@@ -75,7 +75,7 @@
 }
 
 @theme inline {
-  --font-sans: "Fredoka", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "Figtree", ui-sans-serif, system-ui, sans-serif;
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
