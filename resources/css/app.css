@@ -126,6 +126,12 @@
   body {
     @apply bg-background text-foreground;
   }
+
+  /* Prevent Shadcn/Radix from injecting right padding grid gaps when modals open */
+  body[data-scroll-locked] {
+    padding-right: 0 !important;
+    margin-right: 0 !important;
+  }
 }
 
 /* Chatbot Responsive Styles - ONLY for mobile/tablet screens */

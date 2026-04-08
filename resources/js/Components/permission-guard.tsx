@@ -45,7 +45,7 @@ export function PermissionGuard({
   // Wrap the children with a div that has the click handler
   return (
     <>
-      <div className="w-full" onClick={handleClick} onKeyDown={handleClick}>
+      <div className="w-full h-full" onClick={handleClick} onKeyDown={handleClick}>
         {children}
       </div>
       <PermissionDialog

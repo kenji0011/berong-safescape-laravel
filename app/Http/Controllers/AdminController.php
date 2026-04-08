@@ -128,9 +128,11 @@ class AdminController extends Controller
      */
     public function createPost(Request $request)
     {
+        $imageUrl = $request->input('imageUrl') ?? $request->input('image_url');
         $post = BlogPost::create([
-            ...$request->only('title', 'excerpt', 'content', 'image_url', 'category'),
-            'author_id' => $request->user()->id,
+            ...$request->only('title', 'excerpt', 'content', 'category'),
+            'imageUrl' => $imageUrl,
+            'authorId' => $request->user()->id,
         ]);
         return response()->json(['success' => true, 'post' => $post], 201);
     }
@@ -138,7 +140,16 @@ class AdminController extends Controller
     public function updatePost(Request $request, $id)
     {
         $post = BlogPost::findOrFail($id);
-        $post->update($request->only('title', 'excerpt', 'content', 'image_url', 'category', 'is_published'));
+        
+        $updates = $request->only('title', 'excerpt', 'content', 'category');
+        if ($request->has('isPublished') || $request->has('is_published')) {
+            $updates['isPublished'] = $request->boolean($request->has('isPublished') ? 'isPublished' : 'is_published');
+        }
+        if ($request->has('imageUrl') || $request->has('image_url')) {
+            $updates['imageUrl'] = $request->input('imageUrl') ?? $request->input('image_url');
+        }
+        
+        $post->update($updates);
         return response()->json(['success' => true, 'post' => $post]);
     }
 
@@ -150,14 +161,27 @@ class AdminController extends Controller
 
     public function createVideo(Request $request)
     {
-        $video = Video::create($request->only('title', 'description', 'youtube_id', 'category', 'duration'));
+        $youtubeId = $request->input('youtubeId') ?? $request->input('youtube_id');
+        $video = Video::create([
+            ...$request->only('title', 'description', 'category', 'duration'),
+            'youtubeId' => $youtubeId,
+        ]);
         return response()->json(['success' => true, 'video' => $video], 201);
     }
 
     public function updateVideo(Request $request, $id)
     {
         $video = Video::findOrFail($id);
-        $video->update($request->only('title', 'description', 'youtube_id', 'category', 'duration', 'is_active'));
+        
+        $updates = $request->only('title', 'description', 'category', 'duration');
+        if ($request->has('isActive') || $request->has('is_active')) {
+            $updates['isActive'] = $request->boolean($request->has('isActive') ? 'isActive' : 'is_active');
+        }
+        if ($request->has('youtubeId') || $request->has('youtube_id')) {
+            $updates['youtubeId'] = $request->input('youtubeId') ?? $request->input('youtube_id');
+        }
+        
+        $video->update($updates);
         return response()->json(['success' => true, 'video' => $video]);
     }
 
@@ -410,29 +434,29 @@ class AdminController extends Controller
         $weekAgo = now()->subDays(7);
 
         $totalUsers = User::where('role', '!=', 'admin')->count();
-        $profilesCompleted = User::where('role', '!=', 'admin')->where('profile_completed', true)->count();
-        $preTestsTaken = User::where('role', '!=', 'admin')->whereNotNull('pre_test_score')->count();
-        $postTestsTaken = User::where('role', '!=', 'admin')->whereNotNull('post_test_score')->count();
+        $profilesCompleted = User::where('role', '!=', 'admin')->where('profileCompleted', true)->count();
+        $preTestsTaken = User::where('role', '!=', 'admin')->whereNotNull('preTestScore')->count();
+        $postTestsTaken = User::where('role', '!=', 'admin')->whereNotNull('postTestScore')->count();
 
-        $avgPreTest = User::where('role', '!=', 'admin')->avg('pre_test_score') ?? 0;
-        $avgPostTest = User::where('role', '!=', 'admin')->avg('post_test_score') ?? 0;
+        $avgPreTest = User::where('role', '!=', 'admin')->avg('preTestScore') ?? 0;
+        $avgPostTest = User::where('role', '!=', 'admin')->avg('postTestScore') ?? 0;
 
-        $totalEngagement = User::where('role', '!=', 'admin')->sum('engagement_points') ?? 0;
-        $avgEngagement = User::where('role', '!=', 'admin')->avg('engagement_points') ?? 0;
+        $totalEngagement = User::where('role', '!=', 'admin')->sum('engagementPoints') ?? 0;
+        $avgEngagement = User::where('role', '!=', 'admin')->avg('engagementPoints') ?? 0;
 
-        $activeToday = EngagementLog::where('logged_at', '>=', $todayStart)->distinct('user_id')->count('user_id');
-        $activeThisWeek = EngagementLog::where('logged_at', '>=', $weekAgo)->distinct('user_id')->count('user_id');
+        $activeToday = EngagementLog::where('loggedAt', '>=', $todayStart)->distinct('userId')->count('userId');
+        $activeThisWeek = EngagementLog::where('loggedAt', '>=', $weekAgo)->distinct('userId')->count('userId');
 
         $usersWithBoth = User::where('role', '!=', 'admin')
-            ->whereNotNull('pre_test_score')
-            ->whereNotNull('post_test_score')
-            ->get(['pre_test_score', 'post_test_score']);
+            ->whereNotNull('preTestScore')
+            ->whereNotNull('postTestScore')
+            ->get(['preTestScore', 'postTestScore']);
 
         $avgImprovement = 0;
         if ($usersWithBoth->count() > 0) {
             $sum = 0;
             foreach ($usersWithBoth as $u) {
-                $sum += ($u->post_test_score - $u->pre_test_score);
+                $sum += ($u->postTestScore - $u->preTestScore);
             }
             $avgImprovement = $sum / $usersWithBoth->count();
         }
@@ -464,7 +488,7 @@ class AdminController extends Controller
         $barangayData = [];
 
         foreach ($barangays as $barangay) {
-            $users = User::where('role', '!=', 'admin')->where('barangay', $barangay)->get(['pre_test_score', 'post_test_score', 'profile_completed']);
+            $users = User::where('role', '!=', 'admin')->where('barangay', $barangay)->get(['preTestScore', 'postTestScore', 'profileCompleted']);
 
             if ($users->count() === 0) {
                 $barangayData[] = [
@@ -478,18 +502,18 @@ class AdminController extends Controller
                 continue;
             }
 
-            $withPre = $users->filter(fn($u) => !is_null($u->pre_test_score));
-            $withPost = $users->filter(fn($u) => !is_null($u->post_test_score));
-            $withBoth = $users->filter(fn($u) => !is_null($u->pre_test_score) && !is_null($u->post_test_score));
+            $withPre = $users->filter(fn($u) => !is_null($u->preTestScore));
+            $withPost = $users->filter(fn($u) => !is_null($u->postTestScore));
+            $withBoth = $users->filter(fn($u) => !is_null($u->preTestScore) && !is_null($u->postTestScore));
 
-            $avgPre = $withPre->count() > 0 ? $withPre->avg('pre_test_score') : 0;
-            $avgPost = $withPost->count() > 0 ? $withPost->avg('post_test_score') : 0;
+            $avgPre = $withPre->count() > 0 ? $withPre->avg('preTestScore') : 0;
+            $avgPost = $withPost->count() > 0 ? $withPost->avg('postTestScore') : 0;
             
             $avgImprovement = 0;
             if ($withBoth->count() > 0) {
                 $sum = 0;
                 foreach ($withBoth as $u) {
-                    $sum += ($u->post_test_score - $u->pre_test_score);
+                    $sum += ($u->postTestScore - $u->preTestScore);
                 }
                 $avgImprovement = $sum / $withBoth->count();
             }
@@ -500,7 +524,7 @@ class AdminController extends Controller
                 'avgPreTestScore' => round($avgPre, 2),
                 'avgPostTestScore' => round($avgPost, 2),
                 'avgImprovement' => round($avgImprovement, 2),
-                'profilesCompleted' => $users->filter(fn($u) => $u->profile_completed)->count(),
+                'profilesCompleted' => $users->filter(fn($u) => $u->profileCompleted)->count(),
             ];
         }
 
@@ -510,11 +534,11 @@ class AdminController extends Controller
 
     private function getDemographicAnalytics()
     {
-        $users = User::where('role', '!=', 'admin')->where('profile_completed', true)->get(['gender', 'age', 'occupation', 'school']);
+        $users = User::where('role', '!=', 'admin')->where('profileCompleted', true)->get(['gender', 'age', 'occupation', 'school']);
 
         $gender = [];
         $ageGroups = [
-            "Under 10" => 0, "10-14" => 0, "15-17" => 0, "18-24" => 0,
+            "Under 10" => 0, "10 to 14" => 0, "15-17" => 0, "18-24" => 0,
             "25-34" => 0, "35-44" => 0, "45-54" => 0, "55+" => 0,
         ];
         $occupations = [];
@@ -527,7 +551,7 @@ class AdminController extends Controller
 
             if ($user->age) {
                 if ($user->age < 10) $ageGroups["Under 10"]++;
-                elseif ($user->age < 15) $ageGroups["10-14"]++;
+                elseif ($user->age < 15) $ageGroups["10 to 14"]++;
                 elseif ($user->age < 18) $ageGroups["15-17"]++;
                 elseif ($user->age < 25) $ageGroups["18-24"]++;
                 elseif ($user->age < 35) $ageGroups["25-34"]++;
@@ -557,13 +581,14 @@ class AdminController extends Controller
     {
         $categories = [
             'Fire Prevention', 'Emergency Response', 'Electrical Safety', 
-            'Kitchen Safety', 'Evacuation Procedures', 'Fire Extinguisher Usage'
+            'Kitchen Safety', 'Evacuation Planning', 'Fire Extinguisher Use',
+            'Smoke Detector Knowledge', 'General Safety Awareness'
         ];
 
         $knowledgeData = [];
 
         foreach ($categories as $category) {
-            $questions = AssessmentQuestion::where('category', $category)->where('is_active', true)->get(['id']);
+            $questions = AssessmentQuestion::where('category', $category)->where('isActive', true)->get(['id']);
 
             if ($questions->count() === 0) {
                 $knowledgeData[] = [
@@ -578,9 +603,9 @@ class AdminController extends Controller
 
             $questionIds = $questions->pluck('id')->toArray();
 
-            $answers = UserAnswer::whereIn('question_id', $questionIds)->get(['is_correct']);
+            $answers = UserAnswer::whereIn('questionId', $questionIds)->get(['isCorrect']);
             
-            $correctAnswers = $answers->filter(fn($a) => $a->is_correct)->count();
+            $correctAnswers = $answers->filter(fn($a) => $a->isCorrect)->count();
             $totalAnswers = $answers->count();
 
             $knowledgeData[] = [
@@ -594,5 +619,101 @@ class AdminController extends Controller
 
         usort($knowledgeData, fn($a, $b) => $a['avgScore'] <=> $b['avgScore']);
         return $knowledgeData;
+    }
+
+    public function exportCsv()
+    {
+        $summary     = $this->getSummaryAnalytics();
+        $barangay    = $this->getBarangayAnalytics();
+        $demographics = $this->getDemographicAnalytics();
+        $knowledge   = $this->getKnowledgeAnalytics();
+
+        $filename = 'safescape_analytics_' . now()->format('Y-m-d') . '.csv';
+
+        $headers = [
+            'Content-Type'        => 'text/csv',
+            'Content-Disposition' => "attachment; filename=\"{$filename}\"",
+            'Cache-Control'       => 'no-cache, no-store, must-revalidate',
+        ];
+
+        $callback = function () use ($summary, $barangay, $demographics, $knowledge) {
+            $out = fopen('php://output', 'w');
+
+            // ── SUMMARY ──────────────────────────────────────────────
+            fputcsv($out, ['=== SUMMARY STATISTICS ===']);
+            fputcsv($out, ['Metric', 'Value']);
+            fputcsv($out, ['Total Users',              $summary['totalUsers']]);
+            fputcsv($out, ['Profiles Completed',       $summary['profilesCompleted']]);
+            fputcsv($out, ['Pre-Tests Taken',          $summary['preTestsTaken']]);
+            fputcsv($out, ['Post-Tests Taken',         $summary['postTestsTaken']]);
+            fputcsv($out, ['Avg Pre-Test Score',       $summary['averagePreTestScore']]);
+            fputcsv($out, ['Avg Post-Test Score',      $summary['averagePostTestScore']]);
+            fputcsv($out, ['Avg Improvement (points)', $summary['averageImprovement']]);
+            fputcsv($out, ['Total Engagement Points',  $summary['totalEngagementPoints']]);
+            fputcsv($out, ['Avg Engagement / User',    $summary['avgEngagementPerUser']]);
+            fputcsv($out, ['Active Users Today',       $summary['activeUsersToday']]);
+            fputcsv($out, ['Active Users This Week',   $summary['activeUsersThisWeek']]);
+            fputcsv($out, []);
+
+            // ── BY BARANGAY ───────────────────────────────────────────
+            fputcsv($out, ['=== USERS BY BARANGAY ===']);
+            fputcsv($out, ['Barangay', 'Users', 'Profiles Completed', 'Avg Pre-Test', 'Avg Post-Test', 'Avg Improvement']);
+            foreach ($barangay as $b) {
+                if (($b['userCount'] ?? 0) === 0) continue;
+                fputcsv($out, [
+                    $b['barangay'],
+                    $b['userCount'],
+                    $b['profilesCompleted'],
+                    $b['avgPreTestScore'],
+                    $b['avgPostTestScore'],
+                    $b['avgImprovement'],
+                ]);
+            }
+            fputcsv($out, []);
+
+            // ── DEMOGRAPHICS ──────────────────────────────────────────
+            fputcsv($out, ['=== DEMOGRAPHICS ===']);
+
+            fputcsv($out, ['Gender', 'Count']);
+            foreach ((array)$demographics['gender'] as $label => $count) {
+                fputcsv($out, [$label, $count]);
+            }
+            fputcsv($out, []);
+
+            fputcsv($out, ['Age Group', 'Count']);
+            foreach ((array)$demographics['ageGroups'] as $label => $count) {
+                fputcsv($out, [$label, $count]);
+            }
+            fputcsv($out, []);
+
+            fputcsv($out, ['Occupation', 'Count']);
+            foreach ((array)$demographics['occupations'] as $label => $count) {
+                fputcsv($out, [$label, $count]);
+            }
+            fputcsv($out, []);
+
+            fputcsv($out, ['School', 'Count']);
+            foreach ((array)$demographics['schools'] as $label => $count) {
+                fputcsv($out, [$label, $count]);
+            }
+            fputcsv($out, []);
+
+            // ── KNOWLEDGE GAPS ────────────────────────────────────────
+            fputcsv($out, ['=== KNOWLEDGE GAP ANALYSIS ===']);
+            fputcsv($out, ['Category', 'Avg Score (%)', 'Total Questions', 'Correct Answers', 'Incorrect Answers']);
+            foreach ($knowledge as $k) {
+                fputcsv($out, [
+                    $k['category'],
+                    $k['avgScore'],
+                    $k['totalQuestions'],
+                    $k['correctAnswers'],
+                    $k['incorrectAnswers'],
+                ]);
+            }
+
+            fclose($out);
+        };
+
+        return response()->stream($callback, 200, $headers);
     }
 }

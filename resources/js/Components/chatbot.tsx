@@ -433,36 +433,34 @@ export function Chatbot() {
             className={`chatbot-window-container fixed bottom-24 z-50 ${isOnLeft ? 'left-6' : 'right-6'}`}
             style={{ transformOrigin: isOnLeft ? 'bottom left' : 'bottom right' }}
           >
-            <Card className="chatbot-window w-[480px] max-w-[90vw] h-[70vh] min-h-[450px] max-h-[620px] flex flex-col shadow-2xl border-secondary p-0 gap-0 overflow-hidden">
-              {/* Header */}
-              <div className="flex items-center justify-between p-4 border-b bg-primary text-primary-foreground rounded-t-lg">
-                <div className="flex items-center gap-2">
+            <Card className="chatbot-window w-[480px] max-w-[90vw] h-[70vh] min-h-[450px] max-h-[620px] flex flex-col shadow-2xl p-0 gap-0 overflow-hidden border-[3px] border-[#ff6b00] rounded-2xl">
+              {/* Header — Orange */}
+              <div className="flex items-center justify-between px-4 py-3 bg-gradient-to-r from-[#ff6b00] to-[#ff8c00] text-white rounded-t-xl">
+                <div className="flex items-center gap-3">
                   <Image
                     src="/RD Logo.png"
                     alt="BFP Assistant"
-                    width={20}
-                    height={20}
-                    className="h-5 w-5 object-contain rounded-full"
+                    width={32}
+                    height={32}
+                    className="h-8 w-8 object-contain rounded-full bg-white/20 p-0.5"
                   />
-                  <h3 className="font-semibold">BFP Assistant</h3>
+                  <h3 className="font-black text-lg tracking-wide">BFP Assistant</h3>
                 </div>
-                <Button
+                <button
                   onClick={() => setIsOpen(false)}
-                  variant="ghost"
-                  size="icon"
-                  className="h-8 w-8 text-primary-foreground hover:bg-primary-foreground/20"
+                  className="h-9 w-9 flex items-center justify-center text-white hover:bg-white/20 rounded-lg transition-colors"
                 >
-                  <X className="h-4 w-4" />
-                </Button>
+                  <X className="h-6 w-6" strokeWidth={3} />
+                </button>
               </div>
+
               {/* Quick Questions Section */}
               {loadingQuestions ? (
                 <div className="p-3 text-center">
                   <div className="animate-pulse text-xs text-muted-foreground">Loading suggestions...</div>
                 </div>
               ) : Object.keys(quickQuestions).length > 0 && showQuickQuestions ? (
-                <div className="py-2 px-3 bg-gray-50/50 border-b backdrop-blur-sm">
-
+                <div className="py-2 px-3 bg-gray-50/80 border-b backdrop-blur-sm">
                   {/* Header with Icon */}
                   <div className="flex items-center gap-2 mb-2">
                     <div className="h-1.5 w-1.5 rounded-full bg-green-500 animate-pulse" />
@@ -471,28 +469,19 @@ export function Chatbot() {
                     </h4>
                   </div>
 
-                  {/* Scrollable Area - Hidden Scrollbar */}
+                  {/* Scrollable Area */}
                   <div className="max-h-[110px] overflow-y-auto pr-1 space-y-4 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-gray-200 [&::-webkit-scrollbar-thumb]:rounded-full">
                     {Object.entries(quickQuestions).map(([category, questions]) => (
                       <div key={category} className="first:mt-0">
-                        {/* Category Header */}
                         <h5 className="text-[10px] font-bold text-gray-400 mb-2 pl-1 uppercase">
                           {category}
                         </h5>
-
-                        {/* Question Chips */}
                         <div className="flex flex-wrap gap-2">
                           {questions.slice(0, 4).map((question) => (
                             <button
                               key={question.id}
                               onClick={() => handleQuickQuestion(question.questionText, question.responseText)}
-                              className="
-                            text-xs text-left px-3 py-2 rounded-xl
-                            bg-white border border-gray-200 shadow-sm
-                            text-gray-700 transition-all duration-200
-                            hover:border-red-200 hover:bg-red-50 hover:text-red-700 hover:shadow-md
-                            active:scale-95
-                          "
+                              className="text-xs text-left px-3 py-2 rounded-xl bg-white border border-gray-200 shadow-sm text-gray-700 transition-all duration-200 hover:border-orange-300 hover:bg-orange-50 hover:text-orange-700 hover:shadow-md active:scale-95"
                             >
                               {question.questionText}
                             </button>
@@ -504,24 +493,27 @@ export function Chatbot() {
                 </div>
               ) : null}
 
-              {/* Messages */}
-              <div className="flex-1 overflow-y-auto p-4 space-y-4">
+              {/* Messages — white background */}
+              <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-white">
                 {messages.map((message) => (
                   <div key={message.id} className={`flex ${message.sender === "user" ? "justify-end" : "justify-start"}`}>
                     <div
-                      className={`max-w-[85%] rounded-lg p-3 ${message.sender === "user" ? "bg-accent text-accent-foreground" : "bg-muted text-muted-foreground"
-                        }`}
+                      className={`max-w-[85%] rounded-2xl p-3 ${
+                        message.sender === "user"
+                          ? "bg-[#1a6b3c] text-white rounded-br-md"
+                          : "bg-[#1e3a4a] text-white border border-[#2a5060] rounded-bl-md"
+                      }`}
                     >
                       {message.sender === "bot" ? (
-                        <div className="text-sm prose prose-sm prose-neutral dark:prose-invert max-w-none
+                        <div className="text-sm prose prose-sm prose-invert max-w-none
                           [&>p]:my-1 [&>ul]:my-1 [&>ol]:my-1 [&>li]:my-0.5
                           [&>ul]:pl-4 [&>ol]:pl-4 [&>ul]:list-disc [&>ol]:list-decimal
                           [&>h1]:text-base [&>h1]:font-bold [&>h1]:mt-2 [&>h1]:mb-1
                           [&>h2]:text-sm [&>h2]:font-bold [&>h2]:mt-2 [&>h2]:mb-1
                           [&>h3]:text-sm [&>h3]:font-semibold [&>h3]:mt-1.5 [&>h3]:mb-0.5
                           [&>strong]:font-semibold [&>em]:italic
-                          [&>code]:bg-black/10 [&>code]:px-1 [&>code]:rounded [&>code]:text-xs
-                          [&>blockquote]:border-l-2 [&>blockquote]:border-primary [&>blockquote]:pl-2 [&>blockquote]:italic
+                          [&>code]:bg-white/10 [&>code]:px-1 [&>code]:rounded [&>code]:text-xs
+                          [&>blockquote]:border-l-2 [&>blockquote]:border-orange-400 [&>blockquote]:pl-2 [&>blockquote]:italic
                         ">
                           <ReactMarkdown>{message.text}</ReactMarkdown>
                         </div>
@@ -531,33 +523,37 @@ export function Chatbot() {
                     </div>
                   </div>
                 ))}
-                {/* Scroll anchor for auto-scroll */}
                 <div ref={messagesEndRef} />
               </div>
 
-              {/* Input */}
-              <div className="p-4 border-t">
-                <div className="flex gap-2">
+              {/* Input Footer — with mic + send */}
+              <div className="px-4 py-3 border-t border-gray-200 bg-white rounded-b-xl">
+                <div className="flex items-center gap-2">
                   <Input
                     value={inputValue}
                     onChange={(e) => {
                       setInputValue(e.target.value);
-                      // Hide quick questions when user starts typing
                       if (e.target.value.trim() !== '') {
                         setShowQuickQuestions(false);
                       }
                     }}
                     onKeyPress={(e) => e.key === "Enter" && handleSend()}
                     placeholder="Ask about fire safety..."
-                    className="flex-1"
+                    className="flex-1 border-gray-300 bg-gray-50 rounded-xl focus:ring-orange-400 focus:border-orange-400"
                   />
-                  <Button
+                  <button
+                    type="button"
+                    className="h-10 w-10 flex items-center justify-center text-gray-400 hover:text-orange-500 transition-colors"
+                    title="Voice input (coming soon)"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/></svg>
+                  </button>
+                  <button
                     onClick={handleSend}
-                    size="icon"
-                    className="bg-secondary hover:bg-secondary/90 text-secondary-foreground"
+                    className="h-10 w-10 flex items-center justify-center bg-[#1e293b] hover:bg-[#334155] text-white rounded-full shadow-md transition-all active:scale-95"
                   >
                     <Send className="h-4 w-4" />
-                  </Button>
+                  </button>
                 </div>
               </div>
             </Card>

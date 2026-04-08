@@ -89,55 +89,57 @@ export function ManualsDialog({ children }: { children: React.ReactNode }) {
       <DialogTrigger asChild>
         {children}
       </DialogTrigger>
-      <DialogContent className="max-w-3xl max-h-[80vh] overflow-y-auto">
+      <DialogContent className="w-[95vw] sm:max-w-4xl lg:max-w-5xl max-h-[85vh] overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] rounded-[2rem] border-2 border-b-[8px] border-slate-200 p-6 md:p-8">
         <DialogHeader>
-          <div className="flex items-center gap-3 mb-2">
-            <div className="bg-secondary p-2 rounded-lg">
-              <BookOpen className="h-6 w-6 text-secondary-foreground" />
+          <div className="flex items-center gap-4 mb-2">
+            <div className="bg-blue-50 border-2 border-blue-100 p-3 rounded-2xl shadow-sm">
+              <BookOpen className="h-7 w-7 text-blue-500" />
             </div>
             <div>
-              <DialogTitle className="text-2xl">BFP Standard Operating Procedures</DialogTitle>
+              <DialogTitle className="text-2xl font-extrabold text-slate-800">BFP Standard Operating Procedures</DialogTitle>
             </div>
           </div>
         </DialogHeader>
 
-        <div className="space-y-4">
-          <p className="text-muted-foreground">
+        <div className="space-y-6 pt-2">
+          <p className="text-slate-600 font-medium leading-relaxed">
             Access comprehensive manuals covering firefighting operations, emergency response protocols, and safety procedures.
           </p>
 
-          <div className="grid gap-4">
+          <div className="grid gap-5">
             {manuals.map((manual) => (
-              <Card key={manual.id} className="hover:shadow-md transition-shadow">
-                <CardContent className="p-4">
-                  <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
+              <Card key={manual.id} className="bg-white rounded-[1.5rem] border-2 border-b-[4px] border-slate-200 hover:-translate-y-1 hover:border-slate-300 shadow-sm active:translate-y-[2px] active:border-b-2 transition-all">
+                <CardContent className="p-5">
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-5">
                     <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2 mb-1">
-                        <FileText className="h-5 w-5 text-primary flex-shrink-0" />
-                        <h3 className="font-semibold text-foreground line-clamp-2">{manual.title}</h3>
+                      <div className="flex items-center gap-3 mb-2">
+                        <div className="bg-red-50 p-2 rounded-xl shrink-0">
+                            <FileText className="h-5 w-5 text-red-500" />
+                        </div>
+                        <h3 className="font-extrabold text-slate-800 text-[17px] line-clamp-2">{manual.title}</h3>
                       </div>
-                      <p className="text-sm text-muted-foreground mb-2 line-clamp-2">{manual.description}</p>
-                      <Badge variant="secondary" className="text-xs">
-                        {manual.category}
-                      </Badge>
+                      <p className="text-sm text-slate-500 font-medium mb-3 line-clamp-2 pl-12">{manual.description}</p>
+                      <div className="pl-12">
+                          <span className="inline-flex items-center rounded-full px-3 py-1 font-bold bg-slate-100 text-slate-600 text-[10px] tracking-wider uppercase border border-slate-200">
+                            {manual.category}
+                          </span>
+                      </div>
                     </div>
-                    <div className="flex gap-2 sm:ml-0 flex-shrink-0">
-                      <Button
-                        variant="outline"
-                        size="sm"
+                    <div className="flex gap-3 sm:ml-0 shrink-0">
+                      <button
                         onClick={() => handleView(manual.filename)}
+                        className="inline-flex items-center justify-center bg-slate-800 text-white font-extrabold px-5 pb-2 pt-2.5 rounded-xl text-sm shadow-[0_4px_0_#0f172a] hover:-translate-y-0.5 hover:shadow-[0_6px_0_#0f172a] active:translate-y-1 active:shadow-[0_0px_0_#0f172a] transition-all"
                       >
                         <Eye className="h-4 w-4 mr-2" />
                         View
-                      </Button>
-                      <Button
-                        variant="outline"
-                        size="sm"
+                      </button>
+                      <button
                         onClick={() => handleDownload(manual.filename)}
+                        className="inline-flex items-center justify-center bg-white border-2 border-slate-200 text-slate-600 font-extrabold px-5 pb-2 pt-2.5 rounded-xl text-sm shadow-[0_4px_0_#e2e8f0] hover:-translate-y-0.5 hover:shadow-[0_6px_0_#e2e8f0] hover:bg-slate-50 active:translate-y-1 active:shadow-[0_0px_0_#e2e8f0] transition-all"
                       >
                         <Download className="h-4 w-4 mr-2" />
-                        Download
-                      </Button>
+                        Save
+                      </button>
                     </div>
                   </div>
                 </CardContent>

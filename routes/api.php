@@ -66,6 +66,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::post('/pre-test', [AssessmentController::class, 'submitPreTest']);
         Route::post('/post-test', [AssessmentController::class, 'submitPostTest']);
         Route::get('/history', [AssessmentController::class, 'history']);
+        Route::get('/post-test-eligibility', [AssessmentController::class, 'postTestEligibility']);
     });
 
     // ==========================================
@@ -107,6 +108,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::put('/users/{id}/role', [AdminController::class, 'updateUserRole']);
         Route::patch('/users/{id}/permissions', [AdminController::class, 'updateUserPermissions']);
         Route::get('/analytics', [AdminController::class, 'analytics']);
+        Route::get('/analytics/export', [AdminController::class, 'exportCsv']);
 
         // Content management
         Route::post('/upload', [AdminController::class, 'uploadImage']);

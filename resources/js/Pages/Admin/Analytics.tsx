@@ -116,20 +116,14 @@ export default function AnalyticsDashboard({
     }
   }
 
-  const handleExport = async () => {
+  const handleExport = () => {
     try {
-      const response = await fetch("/api/admin/analytics/export")
-      if (!response.ok) throw new Error("Export failed")
-      
-      const blob = await response.blob()
-      const url = window.URL.createObjectURL(blob)
       const a = document.createElement("a")
-      a.href = url
+      a.href = "/api/admin/analytics/export"
       a.download = `safescape_analytics_${new Date().toISOString().split("T")[0]}.csv`
       document.body.appendChild(a)
       a.click()
-      a.remove()
-      window.URL.revokeObjectURL(url)
+      document.body.removeChild(a)
     } catch (err) {
       setError("Failed to export data")
     }
@@ -264,7 +258,7 @@ export default function AnalyticsDashboard({
         {/* Spacer to prevent content from hiding behind the fixed header */}
         <div className="h-[200px] sm:h-[200px]" aria-hidden="true" />
         
-        <div className="max-w-7xl mx-auto px-4 py-6">
+        <div className="w-full max-w-7xl mx-auto px-4 py-6">
           {error && (
             <Alert variant="destructive" className="mb-6">
               <AlertCircle className="h-4 w-4" />
@@ -662,9 +656,9 @@ export default function AnalyticsDashboard({
                         const percentage = total > 0 ? Math.round(((count as number) / total) * 100) : 0
                         return (
                           <div key={occupation} className="w-full">
-                            <div className="flex justify-between items-end mb-1.5 sm:mb-2">
-                              <span className="font-bold text-slate-700 text-[11px] sm:text-sm leading-none truncate max-w-[70%]">{occupation}</span>
-                              <span className="font-black text-slate-500 text-[11px] sm:text-sm leading-none">{percentage}%</span>
+                            <div className="flex justify-between items-start gap-2 mb-1.5 sm:mb-2">
+                              <span className="font-bold text-slate-700 text-[11px] sm:text-sm leading-snug break-words flex-1">{occupation}</span>
+                              <span className="font-black text-slate-500 text-[11px] sm:text-sm leading-none shrink-0">{percentage}%</span>
                             </div>
                             <div className="w-full h-3 sm:h-4 bg-slate-100 rounded-full overflow-hidden border border-slate-200">
                               <div className="h-full bg-emerald-400 rounded-full transition-all duration-1000" style={{ width: `${percentage}%` }} />
@@ -697,9 +691,9 @@ export default function AnalyticsDashboard({
                         const percentage = total > 0 ? Math.round(((count as number) / total) * 100) : 0
                         return (
                           <div key={school} className="w-full">
-                            <div className="flex justify-between items-end mb-1.5 sm:mb-2">
-                              <span className="font-bold text-slate-700 text-[11px] sm:text-sm leading-none truncate max-w-[70%]">{school}</span>
-                              <span className="font-black text-slate-500 text-[11px] sm:text-sm leading-none">{percentage}%</span>
+                            <div className="flex justify-between items-start gap-2 mb-1.5 sm:mb-2">
+                              <span className="font-bold text-slate-700 text-[11px] sm:text-sm leading-snug break-words flex-1">{school}</span>
+                              <span className="font-black text-slate-500 text-[11px] sm:text-sm leading-none shrink-0">{percentage}%</span>
                             </div>
                             <div className="w-full h-3 sm:h-4 bg-slate-100 rounded-full overflow-hidden border border-slate-200">
                               <div className="h-full bg-sky-400 rounded-full transition-all duration-1000" style={{ width: `${percentage}%` }} />

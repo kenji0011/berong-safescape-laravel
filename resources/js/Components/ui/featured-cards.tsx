@@ -113,83 +113,88 @@ export function FeaturedCards({ serverUser }: { serverUser?: ServerUser | null }
   return (
     <div className="max-w-7xl mx-auto px-4">
       {/* Mobile: Horizontal compact cards */}
-      <div className="md:hidden space-y-3.5">
+      <div className="md:hidden space-y-4">
         {visibleCards.map((card) => (
           <React.Fragment key={card.id}>
           <PermissionGuard requiredPermission={card.requiredPermission} targetPath={card.link}>
-            <Link href={card.link} prefetch={false} className="outline-none">
-              <Card className="overflow-hidden border-[3px] border-slate-200 bg-white shadow-[0_4px_0_#cbd5e1] hover:-translate-y-0.5 hover:shadow-[0_6px_0_#cbd5e1] active:translate-y-1 active:shadow-[0_0px_0_#cbd5e1] transition-all duration-200 rounded-[1.25rem] group cursor-pointer">
-                <CardContent className="p-0">
-                  <div className="flex items-center gap-3.5 sm:gap-4 p-3.5 sm:p-4">
-                    {/* Icon Section */}
-                    <div className={`bg-gradient-to-br ${card.color} h-14 w-14 sm:h-16 sm:w-16 rounded-xl sm:rounded-2xl flex items-center justify-center text-white shadow-[0_4px_0_rgba(0,0,0,0.15)] border-2 border-white/20 shrink-0 group-hover:scale-105 transition-transform`}>
-                      {card.icon}
-                    </div>
-                    {/* Content */}
-                    <div className="min-w-0 flex-1">
-                      <h3 className="font-extrabold text-[15px] sm:text-base text-slate-800 leading-tight tracking-tight">{card.btn}</h3>
-                      <p className="text-[12px] sm:text-[13px] font-semibold text-slate-500 line-clamp-2 leading-snug mt-1">{card.description}</p>
-                    </div>
-                    {/* Arrow */}
-                    <div className="h-10 w-10 sm:h-11 sm:w-11 rounded-full border-[3px] border-white bg-yellow-400 text-white flex items-center justify-center flex-shrink-0 shadow-[0_3px_0_#b45309] group-hover:-translate-y-0.5 group-hover:shadow-[0_5px_0_#b45309] group-hover:bg-yellow-300 group-active:translate-y-1 group-active:shadow-[0_0px_0_#b45309] transition-all">
-                      <ArrowRight className="h-5 w-5 sm:h-6 sm:w-6" strokeWidth={3} />
-                    </div>
+            <Link href={card.link} prefetch={false} className="outline-none block w-full group">
+              <div className="w-full bg-white rounded-3xl border-2 border-b-[6px] border-slate-800 p-4 transition-all hover:-translate-y-1 active:translate-y-1 active:border-b-[2px] active:mt-[4px] overflow-hidden relative">
+                <div className="flex items-center gap-4">
+                  {/* Icon Section */}
+                  <div className={`bg-gradient-to-br ${card.color} h-16 w-16 rounded-2xl flex items-center justify-center text-white border-2 border-slate-800 shadow-[0_4px_0_#1e293b] shrink-0 group-hover:scale-105 transition-transform`}>
+                    {card.icon}
                   </div>
-                </CardContent>
-              </Card>
+                  {/* Content */}
+                  <div className="min-w-0 flex-1">
+                    <h3 className="font-black text-lg text-slate-800 leading-tight">{card.title}</h3>
+                    <p className="text-[13px] font-bold text-slate-500 line-clamp-2 leading-snug mt-1 border-slate-800">{card.description}</p>
+                  </div>
+                </div>
+                {/* Full Width Mobile Button */}
+                <div className="mt-4 w-full bg-yellow-400 text-slate-900 border-2 border-b-[4px] border-slate-800 hover:bg-yellow-300 transition-colors font-black text-sm py-3 rounded-xl flex items-center justify-center gap-2">
+                  {card.btn}
+                  <ArrowRight className="h-4 w-4" strokeWidth={3} />
+                </div>
+              </div>
             </Link>
           </PermissionGuard>
           </React.Fragment>
         ))}
       </div>
 
-      {/* Tablet & Desktop: Tilted cards */}
+      {/* Tablet & Desktop: Neobrutalist cards */}
       <div
         className={`hidden md:grid gap-8 p-4 w-full ${visibleCards.length === 1
-          ? 'grid-cols-1 max-w-lg mx-auto'
+          ? 'grid-cols-1 max-w-md mx-auto'
           : visibleCards.length === 2
-            ? 'grid-cols-2 max-w-3xl mx-auto'
-            : 'grid-cols-3 max-w-5xl mx-auto'
+            ? 'grid-cols-2 max-w-4xl mx-auto'
+            : 'grid-cols-3 max-w-6xl mx-auto'
           }`}
       >
         {visibleCards.map((card) => (
-          <div
-            key={card.id}
-            className="w-full transition-all duration-300"
-          >
+          <div key={card.id} className="h-full">
             <PermissionGuard requiredPermission={card.requiredPermission} targetPath={card.link}>
-              <div className="w-full">
-                <TiltedCard
-                  imageSrc={card.imageUrl}
-                  altText={card.title}
-                  captionText={card.title}
-                  containerHeight="320px"
-                  containerWidth="100%"
-                  imageHeight="280px"
-                  imageWidth="100%"
-                  scaleOnHover={1.08}
-                  rotateAmplitude={12}
-                  showMobileWarning={false}
-                  showTooltip={true}
-                  displayOverlayContent={true}
-                  overlayContent={
-                    <div className="text-white">
-                      <h3 className="text-xl font-bold mb-2 drop-shadow-lg">{card.title}</h3>
-                      <p className="text-sm text-gray-200 mb-3 line-clamp-2">{card.description}</p>
-                      <Link href={card.link} prefetch={false}>
-                        <Button
-                          variant="secondary"
-                          size="sm"
-                          className="w-full font-extrabold text-sm tracking-wide bg-white border-[3px] border-white/40 shadow-[0_4px_0_rgba(0,0,0,0.2)] hover:-translate-y-0.5 hover:shadow-[0_6px_0_rgba(0,0,0,0.25)] active:translate-y-1 active:shadow-[0_0px_0_rgba(0,0,0,0.2)] text-gray-900 transition-all rounded-xl py-2 h-auto"
-                          onClick={(e) => e.stopPropagation()}
-                        >
-                          {card.btn}
-                        </Button>
-                      </Link>
+              <Link href={card.link} prefetch={false} className="outline-none flex w-full h-full group">
+                <div className="w-full flex flex-col bg-white rounded-3xl border-2 border-b-[8px] border-slate-800 overflow-hidden relative transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl active:translate-y-1 active:border-b-[4px] active:mt-[4px]">
+                  
+                  {/* Image Area */}
+                  <div className="h-[200px] shrink-0 w-full border-b-2 border-slate-800 overflow-hidden relative">
+                    <img 
+                      src={card.imageUrl} 
+                      alt={card.title} 
+                      className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" 
+                    />
+                    <div className="absolute inset-0 bg-slate-900/20 group-hover:bg-transparent transition-colors duration-500" />
+                  </div>
+                  
+                  {/* Content Area */}
+                  <div className="p-6 flex-1 flex flex-col relative bg-yellow-50 bg-opacity-50">
+                    
+                    {/* Floating Icon overlapping image and content */}
+                    <div className={`absolute -top-10 right-6 h-16 w-16 bg-gradient-to-br ${card.color} rounded-2xl flex items-center justify-center text-white border-2 border-slate-800 shadow-[0_4px_0_#1e293b] group-hover:-translate-y-1 transition-transform z-10`}>
+                      {card.icon}
                     </div>
-                  }
-                />
-              </div>
+
+                    <div className="pr-16"> {/* padding to avoid icon */}
+                      <h3 className="text-xl lg:text-2xl font-black text-slate-800 leading-tight mb-2">
+                        {card.title}
+                      </h3>
+                      <p className="text-sm font-bold text-slate-600 line-clamp-2">
+                        {card.description}
+                      </p>
+                    </div>
+
+                    {/* Action Button */}
+                    <div className="mt-auto">
+                      <div className="w-full bg-[#d60000] text-white border-2 border-b-[4px] border-slate-800 group-hover:bg-[#b30000] transition-colors font-black text-sm py-3 rounded-xl flex items-center justify-center gap-2">
+                        {card.btn}
+                        <ArrowRight className="h-4 w-4" strokeWidth={3} />
+                      </div>
+                    </div>
+                    
+                  </div>
+                </div>
+              </Link>
             </PermissionGuard>
           </div>
         ))}

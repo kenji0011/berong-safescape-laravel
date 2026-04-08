@@ -100,7 +100,11 @@ export function LandingAssessmentSection({ serverUser }: LandingAssessmentProps 
     const checkEligibility = async () => {
         try {
             setLoading(true)
-            const response = await fetch("/api/assessment/post-test-eligibility")
+            const response = await fetch("/api/assessments/post-test-eligibility", {
+                headers: {
+                    'Accept': 'application/json',
+                }
+            })
             const data = await response.json()
             setEligibility(data)
         } catch (err) {

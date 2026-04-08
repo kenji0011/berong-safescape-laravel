@@ -8,12 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { Bell, Check, CheckCheck, MoreHorizontal, Trash2, ArrowRight } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useAuth } from "@/lib/auth-context";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+// DropdownMenu imports removed to prevent nested portal conflicts
 
 interface Notification {
   id: number;
@@ -26,105 +21,91 @@ interface Notification {
   resourceId?: number | null;
 }
 
+const MOCK_NOTIFICATIONS: Notification[] = [
+  {
+    id: 1,
+    title: "New Video Added",
+    message: "A new CPR training video has been added to the Professional dashboard.",
+    type: "video",
+    category: "professional",
+    isRead: false,
+    createdAt: new Date(Date.now() - 600000).toISOString()
+  },
+  {
+    id: 2,
+    title: "System Update",
+    message: "Welcome to SafeScape platform. Don't forget to take your Pre-Test!",
+    type: "urgent",
+    category: "assessment",
+    isRead: false,
+    createdAt: new Date(Date.now() - 3600000).toISOString()
+  },
+  {
+    id: 3,
+    title: "Fire Safety Month",
+    message: "March is Fire Prevention Month. Check out our new modules.",
+    type: "blog",
+    category: "adult",
+    isRead: true,
+    createdAt: new Date(Date.now() - 86400000).toISOString()
+  }
+];
+
 export function NotificationPopover() {
   const { user } = useAuth();
-  const [notifications, setNotifications] = useState<Notification[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [notifications, setNotifications] = useState<Notification[]>(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('safescape_mock_notifications');
+      if (saved) {
+        return JSON.parse(saved);
+      }
+    }
+    return MOCK_NOTIFICATIONS;
+  });
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [openDropdownId, setOpenDropdownId] = useState<number | null>(null);
+
+  // Sync state to local storage whenever it changes so mock data persists like a real DB
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('safescape_mock_notifications', JSON.stringify(notifications));
+    }
+  }, [notifications]);
+
+  // Listen for background updates from Admin actions
+  useEffect(() => {
+    const handleUpdate = () => {
+      const saved = localStorage.getItem('safescape_mock_notifications');
+      if (saved) {
+        setNotifications(JSON.parse(saved));
+      }
+    };
+    window.addEventListener('safescape_notifications_updated', handleUpdate);
+    return () => window.removeEventListener('safescape_notifications_updated', handleUpdate);
+  }, []);
+
+  // Click outside to close custom dropdown
+  useEffect(() => {
+    const handleClickOutside = () => setOpenDropdownId(null);
+    document.addEventListener("click", handleClickOutside);
+    return () => document.removeEventListener("click", handleClickOutside);
+  }, []);
 
   const unreadCount = notifications.filter(n => !n.isRead).length;
 
-  // Load notifications from the database
-  useEffect(() => {
-    const fetchNotifications = async () => {
-      if (!user?.id) return;
-
-      try {
-        setLoading(true);
-        const response = await fetch(`/api/notifications`, {
-          credentials: 'include',
-        });
-        if (response.ok) {
-          const data = await response.json();
-          setNotifications(data);
-        } else {
-          setError('Failed to load notifications');
-        }
-      } catch (err) {
-        setError('Error loading notifications');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchNotifications();
-
-    // Set up polling to refresh notifications every 30 seconds
-    const interval = setInterval(fetchNotifications, 30000);
-    return () => clearInterval(interval);
-  }, [user?.id]);
-
-  
-
   const toggleReadStatus = async (id: number, isRead: boolean) => {
-    if (!user?.id) return;
-
-    try {
-      const response = await fetch(`/api/notifications/${id}`, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        credentials: 'include',
-        body: JSON.stringify({ userId: user.id, isRead }),
-      });
-
-      if (response.ok) {
-        setNotifications(notifications.map(n =>
-          n.id === id ? { ...n, isRead } : n
-        ));
-      } else {
-        // Silently handle update failure
-      }
-    } catch (err) {
-      // Silently handle update error
-    }
+    setNotifications(notifications.map(n =>
+      n.id === id ? { ...n, isRead } : n
+    ));
   };
 
   const deleteNotification = async (id: number) => {
-    if (!user?.id) return;
-
-    try {
-      const response = await fetch(`/api/notifications/${id}`, {
-        method: 'DELETE',
-        credentials: 'include',
-      });
-
-      if (response.ok) {
-        setNotifications(notifications.filter(n => n.id !== id));
-      } else {
-        // Silently handle delete failure
-      }
-    } catch (err) {
-      // Silently handle delete error
-    }
+    setNotifications(notifications.filter(n => n.id !== id));
   };
 
   const markAllAsRead = async () => {
-    if (!user?.id) return;
-
-    try {
-      // Mark all unread notifications as read in the UI first
-      setNotifications(notifications.map(n => ({ ...n, isRead: true })));
-
-      // Then update in the database
-      const unreadNotificationIds = notifications.filter(n => !n.isRead).map(n => n.id);
-      await Promise.all(unreadNotificationIds.map(id => toggleReadStatus(id, true)));
-    } catch (err) {
-      // Silently handle mark-all-read error
-      // Revert the UI changes if there was an error
-      setNotifications(notifications.map(n => ({ ...n, isRead: false })));
-    }
+    setNotifications(notifications.map(n => ({ ...n, isRead: true })));
   };
 
   const handleGo = (notification: Notification) => {
@@ -135,21 +116,21 @@ export function NotificationPopover() {
 
     if (notification.resourceId) {
       if (notification.type === 'blog') {
-        router.push(`/adult/blog/${notification.resourceId}`);
-      } else if (notification.type === 'video') {
-        // Assuming video page or section, might need adjustment based on route structure
-        // For now, redirecting to generic video page if specific ID route doesn't exist
-        // or if query params are used. Let's assume /adult/videos matches the resource type
-        router.push(`/adult/videos`);
+        router.get(`/adult/blog/${notification.resourceId}`);
       } else {
-        // Fallback based on category
-        router.push(`/${notification.category}`);
+        router.get(`/${notification.category}`);
       }
     } else {
-      // Fallback for notifications without resourceId
-      if (notification.type === 'blog') router.push('/adult/blog');
-      else if (notification.type === 'video') router.push('/adult/videos');
-      else router.push(`/${notification.category}`);
+      // Fallback routing for mock data without a specific ID
+      if (notification.category === 'professional') {
+        router.get('/professional');
+      } else if (notification.category === 'assessment') {
+        router.get('/assessment/pre-test'); // The generic assessment route requires a type
+      } else if (notification.type === 'blog' || notification.category === 'adult') {
+        router.get('/adult'); // Blogs are displayed on the main adult dashboard
+      } else {
+        router.get(`/${notification.category}`);
+      }
     }
   };
 
@@ -214,7 +195,7 @@ export function NotificationPopover() {
           )}
         </button>
       </PopoverTrigger>
-      <PopoverContent className="w-[calc(100vw-2rem)] sm:w-96 p-0 rounded-[1.25rem] border-2 border-slate-200/60 shadow-2xl overflow-hidden" align="end" sideOffset={12} collisionPadding={16}>
+      <PopoverContent className="z-[90] w-[calc(100vw-2rem)] sm:w-96 p-0 rounded-[1.25rem] border-2 border-slate-200/60 shadow-2xl overflow-hidden" align="end" sideOffset={12} collisionPadding={16}>
         <div className="flex items-center justify-between p-4 lg:px-5 border-b border-slate-100 bg-slate-50/80 backdrop-blur-sm">
           <h3 className="font-extrabold text-slate-800 text-lg tracking-tight">Notifications</h3>
           {unreadCount > 0 && (
@@ -244,11 +225,11 @@ export function NotificationPopover() {
                 No notifications yet
               </div>
             ) : (
-              <div className="space-y-2">
+              <div className="space-y-2 pb-32">
                 {notifications.map((notification) => (
                   <div
                     key={notification.id}
-                    className={`p-3.5 rounded-xl transition-all group relative border-2 ${!notification.isRead
+                    className={`p-3.5 rounded-xl transition-all group relative border-2 ${openDropdownId === notification.id ? "z-[50]" : "z-10"} ${!notification.isRead
                       ? "bg-blue-50/50 border-blue-200/50 hover:bg-blue-50/80 hover:-translate-y-0.5 hover:shadow-sm"
                       : "bg-white border-transparent hover:border-slate-100 hover:bg-slate-50/80 hover:-translate-y-0.5 hover:shadow-sm"
                       }`}
@@ -276,43 +257,37 @@ export function NotificationPopover() {
                         </p>
                       </div>
                     </div>
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
+                    <div className="absolute top-2.5 right-2.5 z-[100]">
                         <Button
                           variant="ghost"
                           size="icon"
-                          className="absolute top-2.5 right-2.5 h-7 w-7 rounded-full text-slate-400 bg-transparent hover:bg-white border-2 border-transparent hover:border-slate-200 hover:text-slate-600 shadow-none hover:shadow-[0_2px_0_#e2e8f0] hover:-translate-y-0.5 active:translate-y-0 active:shadow-none transition-all outline-none"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setOpenDropdownId(openDropdownId === notification.id ? null : notification.id);
+                          }}
+                          className="h-7 w-7 rounded-full text-slate-400 bg-transparent hover:bg-white border-2 border-transparent hover:border-slate-200 hover:text-slate-600 shadow-none hover:shadow-[0_2px_0_#e2e8f0] hover:-translate-y-0.5 active:translate-y-0 active:shadow-none transition-all outline-none"
                         >
                           <MoreHorizontal className="h-4 w-4" />
                         </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end">
-                        <DropdownMenuItem onClick={() => handleGo(notification)}>
-                          <ArrowRight className="mr-2 h-4 w-4" />
-                          <span>Go</span>
-                        </DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => toggleReadStatus(notification.id, !notification.isRead)}>
-                          {!notification.isRead ? (
-                            <>
-                              <Check className="mr-2 h-4 w-4" />
-                              <span>Mark as Read</span>
-                            </>
-                          ) : (
-                            <>
-                              <Bell className="mr-2 h-4 w-4" />
-                              <span>Mark as Unread</span>
-                            </>
-                          )}
-                        </DropdownMenuItem>
-                        <DropdownMenuItem
-                          onClick={() => deleteNotification(notification.id)}
-                          className="text-destructive focus:text-destructive"
-                        >
-                          <Trash2 className="mr-2 h-4 w-4" />
-                          <span>Delete</span>
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
+                        
+                        {openDropdownId === notification.id && (
+                          <div 
+                            onClick={(e) => e.stopPropagation()}
+                            className="absolute top-full right-0 mt-1 w-48 bg-white border-2 border-slate-200 shadow-xl rounded-[14px] p-1.5 z-[200] animate-in fade-in zoom-in-95 origin-top-right"
+                          >
+                            <button onClick={() => { handleGo(notification); setOpenDropdownId(null); }} className="w-full text-left px-3 py-2 bg-transparent outline-none text-sm font-bold text-slate-700 hover:bg-slate-100 rounded-lg flex items-center transition-colors">
+                              <ArrowRight className="mr-2 h-4 w-4" /> Go
+                            </button>
+                            <button onClick={() => { toggleReadStatus(notification.id, !notification.isRead); setOpenDropdownId(null); }} className="w-full text-left px-3 py-2 bg-transparent outline-none text-sm font-bold text-slate-700 hover:bg-slate-100 rounded-lg flex items-center transition-colors mt-1">
+                              {!notification.isRead ? <><Check className="mr-2 h-4 w-4" /> Mark as Read</> : <><Bell className="mr-2 h-4 w-4" /> Mark as Unread</>}
+                            </button>
+                            <div className="h-[1px] bg-slate-100 my-1" />
+                            <button onClick={() => { deleteNotification(notification.id); setOpenDropdownId(null); }} className="w-full text-left px-3 py-2 bg-transparent outline-none text-sm font-bold text-red-600 hover:bg-red-600 hover:text-white rounded-lg flex items-center transition-all group">
+                              <Trash2 className="mr-2 h-4 w-4 group-hover:text-white" /> Delete
+                            </button>
+                          </div>
+                        )}
+                    </div>
                   </div>
                 ))}
               </div>

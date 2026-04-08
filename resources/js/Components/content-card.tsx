@@ -343,9 +343,15 @@ export function ContentCard({ content, onClick }: ContentCardProps) {
     </Card>
   )
 
-  if (content.isLocked) {
+  if (content.isLocked || content.href === "#") {
     return (
-      <div onClick={onClick} className="group block h-full">
+      <div 
+        onClick={(e) => {
+          if (content.href === "#") e.preventDefault()
+          if (onClick) onClick()
+        }} 
+        className={cn("group block h-full", !content.isLocked && "cursor-pointer")}
+      >
         {mobileCardContent}
         {desktopCardContent}
       </div>
