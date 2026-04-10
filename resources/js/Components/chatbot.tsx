@@ -166,8 +166,16 @@ export function Chatbot() {
       try {
         const response = await fetch('/api/quick-questions')
         if (response.ok) {
-          const questions = await response.json()
-          setQuickQuestions(questions)
+          const questionsArray: QuickQuestion[] = await response.json()
+          
+          const grouped: Record<string, QuickQuestion[]> = {}
+          questionsArray.forEach((q) => {
+            const cat = q.category || 'General'
+            if (!grouped[cat]) grouped[cat] = []
+            grouped[cat].push(q)
+          })
+          
+          setQuickQuestions(grouped)
         }
       } catch (error) {
         console.error('Error loading quick questions:', error)

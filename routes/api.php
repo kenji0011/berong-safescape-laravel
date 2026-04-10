@@ -33,6 +33,7 @@ Route::prefix('auth')->group(function () {
 // Public content — home page carousel, assessment questions for pre-test
 Route::get('/content/carousel', [ContentController::class, 'carousel']);
 Route::get('/assessment/questions', [AssessmentController::class, 'index']);
+Route::get('/quick-questions', [ContentController::class, 'questions']);
 
 Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
     return $request->user();
@@ -144,9 +145,9 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
         // Quick Questions Alias
         Route::get('/quick-questions', [ContentController::class, 'questions']);
-        Route::post('/quick-questions', [AdminController::class, 'createQuestion']);
-        Route::put('/quick-questions/{id}', [AdminController::class, 'updateQuestion']);
-        Route::delete('/quick-questions/{id}', [AdminController::class, 'deleteQuestion']);
+        Route::post('/quick-questions', [AdminController::class, 'createQuickQuestion']);
+        Route::put('/quick-questions/{id}', [AdminController::class, 'updateQuickQuestion']);
+        Route::delete('/quick-questions/{id}', [AdminController::class, 'deleteQuickQuestion']);
 
         // Fire Codes
         Route::get('/fire-codes', [AdminController::class, 'fireCodes']);

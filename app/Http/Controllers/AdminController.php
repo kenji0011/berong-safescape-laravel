@@ -214,6 +214,39 @@ class AdminController extends Controller
         return response()->json(['success' => true, 'message' => 'Question deleted']);
     }
 
+    public function createQuickQuestion(Request $request)
+    {
+        $payload = $request->validate([
+            'category' => 'required|string',
+            'questionText' => 'required|string',
+            'responseText' => 'required|string',
+            'isActive' => 'sometimes|boolean'
+        ]);
+        
+        $question = \App\Models\QuickQuestion::create($payload);
+        return response()->json(['success' => true, 'question' => $question], 201);
+    }
+
+    public function updateQuickQuestion(Request $request, $id)
+    {
+        $question = \App\Models\QuickQuestion::findOrFail($id);
+        $payload = $request->validate([
+            'category' => 'sometimes|required|string',
+            'questionText' => 'sometimes|required|string',
+            'responseText' => 'sometimes|required|string',
+            'isActive' => 'sometimes|boolean'
+        ]);
+        
+        $question->update($payload);
+        return response()->json(['success' => true, 'question' => $question]);
+    }
+
+    public function deleteQuickQuestion($id)
+    {
+        \App\Models\QuickQuestion::findOrFail($id)->delete();
+        return response()->json(['success' => true, 'message' => 'Question deleted']);
+    }
+
     /**
      * Carousel management
      */
