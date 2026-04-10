@@ -26,7 +26,7 @@ class AdminController extends Controller
             'initialVideos' => \App\Models\Video::orderBy('created_at', 'desc')->get(),
             'initialUsers' => \App\Models\User::latest()->paginate(20),
             'initialQuickQuestions' => \App\Models\QuickQuestion::where('isActive', true)->orderBy('created_at', 'desc')->get(),
-            'initialFireCodeSections' => \App\Models\FireCodeSection::orderBy('section_num')->get(),
+            'initialFireCodeSections' => \App\Models\FireCodeSection::orderBy('sectionNum')->get(),
         ]);
     }
 
@@ -49,7 +49,7 @@ class AdminController extends Controller
             'success' => true,
             'stats' => [
                 'totalUsers' => User::count(),
-                'activeUsers' => User::where('is_active', true)->count(),
+                'activeUsers' => User::where('isActive', true)->count(),
                 'totalPosts' => BlogPost::count(),
                 'totalVideos' => Video::count(),
                 'totalQuestions' => AssessmentQuestion::count(),
@@ -129,8 +129,8 @@ class AdminController extends Controller
     public function createPost(Request $request)
     {
         $post = BlogPost::create([
-            ...$request->only('title', 'excerpt', 'content', 'image_url', 'category'),
-            'author_id' => $request->user()->id,
+            ...$request->only('title', 'excerpt', 'content', 'imageUrl', 'category'),
+            'authorId' => $request->user()->id,
         ]);
         return response()->json(['success' => true, 'post' => $post], 201);
     }
@@ -138,7 +138,7 @@ class AdminController extends Controller
     public function updatePost(Request $request, $id)
     {
         $post = BlogPost::findOrFail($id);
-        $post->update($request->only('title', 'excerpt', 'content', 'image_url', 'category', 'is_published'));
+        $post->update($request->only('title', 'excerpt', 'content', 'imageUrl', 'category', 'isPublished'));
         return response()->json(['success' => true, 'post' => $post]);
     }
 
@@ -150,14 +150,14 @@ class AdminController extends Controller
 
     public function createVideo(Request $request)
     {
-        $video = Video::create($request->only('title', 'description', 'youtube_id', 'category', 'duration'));
+        $video = Video::create($request->only('title', 'description', 'youtubeId', 'category', 'duration'));
         return response()->json(['success' => true, 'video' => $video], 201);
     }
 
     public function updateVideo(Request $request, $id)
     {
         $video = Video::findOrFail($id);
-        $video->update($request->only('title', 'description', 'youtube_id', 'category', 'duration', 'is_active'));
+        $video->update($request->only('title', 'description', 'youtubeId', 'category', 'duration', 'isActive'));
         return response()->json(['success' => true, 'video' => $video]);
     }
 
@@ -170,8 +170,8 @@ class AdminController extends Controller
     public function createQuestion(Request $request)
     {
         $question = AssessmentQuestion::create($request->only(
-            'question', 'options', 'correct_answer', 'explanation',
-            'category', 'difficulty', 'for_roles', 'type', 'order'
+            'question', 'options', 'correctAnswer', 'explanation',
+            'category', 'difficulty', 'forRoles', 'type', 'order'
         ));
         return response()->json(['success' => true, 'question' => $question], 201);
     }
@@ -180,8 +180,8 @@ class AdminController extends Controller
     {
         $question = AssessmentQuestion::findOrFail($id);
         $question->update($request->only(
-            'question', 'options', 'correct_answer', 'explanation',
-            'category', 'difficulty', 'is_active', 'for_roles', 'type', 'order'
+            'question', 'options', 'correctAnswer', 'explanation',
+            'category', 'difficulty', 'isActive', 'forRoles', 'type', 'order'
         ));
         return response()->json(['success' => true, 'question' => $question]);
     }
@@ -203,7 +203,7 @@ class AdminController extends Controller
                 ?? $request->input('alt_text')
                 ?? $request->input('alt'),
             'imageUrl' => $request->input('imageUrl')
-                ?? $request->input('image_url')
+                ?? $request->input('imageUrl')
                 ?? $request->input('url'),
             'order' => $request->input('order', (int) CarouselImage::max('order') + 1),
             'isActive' => $request->boolean('isActive', true),
@@ -232,7 +232,7 @@ class AdminController extends Controller
             'alt_text' => 'nullable|string|max:255',
             'alt' => 'nullable|string|max:255',
             'imageUrl' => 'nullable|string|max:2048',
-            'image_url' => 'nullable|string|max:2048',
+            'imageUrl' => 'nullable|string|max:2048',
             'url' => 'nullable|string|max:2048',
             'order' => 'nullable|integer|min:0',
         ]);
@@ -249,9 +249,9 @@ class AdminController extends Controller
                 ?? $request->input('alt');
         }
 
-        if ($request->hasAny(['imageUrl', 'image_url', 'url'])) {
+        if ($request->hasAny(['imageUrl', 'imageUrl', 'url'])) {
             $updates['imageUrl'] = $request->input('imageUrl')
-                ?? $request->input('image_url')
+                ?? $request->input('imageUrl')
                 ?? $request->input('url');
         }
 
@@ -259,9 +259,9 @@ class AdminController extends Controller
             $updates['order'] = $request->integer('order');
         }
 
-        if ($request->hasAny(['isActive', 'is_active'])) {
+        if ($request->hasAny(['isActive', 'isActive'])) {
             $updates['isActive'] = $request->boolean(
-                $request->has('isActive') ? 'isActive' : 'is_active'
+                $request->has('isActive') ? 'isActive' : 'isActive'
             );
         }
 
@@ -363,7 +363,7 @@ class AdminController extends Controller
     public function fireCodes()
     {
         // Return all fire code sections
-        $sections = \App\Models\FireCodeSection::orderBy('section_num')->get();
+        $sections = \App\Models\FireCodeSection::orderBy('sectionNum')->get();
         return response()->json(['success' => true, 'sections' => $sections]);
     }
 
@@ -377,9 +377,9 @@ class AdminController extends Controller
 
         $section = \App\Models\FireCodeSection::create([
             'title' => $request->title,
-            'section_num' => $request->sectionNum,
+            'sectionNum' => $request->sectionNum,
             'content' => $request->input('content'),
-            'parent_section_id' => $request->parentSectionId,
+            'parentSectionId' => $request->parentSectionId,
         ]);
 
         return response()->json(['success' => true, 'section' => $section], 201);
@@ -390,9 +390,9 @@ class AdminController extends Controller
         $section = \App\Models\FireCodeSection::findOrFail($id);
         $section->update([
             'title' => $request->title ?? $section->title,
-            'section_num' => $request->sectionNum ?? $section->section_num,
+            'sectionNum' => $request->sectionNum ?? $section->sectionNum,
             'content' => $request->input('content') ?? $section->content,
-            'parent_section_id' => $request->parentSectionId ?? $section->parent_section_id,
+            'parentSectionId' => $request->parentSectionId ?? $section->parentSectionId,
         ]);
 
         return response()->json(['success' => true, 'section' => $section]);
@@ -410,29 +410,29 @@ class AdminController extends Controller
         $weekAgo = now()->subDays(7);
 
         $totalUsers = User::where('role', '!=', 'admin')->count();
-        $profilesCompleted = User::where('role', '!=', 'admin')->where('profile_completed', true)->count();
-        $preTestsTaken = User::where('role', '!=', 'admin')->whereNotNull('pre_test_score')->count();
-        $postTestsTaken = User::where('role', '!=', 'admin')->whereNotNull('post_test_score')->count();
+        $profilesCompleted = User::where('role', '!=', 'admin')->where('profileCompleted', true)->count();
+        $preTestsTaken = User::where('role', '!=', 'admin')->whereNotNull('preTestScore')->count();
+        $postTestsTaken = User::where('role', '!=', 'admin')->whereNotNull('postTestScore')->count();
 
-        $avgPreTest = User::where('role', '!=', 'admin')->avg('pre_test_score') ?? 0;
-        $avgPostTest = User::where('role', '!=', 'admin')->avg('post_test_score') ?? 0;
+        $avgPreTest = User::where('role', '!=', 'admin')->avg('preTestScore') ?? 0;
+        $avgPostTest = User::where('role', '!=', 'admin')->avg('postTestScore') ?? 0;
 
-        $totalEngagement = User::where('role', '!=', 'admin')->sum('engagement_points') ?? 0;
-        $avgEngagement = User::where('role', '!=', 'admin')->avg('engagement_points') ?? 0;
+        $totalEngagement = User::where('role', '!=', 'admin')->sum('engagementPoints') ?? 0;
+        $avgEngagement = User::where('role', '!=', 'admin')->avg('engagementPoints') ?? 0;
 
-        $activeToday = EngagementLog::where('logged_at', '>=', $todayStart)->distinct('user_id')->count('user_id');
-        $activeThisWeek = EngagementLog::where('logged_at', '>=', $weekAgo)->distinct('user_id')->count('user_id');
+        $activeToday = EngagementLog::where('loggedAt', '>=', $todayStart)->distinct('userId')->count('userId');
+        $activeThisWeek = EngagementLog::where('loggedAt', '>=', $weekAgo)->distinct('userId')->count('userId');
 
         $usersWithBoth = User::where('role', '!=', 'admin')
-            ->whereNotNull('pre_test_score')
-            ->whereNotNull('post_test_score')
-            ->get(['pre_test_score', 'post_test_score']);
+            ->whereNotNull('preTestScore')
+            ->whereNotNull('postTestScore')
+            ->get(['preTestScore', 'postTestScore']);
 
         $avgImprovement = 0;
         if ($usersWithBoth->count() > 0) {
             $sum = 0;
             foreach ($usersWithBoth as $u) {
-                $sum += ($u->post_test_score - $u->pre_test_score);
+                $sum += ($u->postTestScore - $u->preTestScore);
             }
             $avgImprovement = $sum / $usersWithBoth->count();
         }
@@ -464,7 +464,7 @@ class AdminController extends Controller
         $barangayData = [];
 
         foreach ($barangays as $barangay) {
-            $users = User::where('role', '!=', 'admin')->where('barangay', $barangay)->get(['pre_test_score', 'post_test_score', 'profile_completed']);
+            $users = User::where('role', '!=', 'admin')->where('barangay', $barangay)->get(['preTestScore', 'postTestScore', 'profileCompleted']);
 
             if ($users->count() === 0) {
                 $barangayData[] = [
@@ -478,18 +478,18 @@ class AdminController extends Controller
                 continue;
             }
 
-            $withPre = $users->filter(fn($u) => !is_null($u->pre_test_score));
-            $withPost = $users->filter(fn($u) => !is_null($u->post_test_score));
-            $withBoth = $users->filter(fn($u) => !is_null($u->pre_test_score) && !is_null($u->post_test_score));
+            $withPre = $users->filter(fn($u) => !is_null($u->preTestScore));
+            $withPost = $users->filter(fn($u) => !is_null($u->postTestScore));
+            $withBoth = $users->filter(fn($u) => !is_null($u->preTestScore) && !is_null($u->postTestScore));
 
-            $avgPre = $withPre->count() > 0 ? $withPre->avg('pre_test_score') : 0;
-            $avgPost = $withPost->count() > 0 ? $withPost->avg('post_test_score') : 0;
+            $avgPre = $withPre->count() > 0 ? $withPre->avg('preTestScore') : 0;
+            $avgPost = $withPost->count() > 0 ? $withPost->avg('postTestScore') : 0;
             
             $avgImprovement = 0;
             if ($withBoth->count() > 0) {
                 $sum = 0;
                 foreach ($withBoth as $u) {
-                    $sum += ($u->post_test_score - $u->pre_test_score);
+                    $sum += ($u->postTestScore - $u->preTestScore);
                 }
                 $avgImprovement = $sum / $withBoth->count();
             }
@@ -500,7 +500,7 @@ class AdminController extends Controller
                 'avgPreTestScore' => round($avgPre, 2),
                 'avgPostTestScore' => round($avgPost, 2),
                 'avgImprovement' => round($avgImprovement, 2),
-                'profilesCompleted' => $users->filter(fn($u) => $u->profile_completed)->count(),
+                'profilesCompleted' => $users->filter(fn($u) => $u->profileCompleted)->count(),
             ];
         }
 
@@ -510,7 +510,7 @@ class AdminController extends Controller
 
     private function getDemographicAnalytics()
     {
-        $users = User::where('role', '!=', 'admin')->where('profile_completed', true)->get(['gender', 'age', 'occupation', 'school']);
+        $users = User::where('role', '!=', 'admin')->where('profileCompleted', true)->get(['gender', 'age', 'occupation', 'school']);
 
         $gender = [];
         $ageGroups = [
@@ -563,7 +563,7 @@ class AdminController extends Controller
         $knowledgeData = [];
 
         foreach ($categories as $category) {
-            $questions = AssessmentQuestion::where('category', $category)->where('is_active', true)->get(['id']);
+            $questions = AssessmentQuestion::where('category', $category)->where('isActive', true)->get(['id']);
 
             if ($questions->count() === 0) {
                 $knowledgeData[] = [
@@ -578,9 +578,9 @@ class AdminController extends Controller
 
             $questionIds = $questions->pluck('id')->toArray();
 
-            $answers = UserAnswer::whereIn('question_id', $questionIds)->get(['is_correct']);
+            $answers = UserAnswer::whereIn('questionId', $questionIds)->get(['isCorrect']);
             
-            $correctAnswers = $answers->filter(fn($a) => $a->is_correct)->count();
+            $correctAnswers = $answers->filter(fn($a) => $a->isCorrect)->count();
             $totalAnswers = $answers->count();
 
             $knowledgeData[] = [
