@@ -17,37 +17,37 @@ export function KidsWelcomeBanner() {
       </div>
 
       {/* Main content */}
-      <div className="relative z-10 px-6 sm:px-8 py-10 sm:py-12 flex flex-col items-center">
+      <div className="relative z-10 px-4 sm:px-6 py-6 sm:py-8 flex flex-col items-center">
         {/* Avatar */}
-        <div className="mb-4 inline-flex items-center justify-center rounded-full ring-8 ring-pink-400/40 bg-pink-100 shadow-xl backdrop-blur-md animate-bounce-slow">
-          <div className="bg-pink-200 rounded-full h-16 w-16 sm:h-20 sm:w-20 flex items-center justify-center border-4 border-pink-300">
-             <span className="text-4xl sm:text-5xl drop-shadow-md">🐮</span>
+        <div className="mb-3 inline-flex items-center justify-center rounded-full ring-4 ring-pink-400/40 bg-pink-100 shadow-xl backdrop-blur-md animate-bounce-slow">
+          <div className="bg-pink-200 rounded-full h-12 w-12 sm:h-16 sm:w-16 flex items-center justify-center border-4 border-pink-300">
+             <span className="text-3xl sm:text-4xl drop-shadow-md">🐮</span>
           </div>
         </div>
 
         {/* Welcome text */}
-        <h1 className="text-4xl sm:text-5xl md:text-6xl font-black text-white mb-3 drop-shadow-xl tracking-tight">
+        <h1 className="text-3xl sm:text-4xl md:text-5xl font-black text-white mb-2 drop-shadow-xl tracking-tight">
           Welcome, {firstName}!
         </h1>
-        <p className="text-xl sm:text-2xl font-bold text-yellow-100 mb-10 drop-shadow-md max-w-lg leading-relaxed">
+        <p className="text-lg sm:text-xl font-bold text-yellow-100 mb-6 drop-shadow-md max-w-lg leading-relaxed">
           Ready to become a Fire Safety Hero?
         </p>
 
         {/* 3D Action Buttons */}
-        <div className="flex flex-wrap justify-center gap-4 sm:gap-6">
-          <button className="flex items-center gap-2 bg-green-500 hover:bg-green-400 text-white px-8 sm:px-10 py-3.5 sm:py-4 rounded-full border-none shadow-[0_6px_0_0_#15803d] hover:shadow-[0_4px_0_0_#15803d] active:translate-y-[6px] active:shadow-none transition-all duration-200 active:duration-75 cursor-pointer">
-            <Gamepad2 className="h-6 w-6 sm:h-7 sm:w-7 text-white fill-white" />
-            <span className="font-black text-lg sm:text-xl tracking-wide">PLAY</span>
+        <div className="flex flex-wrap justify-center gap-3 sm:gap-4">
+          <button className="flex items-center gap-2 bg-green-500 hover:bg-green-400 text-white px-6 sm:px-8 py-2.5 sm:py-3 rounded-full border-none shadow-[0_4px_0_0_#15803d] hover:shadow-[0_3px_0_0_#15803d] active:translate-y-[4px] active:shadow-none transition-all duration-200 active:duration-75 cursor-pointer">
+            <Gamepad2 className="h-5 w-5 sm:h-6 sm:w-6 text-white fill-white" />
+            <span className="font-black text-base sm:text-lg tracking-wide">PLAY</span>
           </button>
           
-          <button className="flex items-center gap-2 bg-blue-500 hover:bg-blue-400 text-white px-8 sm:px-10 py-3.5 sm:py-4 rounded-full border-none shadow-[0_6px_0_0_#1d4ed8] hover:shadow-[0_4px_0_0_#1d4ed8] active:translate-y-[6px] active:shadow-none transition-all duration-200 active:duration-75 cursor-pointer">
-            <BookOpen className="h-6 w-6 sm:h-7 sm:w-7 text-white fill-white" />
-            <span className="font-black text-lg sm:text-xl tracking-wide">LEARN</span>
+          <button className="flex items-center gap-2 bg-blue-500 hover:bg-blue-400 text-white px-6 sm:px-8 py-2.5 sm:py-3 rounded-full border-none shadow-[0_4px_0_0_#1d4ed8] hover:shadow-[0_3px_0_0_#1d4ed8] active:translate-y-[4px] active:shadow-none transition-all duration-200 active:duration-75 cursor-pointer">
+            <BookOpen className="h-5 w-5 sm:h-6 sm:w-6 text-white fill-white" />
+            <span className="font-black text-base sm:text-lg tracking-wide">LEARN</span>
           </button>
           
-          <button className="flex items-center gap-2 bg-yellow-400 hover:bg-yellow-300 text-amber-900 px-8 sm:px-10 py-3.5 sm:py-4 rounded-full border-none shadow-[0_6px_0_0_#d97706] hover:shadow-[0_4px_0_0_#d97706] active:translate-y-[6px] active:shadow-none transition-all duration-200 active:duration-75 cursor-pointer">
-            <Trophy className="h-6 w-6 sm:h-7 sm:w-7 text-amber-900 fill-amber-900" />
-            <span className="font-black text-lg sm:text-xl tracking-wide">WIN</span>
+          <button className="flex items-center gap-2 bg-yellow-400 hover:bg-yellow-300 text-amber-900 px-6 sm:px-8 py-2.5 sm:py-3 rounded-full border-none shadow-[0_4px_0_0_#d97706] hover:shadow-[0_3px_0_0_#d97706] active:translate-y-[4px] active:shadow-none transition-all duration-200 active:duration-75 cursor-pointer">
+            <Trophy className="h-5 w-5 sm:h-6 sm:w-6 text-amber-900 fill-amber-900" />
+            <span className="font-black text-base sm:text-lg tracking-wide">WIN</span>
           </button>
         </div>
       </div>

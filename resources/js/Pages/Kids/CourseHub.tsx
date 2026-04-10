@@ -252,12 +252,22 @@ const CourseHubPage = () => {
                       {module.isCompleted ? (
                         <>
                           <span className="text-xs font-black tracking-wider text-green-500 uppercase">Completed</span>
-                          <Link
-                            href={moduleRoute}
-                            className="flex items-center gap-2 bg-green-600 hover:bg-green-500 text-white font-black px-5 py-2 rounded-full text-sm shadow-[0_4px_0_#166534] hover:-translate-y-0.5 active:translate-y-1 active:shadow-none transition-all"
-                          >
-                            <CheckCircle className="h-4 w-4" /> Review
-                          </Link>
+                          <div className="flex gap-2">
+                            {module.dayNumber === 5 && (
+                                <Link
+                                  href="/kids/certificate"
+                                  className="flex items-center gap-1.5 bg-gradient-to-r from-amber-500 to-orange-500 hover:brightness-110 text-white font-black px-3 py-2 rounded-full text-sm shadow-[0_4px_0_#b45309] hover:-translate-y-0.5 active:translate-y-1 active:shadow-none transition-all"
+                                >
+                                  <Trophy className="h-4 w-4" /> Cert
+                                </Link>
+                            )}
+                            <Link
+                              href={moduleRoute}
+                              className="flex items-center gap-2 bg-green-600 hover:bg-green-500 text-white font-black px-4 py-2 rounded-full text-sm shadow-[0_4px_0_#166534] hover:-translate-y-0.5 active:translate-y-1 active:shadow-none transition-all"
+                            >
+                              <CheckCircle className="h-4 w-4" /> Review
+                            </Link>
+                          </div>
                         </>
                       ) : module.isLocked ? (
                         <>

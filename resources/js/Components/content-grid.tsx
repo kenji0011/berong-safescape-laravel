@@ -18,11 +18,11 @@ export function ContentGrid({ contents, emptyMessage = "No content available yet
   }
 
   return (
-    <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-6 mb-12">
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-10 mb-12 max-w-5xl mx-auto">
       {contents.map((content) => (
         <div 
-          key={content.id} 
-          className="col-span-2 sm:col-span-2 lg:col-span-full max-w-[900px] mx-auto w-full"
+          key={content.id}
+          className="w-full h-full"
         >
           <ContentCard content={content} />
         </div>

@@ -1,7 +1,10 @@
-import React, { useEffect } from "react"
-import { Head } from '@inertiajs/react'
+import React, { useEffect, useState } from "react"
+import { Head, Link } from '@inertiajs/react'
+import DashboardLayout from "@/Layouts/DashboardLayout"
+import { ArrowLeft, BookOpen, Flame, Trophy } from "lucide-react"
+import { cn } from "@/lib/utils"
 
-export default function ModuleTwoPage({ moduleNum }: { moduleNum: number }) {
+const ModuleTwoPage = ({ moduleNum }: { moduleNum: number }) => {
   const currentModule = moduleNum || 2
 
   useEffect(() => {
@@ -40,14 +43,26 @@ export default function ModuleTwoPage({ moduleNum }: { moduleNum: number }) {
       if (!iframe.contentWindow) return;
       const iframeDoc = iframe.contentWindow.document;
 
-      // Force background color to match full page mapping
-      iframeDoc.body.style.backgroundColor = '#0f1729'; // slate-900 
+      iframeDoc.body.style.backgroundColor = '#0f1729'; 
+      iframeDoc.documentElement.style.overflow = 'hidden'; // Hide inner scrollbar
 
-      // 1. Hide legacy HTML navigation to prevent overlapping headers
       const nav = iframeDoc.querySelector('.ss-nav') as HTMLElement;
       if (nav) nav.style.display = 'none';
 
-      // 2. Intercept legacy <a> tags inside HTML so it redirects natively to our React router app
+      // Dynamically resize iframe to content height
+      const resizeIframe = () => {
+        setTimeout(() => {
+          if (!iframeDoc.documentElement) return;
+          const height = iframeDoc.documentElement.scrollHeight;
+          iframe.style.height = `${height}px`;
+        }, 50);
+      };
+
+      resizeIframe();
+      
+      const observer = new MutationObserver(resizeIframe);
+      observer.observe(iframeDoc.body, { childList: true, subtree: true, attributes: true });
+
       const links = iframeDoc.querySelectorAll('a');
       links.forEach(link => {
         link.addEventListener('click', (ev) => {
@@ -71,28 +86,60 @@ export default function ModuleTwoPage({ moduleNum }: { moduleNum: number }) {
   }
 
   return (
-    <>
+    <div className="min-h-screen bg-slate-50 font-sans flex flex-col">
       <Head title={`Module ${currentModule} | SafeScape`} />
-      <div className="fixed inset-0 w-screen h-screen z-50 bg-slate-900 m-0 p-0 overflow-hidden">
-        
-        {/* Floating Back Button - Overlaid on top of the iframe */}
-        <button 
-          onClick={() => window.parent.location.href = '/kids/safescape'}
-          className="absolute top-4 left-4 z-[999] bg-slate-800/90 hover:bg-slate-700 hover:scale-105 text-white px-5 py-2.5 rounded-full font-black shadow-2xl shadow-black/50 backdrop-blur-sm flex items-center gap-2 border-2 border-slate-600 transition-all text-sm tracking-wide"
-        >
-          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="m15 18-6-6 6-6"/></svg>
-          BACK TO DASHBOARD
-        </button>
 
+      {/* ── Sub Header ── */}
+      <div className="bg-white border-b border-slate-200 py-3 px-4 sm:px-6 lg:px-8 shadow-sm z-20 relative">
+        <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div className="flex items-center gap-4 w-full sm:w-auto">
+            <Link href="/kids/safescape" className="inline-flex items-center gap-2 px-4 py-2 bg-white rounded-full text-slate-700 font-bold hover:text-slate-900 border-2 border-slate-200 shadow-sm transition-all text-sm whitespace-nowrap">
+              <ArrowLeft className="h-4 w-4" />
+              Back to Dashboard
+            </Link>
+            <div className="hidden sm:flex items-center gap-2">
+              <Flame className="h-5 w-5 text-[#ff4b3e]" />
+              <h1 className="text-xl font-black text-slate-800">SafeScape Fire Safety Course</h1>
+            </div>
+          </div>
+          <div className="flex items-center gap-4 sm:gap-6">
+            {/* Module dots */}
+            <div className="flex items-center gap-1 sm:gap-2">
+              {[1, 2, 3, 4, 5].map((n) => (
+                <React.Fragment key={n}>
+                  <div className={cn(
+                    "h-8 w-8 rounded-full flex items-center justify-center text-sm font-black transition-all shrink-0",
+                    n === currentModule
+                      ? "bg-[#ff4b3e] text-white shadow-md shadow-red-500/30 ring-2 ring-red-200"
+                      : "bg-slate-100 text-slate-400 border border-slate-200"
+                  )}>{n}</div>
+                  {n < 5 && <div className="h-0.5 w-3 sm:w-6 bg-slate-200 rounded shrink-0" />}
+                </React.Fragment>
+              ))}
+            </div>
+            {/* Progress */}
+            <div className="text-sm font-bold text-slate-500 bg-slate-50 px-4 py-2 rounded-xl border border-slate-200 whitespace-nowrap hidden lg:block">
+              Status: <span className="text-[#ff4b3e] font-black ml-1">In Progress</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* ── Dark Module Content Area ── */}
+      <div className="flex-1 bg-[#0f1729] flex flex-col w-full">
         <iframe 
           src={`/modules/module_${currentModule}/index.html`}
-          className="w-full h-full border-none m-0 p-0"
+          className="w-full border-none m-0 p-0"
+          style={{ minHeight: 'calc(100vh - 140px)' }}
           onLoad={handleIframeLoad}
           allow="fullscreen; autoplay; encrypted-media"
           title={`SafeScape Module ${currentModule}`}
         />
       </div>
-    </>
+    </div>
   )
 }
 
+ModuleTwoPage.layout = (page: React.ReactNode) => <DashboardLayout>{page}</DashboardLayout>
+
+export default ModuleTwoPage

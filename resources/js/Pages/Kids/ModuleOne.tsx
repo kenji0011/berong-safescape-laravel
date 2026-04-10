@@ -219,14 +219,24 @@ const ModuleOnePage = () => {
               <h1 className="text-xl font-black text-slate-800">SafeScape Fire Safety Course</h1>
             </div>
           </div>
-          <div className="flex items-center gap-3">
-            <div className="flex items-center gap-2 bg-white px-4 py-2 border-2 border-slate-200 rounded-xl font-bold text-slate-700 text-sm whitespace-nowrap">
-              <BookOpen className="h-4 w-4 text-blue-500" />
-              <span>Module 1</span>
+          <div className="flex items-center gap-4 sm:gap-6">
+            {/* Module dots */}
+            <div className="flex items-center gap-1 sm:gap-2">
+              {[1, 2, 3, 4, 5].map((n) => (
+                <React.Fragment key={n}>
+                  <div className={cn(
+                    "h-8 w-8 rounded-full flex items-center justify-center text-sm font-black transition-all shrink-0",
+                    n === 1
+                      ? "bg-[#ff4b3e] text-white shadow-md shadow-red-500/30 ring-2 ring-red-200"
+                      : "bg-slate-100 text-slate-400 border border-slate-200"
+                  )}>{n}</div>
+                  {n < 5 && <div className="h-0.5 w-3 sm:w-6 bg-slate-200 rounded shrink-0" />}
+                </React.Fragment>
+              ))}
             </div>
-            <div className="flex items-center gap-2 bg-white px-4 py-2 border-2 border-slate-200 rounded-xl font-bold text-slate-700 text-sm whitespace-nowrap">
-              <Trophy className="h-4 w-4 text-yellow-500" />
-              <span>{progress}% Complete</span>
+            {/* Progress */}
+            <div className="text-sm font-bold text-slate-500 bg-slate-50 px-4 py-2 rounded-xl border border-slate-200 whitespace-nowrap hidden lg:block">
+              Progress: <span className="text-[#ff4b3e] font-black ml-1">{progress}%</span>
             </div>
           </div>
         </div>
@@ -236,31 +246,7 @@ const ModuleOnePage = () => {
       <div className="flex-1 bg-[#0f1729]">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10 space-y-16">
 
-          {/* ── SafeScape Internal Nav ── */}
-          <div className="flex items-center justify-between border-b border-slate-700 pb-4">
-            <div className="flex items-center gap-2">
-              <Shield className="h-5 w-5 text-[#ff4b3e]" />
-              <span className="text-white font-black text-lg">SafeScape</span>
-              <span className="text-slate-400 font-medium"> | Module 1</span>
-            </div>
-            {/* Module dots */}
-            <div className="flex items-center gap-2">
-              {[1, 2, 3, 4, 5].map((n) => (
-                <React.Fragment key={n}>
-                  <div className={cn(
-                    "h-8 w-8 rounded-full flex items-center justify-center text-sm font-black transition-all",
-                    n === 1
-                      ? "bg-[#ff4b3e] text-white shadow-[0_0_12px_rgba(255,75,62,0.5)]"
-                      : "bg-slate-700 text-slate-400"
-                  )}>{n}</div>
-                  {n < 5 && <div className="h-0.5 w-6 sm:w-10 bg-slate-700 rounded" />}
-                </React.Fragment>
-              ))}
-            </div>
-            <div className="text-sm font-bold text-slate-400">
-              Progress: <span className="text-[#ff4b3e] font-black">{progress}%</span>
-            </div>
-          </div>
+
 
           {/* ── Intro ── */}
           <div className="text-center max-w-3xl mx-auto">

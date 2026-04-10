@@ -74,6 +74,10 @@ Route::get('/about', function () {
         return Inertia::render('Kids/MemoryGame');
     })->name('kids.memory');
 
+    Route::get('/kids/certificate', function () {
+        return Inertia::render('Kids/Certificate');
+    })->name('kids.certificate');
+
     Route::get('/adult', function () {
         $blogs = BlogPost::with('author:id,name')->where('isPublished', true)->orderBy('created_at', 'desc')->get();
         return Inertia::render('AdultDashboard', [

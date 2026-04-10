@@ -1,11 +1,9 @@
 "use client"
 
 import { useState } from "react"
-import { Link } from '@inertiajs/react';
+import { Link } from '@inertiajs/react'
 import { Play, Lock, CheckCircle, ArrowRight } from "lucide-react"
 import { cn } from "@/lib/utils"
-import { Card, CardContent } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
 
 export interface ContentCardData {
   id: string | number
@@ -31,123 +29,16 @@ interface ContentCardProps {
 export function ContentCard({ content, onClick }: ContentCardProps) {
   const [imageError, setImageError] = useState(false)
 
-  if (true) {
-    const bgColors: Record<string, string> = {
-      video: "bg-purple-500",
-      activity: "bg-yellow-500",
-      module: "bg-blue-500",
-      game: "bg-green-500",
-      exam: "bg-red-500"
-    }
-
-    const innerModuleContent = (
-      <div className={cn(
-        "flex flex-col md:flex-row bg-white rounded-[2rem] border-4 transition-all overflow-hidden h-full",
-        content.isLocked
-          ? "opacity-60 border-slate-200 bg-slate-50"
-          : "border-slate-100 shadow-[0_8px_0_0_#cbd5e1] hover:shadow-[0_4px_0_0_#cbd5e1] hover:translate-y-1"
-      )}>
-        {/* Left Side (Visual) */}
-        <div className={`relative w-full md:w-5/12 ${bgColors[content.type] || "bg-blue-500"} p-8 flex items-center justify-center shrink-0 min-h-[200px]`}>
-          <div className="absolute top-4 left-4 z-10">
-            <Badge className="bg-white text-slate-800 font-extrabold px-3 py-1 shadow-sm text-[10px] uppercase tracking-wider">
-              {content.type}
-            </Badge>
-          </div>
-
-          {content.isLocked && (
-            <div className="absolute inset-0 bg-black/30 flex items-center justify-center z-20">
-              <Lock className="h-16 w-16 text-white drop-shadow-lg" />
-            </div>
-          )}
-
-          <div className={cn("text-8xl sm:text-9xl drop-shadow-xl z-0", !content.isLocked && "animate-bounce-slow")}>
-            {content.imageUrl && !imageError ? (
-              <img
-                src={content.imageUrl}
-                alt={content.title}
-                className="w-32 h-32 sm:w-40 sm:h-40 object-contain drop-shadow-2xl"
-                onError={() => setImageError(true)}
-              />
-            ) : (
-              content.emoji || "📚"
-            )}
-          </div>
-        </div>
-
-        {/* Right Side (Content) */}
-        <div className="relative p-6 md:p-8 flex flex-col justify-center flex-1 bg-white">
-          {content.isNew && (
-            <div className="absolute top-4 right-4 sm:top-6 sm:right-6">
-              <Badge className="bg-red-500 text-white font-black px-3 py-1.5 shadow-md shadow-red-500/20 text-xs animate-pulse">
-                NEW!
-              </Badge>
-            </div>
-          )}
-          {content.isCompleted && (
-            <div className="absolute top-4 right-4 sm:top-6 sm:right-6">
-              <Badge className="bg-green-500 text-white font-black px-3 py-1.5 shadow-md shadow-green-500/20 text-xs flex items-center gap-1">
-                <CheckCircle className="h-3.5 w-3.5" /> DONE
-              </Badge>
-            </div>
-          )}
-
-          {/* Remove emoji/icon from title if present */}
-          <h3 className="text-2xl sm:text-3xl font-black text-slate-800 mb-3 leading-tight group-hover:text-blue-600 transition-colors pr-16 line-clamp-2">
-            {content.title.replace(/^[\uE000-\uF8FF]|\uD83C[\uDF00-\uDFFF]|\uD83D[\uDC00-\uDDFF]\s*/g, '')}
-          </h3>
-          
-          <p className="text-slate-600 font-bold text-sm sm:text-base leading-relaxed max-w-lg mb-6 sm:mb-8 opacity-90">
-            {content.description}
-          </p>
-
-          <div className="mt-auto flex items-center justify-between">
-            {content.duration && (
-              <div className="flex items-center gap-1.5 text-xs font-bold text-slate-400 uppercase tracking-wider">
-                <Play className="h-3 w-3" />
-                <span>{content.duration}</span>
-              </div>
-            )}
-            {!content.duration && <div></div>}
-
-            {!content.isLocked ? (
-              <button className="flex items-center gap-2 bg-white border-2 border-slate-200 hover:border-blue-200 hover:bg-blue-50 text-slate-800 px-6 sm:px-8 py-2.5 sm:py-3 rounded-full font-black text-sm sm:text-base shadow-[0_4px_0_0_#e2e8f0] hover:shadow-[0_2px_0_0_#bfdbfe] hover:translate-y-0.5 active:translate-y-1 active:shadow-none transition-all">
-                {content.type === "video" ? "WATCH" : content.type === "game" ? "PLAY" : "START"} <ArrowRight className="h-4 w-4 sm:h-5 sm:w-5 group-hover:translate-x-1 transition-transform" strokeWidth={3} />
-              </button>
-            ) : (
-              <div className="text-xs text-slate-400 font-bold uppercase tracking-wider flex items-center gap-1.5 bg-slate-100 px-4 py-2 rounded-full">
-                <Lock className="h-3 w-3" /> Locked
-              </div>
-            )}
-          </div>
-        </div>
-      </div>
-    )
-
-    if (content.isLocked) {
-      return (
-        <div onClick={onClick} className="group block h-full w-full cursor-not-allowed">
-          {innerModuleContent}
-        </div>
-      )
-    }
-
-    return (
-      <Link href={content.href} onClick={onClick} className="group block cursor-pointer h-full w-full">
-        {innerModuleContent}
-      </Link>
-    )
+  // Premium Gradients
+  const typeGradients: Record<string, string> = {
+    game: "from-[#14B8A6] to-[#0D9488]", // Teal 
+    video: "from-[#EC4899] to-[#F43F5E]", // Pink/Rose
+    activity: "from-[#F59E0B] to-[#EA580C]", // Amber/Orange
+    module: "from-[#4F46E5] to-[#7C3AED]", // Indigo/Violet
+    exam: "from-[#EF4444] to-[#B91C1C]", // Red
   }
 
-  const typeColors = {
-    game: "from-green-400 to-emerald-600",
-    video: "from-purple-400 to-purple-600",
-    activity: "from-yellow-400 to-orange-600",
-    module: "from-blue-400 to-blue-600",
-    exam: "from-red-400 to-red-600",
-  }
-
-  const typeIcons = {
+  const typeIcons: Record<string, string> = {
     game: "🎮",
     video: "🎬",
     activity: "✨",
@@ -155,213 +46,143 @@ export function ContentCard({ content, onClick }: ContentCardProps) {
     exam: "📝",
   }
 
-  const difficultyColors = {
-    easy: "bg-green-500",
-    medium: "bg-yellow-500",
-    hard: "bg-red-500",
+  const badgeColors: Record<string, string> = {
+    easy: "bg-[#10B981] text-white", // Emerald
+    medium: "bg-[#F59E0B] text-white", // Amber
+    hard: "bg-[#EF4444] text-white", // Red
   }
 
-  // Mobile compact card layout (small vertical cards for 2-column grid)
-  const mobileCardContent = (
-    <Card className={cn(
-      "overflow-hidden transition-all duration-300 sm:hidden border-2",
-      content.isLocked
-        ? "opacity-60 bg-gray-50 border-gray-200"
-        : "border-transparent hover:border-yellow-400 hover:shadow-lg active:scale-[0.98]"
-    )}>
-      {/* Compact Image/Emoji Section */}
+  const innerContent = (
+    <>
+      {/* Visual Header Section */}
       <div className={cn(
-        "relative h-20 flex items-center justify-center bg-gradient-to-br",
-        typeColors[content.type]
+        "relative h-52 sm:h-60 w-full flex items-center justify-center bg-gradient-to-br overflow-hidden z-0 shrink-0",
+        typeGradients[content.type] || "from-slate-400 to-slate-600"
       )}>
+        {/* Subtle Glassmorphism Patterns / Lighting */}
+        <div className="absolute inset-0 bg-white/10 opacity-30 mix-blend-overlay bg-[url('/noise.png')] pointer-events-none"></div>
+        <div className="absolute -top-24 -right-24 w-64 h-64 bg-white/20 blur-[50px] rounded-full pointer-events-none transition-transform duration-700 group-hover:scale-150"></div>
+        <div className="absolute -bottom-24 -left-24 w-64 h-64 bg-black/10 blur-[50px] rounded-full pointer-events-none"></div>
+
         {/* Status badges */}
-        {content.isNew && (
-          <div className="absolute top-1 right-1">
-            <Badge className="bg-red-500 text-white text-[9px] px-1 py-0 shadow animate-pulse">
-              NEW
-            </Badge>
-          </div>
-        )}
-        {content.isCompleted && (
-          <div className="absolute top-1 right-1">
-            <Badge className="bg-green-500 text-white text-[9px] px-1 py-0 shadow">
-              ✓
-            </Badge>
-          </div>
-        )}
-
-        {/* Lock overlay */}
-        {content.isLocked && (
-          <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
-            <Lock className="h-6 w-6 text-white" />
-          </div>
-        )}
-
-        {/* Content display */}
-        {content.emoji ? (
-          <div className="text-3xl">{content.emoji}</div>
-        ) : content.imageUrl && !imageError ? (
-          <img
-            src={content.imageUrl}
-            alt={content.title}
-            className="w-full h-full object-cover"
-            onError={() => setImageError(true)}
-          />
-        ) : (
-          <div className="text-3xl">{typeIcons[content.type]}</div>
-        )}
-
-        {/* Difficulty badge */}
-        {content.difficulty && (
-          <div className="absolute bottom-1 right-1">
-            <Badge className={cn(difficultyColors[content.difficulty], "text-white text-[8px] px-1 py-0")}>
-              {content.difficulty}
-            </Badge>
-          </div>
-        )}
-      </div>
-
-      {/* Content Section */}
-      <CardContent className="p-2 bg-white">
-        <h3 className="font-bold text-[11px] text-gray-800 line-clamp-2 leading-tight mb-1">
-          {content.title}
-        </h3>
-
-        {!content.isLocked && (
-          <div className="flex items-center gap-0.5 text-blue-600 font-semibold text-[10px]">
-            <span>{content.type === "game" ? "Play" : content.type === "video" ? "Watch" : "Start"}</span>
-            <Play className="h-2.5 w-2.5" />
-          </div>
-        )}
-      </CardContent>
-    </Card>
-  )
-
-  // Desktop/Tablet full card layout
-  const desktopCardContent = (
-    <Card className={cn(
-      "overflow-hidden transition-all duration-300 border-4 hidden sm:flex sm:flex-col h-full",
-      content.isLocked
-        ? "opacity-60 border-gray-300 bg-gray-50"
-        : "border-transparent hover:border-yellow-400 hover:shadow-2xl hover:-translate-y-2"
-    )}>
-      {/* Image/Emoji Section */}
-      <div className={cn(
-        "relative h-48 flex items-center justify-center bg-gradient-to-br",
-        typeColors[content.type]
-      )}>
-        {/* Status badges */}
-        <div className="absolute top-3 right-3 flex flex-col gap-2">
+        <div className="absolute top-5 right-5 flex flex-col gap-2 z-20">
           {content.isNew && (
-            <Badge className="bg-red-500 text-white font-bold shadow-lg animate-pulse">
-              NEW!
-            </Badge>
+            <div className="bg-white text-rose-500 font-extrabold text-[11px] sm:text-xs tracking-wider uppercase px-4 py-1.5 rounded-full shadow-lg animate-pulse border border-rose-100">
+              New!
+            </div>
           )}
           {content.isCompleted && (
-            <Badge className="bg-green-500 text-white font-bold shadow-lg">
-              <CheckCircle className="h-3 w-3 mr-1" />
-              Done!
-            </Badge>
+            <div className="bg-[#10B981] text-white font-extrabold text-[11px] sm:text-xs tracking-wider uppercase px-4 py-1.5 rounded-full shadow-lg flex items-center gap-1.5 border border-emerald-400">
+              <CheckCircle className="h-3.5 w-3.5 sm:h-4 sm:w-4" /> Done
+            </div>
           )}
+        </div>
+
+        {/* Top left type indicator */}
+        <div className="absolute top-5 left-5 z-20">
+           <div className="bg-black/20 backdrop-blur-md text-white font-bold text-[10px] sm:text-xs tracking-widest uppercase px-4 py-1.5 rounded-full border border-white/20 shadow-sm">
+             {content.type}
+           </div>
         </div>
 
         {/* Lock overlay */}
         {content.isLocked && (
-          <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
-            <Lock className="h-16 w-16 text-white drop-shadow-lg" />
+          <div className="absolute inset-0 bg-slate-900/40 backdrop-blur-[2px] flex items-center justify-center z-30">
+            <Lock className="h-16 w-16 text-white/90 drop-shadow-2xl" />
           </div>
         )}
 
-        {/* Content display */}
-        {content.emoji ? (
-          <div className="text-8xl animate-bounce-slow">{content.emoji}</div>
-        ) : content.imageUrl && !imageError ? (
-          <img
-            src={content.imageUrl}
-            alt={content.title}
-            className="w-full h-full object-cover"
-            onError={() => setImageError(true)}
-          />
-        ) : (
-          <div className="text-8xl">{typeIcons[content.type]}</div>
-        )}
-
-        {/* Type badge */}
-        <div className="absolute bottom-3 left-3">
-          <Badge className="bg-white/90 text-gray-800 font-bold text-xs uppercase">
-            {content.type}
-          </Badge>
+        {/* Central Graphic */}
+        <div className={cn(
+           "z-10 transition-transform duration-500",
+           !content.isLocked && "group-hover:scale-110 group-hover:-translate-y-1"
+        )}>
+          {content.emoji ? (
+            <div className="text-8xl sm:text-9xl drop-shadow-2xl">{content.emoji}</div>
+          ) : content.imageUrl && !imageError ? (
+            <img
+              src={content.imageUrl}
+              alt={content.title}
+              className="w-36 h-36 sm:w-44 sm:h-44 object-contain drop-shadow-2xl"
+              onError={() => setImageError(true)}
+            />
+          ) : (
+            <div className="text-8xl sm:text-9xl drop-shadow-2xl">{typeIcons[content.type]}</div>
+          )}
         </div>
 
-        {/* Difficulty badge */}
+        {/* Detail Badges Bottom */}
         {content.difficulty && (
-          <div className="absolute bottom-3 right-3">
-            <Badge className={cn(difficultyColors[content.difficulty], "text-white font-bold")}>
+          <div className="absolute bottom-5 right-5 z-20">
+            <div className={cn("font-bold text-[10px] sm:text-xs uppercase tracking-wider px-3 py-1.5 rounded-full shadow-md", badgeColors[content.difficulty] || "bg-slate-500 text-white")}>
               {content.difficulty}
-            </Badge>
+            </div>
           </div>
         )}
       </div>
 
-      {/* Content Section */}
-      <CardContent className="p-5 bg-white flex-1 flex flex-col">
-        <h3 className="font-black text-xl mb-2 text-gray-800 line-clamp-2 group-hover:text-blue-600 transition-colors">
+      {/* Text Content Section */}
+      <div className="p-6 sm:p-8 flex-1 flex flex-col bg-white z-10 relative">
+        <h3 className="font-extrabold text-2xl sm:text-3xl text-slate-800 leading-tight mb-3 group-hover:text-[#4F46E5] transition-colors line-clamp-2">
           {content.title}
         </h3>
 
         {content.description && (
-          <p className="text-sm text-gray-600 mb-3 line-clamp-2">
+          <p className="text-sm sm:text-base text-slate-500 font-medium leading-relaxed mb-8 line-clamp-2">
             {content.description}
           </p>
         )}
 
-        {/* Meta information */}
-        <div className="flex items-center justify-between mt-auto pt-3">
-          {content.duration && (
-            <div className="flex items-center gap-1 text-xs text-gray-500">
-              <Play className="h-3 w-3" />
+        {/* Footer Actions */}
+        <div className="mt-auto flex items-center justify-between pt-5 border-t-2 border-slate-50">
+          {content.duration ? (
+            <div className="flex items-center gap-1.5 text-sm font-bold text-slate-400">
+              <Play className="h-4 w-4" />
               <span>{content.duration}</span>
             </div>
+          ) : (
+            <div />
           )}
 
-          {!content.isLocked && (
-            <div className="ml-auto">
-              <div className="flex items-center gap-1 text-blue-600 font-bold text-sm">
-                <span>{content.type === "game" ? "Play Now" : content.type === "video" ? "Watch" : "Start"}</span>
-                <Play className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
-              </div>
+          {!content.isLocked ? (
+            <div className="flex items-center gap-2 text-[#4F46E5] bg-indigo-50/50 px-5 py-2.5 rounded-2xl font-bold text-sm sm:text-base transition-colors group-hover:bg-[#4F46E5] group-hover:text-white shadow-sm hover:shadow-md">
+              <span>{content.type === "game" ? "Play Now" : content.type === "video" ? "Watch" : "Start"}</span>
+              <ArrowRight className="h-4 w-4 sm:h-5 sm:w-5 group-hover:translate-x-1 transition-transform" />
             </div>
-          )}
-
-          {content.isLocked && (
-            <div className="ml-auto text-xs text-gray-500 font-semibold">
-              🔒 Complete previous lessons
+          ) : (
+            <div className="text-xs sm:text-sm font-bold text-slate-400 uppercase tracking-wider bg-slate-100 px-4 py-2 rounded-xl">
+              Locked
             </div>
           )}
         </div>
-      </CardContent>
-    </Card>
+      </div>
+    </>
   )
 
   if (content.isLocked || content.href === "#") {
     return (
-      <div 
-        onClick={(e) => {
-          if (content.href === "#") e.preventDefault()
-          if (onClick) onClick()
-        }} 
-        className={cn("group block h-full", !content.isLocked && "cursor-pointer")}
+      <div
+        onClick={(e) => { e.preventDefault(); if (onClick) onClick(); }}
+        className={cn(
+          "group relative flex flex-col h-full w-full rounded-[2.5rem] overflow-hidden bg-white transition-all duration-500 ease-out",
+          "opacity-60 cursor-not-allowed filter grayscale-[0.3]"
+        )}
       >
-        {mobileCardContent}
-        {desktopCardContent}
+        {innerContent}
       </div>
     )
   }
 
   return (
-    <Link href={content.href} onClick={onClick} className="group block cursor-pointer h-full">
-      {mobileCardContent}
-      {desktopCardContent}
+    <Link
+      href={content.href}
+      onClick={() => { if (onClick) onClick() }}
+      className={cn(
+         "group relative flex flex-col h-full w-full rounded-[2.5rem] overflow-hidden bg-white transition-all duration-500 ease-out",
+         "hover:shadow-[0_20px_40px_rgba(0,0,0,0.12)] hover:-translate-y-2 cursor-pointer shadow-[0_8px_30px_rgba(0,0,0,0.06)] border border-slate-100"
+      )}
+    >
+      {innerContent}
     </Link>
   )
 }
