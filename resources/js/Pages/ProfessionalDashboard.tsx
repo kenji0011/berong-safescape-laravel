@@ -23,6 +23,13 @@ interface ProfessionalPageClientProps {
     initialVideos?: VideoContent[]
 }
 
+const getYouTubeId = (url: string) => {
+    if (!url) return '';
+    const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
+    const match = url.match(regExp);
+    return (match && match[2].length === 11) ? match[2] : url;
+};
+
 const ProfessionalDashboard = ({ initialVideos = professionalVideos }: ProfessionalPageClientProps) => {
     const { user } = useAuth()
     const [searchQuery, setSearchQuery] = useState("")
@@ -130,7 +137,7 @@ const ProfessionalDashboard = ({ initialVideos = professionalVideos }: Professio
                                 <iframe
                                     width="100%"
                                     height="100%"
-                                    src={`https://www.youtube.com/embed/${selectedVideo.youtubeId}`}
+                                    src={`https://www.youtube.com/embed/${getYouTubeId(selectedVideo.youtubeId)}`}
                                     title={selectedVideo.title}
                                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                                     allowFullScreen
@@ -140,7 +147,7 @@ const ProfessionalDashboard = ({ initialVideos = professionalVideos }: Professio
                             <div className="flex items-center gap-4 text-sm font-semibold">
                                 <div className="flex items-center gap-1.5 text-slate-500">
                                     <Clock className="h-4 w-4" />
-                                    <span>{selectedVideo.duration}</span>
+                                    <span>{selectedVideo.duration || 'Watch Video'}</span>
                                 </div>
                                 <span className="inline-flex items-center rounded-full px-2.5 py-0.5 font-bold bg-red-50 text-red-600 text-xs tracking-wide">
                                     PROFESSIONAL
@@ -166,13 +173,13 @@ const ProfessionalDashboard = ({ initialVideos = professionalVideos }: Professio
                             {filteredVideos.map((video) => (
                                 <Card
                                     key={video.id}
-                                    className="cursor-pointer group bg-white rounded-[1.5rem] border-2 border-b-[4px] border-slate-200 overflow-hidden hover:-translate-y-1 active:border-b-2 active:translate-y-[2px] transition-all hover:border-slate-300 shadow-sm hover:shadow-md"
+                                    className="flex flex-col cursor-pointer group bg-white rounded-[1.5rem] border-2 border-b-[4px] border-slate-200 overflow-hidden hover:-translate-y-1 active:border-b-2 active:translate-y-[2px] transition-all hover:border-slate-300 shadow-sm hover:shadow-md"
                                     onClick={() => handleVideoSelect(video)}
                                 >
                                     <CardHeader className="p-0 mb-4">
                                         <div className="aspect-video bg-slate-100 overflow-hidden relative">
                                             <img
-                                                src={`https://img.youtube.com/vi/${video.youtubeId}/maxresdefault.jpg`}
+                                                src={`https://img.youtube.com/vi/${getYouTubeId(video.youtubeId)}/maxresdefault.jpg`}
                                                 alt={video.title}
                                                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                                             />
@@ -183,13 +190,13 @@ const ProfessionalDashboard = ({ initialVideos = professionalVideos }: Professio
                                             </div>
                                         </div>
                                     </CardHeader>
-                                    <CardContent className="px-5 pb-5">
+                                    <CardContent className="flex flex-col flex-1 px-5 pb-5">
                                         <CardTitle className="text-[17px] font-bold text-slate-800 line-clamp-2 mb-2 group-hover:text-red-600 transition-colors">{video.title}</CardTitle>
                                         <p className="text-sm text-slate-600 font-medium line-clamp-2 mb-4 leading-relaxed">{video.description}</p>
-                                        <div className="flex items-center justify-between">
+                                        <div className="flex items-center justify-between mt-auto">
                                             <div className="flex items-center gap-1.5 text-sm text-slate-600 font-semibold">
                                                 <Clock className="h-4 w-4" />
-                                                <span>{video.duration}</span>
+                                                <span>{video.duration || 'Watch Video'}</span>
                                             </div>
                                             <span className="inline-flex items-center rounded-full px-2.5 py-0.5 font-bold bg-red-50 text-red-600 text-[10px] tracking-wider uppercase">
                                                 Professional

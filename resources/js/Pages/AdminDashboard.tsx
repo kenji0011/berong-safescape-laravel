@@ -636,6 +636,25 @@ export default function AdminPage({
 
           if (response.ok) {
             await loadBlogPosts() // Reload the list
+            
+            // --- INJECT MOCK NOTIFICATION ---
+            if (typeof window !== 'undefined') {
+              const saved = localStorage.getItem('safescape_mock_notifications');
+              const notifs = saved ? JSON.parse(saved) : [];
+              notifs.unshift({
+                id: Date.now() + Math.floor(Math.random() * 1000), 
+                title: "New Article Published",
+                message: `A new article "${newBlog.title}" has been published to the Adult dashboard.`,
+                type: "blog",
+                category: "adult",
+                isRead: false,
+                createdAt: new Date().toISOString()
+              });
+              localStorage.setItem('safescape_mock_notifications', JSON.stringify(notifs));
+              window.dispatchEvent(new Event('safescape_notifications_updated'));
+            }
+            // --------------------------------
+
             setNewBlog({ title: "", excerpt: "", content: "", imageUrl: "", category: "adult" })
             setBlogUploadKey(prev => prev + 1) // Reset upload component
             setSuccess("Blog post added successfully")
@@ -709,6 +728,25 @@ export default function AdminPage({
 
           if (response.ok) {
             await loadVideos(); // Reload the list
+            
+            // --- INJECT MOCK NOTIFICATION ---
+            if (typeof window !== 'undefined') {
+              const saved = localStorage.getItem('safescape_mock_notifications');
+              const notifs = saved ? JSON.parse(saved) : [];
+              notifs.unshift({
+                id: Date.now() + Math.floor(Math.random() * 1000), 
+                title: "New Video Added",
+                message: `A new video "${newVideo.title}" has been added to the ${newVideo.category} dashboard.`,
+                type: "video",
+                category: newVideo.category,
+                isRead: false,
+                createdAt: new Date().toISOString()
+              });
+              localStorage.setItem('safescape_mock_notifications', JSON.stringify(notifs));
+              window.dispatchEvent(new Event('safescape_notifications_updated'));
+            }
+            // --------------------------------
+
             setNewVideo({ title: "", description: "", youtubeId: "", category: "professional", duration: "", isActive: true });
             setSuccess("Video added successfully");
             setTimeout(() => setSuccess(""), 3000);
@@ -935,20 +973,7 @@ export default function AdminPage({
           </div>
         </div>
 
-        {/* Alerts */}
-        {success && (
-          <Alert className="mb-6 border-green-500 bg-green-50">
-            <CheckCircle className="h-4 w-4 text-green-600" />
-            <AlertDescription className="text-green-800">{success}</AlertDescription>
-          </Alert>
-        )}
-
-        {error && (
-          <Alert variant="destructive" className="mb-6">
-            <AlertCircle className="h-4 w-4" />
-            <AlertDescription>{error}</AlertDescription>
-          </Alert>
-        )}
+        {/* Alerts moved to individual tabs */}
 
         {/* Admin Tabs */}
         <Tabs defaultValue="carousel" className="space-y-6">
@@ -1088,14 +1113,18 @@ export default function AdminPage({
                   </div>
                 </div>
                 {/* Image URL is now set automatically from the upload component - hidden from user */}
-                <button
-                  type="button"
-                  onClick={handleAddCarousel}
-                  className="inline-flex items-center justify-center bg-[#d60000] text-white font-extrabold px-5 pb-2 pt-2.5 rounded-xl text-sm shadow-[0_4px_0_#991b1b] hover:-translate-y-0.5 hover:shadow-[0_6px_0_#991b1b] active:translate-y-1 active:shadow-[0_0px_0_#991b1b] transition-all"
-                >
-                  <Plus className="h-4 w-4 mr-2" />
-                  Add Image
-                </button>
+                <div className="flex flex-wrap items-center gap-4">
+                  <button
+                    type="button"
+                    onClick={handleAddCarousel}
+                    className="inline-flex items-center justify-center bg-[#d60000] text-white font-extrabold px-5 pb-2 pt-2.5 rounded-xl text-sm shadow-[0_4px_0_#991b1b] hover:-translate-y-0.5 hover:shadow-[0_6px_0_#991b1b] active:translate-y-1 active:shadow-[0_0px_0_#991b1b] transition-all"
+                  >
+                    <Plus className="h-4 w-4 mr-2" />
+                    Add Image
+                  </button>
+                  {success && <div className="text-sm font-bold text-green-700 flex items-center gap-2 bg-green-50 border-2 border-green-200 px-4 py-2 rounded-xl animate-in fade-in zoom-in-95 duration-300"><CheckCircle className="h-4 w-4"/> {success}</div>}
+                  {error && <div className="text-sm font-bold text-red-700 flex items-center gap-2 bg-red-50 border-2 border-red-200 px-4 py-2 rounded-xl animate-in fade-in zoom-in-95 duration-300"><AlertCircle className="h-4 w-4"/> {error}</div>}
+                </div>
               </CardContent>
             </Card>
 
@@ -1164,14 +1193,18 @@ export default function AdminPage({
                     rows={6}
                   />
                 </div>
-                <button
-                  type="button"
-                  onClick={handleAddBlog}
-                  className="inline-flex items-center justify-center bg-[#d60000] text-white font-extrabold px-5 pb-2 pt-2.5 rounded-xl text-sm shadow-[0_4px_0_#991b1b] hover:-translate-y-0.5 hover:shadow-[0_6px_0_#991b1b] active:translate-y-1 active:shadow-[0_0px_0_#991b1b] transition-all"
-                >
-                  <Plus className="h-4 w-4 mr-2" />
-                  Add Blog Post
-                </button>
+                <div className="flex flex-wrap items-center gap-4">
+                  <button
+                    type="button"
+                    onClick={handleAddBlog}
+                    className="inline-flex items-center justify-center bg-[#d60000] text-white font-extrabold px-5 pb-2 pt-2.5 rounded-xl text-sm shadow-[0_4px_0_#991b1b] hover:-translate-y-0.5 hover:shadow-[0_6px_0_#991b1b] active:translate-y-1 active:shadow-[0_0px_0_#991b1b] transition-all"
+                  >
+                    <Plus className="h-4 w-4 mr-2" />
+                    Add Blog Post
+                  </button>
+                  {success && <div className="text-sm font-bold text-green-700 flex items-center gap-2 bg-green-50 border-2 border-green-200 px-4 py-2 rounded-xl animate-in fade-in zoom-in-95 duration-300"><CheckCircle className="h-4 w-4"/> {success}</div>}
+                  {error && <div className="text-sm font-bold text-red-700 flex items-center gap-2 bg-red-50 border-2 border-red-200 px-4 py-2 rounded-xl animate-in fade-in zoom-in-95 duration-300"><AlertCircle className="h-4 w-4"/> {error}</div>}
+                </div>
               </CardContent>
             </Card>
 
@@ -1236,15 +1269,15 @@ export default function AdminPage({
                     />
                   </div>
                 </div>
-                {/* <div className="space-y-2">
-                    <Label htmlFor="video-duration">Duration</Label>
-                    <Input
-                      id="video-duration"
-                      placeholder="Duration (e.g., 15:30)"
-                      value={newVideo.duration}
-                      onChange={(e) => setNewVideo({ ...newVideo, duration: e.target.value })}
-                    />
-                  </div> */}
+                <div className="space-y-2">
+                  <Label htmlFor="video-duration">Duration</Label>
+                  <Input
+                    id="video-duration"
+                    placeholder="Duration (e.g., 15:30)"
+                    value={newVideo.duration}
+                    onChange={(e) => setNewVideo({ ...newVideo, duration: e.target.value })}
+                  />
+                </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <Label htmlFor="video-category">Category</Label>
@@ -1268,14 +1301,18 @@ export default function AdminPage({
                     <Label htmlFor="video-active">Active</Label>
                   </div>
                 </div>
-                <button
-                  type="button"
-                  onClick={handleAddVideo}
-                  className="w-full md:w-auto inline-flex items-center justify-center bg-[#d60000] text-white font-extrabold px-5 pb-2 pt-2.5 rounded-xl text-sm shadow-[0_4px_0_#991b1b] hover:-translate-y-0.5 hover:shadow-[0_6px_0_#991b1b] active:translate-y-1 active:shadow-[0_0px_0_#991b1b] transition-all"
-                >
-                  <Plus className="h-4 w-4 mr-2" />
-                  Add Video
-                </button>
+                <div className="flex flex-wrap items-center gap-4">
+                  <button
+                    type="button"
+                    onClick={handleAddVideo}
+                    className="w-full md:w-auto inline-flex items-center justify-center bg-[#d60000] text-white font-extrabold px-5 pb-2 pt-2.5 rounded-xl text-sm shadow-[0_4px_0_#991b1b] hover:-translate-y-0.5 hover:shadow-[0_6px_0_#991b1b] active:translate-y-1 active:shadow-[0_0px_0_#991b1b] transition-all"
+                  >
+                    <Plus className="h-4 w-4 mr-2" />
+                    Add Video
+                  </button>
+                  {success && <div className="text-sm font-bold text-green-700 flex items-center gap-2 bg-green-50 border-2 border-green-200 px-4 py-2 rounded-xl animate-in fade-in zoom-in-95 duration-300"><CheckCircle className="h-4 w-4"/> {success}</div>}
+                  {error && <div className="text-sm font-bold text-red-700 flex items-center gap-2 bg-red-50 border-2 border-red-200 px-4 py-2 rounded-xl animate-in fade-in zoom-in-95 duration-300"><AlertCircle className="h-4 w-4"/> {error}</div>}
+                </div>
               </CardContent>
             </Card>
 
@@ -1454,14 +1491,18 @@ export default function AdminPage({
                     rows={4}
                   />
                 </div>
-                <button
-                  type="button"
-                  onClick={handleAddQuickQuestion}
-                  className="inline-flex items-center justify-center bg-[#d60000] text-white font-extrabold px-5 pb-2 pt-2.5 rounded-xl text-sm shadow-[0_4px_0_#991b1b] hover:-translate-y-0.5 hover:shadow-[0_6px_0_#991b1b] active:translate-y-1 active:shadow-[0_0px_0_#991b1b] transition-all"
-                >
-                  <Plus className="h-4 w-4 mr-2" />
-                  Add Quick Question
-                </button>
+                <div className="flex flex-wrap items-center gap-4">
+                  <button
+                    type="button"
+                    onClick={handleAddQuickQuestion}
+                    className="inline-flex items-center justify-center bg-[#d60000] text-white font-extrabold px-5 pb-2 pt-2.5 rounded-xl text-sm shadow-[0_4px_0_#991b1b] hover:-translate-y-0.5 hover:shadow-[0_6px_0_#991b1b] active:translate-y-1 active:shadow-[0_0px_0_#991b1b] transition-all"
+                  >
+                    <Plus className="h-4 w-4 mr-2" />
+                    Add Quick Question
+                  </button>
+                  {success && <div className="text-sm font-bold text-green-700 flex items-center gap-2 bg-green-50 border-2 border-green-200 px-4 py-2 rounded-xl animate-in fade-in zoom-in-95 duration-300"><CheckCircle className="h-4 w-4"/> {success}</div>}
+                  {error && <div className="text-sm font-bold text-red-700 flex items-center gap-2 bg-red-50 border-2 border-red-200 px-4 py-2 rounded-xl animate-in fade-in zoom-in-95 duration-300"><AlertCircle className="h-4 w-4"/> {error}</div>}
+                </div>
               </CardContent>
             </Card>
 
@@ -1552,14 +1593,18 @@ export default function AdminPage({
                     onChange={(e) => setNewFireCode({ ...newFireCode, content: e.target.value })}
                   />
                 </div>
-                <button
-                  type="button"
-                  onClick={handleAddFireCode}
-                  className="inline-flex items-center justify-center bg-[#d60000] text-white font-extrabold px-5 pb-2 pt-2.5 rounded-xl text-sm shadow-[0_4px_0_#991b1b] hover:-translate-y-0.5 hover:shadow-[0_6px_0_#991b1b] active:translate-y-1 active:shadow-[0_0px_0_#991b1b] transition-all"
-                >
-                  <Plus className="h-4 w-4 mr-2" />
-                  Add Fire Code Section
-                </button>
+                <div className="flex flex-wrap items-center gap-4">
+                  <button
+                    type="button"
+                    onClick={handleAddFireCode}
+                    className="inline-flex items-center justify-center bg-[#d60000] text-white font-extrabold px-5 pb-2 pt-2.5 rounded-xl text-sm shadow-[0_4px_0_#991b1b] hover:-translate-y-0.5 hover:shadow-[0_6px_0_#991b1b] active:translate-y-1 active:shadow-[0_0px_0_#991b1b] transition-all"
+                  >
+                    <Plus className="h-4 w-4 mr-2" />
+                    Add Fire Code Section
+                  </button>
+                  {success && <div className="text-sm font-bold text-green-700 flex items-center gap-2 bg-green-50 border-2 border-green-200 px-4 py-2 rounded-xl animate-in fade-in zoom-in-95 duration-300"><CheckCircle className="h-4 w-4"/> {success}</div>}
+                  {error && <div className="text-sm font-bold text-red-700 flex items-center gap-2 bg-red-50 border-2 border-red-200 px-4 py-2 rounded-xl animate-in fade-in zoom-in-95 duration-300"><AlertCircle className="h-4 w-4"/> {error}</div>}
+                </div>
               </CardContent>
             </Card>
 

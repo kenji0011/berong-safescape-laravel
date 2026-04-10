@@ -15,7 +15,7 @@ import { Footer } from "@/Components/footer"
 import DashboardLayout from "@/Layouts/DashboardLayout"
 import SpotlightCard from "@/Components/ui/spotlight-card"
 import "@/components/ui/spotlight-card.css"
-import TiltedCard from "@/Components/ui/tilted-card"
+
 import { AdultWelcomeBanner } from "@/Components/adult-welcome-banner"
 
 interface AdultPageClientProps {
@@ -130,36 +130,44 @@ const AdultPageClient = ({ initialBlogs }: AdultPageClientProps) => {
                     ) : (
                         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
                             {filteredBlogs.map((blog) => (
-                                <Link key={blog.id} href={`/adult/blog/${blog.id}`}>
-                                    <TiltedCard
-                                        imageSrc={blog.imageUrl || "/placeholder.svg?height=300&width=400"}
-                                        altText={blog.title}
-                                        captionText="Click to read"
-                                        containerHeight="280px"
-                                        containerWidth="100%"
-                                        imageHeight="280px"
-                                        imageWidth="100%"
-                                        scaleOnHover={1.05}
-                                        rotateAmplitude={10}
-                                        showTooltip={true}
-                                        displayOverlayContent={true}
-                                        overlayContent={
-                                            <div className="text-white">
-                                                <h3 className="font-bold text-lg line-clamp-2 mb-2">{blog.title}</h3>
-                                                <p className="text-sm text-white/80 line-clamp-2 mb-3">{blog.excerpt}</p>
-                                                <div className="flex items-center justify-between text-xs text-white/70">
-                                                    <div className="flex items-center gap-1">
-                                                        <User className="h-3 w-3" />
-                                                        <span>{typeof blog.author === 'string' ? blog.author : blog.author?.name}</span>
-                                                    </div>
-                                                    <div className="flex items-center gap-1">
-                                                        <Calendar className="h-3 w-3" />
-                                                        <span>{new Date(blog.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}</span>
-                                                    </div>
+                                <Link key={blog.id} href={`/adult/blog/${blog.id}`} className="outline-none block w-full group h-full">
+                                    <div className="flex flex-col h-full bg-white rounded-2xl border-2 border-b-[6px] border-slate-800 overflow-hidden relative transition-all duration-300 hover:-translate-y-1.5 hover:shadow-[0_8px_0_#1e293b] active:translate-y-1 active:border-b-[2px] active:shadow-none">
+                                        {/* Image Header */}
+                                        <div className="h-48 shrink-0 w-full border-b-2 border-slate-800 relative overflow-hidden bg-slate-100">
+                                            <img
+                                                src={blog.imageUrl || "/placeholder.svg?height=300&width=400"}
+                                                alt={blog.title}
+                                                className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                                            />
+                                            {/* Tag / Badge */}
+                                            <div className="absolute top-3 left-3 bg-yellow-400 text-slate-900 text-xs font-black px-3 py-1 rounded-full border-2 border-slate-800 shadow-[0_2px_0_#1e293b] z-10">
+                                                Article
+                                            </div>
+                                        </div>
+                                        
+                                        {/* Content Area */}
+                                        <div className="p-5 flex flex-col flex-1 bg-white">
+                                            <h3 className="font-black text-lg text-slate-800 line-clamp-2 mb-2 group-hover:text-red-600 transition-colors">
+                                                {blog.title}
+                                            </h3>
+                                            
+                                            <p className="text-sm font-bold text-slate-500 line-clamp-3 mb-4 flex-1">
+                                                {blog.excerpt || ''}
+                                            </p>
+                                            
+                                            {/* Metadata Footer */}
+                                            <div className="flex items-center justify-between text-xs font-black text-slate-500 pt-4 border-t-2 border-dashed border-slate-200 mt-auto">
+                                                <div className="flex items-center gap-1.5 text-slate-700">
+                                                    <User className="h-3.5 w-3.5 text-slate-800" strokeWidth={3} />
+                                                    <span>{typeof blog.author === 'string' ? blog.author : blog.author?.name}</span>
+                                                </div>
+                                                <div className="flex items-center gap-1.5 bg-slate-100 px-2.5 py-1.5 rounded-md border-2 border-slate-200">
+                                                    <Calendar className="h-3.5 w-3.5 text-slate-600" strokeWidth={3} />
+                                                    <span>{new Date((blog as any).created_at || blog.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}</span>
                                                 </div>
                                             </div>
-                                        }
-                                    />
+                                        </div>
+                                    </div>
                                 </Link>
                             ))}
                         </div>

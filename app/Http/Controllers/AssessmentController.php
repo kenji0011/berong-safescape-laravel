@@ -121,6 +121,64 @@ class AssessmentController extends Controller
     }
 
     /**
+     * GET /api/assessments/post-test-eligibility
+     */
+    public function postTestEligibility(Request $request)
+    {
+        /** @var User $user */
+        $user = Auth::user();
+        
+        $isAdult = $user->age >= 18 && $user->role !== 'kid';
+        
+        // Count how many modules the kid completed
+        $modulesCompleted = \App\Models\UserProgress::where('userId', $user->id)->where('isCompleted', true)->count();
+        $engagementPoints = $user->engagementPoints ?? 0;
+        
+        $minModules = 3;
+        $minPoints = 50; 
+        
+        $alreadyCompleted = !is_null($user->postTestScore);
+        
+        $postTestCompletedAt = null;
+        if ($alreadyCompleted) {
+            $postTestCompletedAt = UserAnswer::where('userId', $user->id)
+                                ->where('testType', 'postTest')
+                                ->latest('created_at')
+                                ->value('created_at');
+        }
+        
+        $eligible = true;
+        if (is_null($user->preTestScore)) $eligible = false;
+        if (!$isAdult && $modulesCompleted < $minModules) $eligible = false;
+        if ($engagementPoints < $minPoints) $eligible = false;
+        
+        return response()->json([
+            'eligible' => $eligible,
+            'alreadyCompleted' => $alreadyCompleted,
+            'reason' => $eligible ? 'Eligible' : 'Requirements not met',
+            'requirements' => [
+                'minEngagementPoints' => $minPoints,
+                'minModulesCompleted' => $minModules,
+                'minQuizzesCompleted' => 0,
+            ],
+            'current' => [
+                'engagementPoints' => $engagementPoints,
+                'modulesCompleted' => $modulesCompleted,
+                'quizzesCompleted' => 0,
+            ],
+            'progress' => [
+                'engagementPoints' => min(100, max(0, ($engagementPoints / max(1, $minPoints)) * 100)),
+                'modulesCompleted' => min(100, max(0, ($modulesCompleted / max(1, $minModules)) * 100)),
+                'quizzesCompleted' => 0,
+            ],
+            'preTestScore' => $user->preTestScore,
+            'postTestScore' => $user->postTestScore,
+            'completedAt' => $postTestCompletedAt,
+            'isAdult' => $isAdult,
+        ]);
+    }
+
+    /**
      * GET /api/assessments/history
      */
     public function history(Request $request)
