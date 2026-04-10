@@ -1203,6 +1203,21 @@
         function loadExam() {
             const container = document.getElementById('quiz-container');
             container.innerHTML = '';
+            
+            if (localState.finalExamPassed) {
+                document.getElementById('exam-result').classList.remove('hidden');
+                document.getElementById('exam-submit').classList.add('hidden');
+                
+                document.getElementById('result-icon').innerText = "🏆";
+                document.getElementById('result-title').innerText = "CONGRATULATIONS, HERO!";
+                document.getElementById('result-title').className = "text-2xl font-bold text-green-400 mb-2";
+                document.getElementById('result-desc').innerText = "You have proven yourself as a Fire Safety Hero!";
+                
+                document.getElementById('btn-view-cert').classList.remove('hidden');
+                document.getElementById('btn-retake').classList.add('hidden');
+                return;
+            }
+
             document.getElementById('exam-result').classList.add('hidden');
             document.getElementById('exam-submit').classList.remove('hidden');
             document.getElementById('btn-retake').classList.add('hidden');

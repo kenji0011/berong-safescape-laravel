@@ -52,7 +52,10 @@ Route::get('/about', function () {
     Route::get('/kids/safescape/{moduleNum}', function ($moduleNum) {
         $pageMap = [
             1 => 'Kids/ModuleOne',
-            // 2 => 'Kids/ModuleTwo', // Add as each module is built
+            2 => 'Kids/ModuleTwo',
+            3 => 'Kids/ModuleThree',
+            4 => 'Kids/ModuleFour',
+            5 => 'Kids/ModuleFive',
         ];
         $page = $pageMap[(int) $moduleNum] ?? null;
         if (!$page) abort(404);
