@@ -9,8 +9,8 @@ const VideosPage = () => {
     id: "1",
     title: "Fire Safety for Kids",
     description: "Learn important fire safety rules in a fun way!",
-    src: "https://www.youtube.com/embed/J7x5Xih-OPE",
-    thumbnail: "https://img.youtube.com/vi/J7x5Xih-OPE/maxresdefault.jpg",
+    src: "https://www.youtube.com/embed/AWHGdWOI4kw",
+    thumbnail: "https://img.youtube.com/vi/AWHGdWOI4kw/maxresdefault.jpg",
     icon: "🎬"
   })
 
@@ -19,8 +19,8 @@ const VideosPage = () => {
       id: "1",
       title: "Fire Safety for Kids",
       description: "Learn important fire safety rules in a fun way!",
-      src: "https://www.youtube.com/embed/J7x5Xih-OPE",
-      thumbnail: "https://img.youtube.com/vi/J7x5Xih-OPE/maxresdefault.jpg",
+      src: "https://www.youtube.com/embed/AWHGdWOI4kw",
+      thumbnail: "https://img.youtube.com/vi/AWHGdWOI4kw/maxresdefault.jpg",
       color: "bg-purple-200",
       icon: "🎬"
     },
@@ -28,8 +28,8 @@ const VideosPage = () => {
       id: "2",
       title: "Stop, Drop, and Roll",
       description: "Learn what to do if your clothes catch fire!",
-      src: "https://www.youtube.com/embed/8o4wX_V-z8A",
-      thumbnail: "https://img.youtube.com/vi/8o4wX_V-z8A/maxresdefault.jpg",
+      src: "https://www.youtube.com/embed/ZlB9q3E-RCI",
+      thumbnail: "https://img.youtube.com/vi/ZlB9q3E-RCI/maxresdefault.jpg",
       color: "bg-[#fbcfe8]",
       icon: "🔥"
     },
@@ -37,8 +37,8 @@ const VideosPage = () => {
       id: "3",
       title: "Meet a Firefighter",
       description: "See what firefighters do every day!",
-      src: "https://www.youtube.com/embed/dummy_id3", // Replace with real later
-      thumbnail: "https://img.youtube.com/vi/dummy_id3/maxresdefault.jpg",
+      src: "https://www.youtube.com/embed/5_lGysdHLFQ",
+      thumbnail: "https://img.youtube.com/vi/5_lGysdHLFQ/maxresdefault.jpg",
       color: "bg-[#fbcfe8]",
       icon: "🚒"
     }

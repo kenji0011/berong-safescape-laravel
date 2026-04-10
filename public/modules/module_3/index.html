@@ -732,6 +732,19 @@
 
         function renderQuiz() {
             const container = document.getElementById('quiz-container');
+            
+            if (localState.quizPassed) {
+                document.getElementById('quiz-result').classList.remove('hidden');
+                document.getElementById('btn-retake').classList.add('hidden');
+                document.getElementById('result-icon').innerText = "🏆";
+                document.getElementById('result-title').innerText = "ESCAPE STRATEGIST!";
+                document.getElementById('result-title').className = "text-2xl font-bold text-green-400 mb-2";
+                document.getElementById('result-desc').innerText = "You have already completed this quiz!";
+                document.getElementById('btn-next-module').classList.remove('hidden');
+                container.innerHTML = '';
+                return;
+            }
+
             document.getElementById('quiz-result').classList.add('hidden');
             document.getElementById('btn-retake').classList.add('hidden');
             document.getElementById('btn-next-module').classList.add('hidden');

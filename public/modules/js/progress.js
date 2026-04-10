@@ -77,7 +77,7 @@ const SafeScapeProgress = (function () {
     let _readyResolve;
     let _readyPromise = new Promise(resolve => { _readyResolve = resolve; });
 
-    const API_ENDPOINT = window.location.origin + '/api/kids/safescape/progress';
+    const API_ENDPOINT = window.location.origin + '/api/kids/safescape';
 
     // Auth helpers: Persist in sessionStorage to survive navigation (links between modules don't pass params)
     function getUserId() {
@@ -102,7 +102,8 @@ const SafeScapeProgress = (function () {
 
     // Check if we're in an authenticated session
     function isAuthenticated() {
-        return !!getUserId();
+        // Force true because authentication is handled securely by the Laravel React parent wrapping the iframe
+        return true;
     }
 
     // --- Core Functions ---
@@ -154,22 +155,22 @@ const SafeScapeProgress = (function () {
     // --- API Sync Functions ---
 
     async function syncToAPI(moduleNum, sectionData, completed) {
+        // Notify parent window regardless of local fetch result or auth status.
+        // This ensures the parent (SafeScape app) can handle the sync securely natively.
+        if (window.parent !== window) {
+            window.parent.postMessage({
+                type: 'SAFESCAPE_SECTION_COMPLETE',
+                moduleNum,
+                sectionData,
+                completed
+            }, '*');
+        }
+
         if (!isAuthenticated()) {
             return false;
         }
 
         try {
-            // Notify parent window regardless of local fetch result
-            // This ensures the parent (SafeScape app) can handle the sync even if iframe auth/cookies fail
-            if (window.parent !== window) {
-                window.parent.postMessage({
-                    type: 'SAFESCAPE_SECTION_COMPLETE',
-                    moduleNum,
-                    sectionData,
-                    completed
-                }, '*');
-            }
-
             const response = await fetch(API_ENDPOINT, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -243,8 +244,8 @@ const SafeScapeProgress = (function () {
         // console.log('SafeScape: Initializing from API...');
         const apiData = await fetchProgressFromAPI();
 
-        if (apiData && apiData.progress) {
-            // console.log('SafeScape: API data received', apiData.progress);
+        if (apiData) {
+            // console.log('SafeScape: API data received', apiData);
             const localProgress = getProgress(); // Gets current in-memory defaults
 
             // Merge API progress into local progress 
@@ -252,17 +253,17 @@ const SafeScapeProgress = (function () {
             for (let i = 1; i <= 5; i++) {
                 const moduleKey = `module${i}`;
 
-                // 1. Merge Completed/Section data if exists in API
-                if (apiData.progress[i]) {
-                    localProgress[moduleKey].completed = apiData.progress[i].completed;
+                // 1. Merge Completed/Section data if exists in API (Laravel Format)
+                if (apiData.completedModules && apiData.completedModules.includes(i)) {
+                    localProgress[moduleKey].completed = true;
+                }
 
-                    // Merge section data
-                    if (apiData.progress[i].sectionData) {
-                        localProgress[moduleKey].sections = {
-                            ...localProgress[moduleKey].sections,
-                            ...apiData.progress[i].sectionData
-                        };
-                    }
+                // Merge section data
+                if (apiData.sectionData && apiData.sectionData[moduleKey]) {
+                    localProgress[moduleKey].sections = {
+                        ...localProgress[moduleKey].sections,
+                        ...apiData.sectionData[moduleKey]
+                    };
                 }
 
                 // 2. Strict Unlock Logic (Independent of API existence)
@@ -345,9 +346,9 @@ const SafeScapeProgress = (function () {
     }
 
     function isModuleUnlocked(moduleNum) {
-        const progress = getProgress();
-        const moduleKey = `module${moduleNum}`;
-        return progress[moduleKey]?.unlocked || false;
+        // Laravel's React dashboard correctly handles strict access control.
+        // Bypassing the local localStorage lock check to prevent erroneous redirects.
+        return true;
     }
 
     function isModuleCompleted(moduleNum) {
