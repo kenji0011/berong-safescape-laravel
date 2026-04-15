@@ -118,20 +118,20 @@ export function FeaturedCards({ serverUser }: { serverUser?: ServerUser | null }
           <React.Fragment key={card.id}>
           <PermissionGuard requiredPermission={card.requiredPermission} targetPath={card.link}>
             <Link href={card.link} prefetch={false} className="outline-none block w-full group">
-              <div className="w-full bg-white rounded-3xl border-2 border-b-[6px] border-slate-800 p-4 transition-all hover:-translate-y-1 active:translate-y-1 active:border-b-[2px] active:mt-[4px] overflow-hidden relative">
+              <div className="w-full bg-white rounded-3xl border-[4px] border-white p-4 transition-all duration-300 overflow-hidden relative shadow-[0_6px_0_#cbd5e1] group-hover:-translate-y-1 group-hover:shadow-[0_10px_0_#cbd5e1] group-active:translate-y-[6px] group-active:shadow-[0_0px_0_#cbd5e1]">
                 <div className="flex items-center gap-4">
                   {/* Icon Section */}
-                  <div className={`bg-gradient-to-br ${card.color} h-16 w-16 rounded-2xl flex items-center justify-center text-white border-2 border-slate-800 shadow-[0_4px_0_#1e293b] shrink-0 group-hover:scale-105 transition-transform`}>
+                  <div className={`bg-gradient-to-br ${card.color} h-16 w-16 rounded-2xl flex items-center justify-center text-white border-[3px] border-white shadow-[0_4px_0_rgba(0,0,0,0.15)] shrink-0 group-hover:scale-105 transition-transform`}>
                     {card.icon}
                   </div>
                   {/* Content */}
                   <div className="min-w-0 flex-1">
                     <h3 className="font-black text-lg text-slate-800 leading-tight">{card.title}</h3>
-                    <p className="text-[13px] font-bold text-slate-500 line-clamp-2 leading-snug mt-1 border-slate-800">{card.description}</p>
+                    <p className="text-[13px] font-bold text-slate-500 line-clamp-2 leading-snug mt-1">{card.description}</p>
                   </div>
                 </div>
                 {/* Full Width Mobile Button */}
-                <div className="mt-4 w-full bg-yellow-400 text-slate-900 border-2 border-b-[4px] border-slate-800 hover:bg-yellow-300 transition-colors font-black text-sm py-3 rounded-xl flex items-center justify-center gap-2">
+                <div className="mt-4 w-full bg-[#e11d48] border-[3px] border-white text-white font-extrabold text-sm py-2 rounded-full shadow-[0_4px_0_#9f1239] transition-all group-hover:-translate-y-0.5 group-hover:shadow-[0_6px_0_#9f1239] group-active:translate-y-[4px] group-active:shadow-[0_0px_0_#9f1239] flex items-center justify-center gap-2 tracking-wide uppercase">
                   {card.btn}
                   <ArrowRight className="h-4 w-4" strokeWidth={3} />
                 </div>
@@ -155,23 +155,23 @@ export function FeaturedCards({ serverUser }: { serverUser?: ServerUser | null }
           <div key={card.id} className="h-full">
             <PermissionGuard requiredPermission={card.requiredPermission} targetPath={card.link}>
               <Link href={card.link} prefetch={false} className="outline-none flex w-full h-full group">
-                <div className="w-full flex flex-col bg-white rounded-3xl border-2 border-b-[8px] border-slate-800 overflow-hidden relative transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl active:translate-y-1 active:border-b-[4px] active:mt-[4px]">
+                <div className="w-full flex flex-col bg-white rounded-3xl border-[4px] border-white overflow-hidden relative transition-all duration-300 shadow-[0_8px_0_#cbd5e1] group-hover:-translate-y-2 group-hover:shadow-[0_14px_0_#cbd5e1] group-active:translate-y-[8px] group-active:shadow-[0_0px_0_#cbd5e1]">
                   
                   {/* Image Area */}
-                  <div className="h-[200px] shrink-0 w-full border-b-2 border-slate-800 overflow-hidden relative">
+                  <div className="h-[200px] shrink-0 w-full border-b-[4px] border-white overflow-hidden relative">
                     <img 
                       src={card.imageUrl} 
                       alt={card.title} 
                       className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" 
                     />
-                    <div className="absolute inset-0 bg-slate-900/20 group-hover:bg-transparent transition-colors duration-500" />
+                    <div className="absolute inset-0 bg-slate-900/10 group-hover:bg-transparent transition-colors duration-500" />
                   </div>
                   
                   {/* Content Area */}
                   <div className="p-6 flex-1 flex flex-col relative bg-yellow-50 bg-opacity-50">
                     
                     {/* Floating Icon overlapping image and content */}
-                    <div className={`absolute -top-10 right-6 h-16 w-16 bg-gradient-to-br ${card.color} rounded-2xl flex items-center justify-center text-white border-2 border-slate-800 shadow-[0_4px_0_#1e293b] group-hover:-translate-y-1 transition-transform z-10`}>
+                    <div className={`absolute -top-10 right-6 h-16 w-16 bg-gradient-to-br ${card.color} rounded-2xl flex items-center justify-center text-white border-[3px] border-white shadow-[0_4px_0_rgba(0,0,0,0.15)] group-hover:-translate-y-1 transition-transform z-10`}>
                       {card.icon}
                     </div>
 
@@ -186,7 +186,7 @@ export function FeaturedCards({ serverUser }: { serverUser?: ServerUser | null }
 
                     {/* Action Button */}
                     <div className="mt-auto">
-                      <div className="w-full bg-[#d60000] text-white border-2 border-b-[4px] border-slate-800 group-hover:bg-[#b30000] transition-colors font-black text-sm py-3 rounded-xl flex items-center justify-center gap-2">
+                      <div className="w-full bg-[#e11d48] border-[3px] border-white text-white font-extrabold text-sm py-2 rounded-full shadow-[0_4px_0_#9f1239] transition-all group-hover:-translate-y-0.5 group-hover:shadow-[0_6px_0_#9f1239] group-active:translate-y-[4px] group-active:shadow-[0_0px_0_#9f1239] flex items-center justify-center gap-2 tracking-wide uppercase">
                         {card.btn}
                         <ArrowRight className="h-4 w-4" strokeWidth={3} />
                       </div>

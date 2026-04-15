@@ -105,7 +105,7 @@ const QuizPage = () => {
         <div className="absolute bottom-20 -right-20 w-80 h-80 rounded-full bg-rose-400/20 blur-3xl opacity-60 animate-pulse duration-1000" />
       </div>
 
-      <div className="relative z-10 w-full flex-1 flex flex-col py-4">
+      <div className="relative z-10 w-full flex-1 flex flex-col py-4 pb-28 sm:pb-4">
         {/* Ghost Header - absolute positioned to save vertical space */}
         <div className="absolute top-2 left-4 z-20">
           <Link 
@@ -118,7 +118,7 @@ const QuizPage = () => {
         </div>
 
         {/* Main Quiz Hub Container */}
-        <div className="max-w-3xl mx-auto w-full px-4 sm:px-6 flex-1 flex flex-col lg:max-h-[85vh]">
+        <div className="max-w-3xl mx-auto w-full px-4 sm:px-6 flex-1 flex flex-col lg:max-h-[85vh] pt-12 sm:pt-0">
           
           <div className="flex flex-col flex-1 w-full bg-white/90 backdrop-blur-2xl border border-white/60 rounded-[2.5rem] p-6 sm:p-10 shadow-[0_25px_60px_rgba(234,88,12,0.15)] overflow-hidden">
             

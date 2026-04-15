@@ -33,13 +33,13 @@ export function AdultWelcomeBanner() {
                     Protecting your family starts with knowledge. <br className="hidden sm:block" /> Explore the latest fire safety articles and simulations today.
                 </p>
 
-                <div className="flex flex-wrap justify-center gap-3">
-                    <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-orange-900 border border-orange-700 text-orange-100 text-sm font-medium shadow-sm">
-                        <BookOpen className="h-4 w-4 text-orange-300" />
+                <div className="flex flex-wrap justify-center gap-4">
+                    <span className="inline-flex items-center gap-2.5 px-6 py-2.5 rounded-full bg-black/30 backdrop-blur-md border border-white/10 text-white text-sm font-bold shadow-2xl transition-all hover:bg-black/40">
+                        <BookOpen className="h-4 w-4 text-orange-400" strokeWidth={2.5} />
                         Articles
                     </span>
-                    <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-red-900 border border-red-700 text-red-100 text-sm font-medium shadow-sm">
-                        <Flame className="h-4 w-4 text-red-300" />
+                    <span className="inline-flex items-center gap-2.5 px-6 py-2.5 rounded-full bg-black/30 backdrop-blur-md border border-white/10 text-white text-sm font-bold shadow-2xl transition-all hover:bg-black/40">
+                        <Flame className="h-4 w-4 text-red-500" strokeWidth={2.5} />
                         Simulations
                     </span>
                 </div>

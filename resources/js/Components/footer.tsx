@@ -69,18 +69,19 @@ export function Footer() {
   };
 
   return (
-    <footer className="bg-[#0f172a] text-white pt-16 pb-10">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-x-8 gap-y-12">
+    <footer className="bg-[#0f172a] text-white pt-12 pb-8 sm:pt-16 sm:pb-10">
+      <div className="max-w-7xl mx-auto px-6 sm:px-8">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-x-6 gap-y-10 sm:gap-x-8 sm:gap-y-12">
           {/* BFP Logo and Description Column */}
-          <div className="col-span-2 sm:col-span-2 md:col-span-1 pr-6">
+          <div className="col-span-2 md:col-span-1 pr-0 sm:pr-6">
             <div className="flex items-center gap-4">
+              <img src="/berong_profile.png" alt="Berong Mascot" className="w-14 h-14 sm:w-16 sm:h-16 object-contain drop-shadow-md" />
               <div>
-                <h3 className="text-lg font-bold text-white tracking-wide">BFP Berong</h3>
-                <p className="text-[13px] text-slate-400 leading-tight mt-0.5">Fire Safety Education<br/>Platform</p>
+                <h3 className="text-xl font-bold text-white tracking-wide">BFP Berong</h3>
+                <p className="text-sm text-slate-400 leading-tight mt-0.5">Fire Safety Education<br/>Platform</p>
               </div>
             </div>
-            <p className="mt-5 text-sm md:text-[15px] text-slate-400 font-medium leading-relaxed max-w-[280px]">
+            <p className="mt-6 text-sm md:text-[15px] text-slate-400 font-medium leading-relaxed max-w-[280px]">
               Empowering communities with knowledge and skills for fire safety.
             </p>
             <div className="mt-5">

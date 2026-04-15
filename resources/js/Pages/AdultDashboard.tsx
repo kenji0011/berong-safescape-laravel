@@ -131,16 +131,16 @@ const AdultPageClient = ({ initialBlogs }: AdultPageClientProps) => {
                         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
                             {filteredBlogs.map((blog) => (
                                 <Link key={blog.id} href={`/adult/blog/${blog.id}`} className="outline-none block w-full group h-full">
-                                    <div className="flex flex-col h-full bg-white rounded-2xl border-2 border-b-[6px] border-slate-800 overflow-hidden relative transition-all duration-300 hover:-translate-y-1.5 hover:shadow-[0_8px_0_#1e293b] active:translate-y-1 active:border-b-[2px] active:shadow-none">
+                                    <div className="flex flex-col h-full bg-white rounded-3xl border-[4px] border-white overflow-hidden relative transition-all duration-300 shadow-[0_6px_0_#cbd5e1] group-hover:-translate-y-1.5 group-hover:shadow-[0_12px_0_#cbd5e1] group-active:translate-y-[6px] group-active:shadow-[0_0px_0_#cbd5e1]">
                                         {/* Image Header */}
-                                        <div className="h-48 shrink-0 w-full border-b-2 border-slate-800 relative overflow-hidden bg-slate-100">
+                                        <div className="h-48 shrink-0 w-full border-b-[3px] border-white relative overflow-hidden bg-slate-100">
                                             <img
                                                 src={blog.imageUrl || "/placeholder.svg?height=300&width=400"}
                                                 alt={blog.title}
                                                 className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                                             />
                                             {/* Tag / Badge */}
-                                            <div className="absolute top-3 left-3 bg-yellow-400 text-slate-900 text-xs font-black px-3 py-1 rounded-full border-2 border-slate-800 shadow-[0_2px_0_#1e293b] z-10">
+                                            <div className="absolute top-3 left-3 bg-yellow-400 text-red-600 text-xs font-extrabold px-3 py-1 rounded-full border-[2px] border-white shadow-[0_2px_0_rgba(0,0,0,0.15)] uppercase tracking-wide z-10">
                                                 Article
                                             </div>
                                         </div>
@@ -156,12 +156,12 @@ const AdultPageClient = ({ initialBlogs }: AdultPageClientProps) => {
                                             </p>
                                             
                                             {/* Metadata Footer */}
-                                            <div className="flex items-center justify-between text-xs font-black text-slate-500 pt-4 border-t-2 border-dashed border-slate-200 mt-auto">
-                                                <div className="flex items-center gap-1.5 text-slate-700">
+                                            <div className="flex items-center justify-between text-xs font-bold text-slate-500 pt-4 border-t-[3px] border-dashed border-slate-100 mt-auto">
+                                                <div className="flex items-center gap-1.5 text-slate-700 bg-slate-50 px-2.5 py-1.5 rounded-xl border-[2px] border-white shadow-sm">
                                                     <User className="h-3.5 w-3.5 text-slate-800" strokeWidth={3} />
                                                     <span>{typeof blog.author === 'string' ? blog.author : blog.author?.name}</span>
                                                 </div>
-                                                <div className="flex items-center gap-1.5 bg-slate-100 px-2.5 py-1.5 rounded-md border-2 border-slate-200">
+                                                <div className="flex items-center gap-1.5 bg-slate-50 px-2.5 py-1.5 rounded-xl border-[2px] border-white shadow-sm">
                                                     <Calendar className="h-3.5 w-3.5 text-slate-600" strokeWidth={3} />
                                                     <span>{new Date((blog as any).created_at || blog.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}</span>
                                                 </div>

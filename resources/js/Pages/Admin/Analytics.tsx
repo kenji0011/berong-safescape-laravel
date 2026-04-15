@@ -210,8 +210,8 @@ export default function AnalyticsDashboard({
                 <button 
                   onClick={() => setActiveTab('overview')}
                   className={activeTab === 'overview'
-                    ? "bg-yellow-400 border-2 sm:border-[3px] border-white rounded-[1.5rem] shadow-[0_3px_0_0_#ca8a04] sm:shadow-[0_4px_0_0_#ca8a04] px-3 sm:px-6 py-2.5 flex items-center justify-center select-none z-50 transition-transform active:translate-y-[3px] active:shadow-none min-w-[90px]"
-                    : "flex items-center px-3 sm:px-5 py-2.5 active:opacity-70 transition-all outline-none select-none justify-center group hover:bg-white/10 rounded-[1.5rem] cursor-pointer min-w-[90px]"
+                    ? "bg-yellow-400 border-2 sm:border-[3px] border-white rounded-[1.5rem] shadow-[0_3px_0_0_#ca8a04] sm:shadow-[0_4px_0_0_#ca8a04] px-3 sm:px-6 py-2.5 flex items-center justify-center select-none z-50 transition-transform active:translate-y-[3px] sm:active:translate-y-[4px] active:shadow-none sm:active:shadow-none outline-none focus:outline-none focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-offset-0 min-w-[90px]"
+                    : "border-2 sm:border-[3px] border-transparent flex items-center px-3 sm:px-6 py-2.5 active:opacity-70 transition-transform outline-none focus:outline-none focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-offset-0 select-none justify-center group hover:bg-white/10 rounded-[1.5rem] cursor-pointer min-w-[90px]"
                   }
                 >
                    <span className={`font-black tracking-widest uppercase text-[10px] sm:text-xs pt-0.5 whitespace-nowrap drop-shadow-sm ${activeTab === 'overview' ? 'text-slate-900 drop-shadow-none' : 'text-slate-300 group-hover:text-white'}`}>
@@ -224,8 +224,8 @@ export default function AnalyticsDashboard({
                   <DropdownMenuTrigger asChild>
                     <button 
                       className={activeTab !== 'overview'
-                        ? "bg-yellow-400 border-2 sm:border-[3px] border-white rounded-[1.5rem] shadow-[0_3px_0_0_#ca8a04] sm:shadow-[0_4px_0_0_#ca8a04] px-2 sm:px-5 py-2.5 flex items-center justify-center gap-1 select-none z-50 transition-transform active:translate-y-[3px] active:shadow-none group flex-1 min-w-[120px]"
-                        : "flex items-center gap-1 px-2 sm:px-5 py-2.5 active:opacity-70 transition-all outline-none select-none group justify-center hover:bg-white/10 rounded-[1.5rem] cursor-pointer flex-1 min-w-[100px]"
+                        ? "bg-yellow-400 border-2 sm:border-[3px] border-white rounded-[1.5rem] shadow-[0_3px_0_0_#ca8a04] sm:shadow-[0_4px_0_0_#ca8a04] px-2 sm:px-5 py-2.5 flex items-center justify-center gap-1 select-none z-50 transition-transform active:translate-y-[3px] sm:active:translate-y-[4px] active:shadow-none sm:active:shadow-none data-[state=open]:translate-y-[3px] sm:data-[state=open]:translate-y-[4px] data-[state=open]:shadow-none sm:data-[state=open]:shadow-none outline-none focus:outline-none focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-offset-0 group flex-1 min-w-[120px]"
+                        : "border-2 sm:border-[3px] border-transparent flex items-center gap-1 px-2 sm:px-5 py-2.5 active:opacity-70 transition-transform outline-none focus:outline-none focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-offset-0 select-none group justify-center hover:bg-white/10 rounded-[1.5rem] cursor-pointer flex-1 min-w-[100px]"
                       }
                     >
                        <span className={`font-black tracking-widest uppercase text-[10px] sm:text-xs pt-0.5 truncate drop-shadow-sm ${activeTab !== 'overview' ? 'text-slate-900 drop-shadow-none' : 'text-slate-300 group-hover:text-white'}`}>

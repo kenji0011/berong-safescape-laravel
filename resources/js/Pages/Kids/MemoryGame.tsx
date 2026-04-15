@@ -124,7 +124,7 @@ const MemoryGamePage = () => {
         <div className="absolute bottom-20 -right-20 w-80 h-80 rounded-full bg-cyan-400/30 blur-3xl opacity-60 animate-pulse duration-1000" />
       </div>
 
-      <div className="relative z-10 w-full flex-1 flex flex-col py-4">
+      <div className="relative z-10 w-full flex-1 flex flex-col py-4 pb-28 sm:pb-4">
         {/* Ghost Header - absolute positioned to save vertical space */}
         <div className="absolute top-2 left-4 z-20">
           <Link 
@@ -136,7 +136,7 @@ const MemoryGamePage = () => {
           </Link>
         </div>
 
-        <div className="max-w-4xl mx-auto w-full px-4 sm:px-6 flex-1 flex items-center justify-center">
+        <div className="max-w-4xl mx-auto w-full px-4 sm:px-6 flex-1 flex items-center justify-center pt-12 sm:pt-0">
           <div className="w-full bg-white/90 backdrop-blur-2xl border border-white/60 rounded-[2.5rem] p-6 sm:p-8 shadow-[0_25px_60px_rgba(20,184,166,0.15)] overflow-hidden lg:max-h-[85vh] flex flex-col">
             
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-6">
@@ -160,7 +160,7 @@ const MemoryGamePage = () => {
               </div>
             </div>
 
-            <div className="grid grid-cols-3 sm:grid-cols-4 gap-3 sm:gap-4 flex-1">
+            <div className="grid grid-cols-3 sm:grid-cols-4 gap-2 sm:gap-4 flex-1">
               {cards.map((card, idx) => (
                 <div 
                   key={card.id}
@@ -173,11 +173,11 @@ const MemoryGamePage = () => {
                   )}
                 >
                   {card.isFlipped || card.isMatched ? (
-                    <span className="text-4xl sm:text-5xl drop-shadow-md">
+                    <span className="text-3xl sm:text-5xl drop-shadow-md">
                       {card.emoji}
                     </span>
                   ) : (
-                    <span className="text-4xl sm:text-5xl font-black text-white/50 drop-shadow-sm group-hover:text-white/80 transition-colors">?</span>
+                    <span className="text-3xl sm:text-5xl font-black text-white/50 drop-shadow-sm group-hover:text-white/80 transition-colors">?</span>
                   )}
                 </div>
               ))}

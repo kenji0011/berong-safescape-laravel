@@ -78,29 +78,29 @@ const CourseHubPage = () => {
     <div className="min-h-screen bg-slate-50 font-sans flex flex-col">
 
       {/* ── Sub Header ── */}
-      <div className="bg-white border-b border-slate-200 py-3 px-4 sm:px-6 lg:px-8 shadow-sm z-20 relative">
-        <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-4 w-full sm:w-auto">
+      <div className="bg-white border-b border-slate-200 py-2 sm:py-3 px-3 sm:px-6 lg:px-8 shadow-sm z-20 relative">
+        <div className="max-w-7xl mx-auto flex items-center justify-between gap-2 sm:gap-4">
+          <div className="flex items-center gap-2 sm:gap-4 min-w-0">
             <Link
               href="/kids"
-              className="inline-flex items-center gap-2 px-4 py-2 bg-white rounded-full text-slate-700 font-bold hover:text-slate-900 border-2 border-slate-200 shadow-sm transition-all text-sm whitespace-nowrap"
+              className="inline-flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-4 py-1.5 sm:py-2 bg-white rounded-full text-slate-700 font-bold hover:text-slate-900 border-2 border-slate-200 shadow-sm transition-all text-xs sm:text-sm whitespace-nowrap shrink-0"
             >
-              <ArrowLeft className="h-4 w-4" />
-              Back to Dashboard
+              <ArrowLeft className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+              <span className="hidden sm:inline">Back to Dashboard</span>
             </Link>
-            <div className="hidden sm:flex items-center gap-2">
+            <div className="hidden md:flex items-center gap-2">
               <Flame className="h-5 w-5 text-[#ff4b3e]" />
               <h1 className="text-xl font-black text-slate-800">SafeScape Fire Safety Course</h1>
             </div>
           </div>
-          <div className="flex items-center gap-3">
-            <div className="flex items-center gap-2 bg-white px-4 py-2 border-2 border-slate-200 rounded-xl font-bold text-slate-700 text-sm whitespace-nowrap">
-              <BookOpen className="h-4 w-4 text-blue-500" />
-              <span>{completedCount}/5 Modules</span>
+          <div className="flex items-center gap-1.5 sm:gap-3 shrink-0">
+            <div className="flex items-center gap-1 sm:gap-2 bg-white px-2 sm:px-4 py-1.5 sm:py-2 border-2 border-slate-200 rounded-lg sm:rounded-xl font-bold text-slate-700 text-xs sm:text-sm whitespace-nowrap">
+              <BookOpen className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-blue-500" />
+              <span>{completedCount}/5<span className="hidden sm:inline"> Modules</span></span>
             </div>
-            <div className="flex items-center gap-2 bg-white px-4 py-2 border-2 border-slate-200 rounded-xl font-bold text-slate-700 text-sm whitespace-nowrap">
-              <Trophy className="h-4 w-4 text-yellow-500" />
-              <span>{overallProgress}% Complete</span>
+            <div className="flex items-center gap-1 sm:gap-2 bg-white px-2 sm:px-4 py-1.5 sm:py-2 border-2 border-slate-200 rounded-lg sm:rounded-xl font-bold text-slate-700 text-xs sm:text-sm whitespace-nowrap">
+              <Trophy className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-yellow-500" />
+              <span>{overallProgress}%<span className="hidden sm:inline"> Complete</span></span>
             </div>
           </div>
         </div>

@@ -97,6 +97,7 @@ class AdminController extends Controller
     {
         $request->validate([
             'permission' => 'required|string',
+            'action' => 'nullable|string|in:add,remove',
             'adminPassword' => 'required|string',
         ]);
 
@@ -106,6 +107,7 @@ class AdminController extends Controller
         }
 
         $user = User::findOrFail($id);
+        $action = $request->input('action', 'add');
         
         $permissionToRoleMap = [
             'accessKids' => 'kid',
@@ -114,10 +116,26 @@ class AdminController extends Controller
             'isAdmin' => 'admin',
         ];
 
-        if (isset($permissionToRoleMap[$request->permission])) {
-            $user->update(['role' => $permissionToRoleMap[$request->permission]]);
-        } else {
+        if (!isset($permissionToRoleMap[$request->permission])) {
             return response()->json(['success' => false, 'error' => 'Invalid permission'], 400);
+        }
+
+        if ($action === 'remove') {
+            // Downgrade the user's role because permissions are cumulative and hierarchical
+            $newRole = 'guest';
+            if ($request->permission === 'isAdmin') {
+                $newRole = 'professional';
+            } elseif ($request->permission === 'accessProfessional') {
+                $newRole = 'adult';
+            } elseif ($request->permission === 'accessAdult') {
+                $newRole = 'kid';
+            } elseif ($request->permission === 'accessKids') {
+                $newRole = 'guest';
+            }
+            
+            $user->update(['role' => $newRole]);
+        } else {
+            $user->update(['role' => $permissionToRoleMap[$request->permission]]);
         }
 
         return response()->json(['success' => true, 'user' => $user]);

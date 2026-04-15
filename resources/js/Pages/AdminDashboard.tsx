@@ -806,19 +806,20 @@ export default function AdminPage({
     userId: "",
     permission: "",
     userName: "",
+    action: "add",
   })
   const [roleChangePassword, setRoleChangePassword] = useState("")
   const [roleChangeError, setRoleChangeError] = useState("")
   const [roleChangeLoading, setRoleChangeLoading] = useState(false)
 
-  const promptRoleChange = (userId: string, permission: string, userName: string) => {
-    setRoleChangeDialog({ isOpen: true, userId, permission, userName })
+  const promptRoleChange = (userId: string, permission: string, userName: string, action: string = "add") => {
+    setRoleChangeDialog({ isOpen: true, userId, permission, userName, action })
     setRoleChangePassword("")
     setRoleChangeError("")
   }
 
   const closeRoleChangeDialog = () => {
-    setRoleChangeDialog({ isOpen: false, userId: "", permission: "", userName: "" })
+    setRoleChangeDialog({ isOpen: false, userId: "", permission: "", userName: "", action: "add" })
     setRoleChangePassword("")
     setRoleChangeError("")
   }
@@ -840,6 +841,7 @@ export default function AdminPage({
         },
         body: JSON.stringify({
           permission: roleChangeDialog.permission,
+          action: roleChangeDialog.action,
           adminPassword: roleChangePassword,
         }),
       })
@@ -1039,7 +1041,7 @@ export default function AdminPage({
               <AlertDialogHeader>
                 <AlertDialogTitle>Verify Admin Password</AlertDialogTitle>
                 <AlertDialogDescription>
-                  Enter your admin password to change the role for <strong>{roleChangeDialog.userName}</strong>.
+                  Enter your admin password to {roleChangeDialog.action === 'remove' ? 'remove' : 'grant'} the <strong>{roleChangeDialog.permission}</strong> permission for <strong>{roleChangeDialog.userName}</strong>.
                 </AlertDialogDescription>
               </AlertDialogHeader>
               <div className="py-4">
@@ -1379,47 +1381,47 @@ export default function AdminPage({
                         <div className="flex flex-wrap gap-2 sm:gap-3">
                           <button
                             type="button"
-                            onClick={() => promptRoleChange(u.id, "accessKids", u.name)}
+                            onClick={() => promptRoleChange(u.id, "accessKids", u.name, u.permissions.accessKids ? "remove" : "add")}
                             className={`inline-flex items-center justify-center font-extrabold px-4 pb-1.5 pt-2 rounded-xl text-xs sm:text-sm transition-all ${
                               u.permissions.accessKids
-                                ? "bg-slate-600 text-white shadow-[0_4px_0_#1e293b] hover:-translate-y-0.5 hover:shadow-[0_6px_0_#1e293b] active:translate-y-1 active:shadow-[0_0px_0_#1e293b]"
+                                ? "bg-slate-600 text-white shadow-[0_4px_0_#1e293b] hover:-translate-y-0.5 hover:shadow-[0_6px_0_#1e293b] hover:bg-red-600 hover:shadow-[0_4px_0_#991b1b] active:translate-y-1 active:shadow-[0_0px_0_#991b1b]"
                                 : "bg-white border-2 border-slate-200 text-slate-500 shadow-[0_4px_0_#e2e8f0] hover:-translate-y-0.5 hover:shadow-[0_6px_0_#e2e8f0] hover:bg-slate-50 active:translate-y-1 active:shadow-[0_0px_0_#e2e8f0]"
                             }`}
                           >
-                            Kids Access
+                            Kids Access {u.permissions.accessKids && <Trash2 className="h-3 w-3 ml-2 inline opacity-0 group-hover:opacity-100 transition-opacity" style={{ opacity: 0.7 }} />}
                           </button>
                           <button
                             type="button"
-                            onClick={() => promptRoleChange(u.id, "accessAdult", u.name)}
+                            onClick={() => promptRoleChange(u.id, "accessAdult", u.name, u.permissions.accessAdult ? "remove" : "add")}
                             className={`inline-flex items-center justify-center font-extrabold px-4 pb-1.5 pt-2 rounded-xl text-xs sm:text-sm transition-all ${
                               u.permissions.accessAdult
-                                ? "bg-teal-700 text-white shadow-[0_4px_0_#134e4a] hover:-translate-y-0.5 hover:shadow-[0_6px_0_#134e4a] active:translate-y-1 active:shadow-[0_0px_0_#134e4a]"
+                                ? "bg-teal-700 text-white shadow-[0_4px_0_#134e4a] hover:-translate-y-0.5 hover:shadow-[0_6px_0_#134e4a] hover:bg-red-600 hover:shadow-[0_4px_0_#991b1b] active:translate-y-1 active:shadow-[0_0px_0_#991b1b]"
                                 : "bg-white border-2 border-slate-200 text-slate-500 shadow-[0_4px_0_#e2e8f0] hover:-translate-y-0.5 hover:shadow-[0_6px_0_#e2e8f0] hover:bg-slate-50 active:translate-y-1 active:shadow-[0_0px_0_#e2e8f0]"
                             }`}
                           >
-                            Adult Access
+                            Adult Access {u.permissions.accessAdult && <Trash2 className="h-3 w-3 ml-2 inline opacity-0 group-hover:opacity-100 transition-opacity" style={{ opacity: 0.7 }} />}
                           </button>
                           <button
                             type="button"
-                            onClick={() => promptRoleChange(u.id, "accessProfessional", u.name)}
+                            onClick={() => promptRoleChange(u.id, "accessProfessional", u.name, u.permissions.accessProfessional ? "remove" : "add")}
                             className={`inline-flex items-center justify-center font-extrabold px-4 pb-1.5 pt-2 rounded-xl text-xs sm:text-sm transition-all ${
                               u.permissions.accessProfessional
-                                ? "bg-[#d60000] text-white shadow-[0_4px_0_#991b1b] hover:-translate-y-0.5 hover:shadow-[0_6px_0_#991b1b] active:translate-y-1 active:shadow-[0_0px_0_#991b1b]"
+                                ? "bg-[#d60000] text-white shadow-[0_4px_0_#991b1b] hover:-translate-y-0.5 hover:shadow-[0_6px_0_#991b1b] hover:bg-red-600 hover:shadow-[0_4px_0_#991b1b] active:translate-y-1 active:shadow-[0_0px_0_#991b1b]"
                                 : "bg-white border-2 border-slate-200 text-slate-500 shadow-[0_4px_0_#e2e8f0] hover:-translate-y-0.5 hover:shadow-[0_6px_0_#e2e8f0] hover:bg-slate-50 active:translate-y-1 active:shadow-[0_0px_0_#e2e8f0]"
                             }`}
                           >
-                            Professional Access
+                            Professional Access {u.permissions.accessProfessional && <Trash2 className="h-3 w-3 ml-2 inline opacity-0 group-hover:opacity-100 transition-opacity" style={{ opacity: 0.7 }} />}
                           </button>
                           <button
                             type="button"
-                            onClick={() => promptRoleChange(u.id, "isAdmin", u.name)}
+                            onClick={() => promptRoleChange(u.id, "isAdmin", u.name, u.permissions.isAdmin ? "remove" : "add")}
                             className={`inline-flex items-center justify-center font-extrabold px-4 pb-1.5 pt-2 rounded-xl text-xs sm:text-sm transition-all ${
                               u.permissions.isAdmin
-                                ? "bg-slate-900 text-white shadow-[0_4px_0_#000000] hover:-translate-y-0.5 hover:shadow-[0_6px_0_#000000] active:translate-y-1 active:shadow-[0_0px_0_#000000]"
+                                ? "bg-slate-900 text-white shadow-[0_4px_0_#000000] hover:-translate-y-0.5 hover:shadow-[0_6px_0_#000000] hover:bg-red-600 hover:shadow-[0_4px_0_#991b1b] active:translate-y-1 active:shadow-[0_0px_0_#991b1b]"
                                 : "bg-white border-2 border-slate-200 text-slate-500 shadow-[0_4px_0_#e2e8f0] hover:-translate-y-0.5 hover:shadow-[0_6px_0_#e2e8f0] hover:bg-slate-50 active:translate-y-1 active:shadow-[0_0px_0_#e2e8f0]"
                             }`}
                           >
-                            Admin
+                            Admin {u.permissions.isAdmin && <Trash2 className="h-3 w-3 ml-2 inline opacity-0 group-hover:opacity-100 transition-opacity" style={{ opacity: 0.7 }} />}
                           </button>
                         </div>
                       </div>
