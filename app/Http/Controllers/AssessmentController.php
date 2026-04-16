@@ -75,6 +75,9 @@ class AssessmentController extends Controller
 
         $user->update(['preTestScore' => $score]);
 
+        // Adaptive Learning: Update competency scores per category
+        $this->updateCompetencyScores($user);
+
         return response()->json([
             'score' => $score,
             'maxScore' => $maxScore,
@@ -112,6 +115,9 @@ class AssessmentController extends Controller
         }
 
         $user->update(['postTestScore' => $score]);
+
+        // Adaptive Learning: Update competency scores per category
+        $this->updateCompetencyScores($user);
 
         return response()->json([
             'score' => $score,
@@ -198,4 +204,37 @@ class AssessmentController extends Controller
     public function show(string $id) { }
     public function update(Request $request, string $id) { }
     public function destroy(string $id) { }
+
+    /**
+     * Compute per-category competency scores from all user answers.
+     * Stores as JSON: {"Fire Prevention": 80, "Evacuation Planning": 60, ...}
+     */
+    private function updateCompetencyScores(User $user): void
+    {
+        $answers = UserAnswer::where('userId', $user->id)
+            ->with('question:id,category')
+            ->get();
+
+        $categories = [];
+        foreach ($answers as $answer) {
+            if (!$answer->question || !$answer->question->category) continue;
+            $cat = $answer->question->category;
+            if (!isset($categories[$cat])) {
+                $categories[$cat] = ['correct' => 0, 'total' => 0];
+            }
+            $categories[$cat]['total']++;
+            if ($answer->isCorrect) {
+                $categories[$cat]['correct']++;
+            }
+        }
+
+        $scores = [];
+        foreach ($categories as $cat => $data) {
+            $scores[$cat] = $data['total'] > 0
+                ? (int) round(($data['correct'] / $data['total']) * 100)
+                : 0;
+        }
+
+        $user->update(['competency_scores' => $scores]);
+    }
 }

@@ -113,6 +113,7 @@ class AuthApiController extends Controller
             'gender' => $request->input('gender'),
             'barangay' => $request->input('barangay'),
             'school' => $request->input('school') ?? $request->input('schoolOther'),
+            'school_id' => $request->input('school_id'),
             'occupation' => $request->input('occupation') ?? $request->input('occupationOther'),
             'profileCompleted' => true,
         ]);
@@ -185,6 +186,7 @@ class AuthApiController extends Controller
             'gender' => $request->input('gender'),
             'barangay' => $request->input('barangay'),
             'school' => $request->input('school') ?? $request->input('schoolOther'),
+            'school_id' => $request->input('school_id'),
             'occupation' => $request->input('occupation') ?? $request->input('occupationOther'),
             'profileCompleted' => true
         ]);

@@ -1,6 +1,7 @@
 import React from "react";
 import { Navigation } from "@/Components/navigation";
 import { Footer } from "@/Components/footer";
+import { FeedbackWidget } from "@/Components/FeedbackWidget";
 import RootLayout from "./RootLayout";
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
@@ -12,6 +13,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                     {children}
                 </div>
                 <Footer />
+                <FeedbackWidget />
             </div>
         </RootLayout>
     );

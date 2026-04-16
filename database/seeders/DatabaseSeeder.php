@@ -11,6 +11,7 @@ use App\Models\BlogPost;
 use App\Models\KidsModule;
 use App\Models\QuickQuestion;
 use App\Models\AssessmentQuestion;
+use App\Models\School;
 
 class DatabaseSeeder extends Seeder
 {
@@ -60,6 +61,29 @@ class DatabaseSeeder extends Seeder
         ]);
 
         $this->command->info('✅ Created users (admin/testkid/testadult/testpro)');
+
+        // ============================
+        // 1b. Schools (Per-School Analytics)
+        // ============================
+        $schools = [
+            ['name' => 'Sta. Cruz Central Elementary School', 'address' => 'Poblacion, Sta. Cruz, Laguna', 'region' => 'Region IV-A (CALABARZON)', 'district' => 'Sta. Cruz District', 'type' => 'elementary'],
+            ['name' => 'Sta. Cruz National High School', 'address' => 'Poblacion, Sta. Cruz, Laguna', 'region' => 'Region IV-A (CALABARZON)', 'district' => 'Sta. Cruz District', 'type' => 'highschool'],
+            ['name' => 'Laguna State Polytechnic University - Sta. Cruz', 'address' => 'Sta. Cruz, Laguna', 'region' => 'Region IV-A (CALABARZON)', 'district' => 'Sta. Cruz District', 'type' => 'college'],
+            ['name' => 'Pili Elementary School', 'address' => 'Pili, Sta. Cruz, Laguna', 'region' => 'Region IV-A (CALABARZON)', 'district' => 'Sta. Cruz District', 'type' => 'elementary'],
+            ['name' => 'Barangay Pagsawitan Elementary School', 'address' => 'Pagsawitan, Sta. Cruz, Laguna', 'region' => 'Region IV-A (CALABARZON)', 'district' => 'Sta. Cruz District', 'type' => 'elementary'],
+            ['name' => 'Bagumbayan Elementary School', 'address' => 'Bagumbayan, Sta. Cruz, Laguna', 'region' => 'Region IV-A (CALABARZON)', 'district' => 'Sta. Cruz District', 'type' => 'elementary'],
+        ];
+        foreach ($schools as $s) {
+            School::updateOrCreate(['name' => $s['name']], $s);
+        }
+
+        // Link test users to schools
+        $school1 = School::where('name', 'Sta. Cruz Central Elementary School')->first();
+        $school2 = School::where('name', 'Sta. Cruz National High School')->first();
+        if ($school1) $kid->update(['school_id' => $school1->id]);
+        if ($school2) $adult->update(['school_id' => $school2->id]);
+
+        $this->command->info('✅ Seeded schools and linked test users');
 
         // ============================
         // 2. Carousel Images

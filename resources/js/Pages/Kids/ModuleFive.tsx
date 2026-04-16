@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from "react"
-import { Head, Link } from '@inertiajs/react'
+import { Head, Link, router } from '@inertiajs/react'
 import DashboardLayout from "@/Layouts/DashboardLayout"
-import { ArrowLeft, BookOpen, Flame, Trophy } from "lucide-react"
+import { ArrowLeft, BookOpen, ChevronRight, Flame, Trophy, ClipboardCheck, PartyPopper } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 const ModuleFivePage = ({ moduleNum }: { moduleNum: number }) => {
   const currentModule = moduleNum || 5
+  const [moduleCompleted, setModuleCompleted] = useState(false)
 
   useEffect(() => {
     const handleMessage = async (e: MessageEvent) => {
@@ -26,6 +27,11 @@ const ModuleFivePage = ({ moduleNum }: { moduleNum: number }) => {
               completed: data.completed
             }),
           })
+
+          // Show completion banner when Module 5 is done
+          if (data.completed && data.moduleNum === 5) {
+            setModuleCompleted(true)
+          }
         } catch (error) {
           console.error("Failed to sync progress:", error)
         }
@@ -56,9 +62,49 @@ const ModuleFivePage = ({ moduleNum }: { moduleNum: number }) => {
         }, 50);
       };
 
+      // Check if the congratulations/completion screen appeared inside the iframe
+      const checkForCompletion = () => {
+        const bodyText = iframeDoc.body?.innerText || '';
+        const alreadyInjected = iframeDoc.getElementById('post-test-cta');
+        
+        if ((bodyText.includes('CONGRATULATIONS') || bodyText.includes('Course Complete')) && !alreadyInjected) {
+          setModuleCompleted(true);
+          
+          // Find the certificate button or the completion container to inject after
+          const certificateBtn = iframeDoc.querySelector('a[href*="certificate"], button, .btn, [class*="cert"]');
+          const completionContainer = certificateBtn?.closest('div') || certificateBtn?.parentElement;
+          
+          if (completionContainer) {
+            const ctaDiv = iframeDoc.createElement('div');
+            ctaDiv.id = 'post-test-cta';
+            ctaDiv.style.cssText = 'text-align:center; margin-top:16px; padding:16px; background:linear-gradient(135deg,#10b981,#059669); border-radius:16px; border:2px solid rgba(255,255,255,0.2);';
+            ctaDiv.innerHTML = `
+              <p style="color:rgba(255,255,255,0.9); font-size:13px; font-weight:700; margin-bottom:10px; letter-spacing:0.5px;">
+                📋 Ready for the final challenge?
+              </p>
+              <a href="/assessment/post-test" 
+                 style="display:inline-flex; align-items:center; gap:8px; padding:12px 28px; background:white; color:#059669; font-weight:900; font-size:15px; border-radius:999px; text-decoration:none; box-shadow:0 4px 0 #047857; border:2px solid white; transition:all 0.2s; text-transform:uppercase; letter-spacing:1px;"
+                 onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 0 #047857'"
+                 onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 0 #047857'"
+              >
+                📝 Take Post-Test Assessment →
+              </a>
+            `;
+            completionContainer.appendChild(ctaDiv);
+            resizeIframe();
+          }
+        }
+      };
+
       resizeIframe();
-      const observer = new MutationObserver(resizeIframe);
+      const observer = new MutationObserver(() => {
+        resizeIframe();
+        checkForCompletion();
+      });
       observer.observe(iframeDoc.body, { childList: true, subtree: true, attributes: true });
+
+      // Also check immediately in case completion is already shown
+      checkForCompletion();
 
       const links = iframeDoc.querySelectorAll('a');
       links.forEach(link => {
@@ -116,11 +162,37 @@ const ModuleFivePage = ({ moduleNum }: { moduleNum: number }) => {
             </div>
             {/* Progress */}
             <div className="text-sm font-bold text-slate-500 bg-slate-50 px-4 py-2 rounded-xl border border-slate-200 whitespace-nowrap hidden lg:block">
-              Status: <span className="text-[#ff4b3e] font-black ml-1">In Progress</span>
+              Status: <span className={cn("font-black ml-1", moduleCompleted ? "text-green-500" : "text-[#ff4b3e]")}>{moduleCompleted ? "Completed ✓" : "In Progress"}</span>
             </div>
           </div>
         </div>
       </div>
+
+      {/* ── Module 5 Completion Banner ── */}
+      {moduleCompleted && (
+        <div className="bg-gradient-to-r from-emerald-500 via-green-500 to-teal-500 px-4 sm:px-6 py-6 sm:py-8 relative overflow-hidden animate-in slide-in-from-top fade-in duration-500">
+          <div className="absolute inset-0 bg-[url('/noise.png')] opacity-5" />
+          <div className="max-w-4xl mx-auto relative z-10 flex flex-col sm:flex-row items-center gap-4 sm:gap-8">
+            <div className="flex items-center gap-4 flex-1">
+              <div className="h-14 w-14 sm:h-16 sm:w-16 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center shrink-0 border-2 border-white/30">
+                <Trophy className="h-7 w-7 sm:h-8 sm:w-8 text-yellow-200" />
+              </div>
+              <div>
+                <h3 className="text-lg sm:text-xl font-black text-white tracking-tight">🎉 All Modules Complete!</h3>
+                <p className="text-white/80 text-xs sm:text-sm font-bold mt-0.5">You've finished all 5 fire safety modules. Take the final Post-Test to earn your certificate!</p>
+              </div>
+            </div>
+            <button
+              onClick={() => router.visit('/assessment/post-test')}
+              className="w-full sm:w-auto bg-white hover:bg-yellow-50 text-green-700 font-black px-6 py-3.5 rounded-full border-2 border-white border-b-[4px] border-b-green-200 active:border-b-2 active:translate-y-[2px] shadow-lg transition-all flex items-center justify-center gap-2 text-sm sm:text-base shrink-0 uppercase tracking-wider"
+            >
+              <ClipboardCheck className="h-5 w-5" />
+              Take Post-Test
+              <ChevronRight className="h-4 w-4" />
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* ── Dark Module Content Area ── */}
       <div className="flex-1 bg-[#0f1729] flex flex-col w-full">
@@ -140,3 +212,4 @@ const ModuleFivePage = ({ moduleNum }: { moduleNum: number }) => {
 ModuleFivePage.layout = (page: React.ReactNode) => <DashboardLayout>{page}</DashboardLayout>
 
 export default ModuleFivePage
+

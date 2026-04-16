@@ -18,6 +18,7 @@ interface ModuleData {
   progress: number
   gameLabel?: string
   gameIcon?: string
+  recommendedAction?: string | null
 }
 
 // Static metadata per module (game names, icons) since these are hardcoded per module
@@ -192,6 +193,18 @@ const CourseHubPage = () => {
                     {module.isCompleted && (
                       <div className="absolute top-4 right-4 h-7 w-7 rounded-full bg-green-500 flex items-center justify-center shadow">
                         <CheckCircle className="h-4 w-4 text-white" />
+                      </div>
+                    )}
+
+                    {/* Adaptive Learning Badge */}
+                    {module.recommendedAction && !module.isLocked && (
+                      <div className={cn(
+                        "absolute top-4 left-4 px-2 py-0.5 rounded-md text-[10px] sm:text-xs font-black uppercase tracking-wider border-2 shadow-sm",
+                        module.recommendedAction === 'Priority Review' ? 'bg-red-500/20 text-red-400 border-red-500/50' : 
+                        module.recommendedAction === 'Needs Practice' ? 'bg-orange-500/20 text-orange-400 border-orange-500/50' : 
+                        'bg-green-500/20 text-green-400 border-green-500/50'
+                      )}>
+                        {module.recommendedAction}
                       </div>
                     )}
 

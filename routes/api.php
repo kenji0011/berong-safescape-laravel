@@ -9,6 +9,8 @@ use App\Http\Controllers\KidsController;
 use App\Http\Controllers\FloorPlanController;
 use App\Http\Controllers\EngagementController;
 use App\Http\Controllers\AuthApiController;
+use App\Http\Controllers\SchoolAnalyticsController;
+use App\Http\Controllers\FeedbackController;
 
 /*
 |--------------------------------------------------------------------------
@@ -35,6 +37,9 @@ Route::get('/content/carousel', [ContentController::class, 'carousel']);
 Route::get('/assessment/questions', [AssessmentController::class, 'index']);
 Route::get('/quick-questions', [ContentController::class, 'questions']);
 
+// Public schools list (for registration dropdowns)
+Route::get('/schools', [SchoolAnalyticsController::class, 'index']);
+
 Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
     return $request->user();
 });
@@ -47,6 +52,11 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/auth/user-scores', [AuthApiController::class, 'userScores']);
     Route::put('/auth/update-profile', [AuthApiController::class, 'updateProfile']);
     Route::put('/auth/change-password', [AuthApiController::class, 'changePassword']);
+
+    // ==========================================
+    // Chatbot AI Domain
+    // ==========================================
+    Route::post('/chatbot/ai-response', [\App\Http\Controllers\ChatbotController::class, 'respond']);
 
     // ==========================================
     // 1. Content Domain (Blog, Videos, FAQs, Carousel)
@@ -99,6 +109,11 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::get('/notifications', [EngagementController::class, 'notifications']);
         Route::post('/notifications/read', [EngagementController::class, 'readNotifications']);
     });
+
+    // ==========================================
+    // User Feedback Submission
+    // ==========================================
+    Route::post('/feedback', [FeedbackController::class, 'store']);
 
     // ==========================================
     // 6. Admin Control Panel (Role Protected)
@@ -154,5 +169,15 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::post('/fire-codes', [AdminController::class, 'createFireCode']);
         Route::put('/fire-codes/{id}', [AdminController::class, 'updateFireCode']);
         Route::delete('/fire-codes/{id}', [AdminController::class, 'deleteFireCode']);
+
+        // School Analytics & Management
+        Route::get('/school-analytics', [SchoolAnalyticsController::class, 'analytics']);
+        Route::get('/school-analytics/{id}', [SchoolAnalyticsController::class, 'show']);
+        Route::post('/schools', [SchoolAnalyticsController::class, 'store']);
+        Route::put('/schools/{id}', [SchoolAnalyticsController::class, 'update']);
+        Route::delete('/schools/{id}', [SchoolAnalyticsController::class, 'destroy']);
+
+        // Feedback Analytics
+        Route::get('/feedback-analytics', [FeedbackController::class, 'analytics']);
     });
 });

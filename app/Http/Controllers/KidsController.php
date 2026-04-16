@@ -22,7 +22,17 @@ class KidsController extends Controller
             ->get()
             ->keyBy('moduleNum');
 
-        return response()->json($modules->map(function ($module) use ($progressRecords) {
+        // Adaptive Learning mapping: Module dayNumber -> Assessment Category
+        $categoryMapping = [
+            1 => 'General Safety Awareness',
+            2 => 'Emergency Response',
+            3 => 'Smoke Detector Knowledge',
+            4 => 'Evacuation Planning',
+            5 => 'Fire Prevention'
+        ];
+        $scores = $user->competency_scores ?? [];
+
+        return response()->json($modules->map(function ($module) use ($progressRecords, $categoryMapping, $scores) {
             $progress = $progressRecords->get($module->dayNumber);
             $isCompleted = $progress && $progress->completed;
 
@@ -42,6 +52,19 @@ class KidsController extends Controller
                 $sectionProgress = $isCompleted ? 100 : (int) round(($completedSections / $totalSections) * 100);
             }
 
+            // Adaptive Learning logic
+            $recommendedAction = null;
+            $cat = $categoryMapping[$module->dayNumber] ?? null;
+            if ($cat && isset($scores[$cat])) {
+                if ($scores[$cat] <= 50) {
+                    $recommendedAction = 'Priority Review';
+                } elseif ($scores[$cat] < 75) {
+                    $recommendedAction = 'Needs Practice';
+                } elseif ($scores[$cat] >= 90) {
+                    $recommendedAction = 'Mastered';
+                }
+            }
+
             return [
                 'id'          => $module->id,
                 'title'       => $module->title,
@@ -53,6 +76,7 @@ class KidsController extends Controller
                 'isLocked'    => $isLocked,
                 'progress'    => $isCompleted ? 100 : $sectionProgress,
                 'sections'    => [],
+                'recommendedAction' => $recommendedAction,
             ];
         }));
     }
