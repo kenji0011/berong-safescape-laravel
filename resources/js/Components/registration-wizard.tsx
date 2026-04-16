@@ -28,7 +28,8 @@ import {
   MapPin,
   KeyRound,
   ClipboardList,
-  Loader2
+  Loader2,
+  Star
 } from "lucide-react"
 import {
   BARANGAYS_SANTA_CRUZ,
@@ -117,6 +118,11 @@ export function RegistrationWizard() {
   })
 
   const [validationErrors, setValidationErrors] = useState<Record<string, string>>({})
+
+  const [feedbackRating, setFeedbackRating] = useState(0)
+  const [feedbackHover, setFeedbackHover] = useState(0)
+  const [feedbackSubmitting, setFeedbackSubmitting] = useState(false)
+  const [feedbackSuccess, setFeedbackSuccess] = useState(false)
 
   // Fetch pre-test questions when reaching step 4
   useEffect(() => {
@@ -347,6 +353,24 @@ export function RegistrationWizard() {
     }
   }
 
+  const handleFeedbackSubmit = async () => {
+    if (feedbackRating === 0) return
+    setFeedbackSubmitting(true)
+    try {
+        await axios.post('/api/feedback', {
+            featureName: 'Registration Pre-Test',
+            featureType: 'quiz',
+            rating: feedbackRating,
+            comments: ''
+        })
+        setFeedbackSuccess(true)
+    } catch(err) {
+        console.error('Failed to submit registration feedback', err)
+    } finally {
+        setFeedbackSubmitting(false)
+    }
+  }
+
   const handleContinue = async () => {
     // Small delay to ensure cookie is fully set before middleware checks it
     // This fixes a race condition where navigation happens before cookie propagation
@@ -397,7 +421,7 @@ export function RegistrationWizard() {
 
           <button
             onClick={handleContinue}
-            className="w-full bg-yellow-400 text-red-600 font-extrabold py-3 rounded-full text-lg shadow-[0_4px_0_#b45309] hover:-translate-y-0.5 hover:shadow-[0_6px_0_#b45309] active:translate-y-1 active:shadow-[0_0px_0_#b45309] transition-all flex items-center justify-center gap-2"
+            className="w-full bg-yellow-400 text-red-600 font-extrabold py-3 rounded-full text-lg shadow-[0_4px_0_#b45309] hover:-translate-y-0.5 hover:shadow-[0_6px_0_#b45309] active:translate-y-1 active:shadow-[0_0px_0_#b45309] transition-all flex items-center justify-center gap-2 mt-4"
           >
             🚀 Start Learning
             <ChevronRight className="h-5 w-5" />

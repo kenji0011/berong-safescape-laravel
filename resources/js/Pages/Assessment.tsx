@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Label } from "@/components/ui/label"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
-import { ArrowLeft, Check, ChevronLeft, ChevronRight, Loader2, Shield } from "lucide-react"
+import { ArrowLeft, Check, ChevronLeft, ChevronRight, Loader2, Shield, Star } from "lucide-react"
 import { getScoreRating } from "@/lib/constants"
 import { useAuth } from "@/lib/auth-context"
 
@@ -37,6 +37,12 @@ export default function Assessment({ type }: AssessmentProps) {
         score?: number
         maxScore?: number
     } | null>(null)
+
+    // Embedded feedback state
+    const [feedbackRating, setFeedbackRating] = useState(0)
+    const [feedbackHover, setFeedbackHover] = useState(0)
+    const [feedbackSubmitting, setFeedbackSubmitting] = useState(false)
+    const [feedbackSuccess, setFeedbackSuccess] = useState(false)
 
     const isPreTest = type === 'preTest'
     const title = isPreTest ? "Pre-Test Assessment" : "Post-Test Assessment"
@@ -110,6 +116,24 @@ export default function Assessment({ type }: AssessmentProps) {
         }
     }
 
+    const handleFeedbackSubmit = async () => {
+        if (feedbackRating === 0) return
+        setFeedbackSubmitting(true)
+        try {
+            await axios.post('/api/feedback', {
+                featureName: isPreTest ? 'Pre-Test Assessment' : 'Post-Test Assessment',
+                featureType: 'quiz',
+                rating: feedbackRating,
+                comments: ''
+            })
+            setFeedbackSuccess(true)
+        } catch(err) {
+            console.error('Failed to submit post-test feedback', err)
+        } finally {
+            setFeedbackSubmitting(false)
+        }
+    }
+
     const handleContinue = () => {
         if (user?.role === "kid") router.visit("/kids")
         else if (user?.role === "adult") router.visit("/adult")
@@ -161,6 +185,51 @@ export default function Assessment({ type }: AssessmentProps) {
                                     : "Great job completing your final assessment!"}
                             </p>
                         </div>
+
+                        {/* Inline Feedback Widget - Post-Test only */}
+                        {!isPreTest && (
+                            <div className="bg-slate-50 border-2 border-slate-200 rounded-2xl p-4 text-center mt-2 mb-4 animate-in fade-in slide-in-from-bottom-4">
+                                {feedbackSuccess ? (
+                                    <div className="flex flex-col items-center">
+                                        <Check className="h-6 w-6 text-green-500 mb-2" />
+                                        <p className="text-sm font-bold text-slate-700">Thanks for your feedback!</p>
+                                    </div>
+                                ) : (
+                                    <>
+                                        <p className="text-xs font-black text-slate-500 uppercase tracking-wider mb-3">Rate your Assessment Experience</p>
+                                        <div className="flex justify-center gap-2 mb-2">
+                                            {[1, 2, 3, 4, 5].map((star) => (
+                                                <button
+                                                    key={star}
+                                                    onClick={() => !feedbackSubmitting && setFeedbackRating(star)}
+                                                    onMouseEnter={() => !feedbackSubmitting && setFeedbackHover(star)}
+                                                    onMouseLeave={() => !feedbackSubmitting && setFeedbackHover(0)}
+                                                    className="p-1 transition-all hover:scale-110"
+                                                >
+                                                    <Star 
+                                                        className={`h-6 w-6 sm:h-8 sm:w-8 transition-colors ${
+                                                            (feedbackHover || feedbackRating) >= star 
+                                                                ? "text-yellow-400 fill-yellow-400" 
+                                                                : "text-slate-200"
+                                                        }`} 
+                                                    />
+                                                </button>
+                                            ))}
+                                        </div>
+                                        {feedbackRating > 0 && (
+                                            <Button 
+                                                onClick={handleFeedbackSubmit}
+                                                disabled={feedbackSubmitting}
+                                                className="bg-blue-500 hover:bg-blue-600 text-white rounded-full font-bold px-6 py-2 mt-2 h-auto"
+                                            >
+                                                {feedbackSubmitting ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
+                                                Submit Rating
+                                            </Button>
+                                        )}
+                                    </>
+                                )}
+                            </div>
+                        )}
 
                         <Button 
                             onClick={handleContinue}

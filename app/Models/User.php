@@ -27,11 +27,13 @@ class User extends Authenticatable
         'gender',
         'barangay',
         'school',
+        'school_id',
         'occupation',
         'preTestScore',
         'postTestScore',
         'engagementPoints',
         'profileCompleted',
+        'competency_scores',
     ];
 
     /**
@@ -55,6 +57,7 @@ class User extends Authenticatable
             'postTestScore' => 'integer',
             'engagementPoints' => 'integer',
             'profileCompleted' => 'boolean',
+            'competency_scores' => 'array',
         ];
     }
 
@@ -68,4 +71,6 @@ class User extends Authenticatable
     public function engagementLogs() { return $this->hasMany(EngagementLog::class, 'userId'); }
     public function floorPlans() { return $this->hasMany(FloorPlan::class, 'userId'); }
     public function simulationJobs() { return $this->hasMany(SimulationJob::class, 'userId'); }
+    public function school() { return $this->belongsTo(School::class, 'school_id'); }
+    public function feedbacks() { return $this->hasMany(UserFeedback::class, 'userId'); }
 }

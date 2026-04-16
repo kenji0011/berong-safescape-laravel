@@ -4,11 +4,12 @@ import { useState, useEffect, useRef } from "react"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
-import { MessageCircle, X, Send, Sparkles, Minimize2, Maximize2 } from "lucide-react"
+import { MessageCircle, X, Send, Sparkles, Minimize2, Maximize2, Volume2, VolumeX, Mic, Square } from "lucide-react"
 import Image from '@/components/Image';
 import { motion, AnimatePresence, useMotionValue, animate } from "motion/react"
 import { useAuth } from "@/lib/auth-context"
 import { Link } from '@inertiajs/react';
+import axios from 'axios';
 import ReactMarkdown from "react-markdown"
 import chatbotIntents from "@/lib/chatbot-intents.json"
 
@@ -55,7 +56,68 @@ export function Chatbot() {
   const [quickQuestions, setQuickQuestions] = useState<Record<string, QuickQuestion[]>>({})
   const [loadingQuestions, setLoadingQuestions] = useState(true)
   const [showQuickQuestions, setShowQuickQuestions] = useState(true)
+  const [readAloud, setReadAloud] = useState(false)
+  const [isListening, setIsListening] = useState(false)
+  const [isTyping, setIsTyping] = useState(false)
+  const abortControllerRef = useRef<AbortController | null>(null)
   const messagesEndRef = useRef<HTMLDivElement>(null)
+
+  const readAloudRef = useRef(readAloud)
+  useEffect(() => {
+    readAloudRef.current = readAloud
+  }, [readAloud])
+
+  const speakText = (text: string) => {
+    if (!readAloudRef.current) return
+    window.speechSynthesis.cancel() // Stop any current speech
+    
+    // Attempt to parse out basic markdown if present to read cleaner
+    const cleanText = text.replace(/[*#_`]/g, '').replace(/\n+/g, ' ')
+    const utterance = new SpeechSynthesisUtterance(cleanText)
+    utterance.lang = 'en-US'
+    window.speechSynthesis.speak(utterance)
+  }
+
+  const startListening = () => {
+    // Check support
+    if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+      alert("Your browser does not support Speech Recognition. Please try Chrome or Edge.")
+      return
+    }
+    
+    // type cast to any to bypass TS window type issues
+    const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition
+    const recognition = new SpeechRecognition()
+    recognition.continuous = false
+    recognition.interimResults = false
+    recognition.lang = 'en-US' // Can also be tl-PH for tagalog
+
+    recognition.onstart = () => {
+      setIsListening(true)
+    }
+
+    recognition.onresult = (event: any) => {
+      const transcript = event.results[0][0].transcript
+      setInputValue(prev => prev + (prev.length > 0 ? ' ' : '') + transcript)
+      setShowQuickQuestions(false)
+    }
+
+    recognition.onerror = (event: any) => {
+      console.error("Speech recognition error", event.error)
+      if (event.error === 'not-allowed') {
+        alert("Microphone access was denied. Please check your browser settings to allow microphone input.")
+      } else {
+        alert(`Microphone error: ${event.error}`)
+      }
+      setIsListening(false)
+    }
+
+    recognition.onend = () => {
+      setIsListening(false)
+    }
+
+    recognition.start()
+  }
 
   // Compact mode — small circle button instead of full mascot
   const [useMiniButton, setUseMiniButton] = useState(() => {
@@ -186,9 +248,9 @@ export function Chatbot() {
   useEffect(() => {
     const loadQuickQuestions = async () => {
       try {
-        const response = await fetch('/api/quick-questions')
-        if (response.ok) {
-          const questionsArray: QuickQuestion[] = await response.json()
+        const response = await axios.get('/api/quick-questions')
+        if (response.data) {
+          const questionsArray: QuickQuestion[] = response.data
           
           const grouped: Record<string, QuickQuestion[]> = {}
           questionsArray.forEach((q) => {
@@ -246,8 +308,21 @@ export function Chatbot() {
     setMessages((prev) => [...prev, userMessage])
     setInputValue("")
 
+    // Create an abort controller for stopping generation
+    abortControllerRef.current = new AbortController()
+
     // Get bot response and add to messages
-    const botResponse = await generateBotResponse(inputValue)
+    const currentContext = [...messages, userMessage]
+    setIsTyping(true)
+    
+    let botResponse = ""
+    try {
+      botResponse = await generateBotResponse(inputValue, currentContext, abortControllerRef.current.signal)
+    } finally {
+      setIsTyping(false)
+      abortControllerRef.current = null
+    }
+
     const botMessage: Message = {
       id: (Date.now() + 1).toString(),
       text: botResponse,
@@ -255,6 +330,15 @@ export function Chatbot() {
       timestamp: new Date(),
     }
     setMessages((prev) => [...prev, botMessage])
+    if (botResponse !== "Response generation stopped.") {
+      speakText(botResponse)
+    }
+  }
+
+  const handleStopGeneration = () => {
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort()
+    }
   }
 
   const handleQuickQuestion = async (questionText: string, responseText: string) => {
@@ -276,9 +360,10 @@ export function Chatbot() {
       timestamp: new Date(),
     }
     setMessages((prev) => [...prev, botMessage])
+    speakText(responseText)
   }
 
-  const generateBotResponse = async (input: string): Promise<string> => {
+  const generateBotResponse = async (input: string, currentHistory: Message[] = [], signal?: AbortSignal): Promise<string> => {
     // Only use AI for authenticated users
     if (!isAuthenticated) {
       return generateRuleBasedResponse(input) + "\n\n💡 Sign in for AI-powered responses!"
@@ -286,26 +371,29 @@ export function Chatbot() {
 
     try {
       // Use AI backend for logged-in users
-      const response = await fetch('/api/chatbot/ai-response', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ message: input }),
-      });
+      // Map history to simple role/text objects
+      const recentHistory = currentHistory.slice(currentHistory.length > 5 ? currentHistory.length - 5 : 0).map(m => ({
+        role: m.sender === 'user' ? 'user' : 'bot',
+        text: m.text
+      }));
 
-      if (response.ok) {
-        const data = await response.json();
-        return data.response;
+      const response = await axios.post('/api/chatbot/ai-response', {
+        message: input,
+        history: recentHistory
+      }, { signal });
+
+      if (response.data && response.data.response) {
+        return response.data.response;
       } else {
-        console.error('AI response failed:', response.status);
-        // Fallback to rule-based response
-        return generateRuleBasedResponse(input);
+        console.error('AI response data empty:', response);
+        return "I apologize, but my AI system received an unexpected response. Please try asking your question again.";
       }
-    } catch (error) {
+    } catch (error: any) {
+      if (axios.isCancel(error)) {
+        return "Response generation stopped.";
+      }
       console.error('Error calling AI backend:', error);
-      // Fallback to rule-based response
-      return generateRuleBasedResponse(input);
+      return "I'm having trouble connecting to my knowledge base right now. For emergencies, please call 911 immediately.";
     }
   }
 
@@ -556,6 +644,18 @@ export function Chatbot() {
                   <h3 className="font-black text-lg tracking-wide">BFP Assistant</h3>
                 </div>
                 <div className="flex items-center gap-1">
+                  {/* Toggle Read Aloud */}
+                  <button
+                    onClick={() => {
+                      setReadAloud(prev => !prev)
+                      if (readAloud) window.speechSynthesis.cancel()
+                    }}
+                    className={`h-9 w-9 flex items-center justify-center rounded-lg transition-colors ${readAloud ? 'bg-white/30 text-white' : 'text-white/80 hover:bg-white/20'}`}
+                    title={readAloud ? 'Turn off voice' : 'Turn on voice'}
+                  >
+                    {readAloud ? <Volume2 className="h-5 w-5" strokeWidth={2.5} /> : <VolumeX className="h-5 w-5" strokeWidth={2.5} />}
+                  </button>
+
                   {/* Toggle mini/full mascot mode */}
                   <button
                     onClick={toggleMiniMode}
@@ -642,6 +742,29 @@ export function Chatbot() {
                     </div>
                   </div>
                 ))}
+                {/* Typing Indicator */}
+                {isTyping && (
+                  <div className="flex justify-start">
+                    <div className="bg-[#1e3a4a] text-white border border-[#2a5060] rounded-2xl rounded-bl-md p-3 px-4 flex items-center gap-1.5 h-10 w-16">
+                      <motion.div
+                        className="w-1.5 h-1.5 bg-orange-400 rounded-full"
+                        animate={{ y: [0, -5, 0] }}
+                        transition={{ duration: 0.6, repeat: Infinity, ease: "easeInOut" }}
+                      />
+                      <motion.div
+                        className="w-1.5 h-1.5 bg-orange-400 rounded-full"
+                        animate={{ y: [0, -5, 0] }}
+                        transition={{ duration: 0.6, repeat: Infinity, ease: "easeInOut", delay: 0.2 }}
+                      />
+                      <motion.div
+                        className="w-1.5 h-1.5 bg-orange-400 rounded-full"
+                        animate={{ y: [0, -5, 0] }}
+                        transition={{ duration: 0.6, repeat: Infinity, ease: "easeInOut", delay: 0.4 }}
+                      />
+                    </div>
+                  </div>
+                )}
+
                 <div ref={messagesEndRef} />
               </div>
 
@@ -662,17 +785,35 @@ export function Chatbot() {
                   />
                   <button
                     type="button"
-                    className="h-10 w-10 flex items-center justify-center text-gray-400 hover:text-orange-500 transition-colors"
-                    title="Voice input (coming soon)"
+                    onClick={startListening}
+                    className={`h-10 w-10 flex items-center justify-center transition-all ${
+                      isListening 
+                        ? 'text-red-500 bg-red-100 rounded-full animate-pulse shadow-[0_0_15px_rgba(239,68,68,0.5)]' 
+                        : 'text-gray-400 hover:text-orange-500'
+                    }`}
+                    title={isListening ? "Listening..." : "Voice input"}
                   >
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/></svg>
+                    <Mic className="h-5 w-5" strokeWidth={isListening ? 2.5 : 2} />
                   </button>
-                  <button
-                    onClick={handleSend}
-                    className="h-10 w-10 flex items-center justify-center bg-[#1e293b] hover:bg-[#334155] text-white rounded-full shadow-md transition-all active:scale-95"
-                  >
-                    <Send className="h-4 w-4" />
-                  </button>
+                  {isTyping ? (
+                    <button
+                      onClick={handleStopGeneration}
+                      className="h-10 w-10 flex items-center justify-center bg-red-500 hover:bg-red-600 text-white rounded-full shadow-md transition-all active:scale-95"
+                      title="Stop generating"
+                    >
+                      <Square className="h-4 w-4 fill-current" />
+                    </button>
+                  ) : (
+                    <button
+                      onClick={handleSend}
+                      disabled={!inputValue.trim()}
+                      className={`h-10 w-10 flex items-center justify-center text-white rounded-full shadow-md transition-all active:scale-95 ${
+                        inputValue.trim() ? 'bg-[#1e293b] hover:bg-[#334155]' : 'bg-gray-300 cursor-not-allowed'
+                      }`}
+                    >
+                      <Send className="h-4 w-4 ml-0.5" />
+                    </button>
+                  )}
                 </div>
               </div>
             </Card>
