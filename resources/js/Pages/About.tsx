@@ -83,13 +83,13 @@ function FeatureCard({ feature, index }: { feature: { icon: any; title: string; 
                 ease: "easeOut",
                 delay: index * 0.1
             }}
-            className="group bg-white/10 backdrop-blur-sm rounded-xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border border-white/20 hover:bg-white/20"
+            className="group bg-white/10 backdrop-blur-sm rounded-xl p-5 sm:p-6 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border border-white/20 hover:bg-white/20"
         >
-            <div className={`${feature.color} w-14 h-14 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300`}>
-                <feature.icon className="w-7 h-7 text-white" />
+            <div className={`${feature.color} w-12 h-12 sm:w-14 sm:h-14 rounded-xl flex items-center justify-center mb-3 sm:mb-4 group-hover:scale-110 transition-transform duration-300`}>
+                <feature.icon className="w-6 h-6 sm:w-7 sm:h-7 text-white" />
             </div>
-            <h3 className="text-xl font-semibold text-white mb-2">{feature.title}</h3>
-            <p className="text-white/80">{feature.description}</p>
+            <h3 className="text-lg sm:text-xl font-semibold text-white mb-1 sm:mb-2">{feature.title}</h3>
+            <p className="text-white/80 text-sm sm:text-base">{feature.description}</p>
         </motion.div>
     );
 }
@@ -346,7 +346,7 @@ export default function AboutPage() {
                 {/* Hero Section with 3D Parallax */}
                 <motion.section
                     ref={heroRef}
-                    className="relative bg-white py-20 sm:py-28 overflow-hidden"
+                    className="relative bg-white py-10 sm:py-28 overflow-hidden"
                     style={{ opacity: heroOpacity, scale: heroScale }}
                 >
                     {/* Background Pattern */}
@@ -370,7 +370,7 @@ export default function AboutPage() {
                                     transformPerspective: 1000
                                 }}
                             >
-                                <div className="relative w-56 h-56 sm:w-72 sm:h-72 lg:w-96 lg:h-96">
+                                <div className="relative w-48 h-48 sm:w-72 sm:h-72 lg:w-96 lg:h-96">
                                     <motion.div
                                         className="absolute inset-0 bg-red-500/20 rounded-full blur-3xl"
                                         animate={{ scale: [1, 1.1, 1], opacity: [0.2, 0.3, 0.2] }}
@@ -407,7 +407,7 @@ export default function AboutPage() {
                                 style={{ y: heroTextY, opacity: heroOpacity }}
                             >
                                 <motion.span
-                                    className="text-red-600 font-semibold text-lg sm:text-xl uppercase tracking-wider mb-4 block"
+                                    className="text-red-600 font-semibold text-sm sm:text-xl uppercase tracking-wider mb-2 sm:mb-4 block"
                                     initial={{ opacity: 0, y: 20 }}
                                     animate={{ opacity: 1, y: 0 }}
                                     transition={{ duration: 0.4 }}
@@ -415,7 +415,7 @@ export default function AboutPage() {
                                     About SafeScape
                                 </motion.span>
                                 <motion.h1
-                                    className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-6 leading-tight text-gray-900"
+                                    className="text-3xl sm:text-5xl lg:text-6xl font-bold mb-2 sm:mb-6 leading-tight text-gray-900"
                                     initial={{ opacity: 0, y: 30 }}
                                     animate={{ opacity: 1, y: 0 }}
                                     transition={{ duration: 0.4, delay: 0.05 }}
@@ -423,7 +423,7 @@ export default function AboutPage() {
                                     Meet <span className="text-red-600">Berong</span>
                                 </motion.h1>
                                 <motion.p
-                                    className="text-2xl sm:text-3xl font-light mb-6 text-gray-700"
+                                    className="text-lg sm:text-3xl font-light mb-4 sm:mb-6 text-gray-700"
                                     initial={{ opacity: 0, y: 30 }}
                                     animate={{ opacity: 1, y: 0 }}
                                     transition={{ duration: 0.4, delay: 0.1 }}
@@ -431,7 +431,7 @@ export default function AboutPage() {
                                     Your Fire Safety Companion
                                 </motion.p>
                                 <motion.p
-                                    className="text-lg sm:text-xl text-gray-600 leading-relaxed"
+                                    className="text-sm sm:text-xl text-gray-600 leading-relaxed px-2 sm:px-0"
                                     initial={{ opacity: 0, y: 30 }}
                                     animate={{ opacity: 1, y: 0 }}
                                     transition={{ duration: 0.4, delay: 0.15 }}
@@ -447,7 +447,7 @@ export default function AboutPage() {
                 {/* Platform Overview Section - Card Flip Animation */}
                 <motion.section
                     ref={platformRef}
-                    className="py-16 sm:py-20 bg-gradient-to-br from-red-700 via-red-600 to-orange-500 text-white relative overflow-hidden"
+                    className="py-10 sm:py-20 bg-gradient-to-br from-red-700 via-red-600 to-orange-500 text-white relative overflow-hidden"
                     style={{ opacity: platformOpacity, scale: platformScale }}
                 >
                     {/* Background Pattern */}
@@ -464,15 +464,15 @@ export default function AboutPage() {
                             viewport={{ once: true }}
                             transition={{ duration: 0.7 }}
                         >
-                            <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4">
+                            <h2 className="text-3xl sm:text-4xl font-bold text-white mb-2 sm:mb-4">
                                 What is <span className="text-yellow-400">SafeScape</span>?
                             </h2>
-                            <p className="text-white/90 max-w-3xl mx-auto text-lg">
+                            <p className="text-white/90 max-w-3xl mx-auto text-sm sm:text-lg px-2 sm:px-0">
                                 A comprehensive fire safety education platform designed to empower communities with knowledge and skills.
                             </p>
                         </motion.div>
 
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6" style={{ perspective: 1000 }}>
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6" style={{ perspective: 1000 }}>
                             {features.map((feature, index) => (
                                 <FeatureCard key={index} feature={feature} index={index} />
                             ))}

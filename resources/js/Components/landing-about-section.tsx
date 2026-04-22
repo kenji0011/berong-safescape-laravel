@@ -113,13 +113,13 @@ function FeatureCard({
                 ease: "easeOut",
                 delay: index * 0.1
             }}
-            className="group bg-white rounded-2xl p-6 sm:p-8 shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-1 flex flex-col items-start border border-gray-100"
+            className="group bg-white rounded-2xl p-5 sm:p-8 shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-1 flex flex-col items-start border border-gray-100"
         >
-            <div className={`${feature.color} w-16 h-16 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-105 transition-transform duration-300 shadow-sm`}>
-                <feature.icon className="w-8 h-8" strokeWidth={2} />
+            <div className={`${feature.color} w-12 h-12 sm:w-16 sm:h-16 rounded-xl sm:rounded-2xl flex items-center justify-center mb-4 sm:mb-6 group-hover:scale-105 transition-transform duration-300 shadow-sm`}>
+                <feature.icon className="w-6 h-6 sm:w-8 sm:h-8" strokeWidth={2} />
             </div>
-            <h3 className="text-xl font-bold text-gray-900 mb-3">{feature.title}</h3>
-            <p className="text-gray-600 font-medium leading-relaxed">{feature.description}</p>
+            <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-2 sm:mb-3">{feature.title}</h3>
+            <p className="text-sm sm:text-base text-gray-600 font-medium leading-relaxed">{feature.description}</p>
         </motion.div>
     );
 }
@@ -320,7 +320,7 @@ export function LandingAboutSection() {
             {/* Meet Berong Section */}
             <motion.section
                 ref={heroRef}
-                className="relative bg-white/95 backdrop-blur-sm pt-10 pb-16 sm:py-16 overflow-hidden rounded-2xl sm:rounded-3xl border border-gray-200/80 shadow-sm"
+                className="relative bg-white/95 backdrop-blur-sm pt-8 pb-10 sm:py-16 overflow-hidden rounded-2xl sm:rounded-3xl border border-gray-200/80 shadow-sm"
                 style={{ opacity: heroOpacity, scale: heroScale }}
             >
                 {/* Background Pattern */}
@@ -343,7 +343,7 @@ export function LandingAboutSection() {
                                 scale: mascotScale,
                             }}
                         >
-                            <div className="relative w-64 h-64 sm:w-80 sm:h-80 lg:w-[400px] lg:h-[400px]">
+                            <div className="relative w-48 h-48 sm:w-80 sm:h-80 lg:w-[400px] lg:h-[400px]">
                                 <motion.div
                                     className="relative w-full h-full"
                                     initial={{ opacity: 0, scale: 0.8 }}
@@ -390,7 +390,7 @@ export function LandingAboutSection() {
                             </motion.div>
                             
                             <motion.h1
-                                className="text-4xl sm:text-5xl lg:text-6xl font-black mb-3 text-slate-800"
+                                className="text-3xl sm:text-5xl lg:text-6xl font-black mb-2 sm:mb-3 text-slate-800"
                                 initial={{ opacity: 0, y: 30 }}
                                 whileInView={{ opacity: 1, y: 0 }}
                                 viewport={{ once: true }}
@@ -400,7 +400,7 @@ export function LandingAboutSection() {
                             </motion.h1>
                             
                             <motion.p
-                                className="text-xl sm:text-2xl font-bold mb-6 text-orange-500"
+                                className="text-lg sm:text-2xl font-bold mb-4 sm:mb-6 text-orange-500"
                                 initial={{ opacity: 0, y: 30 }}
                                 whileInView={{ opacity: 1, y: 0 }}
                                 viewport={{ once: true }}
@@ -410,7 +410,7 @@ export function LandingAboutSection() {
                             </motion.p>
                             
                             <motion.p
-                                className="text-base sm:text-lg text-slate-600 font-medium leading-relaxed max-w-xl mx-auto lg:mx-0"
+                                className="text-sm sm:text-lg text-slate-600 font-medium leading-relaxed max-w-xl mx-auto lg:mx-0 px-2 sm:px-0"
                                 initial={{ opacity: 0, y: 30 }}
                                 whileInView={{ opacity: 1, y: 0 }}
                                 viewport={{ once: true }}
@@ -427,7 +427,7 @@ export function LandingAboutSection() {
             {/* Platform Overview Section */}
             <motion.section
                 ref={platformRef}
-                className="py-16 sm:py-24 bg-gradient-to-br from-[#ff4b3e] to-[#ff8c00] text-white relative overflow-hidden rounded-[2.5rem] shadow-sm"
+                className="py-10 sm:py-24 bg-gradient-to-br from-[#ff4b3e] to-[#ff8c00] text-white relative overflow-hidden rounded-[2.5rem] shadow-sm"
                 style={{ opacity: platformOpacity, scale: platformScale }}
             >
                 {/* Background Pattern */}
@@ -438,7 +438,7 @@ export function LandingAboutSection() {
                 </div>
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
                     <motion.div
-                        className="text-center mb-16"
+                        className="text-center mb-10 sm:mb-16"
                         initial={{ opacity: 0, y: 40 }}
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true }}
@@ -447,12 +447,12 @@ export function LandingAboutSection() {
                         <h2 className="text-4xl sm:text-5xl font-black text-white mb-4">
                             What is <span className="text-yellow-300">SafeScape</span>?
                         </h2>
-                        <p className="text-white/95 font-medium max-w-3xl mx-auto text-lg sm:text-xl">
+                        <p className="text-white/95 font-medium max-w-3xl mx-auto text-sm sm:text-xl px-2">
                             A comprehensive fire safety education platform designed to empower communities with knowledge and skills.
                         </p>
                     </motion.div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6" style={{ perspective: 1000 }}>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6" style={{ perspective: 1000 }}>
                         {features.map((feature, index) => (
                             <FeatureCard key={index} feature={feature} index={index} reduceMotion={reduceMotion} />
                         ))}

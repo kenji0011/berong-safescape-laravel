@@ -91,18 +91,17 @@ const CertificatePage = () => {
             <p className="text-amber-900/60 font-bold mt-2 text-lg">You've successfully completed your Fire Safety Training!</p>
           </div>
 
-          <div className="w-full bg-white/90 backdrop-blur-2xl border border-white/60 rounded-[2.5rem] p-6 sm:p-10 shadow-[0_25px_60px_rgba(245,158,11,0.15)] flex flex-col items-center">
+          <div className="w-full bg-white/90 backdrop-blur-2xl border border-white/60 rounded-3xl sm:rounded-[2.5rem] p-3 sm:p-10 shadow-[0_25px_60px_rgba(245,158,11,0.15)] flex flex-col items-center">
             
-            {/* Certificate Display Area */}
             <div 
               ref={certificateRef} 
               className="relative w-full max-w-4xl select-none shadow-xl border border-amber-100 bg-white" 
-              style={{ aspectRatio: '1123/794' }}
+              style={{ aspectRatio: '1123/794', containerType: 'inline-size' }}
             >
               <img 
                 src="/safescape_certificate.svg" 
                 alt="Certificate Template" 
-                className="absolute inset-0 w-full h-full object-contain" 
+                className="absolute inset-0 w-full h-full" 
                 crossOrigin="anonymous" 
               />
               <div 
@@ -110,8 +109,11 @@ const CertificatePage = () => {
                 style={{ top: '50%', transform: 'translateY(-50%)' }}
               >
                 <h2 
-                  className="text-[clamp(1.5rem,4vw,3.5rem)] font-bold text-[#1a1a2e] uppercase tracking-widest break-words px-8" 
-                  style={{ fontFamily: "'Georgia', 'Times New Roman', serif" }}
+                  className="font-bold text-[#1a1a2e] uppercase tracking-widest break-words px-4 sm:px-8" 
+                  style={{ 
+                    fontFamily: "'Georgia', 'Times New Roman', serif",
+                    fontSize: 'clamp(0.75rem, 5cqw, 3.5rem)'
+                  }}
                 >
                   {userName}
                 </h2>
@@ -121,8 +123,11 @@ const CertificatePage = () => {
                 style={{ top: '78%', transform: 'translateY(-50%)' }}
               >
                 <p 
-                  className="text-[clamp(0.7rem,1.8vw,1.2rem)] text-[#333]" 
-                  style={{ fontFamily: "'Alice', 'Georgia', serif" }}
+                  className="text-[#333]" 
+                  style={{ 
+                    fontFamily: "'Alice', 'Georgia', serif",
+                    fontSize: 'clamp(0.4rem, 1.8cqw, 1.2rem)'
+                  }}
                 >
                   {formattedDate}
                 </p>

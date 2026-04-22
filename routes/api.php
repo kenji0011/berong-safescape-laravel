@@ -11,6 +11,7 @@ use App\Http\Controllers\EngagementController;
 use App\Http\Controllers\AuthApiController;
 use App\Http\Controllers\SchoolAnalyticsController;
 use App\Http\Controllers\FeedbackController;
+use App\Http\Controllers\NotificationController;
 
 /*
 |--------------------------------------------------------------------------
@@ -179,5 +180,15 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
         // Feedback Analytics
         Route::get('/feedback-analytics', [FeedbackController::class, 'analytics']);
+    });
+
+    // ==========================================
+    // 7. Notifications Domain
+    // ==========================================
+    Route::prefix('notifications')->group(function () {
+        Route::get('/', [NotificationController::class, 'index']);
+        Route::patch('/{id}/read', [NotificationController::class, 'markAsRead']);
+        Route::post('/read-all', [NotificationController::class, 'markAllAsRead']);
+        Route::delete('/{id}', [NotificationController::class, 'destroy']);
     });
 });

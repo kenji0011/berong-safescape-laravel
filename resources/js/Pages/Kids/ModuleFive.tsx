@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from "react"
 import { Head, Link, router } from '@inertiajs/react'
 import DashboardLayout from "@/Layouts/DashboardLayout"
-import { ArrowLeft, BookOpen, ChevronRight, Flame, Trophy, ClipboardCheck, PartyPopper } from "lucide-react"
+import { ArrowLeft, BookOpen, ChevronRight, Flame, Trophy, ClipboardCheck, PartyPopper, CheckCircle } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { useAuth } from "@/lib/auth-context"
 
 const ModuleFivePage = ({ moduleNum }: { moduleNum: number }) => {
+  const { user } = useAuth()
   const currentModule = moduleNum || 5
   const [moduleCompleted, setModuleCompleted] = useState(false)
 
@@ -64,15 +66,18 @@ const ModuleFivePage = ({ moduleNum }: { moduleNum: number }) => {
 
       // Check if the congratulations/completion screen appeared inside the iframe
       const checkForCompletion = () => {
-        const bodyText = iframeDoc.body?.innerText || '';
+        const examResult = iframeDoc.getElementById('exam-result');
+        const isExamPassed = examResult && !examResult.classList.contains('hidden') && 
+                             iframeDoc.getElementById('result-title')?.innerText?.includes('CONGRATULATIONS');
+                             
         const alreadyInjected = iframeDoc.getElementById('post-test-cta');
         
-        if ((bodyText.includes('CONGRATULATIONS') || bodyText.includes('Course Complete')) && !alreadyInjected) {
+        if (isExamPassed && !alreadyInjected) {
           setModuleCompleted(true);
           
           // Find the certificate button or the completion container to inject after
-          const certificateBtn = iframeDoc.querySelector('a[href*="certificate"], button, .btn, [class*="cert"]');
-          const completionContainer = certificateBtn?.closest('div') || certificateBtn?.parentElement;
+          const certificateBtn = iframeDoc.getElementById('btn-view-cert') || iframeDoc.querySelector('button[onclick*="showCertificate"]');
+          const completionContainer = certificateBtn?.closest('div') || certificateBtn?.parentElement || examResult;
           
           if (completionContainer) {
             const ctaDiv = iframeDoc.createElement('div');
@@ -169,7 +174,7 @@ const ModuleFivePage = ({ moduleNum }: { moduleNum: number }) => {
       </div>
 
       {/* ── Module 5 Completion Banner ── */}
-      {moduleCompleted && (
+      {moduleCompleted && (user?.postTestScore === null || user?.postTestScore === undefined) && (
         <div className="bg-gradient-to-r from-emerald-500 via-green-500 to-teal-500 px-4 sm:px-6 py-6 sm:py-8 relative overflow-hidden animate-in slide-in-from-top fade-in duration-500">
           <div className="absolute inset-0 bg-[url('/noise.png')] opacity-5" />
           <div className="max-w-4xl mx-auto relative z-10 flex flex-col sm:flex-row items-center gap-4 sm:gap-8">
@@ -190,6 +195,32 @@ const ModuleFivePage = ({ moduleNum }: { moduleNum: number }) => {
               Take Post-Test
               <ChevronRight className="h-4 w-4" />
             </button>
+          </div>
+        </div>
+      )}
+
+      {/* ── Post-Test Completed Banner ── */}
+      {moduleCompleted && user?.postTestScore !== null && user?.postTestScore !== undefined && (
+        <div className="bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500 px-4 sm:px-6 py-6 sm:py-8 relative overflow-hidden animate-in slide-in-from-top fade-in duration-500">
+          <div className="absolute inset-0 bg-[url('/noise.png')] opacity-5" />
+          <div className="max-w-4xl mx-auto relative z-10 flex flex-col sm:flex-row items-center gap-4 sm:gap-8">
+            <div className="flex items-center gap-4 flex-1">
+              <div className="h-14 w-14 sm:h-16 sm:w-16 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center shrink-0 border-2 border-white/30">
+                <CheckCircle className="h-7 w-7 sm:h-8 sm:w-8 text-blue-200" />
+              </div>
+              <div>
+                <h3 className="text-lg sm:text-xl font-black text-white tracking-tight">🎉 Course Completed!</h3>
+                <p className="text-white/80 text-xs sm:text-sm font-bold mt-0.5">You've successfully finished your fire safety training. View your official certificate!</p>
+              </div>
+            </div>
+            <Link
+              href="/kids/certificate"
+              className="w-full sm:w-auto bg-white hover:bg-blue-50 text-indigo-700 font-black px-6 py-3.5 rounded-full border-2 border-white border-b-[4px] border-b-blue-200 active:border-b-2 active:translate-y-[2px] shadow-lg transition-all flex items-center justify-center gap-2 text-sm sm:text-base shrink-0 uppercase tracking-wider"
+            >
+              <Trophy className="h-5 w-5 text-yellow-500" />
+              View Certificate
+              <ChevronRight className="h-4 w-4" />
+            </Link>
           </div>
         </div>
       )}

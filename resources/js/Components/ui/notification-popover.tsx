@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import axios from 'axios';
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { router, usePage } from '@inertiajs/react';
@@ -21,69 +22,29 @@ interface Notification {
   resourceId?: number | null;
 }
 
-const MOCK_NOTIFICATIONS: Notification[] = [
-  {
-    id: 1,
-    title: "New Video Added",
-    message: "A new CPR training video has been added to the Professional dashboard.",
-    type: "video",
-    category: "professional",
-    isRead: false,
-    createdAt: new Date(Date.now() - 600000).toISOString()
-  },
-  {
-    id: 2,
-    title: "System Update",
-    message: "Welcome to SafeScape platform. Don't forget to take your Pre-Test!",
-    type: "urgent",
-    category: "assessment",
-    isRead: false,
-    createdAt: new Date(Date.now() - 3600000).toISOString()
-  },
-  {
-    id: 3,
-    title: "Fire Safety Month",
-    message: "March is Fire Prevention Month. Check out our new modules.",
-    type: "blog",
-    category: "adult",
-    isRead: true,
-    createdAt: new Date(Date.now() - 86400000).toISOString()
-  }
-];
-
 export function NotificationPopover() {
   const { user } = useAuth();
-  const [notifications, setNotifications] = useState<Notification[]>(() => {
-    if (typeof window !== 'undefined') {
-      const saved = localStorage.getItem('safescape_mock_notifications');
-      if (saved) {
-        return JSON.parse(saved);
-      }
-    }
-    return MOCK_NOTIFICATIONS;
-  });
+  const [notifications, setNotifications] = useState<Notification[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [openDropdownId, setOpenDropdownId] = useState<number | null>(null);
 
-  // Sync state to local storage whenever it changes so mock data persists like a real DB
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      localStorage.setItem('safescape_mock_notifications', JSON.stringify(notifications));
+  const fetchNotifications = async () => {
+    if (!user) return;
+    setLoading(true);
+    try {
+      const res = await axios.get('/api/notifications');
+      setNotifications(res.data);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
     }
-  }, [notifications]);
+  };
 
-  // Listen for background updates from Admin actions
   useEffect(() => {
-    const handleUpdate = () => {
-      const saved = localStorage.getItem('safescape_mock_notifications');
-      if (saved) {
-        setNotifications(JSON.parse(saved));
-      }
-    };
-    window.addEventListener('safescape_notifications_updated', handleUpdate);
-    return () => window.removeEventListener('safescape_notifications_updated', handleUpdate);
-  }, []);
+    fetchNotifications();
+  }, [user]);
 
   // Click outside to close custom dropdown
   useEffect(() => {
@@ -98,14 +59,25 @@ export function NotificationPopover() {
     setNotifications(notifications.map(n =>
       n.id === id ? { ...n, isRead } : n
     ));
+    try {
+      if (isRead) {
+        await axios.patch(`/api/notifications/${id}/read`);
+      }
+    } catch (e) { console.error(e); }
   };
 
   const deleteNotification = async (id: number) => {
     setNotifications(notifications.filter(n => n.id !== id));
+    try {
+      await axios.delete(`/api/notifications/${id}`);
+    } catch (e) { console.error(e); }
   };
 
   const markAllAsRead = async () => {
     setNotifications(notifications.map(n => ({ ...n, isRead: true })));
+    try {
+      await axios.post('/api/notifications/read-all');
+    } catch (e) { console.error(e); }
   };
 
   const handleGo = (notification: Notification) => {

@@ -85,9 +85,9 @@ const ProfessionalDashboard = ({ initialVideos = professionalVideos }: Professio
                         className="overflow-hidden cursor-pointer border-2 border-b-[4px] border-slate-200 hover:border-slate-300 rounded-2xl bg-white h-full group active:border-b-2 active:translate-y-[2px] transition-all shadow-sm hover:shadow-md"
                         onClick={() => document.getElementById('training-videos-section')?.scrollIntoView({ behavior: 'smooth' })}
                     >
-                        <CardContent className="p-4 sm:p-5 flex items-center gap-4">
-                            <div className="p-3 bg-red-50 rounded-xl">
-                                <Video className="h-6 w-6 text-red-500" />
+                        <CardContent className="p-3 sm:p-5 flex items-center gap-3 sm:gap-4">
+                            <div className="p-2 sm:p-3 bg-red-50 rounded-lg sm:rounded-xl">
+                                <Video className="h-5 w-5 sm:h-6 sm:w-6 text-red-500" />
                             </div>
                             <div className="min-w-0 flex-1">
                                 <CardTitle className="text-base sm:text-lg text-slate-800 font-bold mb-1">Training Videos</CardTitle>
@@ -100,9 +100,9 @@ const ProfessionalDashboard = ({ initialVideos = professionalVideos }: Professio
                         className="overflow-hidden cursor-pointer border-2 border-b-[4px] border-slate-200 hover:border-slate-300 rounded-2xl bg-white h-full group active:border-b-2 active:translate-y-[2px] transition-all shadow-sm hover:shadow-md"
                         onClick={() => document.getElementById('manuals-section')?.scrollIntoView({ behavior: 'smooth' })}
                     >
-                        <CardContent className="p-4 sm:p-5 flex items-center gap-4">
-                            <div className="p-3 bg-blue-50 rounded-xl">
-                                <BookOpen className="h-6 w-6 text-blue-500" />
+                        <CardContent className="p-3 sm:p-5 flex items-center gap-3 sm:gap-4">
+                            <div className="p-2 sm:p-3 bg-blue-50 rounded-lg sm:rounded-xl">
+                                <BookOpen className="h-5 w-5 sm:h-6 sm:w-6 text-blue-500" />
                             </div>
                             <div className="min-w-0 flex-1">
                                 <CardTitle className="text-base sm:text-lg text-slate-800 font-bold mb-1">BFP Manuals</CardTitle>

@@ -43,13 +43,13 @@ class FeedbackController extends Controller
         $totalFeedback = UserFeedback::count();
 
         // Average rating per feature type
-        $byFeatureType = UserFeedback::selectRaw("featureType, ROUND(AVG(rating), 1) as avgRating, COUNT(*) as totalCount")
+        $byFeatureType = UserFeedback::selectRaw('"featureType", ROUND(AVG(rating), 1) as "avgRating", COUNT(*) as "totalCount"')
             ->groupBy('featureType')
             ->orderByDesc('avgRating')
             ->get();
 
         // Average rating per specific feature name
-        $byFeatureName = UserFeedback::selectRaw("featureName, featureType, ROUND(AVG(rating), 1) as avgRating, COUNT(*) as totalCount")
+        $byFeatureName = UserFeedback::selectRaw('"featureName", "featureType", ROUND(AVG(rating), 1) as "avgRating", COUNT(*) as "totalCount"')
             ->groupBy('featureName', 'featureType')
             ->orderByDesc('avgRating')
             ->get();

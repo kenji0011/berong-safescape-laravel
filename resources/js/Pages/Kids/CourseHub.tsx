@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react"
 import { Link } from '@inertiajs/react'
-import { ArrowLeft, BookOpen, Trophy, Shield, CheckCircle, Lock, Flame, Star } from "lucide-react"
+import { ArrowLeft, BookOpen, Trophy, Shield, CheckCircle, Lock, Flame, Star, ChevronRight, ClipboardCheck } from "lucide-react"
 import { useAuth } from "@/lib/auth-context"
 import DashboardLayout from "@/Layouts/DashboardLayout"
 import { cn } from "@/lib/utils"
@@ -106,6 +106,58 @@ const CourseHubPage = () => {
           </div>
         </div>
       </div>
+
+      {/* ── Course Completion Banner ── */}
+      {completedCount === 5 && (user?.postTestScore === null || user?.postTestScore === undefined) && (
+        <div className="bg-gradient-to-r from-emerald-500 via-green-500 to-teal-500 px-4 sm:px-6 py-6 sm:py-8 relative overflow-hidden animate-in slide-in-from-top fade-in duration-500">
+          <div className="absolute inset-0 bg-[url('/noise.png')] opacity-5" />
+          <div className="max-w-6xl mx-auto relative z-10 flex flex-col sm:flex-row items-center gap-4 sm:gap-8">
+            <div className="flex items-center gap-4 flex-1">
+              <div className="h-14 w-14 sm:h-16 sm:w-16 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center shrink-0 border-2 border-white/30">
+                <Trophy className="h-7 w-7 sm:h-8 sm:w-8 text-yellow-200" />
+              </div>
+              <div>
+                <h3 className="text-lg sm:text-xl font-black text-white tracking-tight">🎉 All Modules Complete!</h3>
+                <p className="text-white/80 text-xs sm:text-sm font-bold mt-0.5">You've finished all 5 fire safety modules. Take the final Post-Test to earn your certificate!</p>
+              </div>
+            </div>
+            <Link
+              href="/assessment/post-test"
+              className="w-full sm:w-auto bg-white hover:bg-yellow-50 text-green-700 font-black px-6 py-3.5 rounded-full border-2 border-white border-b-[4px] border-b-green-200 active:border-b-2 active:translate-y-[2px] shadow-lg transition-all flex items-center justify-center gap-2 text-sm sm:text-base shrink-0 uppercase tracking-wider"
+            >
+              <ClipboardCheck className="h-5 w-5" />
+              Take Post-Test
+              <ChevronRight className="h-4 w-4" />
+            </Link>
+          </div>
+        </div>
+      )}
+
+      {/* ── Post-Test Completed Banner ── */}
+      {completedCount === 5 && user?.postTestScore !== null && user?.postTestScore !== undefined && (
+        <div className="bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500 px-4 sm:px-6 py-6 sm:py-8 relative overflow-hidden animate-in slide-in-from-top fade-in duration-500">
+          <div className="absolute inset-0 bg-[url('/noise.png')] opacity-5" />
+          <div className="max-w-6xl mx-auto relative z-10 flex flex-col sm:flex-row items-center gap-4 sm:gap-8">
+            <div className="flex items-center gap-4 flex-1">
+              <div className="h-14 w-14 sm:h-16 sm:w-16 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center shrink-0 border-2 border-white/30">
+                <CheckCircle className="h-7 w-7 sm:h-8 sm:w-8 text-blue-200" />
+              </div>
+              <div>
+                <h3 className="text-lg sm:text-xl font-black text-white tracking-tight">🎉 Course Completed!</h3>
+                <p className="text-white/80 text-xs sm:text-sm font-bold mt-0.5">You've successfully finished your fire safety training. View your official certificate!</p>
+              </div>
+            </div>
+            <Link
+              href="/kids/certificate"
+              className="w-full sm:w-auto bg-white hover:bg-blue-50 text-indigo-700 font-black px-6 py-3.5 rounded-full border-2 border-white border-b-[4px] border-b-blue-200 active:border-b-2 active:translate-y-[2px] shadow-lg transition-all flex items-center justify-center gap-2 text-sm sm:text-base shrink-0 uppercase tracking-wider"
+            >
+              <Trophy className="h-5 w-5 text-yellow-500" />
+              View Certificate
+              <ChevronRight className="h-4 w-4" />
+            </Link>
+          </div>
+        </div>
+      )}
 
       {/* ── Dark Module Content Area ── */}
       <div className="flex-1 bg-[#111827] py-8 sm:py-12 px-4 sm:px-6 lg:px-8">
@@ -266,14 +318,7 @@ const CourseHubPage = () => {
                         <>
                           <span className="text-xs font-black tracking-wider text-green-500 uppercase">Completed</span>
                           <div className="flex gap-2">
-                            {module.dayNumber === 5 && (
-                                <Link
-                                  href="/kids/certificate"
-                                  className="flex items-center gap-1.5 bg-gradient-to-r from-amber-500 to-orange-500 hover:brightness-110 text-white font-black px-3 py-2 rounded-full text-sm shadow-[0_4px_0_#b45309] hover:-translate-y-0.5 active:translate-y-1 active:shadow-none transition-all"
-                                >
-                                  <Trophy className="h-4 w-4" /> Cert
-                                </Link>
-                            )}
+
                             <Link
                               href={moduleRoute}
                               className="flex items-center gap-2 bg-green-600 hover:bg-green-500 text-white font-black px-4 py-2 rounded-full text-sm shadow-[0_4px_0_#166534] hover:-translate-y-0.5 active:translate-y-1 active:shadow-none transition-all"
@@ -306,6 +351,58 @@ const CourseHubPage = () => {
                   </div>
                 )
               })}
+
+              {/* ── Certificate Card ── */}
+              <div
+                className={cn(
+                  "relative rounded-2xl flex flex-col transition-all duration-200 overflow-hidden",
+                  completedCount === 5
+                    ? "bg-[#1e293b] border-2 border-orange-500 hover:bg-slate-800 shadow-[0_0_20px_rgba(249,115,22,0.2)]"
+                    : "bg-[#1e293b]/50 border border-slate-800 opacity-70"
+                )}
+              >
+                {/* Header Graphic Area */}
+                <div className={cn(
+                  "h-32 p-6 flex flex-col justify-end",
+                  completedCount === 5 ? "bg-gradient-to-br from-orange-400 to-amber-600" : "bg-slate-800"
+                )}>
+                  <Trophy className={cn("h-8 w-8 mb-2", completedCount === 5 ? "text-yellow-100" : "text-slate-600")} />
+                  <h4 className={cn("text-2xl font-black", completedCount === 5 ? "text-white" : "text-slate-500")}>
+                    Your Certificate
+                  </h4>
+                </div>
+
+                <div className="p-6 flex flex-col flex-1">
+                  <p className="text-sm leading-relaxed mb-6 flex-1 text-slate-400">
+                    {completedCount === 5 
+                      ? "Congratulations! You've completed all modules and earned your Fire Safety Hero Certificate!" 
+                      : "Complete all 5 fire safety modules to unlock your official hero certificate."}
+                  </p>
+                  
+                  {/* CTA Button */}
+                  <div className="mt-auto border-t border-slate-700 pt-4 flex items-center justify-between">
+                    {completedCount === 5 ? (
+                      <>
+                        <span className="text-xs font-black tracking-wider text-green-500 uppercase">Earned!</span>
+                        <Link
+                          href="/kids/certificate"
+                          className="flex items-center gap-2 bg-green-600 hover:bg-green-500 text-white font-black px-4 py-2 rounded-full text-sm shadow-[0_4px_0_#166534] hover:-translate-y-0.5 active:translate-y-1 active:shadow-none transition-all"
+                        >
+                          <Trophy className="h-4 w-4" /> View Certificate
+                        </Link>
+                      </>
+                    ) : (
+                      <>
+                        <span className="text-xs font-black tracking-wider text-slate-600 uppercase">Locked</span>
+                        <div className="flex items-center gap-2 bg-slate-800 text-slate-500 font-bold px-5 py-2 rounded-full text-sm">
+                          <Lock className="h-3.5 w-3.5" /> Locked
+                        </div>
+                      </>
+                    )}
+                  </div>
+                </div>
+              </div>
+
             </div>
           )}
 

@@ -152,6 +152,15 @@ class AdminController extends Controller
             'imageUrl' => $imageUrl,
             'authorId' => $request->user()->id,
         ]);
+
+        \App\Models\Notification::broadcast(
+            'New Article Published',
+            'A new article "' . $post->title . '" has been published. Check it out!',
+            'blog',
+            'adult',
+            ['adult', 'professional', 'admin'] // Do not notify kids
+        );
+
         return response()->json(['success' => true, 'post' => $post], 201);
     }
 
@@ -183,6 +192,15 @@ class AdminController extends Controller
             ...$request->only('title', 'description', 'category', 'duration'),
             'youtubeId' => $youtubeId,
         ]);
+
+        \App\Models\Notification::broadcast(
+            'New Video Added',
+            'A new video "' . $video->title . '" has been added.',
+            'video',
+            $video->category === 'professional' ? 'professional' : 'kids',
+            $video->category === 'professional' ? ['professional', 'admin'] : ['kid', 'admin']
+        );
+
         return response()->json(['success' => true, 'video' => $video], 201);
     }
 

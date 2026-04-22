@@ -101,6 +101,15 @@ class AuthApiController extends Controller
             $name = $request->input('firstName') . ' ' . $request->input('middleName') . ' ' . $request->input('lastName');
         }
 
+        $schoolName = $request->input('school') ?? $request->input('schoolOther');
+        $schoolModel = null;
+        if ($schoolName) {
+            $schoolModel = \App\Models\School::firstOrCreate(
+                ['name' => $schoolName],
+                ['isActive' => true, 'type' => 'Other']
+            );
+        }
+
         $user = User::create([
             'username' => $request->input('username'),
             'email' => $request->input('email'),
@@ -112,8 +121,8 @@ class AuthApiController extends Controller
             'role' => $role,
             'gender' => $request->input('gender'),
             'barangay' => $request->input('barangay'),
-            'school' => $request->input('school') ?? $request->input('schoolOther'),
-            'school_id' => $request->input('school_id'),
+            'school' => $schoolName,
+            'school_id' => $schoolModel ? $schoolModel->id : null,
             'occupation' => $request->input('occupation') ?? $request->input('occupationOther'),
             'profileCompleted' => true,
         ]);
@@ -143,6 +152,10 @@ class AuthApiController extends Controller
 
         // Update user's pre-test score
         $user->update(['preTestScore' => $score]);
+
+        if ($schoolModel) {
+            $schoolModel->recalculateAnalytics();
+        }
 
         // Log in the user
         Auth::login($user);
@@ -182,11 +195,20 @@ class AuthApiController extends Controller
             return response()->json(['success' => false, 'error' => 'Validation failed'], 422);
         }
 
+        $schoolName = $request->input('school') ?? $request->input('schoolOther');
+        $schoolModel = null;
+        if ($schoolName) {
+            $schoolModel = \App\Models\School::firstOrCreate(
+                ['name' => $schoolName],
+                ['isActive' => true, 'type' => 'Other']
+            );
+        }
+
         $user->update([
             'gender' => $request->input('gender'),
             'barangay' => $request->input('barangay'),
-            'school' => $request->input('school') ?? $request->input('schoolOther'),
-            'school_id' => $request->input('school_id'),
+            'school' => $schoolName,
+            'school_id' => $schoolModel ? $schoolModel->id : null,
             'occupation' => $request->input('occupation') ?? $request->input('occupationOther'),
             'profileCompleted' => true
         ]);
@@ -218,6 +240,10 @@ class AuthApiController extends Controller
         }
 
         $user->update(['preTestScore' => $score]);
+
+        if ($schoolModel) {
+            $schoolModel->recalculateAnalytics();
+        }
 
         return response()->json([
             'success' => true,

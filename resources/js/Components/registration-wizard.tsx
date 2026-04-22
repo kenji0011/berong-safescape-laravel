@@ -303,6 +303,13 @@ export function RegistrationWizard() {
         [questionId]: answerIndex
       }
     }))
+    
+    // Auto-advance to the next question after a short delay
+    if (currentQuestionIndex < questions.length - 1) {
+      setTimeout(() => {
+        setCurrentQuestionIndex(prev => prev + 1)
+      }, 400)
+    }
   }
 
   const handleSubmit = async () => {
@@ -434,15 +441,15 @@ export function RegistrationWizard() {
   return (
     <Card className="w-full max-w-3xl mx-auto border-none shadow-[0_8px_30px_rgba(0,0,0,0.12)] rounded-3xl overflow-hidden">
       {/* Colorful Gradient Header */}
-      <div className="bg-red-600 px-6 pt-5 pb-6 rounded-t-3xl">
-        <div className="flex items-center gap-2 mb-3">
-          <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center shadow">
-            <Shield className="h-5 w-5 text-orange-500" />
+      <div className="bg-red-600 px-4 sm:px-6 pt-4 sm:pt-5 pb-5 sm:pb-6 rounded-t-3xl">
+        <div className="flex items-center gap-2 mb-2 sm:mb-3">
+          <div className="w-8 h-8 sm:w-10 sm:h-10 bg-white rounded-full flex items-center justify-center shadow">
+            <Shield className="h-4 w-4 sm:h-5 sm:w-5 text-orange-500" />
           </div>
-          <span className="text-xl font-bold text-white">SafeScape</span>
+          <span className="text-lg sm:text-xl font-bold text-white">SafeScape</span>
         </div>
-        <h2 className="text-2xl font-bold text-white">Create Your Account 🎓</h2>
-        <p className="text-white/80 text-sm">
+        <h2 className="text-xl sm:text-2xl font-bold text-white">Create Your Account 🎓</h2>
+        <p className="text-white/80 text-xs sm:text-sm">
           Step {currentStep} of {STEPS.length}: {STEPS[currentStep - 1].description}
         </p>
 
@@ -466,16 +473,16 @@ export function RegistrationWizard() {
                     isCompleted ? "text-yellow-300" : isCurrent ? "text-white" : "text-white/40"
                   }`}
                 >
-                  <div className={`w-10 h-10 rounded-full flex items-center justify-center border-[3px] transition-all ${
+                  <div className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center border-[2px] sm:border-[3px] transition-all ${
                     isCompleted
-                      ? "bg-yellow-400 border-white text-red-600 shadow-[0_3px_0_#b45309]"
+                      ? "bg-yellow-400 border-white text-red-600 shadow-[0_2px_0_#b45309] sm:shadow-[0_3px_0_#b45309]"
                       : isCurrent
-                        ? "bg-white border-yellow-400 text-orange-500 shadow-lg"
+                        ? "bg-white border-yellow-400 text-orange-500 shadow-md sm:shadow-lg"
                         : "bg-white/20 border-white/30 text-white/60"
                   }`}>
-                    {isCompleted ? <Check className="w-5 h-5" /> : <Icon className="w-5 h-5" />}
+                    {isCompleted ? <Check className="w-4 h-4 sm:w-5 sm:h-5" /> : <Icon className="w-4 h-4 sm:w-5 sm:h-5" />}
                   </div>
-                  <span className="text-xs mt-1.5 font-semibold hidden sm:block">{step.title}</span>
+                  <span className="text-[10px] sm:text-xs mt-1.5 font-semibold hidden sm:block">{step.title}</span>
                 </div>
               )
             })}
@@ -486,7 +493,7 @@ export function RegistrationWizard() {
         <CardTitle>Create Your Account</CardTitle>
       </CardHeader>
 
-      <CardContent className="p-6">
+      <CardContent className="p-4 sm:p-6">
         {error && (
           <div className="mb-4 p-3 bg-red-50 border-2 border-red-200 rounded-2xl flex items-start gap-2">
             <AlertCircle className="h-5 w-5 text-red-500 flex-shrink-0 mt-0.5" />
@@ -831,34 +838,9 @@ export function RegistrationWizard() {
                 </div>
 
                 {/* Question Navigation */}
-                <div className="flex justify-between mt-3">
-                  <button
-                    onClick={() => setCurrentQuestionIndex(prev => Math.max(0, prev - 1))}
-                    disabled={currentQuestionIndex === 0}
-                    className={`flex items-center gap-1 font-bold px-4 py-2 rounded-full border-[3px] transition-all text-sm ${
-                      currentQuestionIndex === 0
-                        ? "border-gray-200 text-gray-300 cursor-not-allowed"
-                        : "border-gray-300 text-slate-600 shadow-[0_3px_0_#94a3b8] hover:-translate-y-0.5 hover:shadow-[0_5px_0_#94a3b8] active:translate-y-1 active:shadow-[0_0px_0_#94a3b8]"
-                    }`}
-                  >
-                    <ChevronLeft className="h-4 w-4" />
-                    Previous
-                  </button>
+                <div className="flex justify-end mt-4 sm:mt-5">
 
-                  {currentQuestionIndex < questions.length - 1 ? (
-                    <button
-                      onClick={() => setCurrentQuestionIndex(prev => prev + 1)}
-                      disabled={data.preTestAnswers[questions[currentQuestionIndex].id] === undefined}
-                      className={`flex items-center gap-1 font-extrabold px-5 py-2 rounded-full border-[3px] transition-all text-sm ${
-                        data.preTestAnswers[questions[currentQuestionIndex].id] === undefined
-                          ? "bg-gray-200 text-gray-400 border-gray-300 cursor-not-allowed"
-                          : "bg-yellow-400 text-red-600 border-white shadow-[0_4px_0_#b45309] hover:-translate-y-0.5 hover:shadow-[0_6px_0_#b45309] active:translate-y-1 active:shadow-[0_0px_0_#b45309]"
-                      }`}
-                    >
-                      Next
-                      <ChevronRight className="h-4 w-4" />
-                    </button>
-                  ) : (
+                  {currentQuestionIndex === questions.length - 1 && (
                     <button
                       onClick={handleSubmit}
                       disabled={loading || Object.keys(data.preTestAnswers).length < questions.length}
@@ -884,12 +866,12 @@ export function RegistrationWizard() {
                 </div>
 
                 {/* Question dots for quick navigation */}
-                <div className="flex justify-center gap-1.5 mt-3">
+                <div className="flex flex-wrap justify-center gap-1.5 sm:gap-2 mt-5 sm:mt-6">
                   {questions.map((q, idx) => (
                     <button
                       key={q.id}
                       onClick={() => setCurrentQuestionIndex(idx)}
-                      className={`w-8 h-8 rounded-full text-[11px] font-bold transition-all border-2 ${
+                      className={`w-7 h-7 sm:w-8 sm:h-8 rounded-full text-[10px] sm:text-[11px] font-bold transition-all border-2 ${
                         currentQuestionIndex === idx
                           ? "bg-orange-500 text-white border-orange-300 shadow-[0_3px_0_#c2410c] scale-110"
                           : data.preTestAnswers[q.id] !== undefined
@@ -936,7 +918,7 @@ export function RegistrationWizard() {
         )}
 
         {currentStep === 4 && questions.length > 0 && (
-          <div className="flex justify-start mt-8">
+          <div className="flex justify-start mt-6 sm:mt-8">
             <button
               onClick={handleBack}
               className="flex items-center gap-1 font-bold px-5 py-2.5 rounded-full border-[3px] border-gray-300 text-slate-600 shadow-[0_3px_0_#94a3b8] hover:-translate-y-0.5 hover:shadow-[0_5px_0_#94a3b8] active:translate-y-1 active:shadow-[0_0px_0_#94a3b8] transition-all text-sm"

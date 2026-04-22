@@ -5,8 +5,11 @@ import { PageLoader } from "@/components/page-loader";
 import { LogoutLoader } from "@/components/logout-loader";
 import { LoginLoader } from "@/components/login-loader";
 import { ProfileCheckWrapper } from "@/components/profile-check-wrapper";
+import { usePage } from '@inertiajs/react';
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
+  const { url } = usePage();
+  const isAuthPage = url.startsWith('/login') || url.startsWith('/register');
   return (
     <div className="antialiased relative min-h-screen font-sans">
       <Suspense fallback={null}>
@@ -25,7 +28,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <ProfileCheckWrapper>
             {children}
           </ProfileCheckWrapper>
-          <Chatbot />
+          {!isAuthPage && <Chatbot />}
           <LoginLoader />
           <LogoutLoader />
         </AuthProvider>

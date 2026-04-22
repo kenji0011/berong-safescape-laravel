@@ -293,7 +293,7 @@ function AuthContent() {
                       value={loginData.username}
                       onChange={(e) => setLoginData({ ...loginData, username: e.target.value })}
                       required
-                      autoComplete="username"
+                      autoComplete="off"
                       className="h-11 sm:h-12 rounded-lg sm:rounded-xl border-slate-200 bg-slate-50 px-3 sm:px-4 text-sm placeholder:text-slate-400 focus-visible:ring-[#d60000] focus-visible:border-[#d60000] transition-all font-medium text-slate-800"
                     />
                     {validationErrors.username && (
@@ -310,7 +310,7 @@ function AuthContent() {
                         value={loginData.password}
                         onChange={(e) => setLoginData({ ...loginData, password: e.target.value })}
                         required
-                        autoComplete="current-password"
+                        autoComplete="new-password"
                         className="h-11 sm:h-12 rounded-lg sm:rounded-xl border-slate-200 bg-slate-50 px-3 sm:px-4 text-sm placeholder:text-slate-400 focus-visible:ring-[#d60000] focus-visible:border-[#d60000] transition-all pr-10 sm:pr-12 font-medium text-slate-800"
                       />
                       <button
