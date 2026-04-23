@@ -94,6 +94,57 @@
         canvas {
             display: block;
         }
+
+        /* Mobile Arrow Keys D-Pad */
+        .dpad-container {
+            position: absolute;
+            bottom: 8px;
+            right: 8px;
+            width: 120px;
+            height: 120px;
+            z-index: 30;
+            touch-action: none;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: repeat(3, 1fr);
+            gap: 3px;
+        }
+        @media (min-width: 640px) {
+            .dpad-container {
+                bottom: 12px;
+                right: 12px;
+                width: 140px;
+                height: 140px;
+            }
+        }
+        .dpad-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 6px;
+            background: rgba(30, 41, 59, 0.85);
+            border: 1.5px solid rgba(148, 163, 184, 0.35);
+            color: rgba(248, 250, 252, 0.9);
+            font-size: 18px;
+            cursor: pointer;
+            user-select: none;
+            -webkit-user-select: none;
+            backdrop-filter: blur(4px);
+            transition: background 0.1s, transform 0.08s, box-shadow 0.1s;
+            touch-action: none;
+        }
+        .dpad-btn:active, .dpad-btn.active {
+            background: rgba(251, 146, 60, 0.7);
+            border-color: rgba(251, 146, 60, 0.8);
+            transform: scale(0.92);
+            box-shadow: 0 0 10px rgba(251, 146, 60, 0.4);
+        }
+        .dpad-btn i {
+            pointer-events: none;
+        }
+        .dpad-spacer {
+            /* empty grid cell */
+        }
     </style>
 </head>
 
@@ -142,16 +193,17 @@
         </section>
 
         <!-- VIDEO -->
-        <section id="section-video" class="fade-in ss-section bg-white rounded-[2rem] border-[4px] border-blue-200 shadow-sm p-6 sm:p-10 text-center" style="animation-delay: 0.2s;">
+        <section id="section-video" class="fade-in ss-section bg-white rounded-xl sm:rounded-[2rem] border-[3px] sm:border-[4px] border-blue-200 shadow-sm p-4 sm:p-10 text-center" style="animation-delay: 0.2s;">
             <div class="ss-section-badge bg-green-500 border-[3px] border-white shadow-sm text-white"><i class="fa-regular fa-circle-check"></i></div>
             <h2 class="text-2xl sm:text-3xl font-black text-blue-600 mb-4 sm:mb-6 drop-shadow-sm">Watch the Intro Video</h2>
             <div
-                class="w-full aspect-video bg-slate-100 rounded-3xl overflow-hidden shadow-sm border-[4px] border-blue-200 relative group">
+                class="w-full aspect-video bg-slate-100 rounded-xl sm:rounded-3xl overflow-hidden shadow-sm border-[3px] sm:border-[4px] border-blue-200 relative group">
                 <video id="module-video" controls class="w-full h-full object-cover" onplay="onVideoPlay()" onended="onVideoEnd()">
                     <source src="../assets/videos/m3.mp4" type="video/mp4">
                 </video>
             </div>
-            <p class="text-center text-slate-500 font-bold text-sm mt-6 pt-6 border-t-2 border-slate-100 uppercase tracking-widest">Watch the video until the end to continue</p>
+            <p class="text-center text-yellow-600 font-bold text-xs sm:text-sm mt-4 sm:mt-6 uppercase tracking-widest"><i class="fa-solid fa-expand mr-1"></i> Watch in Fullscreen for best viewing</p>
+            <p class="text-center text-slate-500 font-bold text-xs sm:text-sm mt-2 pt-4 sm:pt-6 border-t-2 border-slate-100 uppercase tracking-widest">Watch the video until the end to continue</p>
         </section>
 
         <!-- PART 1: STRATEGIC CONTENT -->
@@ -225,63 +277,59 @@
 
         <!-- PART 2: THE CANVAS GAME -->
         <section id="section-game"
-            class="fade-in ss-section bg-slate-800 rounded-[2rem] p-8 md:p-10 shadow-sm border-[4px] border-slate-700 text-center"
+            class="fade-in ss-section bg-slate-800 rounded-[1.5rem] sm:rounded-[2rem] p-4 sm:p-6 md:p-8 lg:p-10 shadow-sm border-[3px] sm:border-[4px] border-slate-700 text-center"
             style="animation-delay: 0.5s;">
             <div class="ss-section-badge bg-green-500 border-[3px] border-white shadow-sm text-white"><i class="fa-regular fa-circle-check"></i></div>
-            <div class="mb-6">
-                <h2 class="text-3xl font-black text-white mb-2 drop-shadow-sm"><i
-                        class="fa-solid fa-compass-drafting text-blue-400 mr-2"></i> The Smoke Labyrinth</h2>
-                <p class="text-slate-300 font-bold">Use <strong class="text-slate-800 border-[3px] border-slate-400 bg-white px-2 py-0.5 rounded shadow-sm">ARROW
+            <div class="mb-4 sm:mb-6">
+                <h2 class="text-xl sm:text-2xl md:text-3xl font-black text-white mb-1.5 sm:mb-2 drop-shadow-sm"><i
+                        class="fa-solid fa-compass-drafting text-blue-400 mr-1.5 sm:mr-2 text-base sm:text-xl"></i> The Smoke Labyrinth</h2>
+                <p class="text-slate-300 font-bold text-xs sm:text-sm md:text-base">Use <strong class="text-slate-800 border-[2px] sm:border-[3px] border-slate-400 bg-white px-1.5 py-0.5 sm:px-2 rounded shadow-sm text-xs sm:text-sm">ARROW
                         KEYS</strong> to find your way through the smoke.</p>
             </div>
 
-            <div class="flex flex-col xl:flex-row gap-8 justify-center items-start">
+            <div class="flex flex-col xl:flex-row gap-4 sm:gap-6 md:gap-8 justify-center items-start">
                 <div class="relative w-full max-w-[600px] mx-auto">
-                    <div id="game-container" class="rounded-3xl border-[4px] border-slate-600 shadow-xl overflow-hidden relative bg-slate-900 cursor-crosshair">
+                    <div id="game-container" class="rounded-2xl sm:rounded-3xl border-[3px] sm:border-[4px] border-slate-600 shadow-xl overflow-hidden relative bg-slate-900 cursor-crosshair">
                         <canvas id="gameCanvas" width="600" height="400" class="w-full h-auto block"></canvas>
-                        <div class="absolute top-4 left-4 text-left pointer-events-none">
-                            <div class="text-green-400 font-black tracking-widest text-xs mb-1 uppercase">VISIBILITY: LOW</div>
-                            <div class="text-slate-400 font-bold tracking-wider text-xs uppercase">OBJECTIVE: ESCAPE</div>
+                        <div class="absolute top-2 left-2 sm:top-4 sm:left-4 text-left pointer-events-none">
+                            <div class="text-green-400 font-black tracking-widest text-[10px] sm:text-xs mb-0.5 sm:mb-1 uppercase">VISIBILITY: LOW</div>
+                            <div class="text-slate-400 font-bold tracking-wider text-[10px] sm:text-xs uppercase">OBJECTIVE: ESCAPE</div>
                         </div>
-                        <div class="absolute bottom-4 right-4 grid grid-cols-3 gap-1 md:hidden opacity-50">
-                            <div></div>
-                            <button onpointerdown="startMove(0,-1)" onpointerup="stopMove()"
-                                class="bg-slate-700 w-12 h-12 rounded-full shadow-sm"><i
-                                    class="fa-solid fa-arrow-up text-white"></i></button>
-                            <div></div>
-                            <button onpointerdown="startMove(-1,0)" onpointerup="stopMove()"
-                                class="bg-slate-700 w-12 h-12 rounded-full shadow-sm"><i
-                                    class="fa-solid fa-arrow-left text-white"></i></button>
-                            <button onpointerdown="startMove(0,1)" onpointerup="stopMove()"
-                                class="bg-slate-700 w-12 h-12 rounded-full shadow-sm"><i
-                                    class="fa-solid fa-arrow-down text-white"></i></button>
-                            <button onpointerdown="startMove(1,0)" onpointerup="stopMove()"
-                                class="bg-slate-700 w-12 h-12 rounded-full shadow-sm"><i
-                                    class="fa-solid fa-arrow-right text-white"></i></button>
+                        <!-- Mobile Arrow Keys D-Pad -->
+                        <div id="dpad" class="dpad-container md:hidden">
+                            <div class="dpad-spacer"></div>
+                            <button class="dpad-btn" data-dir="up" aria-label="Move Up"><i class="fa-solid fa-caret-up"></i></button>
+                            <div class="dpad-spacer"></div>
+                            <button class="dpad-btn" data-dir="left" aria-label="Move Left"><i class="fa-solid fa-caret-left"></i></button>
+                            <div class="dpad-spacer"></div>
+                            <button class="dpad-btn" data-dir="right" aria-label="Move Right"><i class="fa-solid fa-caret-right"></i></button>
+                            <div class="dpad-spacer"></div>
+                            <button class="dpad-btn" data-dir="down" aria-label="Move Down"><i class="fa-solid fa-caret-down"></i></button>
+                            <div class="dpad-spacer"></div>
                         </div>
                     </div>
                 </div>
 
                 <div
-                    class="w-full xl:w-72 bg-slate-900 p-6 rounded-3xl border-[4px] border-slate-700 shadow-sm text-left h-auto min-h-[300px] flex flex-col">
-                    <h3 class="text-xs font-black text-slate-500 uppercase tracking-widest mb-3">System Log</h3>
+                    class="w-full xl:w-72 bg-slate-900 p-4 sm:p-6 rounded-2xl sm:rounded-3xl border-[3px] sm:border-[4px] border-slate-700 shadow-sm text-left h-auto min-h-[220px] sm:min-h-[300px] flex flex-col">
+                    <h3 class="text-[10px] sm:text-xs font-black text-slate-500 uppercase tracking-widest mb-2 sm:mb-3">System Log</h3>
                     <div id="game-log"
-                        class="text-sm font-mono font-bold space-y-3 h-48 overflow-y-auto mb-4 border-b border-slate-800 pb-2">
+                        class="text-xs sm:text-sm font-mono font-bold space-y-2 sm:space-y-3 h-36 sm:h-48 overflow-y-auto mb-3 sm:mb-4 border-b border-slate-800 pb-2">
                         <p class="text-green-400">> Environment Loaded.</p>
                         <p class="text-slate-400">> Smoke Density: 90%</p>
                     </div>
 
                     <div class="mt-auto">
                         <button onclick="initGame()"
-                            class="w-full bg-slate-800 hover:bg-slate-700 text-white font-bold py-3 rounded-xl border-2 border-slate-600 shadow-sm transition-all hover:-translate-y-0.5 active:translate-y-1 text-sm uppercase tracking-wider">
+                            class="w-full bg-slate-800 hover:bg-slate-700 text-white font-bold py-2.5 sm:py-3 rounded-xl border-2 border-slate-600 shadow-sm transition-all hover:-translate-y-0.5 active:translate-y-1 text-xs sm:text-sm uppercase tracking-wider">
                             <i class="fa-solid fa-rotate mr-2"></i>Reset Simulation
                         </button>
                     </div>
 
                     <div id="integrity-modal"
-                        class="hidden mt-4 pt-4 border-t border-slate-800 animate-pulse bg-slate-800 p-4 rounded-2xl shadow-lg border-[3px] border-orange-500">
-                        <p class="text-orange-400 font-black text-sm mb-2 text-center uppercase tracking-wider">⚠️ TEMPTATION ALERT!</p>
-                        <p class="text-sm font-bold text-slate-300 mb-4 text-center">You are safe outside. But you left your
+                        class="hidden mt-3 sm:mt-4 pt-3 sm:pt-4 border-t border-slate-800 animate-pulse bg-slate-800 p-3 sm:p-4 rounded-xl sm:rounded-2xl shadow-lg border-[3px] border-orange-500">
+                        <p class="text-orange-400 font-black text-xs sm:text-sm mb-1.5 sm:mb-2 text-center uppercase tracking-wider">⚠️ TEMPTATION ALERT!</p>
+                        <p class="text-xs sm:text-sm font-bold text-slate-300 mb-3 sm:mb-4 text-center">You are safe outside. But you left your
                             tablet inside!</p>
                         <div class="flex flex-col gap-2">
                             <button onclick="handleIntegrity(false)"
@@ -311,11 +359,11 @@
                 </div>
             </div>
 
-            <div id="completion-msg" class="hidden mt-10 bg-green-50 p-8 rounded-[2rem] border-[4px] border-green-200 shadow-sm">
-                <h3 class="text-green-600 text-3xl font-black mb-3 drop-shadow-sm">ESCAPE SUCCESSFUL</h3>
-                <p class="text-slate-600 font-bold text-lg mb-6">You navigated the smoke and showed perfect integrity.</p>
+            <div id="completion-msg" class="hidden mt-6 sm:mt-10 bg-green-50 p-5 sm:p-8 rounded-[1.5rem] sm:rounded-[2rem] border-[3px] sm:border-[4px] border-green-200 shadow-sm">
+                <h3 class="text-green-600 text-xl sm:text-2xl md:text-3xl font-black mb-2 sm:mb-3 drop-shadow-sm">ESCAPE SUCCESSFUL</h3>
+                <p class="text-slate-600 font-bold text-sm sm:text-base md:text-lg mb-4 sm:mb-6">You navigated the smoke and showed perfect integrity.</p>
                 <button onclick="scrollToQuiz()"
-                    class="bg-blue-500 text-white font-black px-8 py-3 sm:px-10 sm:py-4 rounded-full border-[3px] border-blue-600 shadow-[0_4px_0_#1d4ed8] hover:-translate-y-0.5 active:translate-y-1 active:shadow-none transition-all uppercase tracking-wide text-base sm:text-lg">
+                    class="bg-blue-500 text-white font-black px-5 py-2 sm:px-10 sm:py-4 rounded-full border-[3px] border-blue-600 shadow-[0_4px_0_#1d4ed8] hover:-translate-y-0.5 active:translate-y-1 active:shadow-none transition-all uppercase tracking-wide text-xs sm:text-lg">
                     Take Final Certification <i class="fa-solid fa-arrow-down ml-2"></i>
                 </button>
             </div>
@@ -323,29 +371,27 @@
 
         <!-- QUIZ SECTION -->
         <section id="final-quiz"
-            class="fade-in ss-section bg-yellow-50 rounded-[2rem] p-8 md:p-12 border-[4px] border-yellow-300 shadow-sm"
+            class="fade-in ss-section bg-yellow-50 rounded-xl sm:rounded-[2rem] p-4 sm:p-8 md:p-12 border-[3px] sm:border-[4px] border-yellow-300 shadow-sm"
             style="animation-delay: 0.6s;">
             <div class="ss-section-badge bg-green-500 border-[3px] border-white shadow-sm text-white"><i class="fa-regular fa-circle-check"></i></div>
-            <div class="text-center mb-8 sm:mb-10">
-                <h2 class="text-2xl sm:text-3xl font-black text-yellow-900 mb-3 drop-shadow-sm"><i
+            <div class="text-center mb-4 sm:mb-10">
+                <h2 class="text-lg sm:text-3xl font-black text-yellow-900 mb-2 sm:mb-3 drop-shadow-sm"><i
                         class="fa-solid fa-graduation-cap text-orange-500 mr-2"></i> Strategic Certification</h2>
-                <p class="text-slate-700 font-bold text-base sm:text-lg">Prove your knowledge. Score <span class="text-red-500 font-black">4/5</span>
-                    to pass.</p>
             </div>
 
             <div id="quiz-container" class="max-w-2xl mx-auto space-y-6"></div>
 
-            <div id="quiz-result" class="hidden text-center mt-8 sm:mt-10 p-6 sm:p-8 bg-white rounded-[2rem] border-[4px] border-green-200 shadow-sm">
-                <div class="text-5xl sm:text-6xl mb-4 sm:mb-6 drop-shadow-md" id="result-icon"></div>
-                <h3 class="text-2xl sm:text-3xl font-black text-green-700 mb-3 drop-shadow-sm" id="result-title"></h3>
-                <p class="text-slate-600 font-bold mb-6 sm:mb-8 text-base sm:text-lg" id="result-desc"></p>
+            <div id="quiz-result" class="hidden text-center mt-5 sm:mt-10 p-4 sm:p-8 bg-white rounded-xl sm:rounded-[2rem] border-[3px] sm:border-[4px] border-green-200 shadow-sm">
+                <div class="text-3xl sm:text-6xl mb-3 sm:mb-6 drop-shadow-md" id="result-icon"></div>
+                <h3 class="text-xl sm:text-3xl font-black text-green-700 mb-1 sm:mb-3 drop-shadow-sm" id="result-title"></h3>
+                <p class="text-slate-600 font-bold mb-4 sm:mb-8 text-xs sm:text-lg" id="result-desc"></p>
 
-                <div class="flex flex-col-reverse sm:flex-row items-center justify-center gap-4 sm:gap-6">
+                <div class="flex flex-col-reverse sm:flex-row items-center justify-center gap-3 sm:gap-6">
                     <button id="btn-retake" onclick="renderQuiz()"
-                        class="text-sm font-bold text-slate-500 hover:text-slate-800 underline hidden uppercase tracking-wide mt-2 sm:mt-0">Retake Quiz</button>
+                        class="text-xs sm:text-sm font-bold text-slate-500 hover:text-slate-800 underline hidden uppercase tracking-wide mt-1 sm:mt-0">Retake Quiz</button>
                     <button id="btn-review" onclick="toggleReview()"
-                        class="text-sm font-bold text-slate-500 hover:text-slate-800 underline hidden uppercase tracking-wide mt-2 sm:mt-0 whitespace-nowrap">Review Answers</button>
-                    <a href="../module_4/index.html" id="btn-next-module" class="hidden bg-yellow-400 text-red-600 font-black px-6 py-3 sm:px-10 sm:py-4 text-sm sm:text-base rounded-full border-[3px] border-white shadow-[0_4px_0_#b45309] hover:-translate-y-0.5 active:translate-y-1 active:shadow-[0_0px_0_#b45309] transition-all uppercase tracking-wide text-center w-full sm:w-auto">
+                        class="text-xs sm:text-sm font-bold text-slate-500 hover:text-slate-800 underline hidden uppercase tracking-wide mt-1 sm:mt-0 whitespace-nowrap">Review Answers</button>
+                    <a href="../module_4/index.html" id="btn-next-module" class="hidden bg-yellow-400 text-red-600 font-black px-5 py-2 sm:px-10 sm:py-4 text-xs sm:text-base rounded-full border-[3px] border-white shadow-[0_4px_0_#b45309] hover:-translate-y-0.5 active:translate-y-1 active:shadow-[0_0px_0_#b45309] transition-all uppercase tracking-wide text-center w-full sm:w-auto">
                         Go to Module 4 <i class="fa-solid fa-arrow-right ml-2"></i>
                     </a>
                 </div>
@@ -490,7 +536,7 @@
         fogCanvas.width = canvas.width;
         fogCanvas.height = canvas.height;
 
-        let player = { x: 30, y: 30, radius: 5, speed: 2.5, dx: 0, dy: 0 };
+        let player = { x: 30, y: 30, radius: 5, speed: 1.8, dx: 0, dy: 0 };
         let keys = { ArrowUp: false, ArrowDown: false, ArrowLeft: false, ArrowRight: false };
         let gameState = 'playing';
         let walls = [];
@@ -586,10 +632,11 @@
 
         function updatePhysics() {
             player.dx = 0; player.dy = 0;
-            if (keys.ArrowUp) player.dy = -player.speed;
-            if (keys.ArrowDown) player.dy = player.speed;
-            if (keys.ArrowLeft) player.dx = -player.speed;
-            if (keys.ArrowRight) player.dx = player.speed;
+            const spd = player.speed;
+            if (keys.ArrowUp) player.dy = -spd;
+            if (keys.ArrowDown) player.dy = spd;
+            if (keys.ArrowLeft) player.dx = -spd;
+            if (keys.ArrowRight) player.dx = spd;
 
             let nextX = player.x + player.dx;
             let nextY = player.y + player.dy;
@@ -740,6 +787,67 @@
         function stopMove() {
             keys = { ArrowUp: false, ArrowDown: false, ArrowLeft: false, ArrowRight: false };
         }
+
+        // --- MOBILE ARROW KEY D-PAD ---
+        (function() {
+            const dpad = document.getElementById('dpad');
+            if (!dpad) return;
+
+            const dirMap = {
+                up:    'ArrowUp',
+                down:  'ArrowDown',
+                left:  'ArrowLeft',
+                right: 'ArrowRight'
+            };
+
+            const activePointers = new Map();
+
+            function pressDir(dir, btn) {
+                if (dirMap[dir]) {
+                    keys[dirMap[dir]] = true;
+                    btn.classList.add('active');
+                }
+            }
+
+            function releaseDir(dir, btn) {
+                if (dirMap[dir]) {
+                    keys[dirMap[dir]] = false;
+                    btn.classList.remove('active');
+                }
+            }
+
+            dpad.addEventListener('pointerdown', function(e) {
+                e.preventDefault();
+                const btn = e.target.closest('.dpad-btn');
+                if (!btn) return;
+                btn.setPointerCapture(e.pointerId);
+                const dir = btn.dataset.dir;
+                activePointers.set(e.pointerId, { dir, btn });
+                pressDir(dir, btn);
+            }, { passive: false });
+
+            dpad.addEventListener('pointerup', function(e) {
+                e.preventDefault();
+                const entry = activePointers.get(e.pointerId);
+                if (entry) {
+                    releaseDir(entry.dir, entry.btn);
+                    activePointers.delete(e.pointerId);
+                }
+            }, { passive: false });
+
+            dpad.addEventListener('pointercancel', function(e) {
+                e.preventDefault();
+                const entry = activePointers.get(e.pointerId);
+                if (entry) {
+                    releaseDir(entry.dir, entry.btn);
+                    activePointers.delete(e.pointerId);
+                }
+            }, { passive: false });
+
+            dpad.addEventListener('contextmenu', function(e) {
+                e.preventDefault();
+            });
+        })();
 
         // --- QUIZ LOGIC ---
         const quizData = [

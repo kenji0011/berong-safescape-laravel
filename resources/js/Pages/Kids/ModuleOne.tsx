@@ -248,16 +248,16 @@ const ModuleOnePage = () => {
 
       {/* ── Module Content Area ── */}
       <div className="flex-1">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 space-y-20">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 md:py-12 space-y-10 sm:space-y-14 md:space-y-20">
 
 
 
           {/* ── Intro ── */}
-          <div className="text-center max-w-3xl mx-auto space-y-4">
-            <h1 className="text-4xl sm:text-5xl md:text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-[#ff4b3e] to-[#ff8c00] leading-tight drop-shadow-sm">
+          <div className="text-center max-w-3xl mx-auto space-y-3 sm:space-y-4">
+            <h1 className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-[#ff4b3e] to-[#ff8c00] leading-tight drop-shadow-sm">
               Fire is a Tool, Not a Toy
             </h1>
-            <p className="text-lg text-slate-600 font-bold leading-relaxed max-w-2xl mx-auto">
+            <p className="text-sm sm:text-base md:text-lg text-slate-600 font-bold leading-relaxed max-w-2xl mx-auto">
               To be a fire safety hero, the first thing you need to do is understand what fire is and respect its power.
               Just like some tools are only for grown-ups to use, fire is also something that needs to be handled with great care.
               This module will help you understand why fire is a tool for adults and not a toy for kids.
@@ -265,14 +265,14 @@ const ModuleOnePage = () => {
           </div>
 
           {/* ── Video Section ── */}
-          <section className={cn("relative bg-white rounded-[2rem] border-[4px] border-blue-200 shadow-sm p-6 sm:p-10 text-center transition-all", videoStarted && "border-green-200")}>
+          <section className={cn("relative bg-white rounded-[1.5rem] sm:rounded-[2rem] border-[3px] sm:border-[4px] border-blue-200 shadow-sm p-4 sm:p-6 md:p-10 text-center transition-all", videoStarted && "border-green-200")}>
             {videoStarted && (
-              <div className="absolute top-4 right-4 z-10 h-10 w-10 rounded-full bg-green-500 border-[3px] border-white shadow-sm flex items-center justify-center">
-                <CheckCircle className="h-5 w-5 text-white" />
+              <div className="absolute top-3 right-3 sm:top-4 sm:right-4 z-10 h-8 w-8 sm:h-10 sm:w-10 rounded-full bg-green-500 border-[3px] border-white shadow-sm flex items-center justify-center">
+                <CheckCircle className="h-4 w-4 sm:h-5 sm:w-5 text-white" />
               </div>
             )}
-            <h2 className="text-3xl font-black text-blue-600 mb-6 drop-shadow-sm">Watch the Intro Video</h2>
-            <div className="w-full aspect-video bg-slate-100 rounded-3xl overflow-hidden shadow-sm border-[4px] border-blue-200 relative">
+            <h2 className="text-xl sm:text-2xl md:text-3xl font-black text-blue-600 mb-4 sm:mb-6 drop-shadow-sm">Watch the Intro Video</h2>
+            <div className="w-full aspect-video bg-slate-100 rounded-2xl sm:rounded-3xl overflow-hidden shadow-sm border-[3px] sm:border-[4px] border-blue-200 relative">
               <video
                 ref={videoRef}
                 controls
@@ -283,12 +283,12 @@ const ModuleOnePage = () => {
                 Your browser doesn't support HTML5 video.
               </video>
             </div>
-            <p className="text-center text-slate-500 font-bold text-sm mt-6 pt-6 border-t-2 border-slate-100 uppercase tracking-widest">Watch the video to continue</p>
+            <p className="text-center text-slate-500 font-bold text-xs sm:text-sm mt-4 sm:mt-6 pt-4 sm:pt-6 border-t-2 border-slate-100 uppercase tracking-widest">Watch the video to continue</p>
           </section>
 
           {/* ── Section 1.1 — What Makes a Fire? (unlocked after video) ── */}
           <section className={cn(
-            "relative bg-orange-50/50 rounded-[2rem] border-[4px] border-orange-200 p-8 sm:p-12 shadow-sm transition-all duration-500",
+            "relative bg-orange-50/50 rounded-[2rem] border-[4px] border-orange-200 p-5 sm:p-8 md:p-12 shadow-sm transition-all duration-500",
             !videoStarted && "opacity-30 pointer-events-none select-none",
             section1Done && "border-green-200"
           )}>
@@ -305,39 +305,39 @@ const ModuleOnePage = () => {
               </div>
             )}
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8 md:gap-12 items-center">
               {/* Text content */}
-              <div className="space-y-6 order-2 md:order-1">
-                <div className="flex items-center gap-3 mb-2">
-                  <span className="bg-orange-100 text-orange-600 border-2 border-orange-200 shadow-sm px-3 py-1 rounded-xl text-sm font-black">1.1</span>
-                  <h2 className="text-3xl font-black text-slate-800">What Makes a Fire?</h2>
+              <div className="space-y-4 sm:space-y-6 order-2 md:order-1">
+                <div className="flex items-center gap-2 sm:gap-3 mb-1 sm:mb-2">
+                  <span className="bg-orange-100 text-orange-600 border-2 border-orange-200 shadow-sm px-2 py-0.5 sm:px-3 sm:py-1 rounded-xl text-xs sm:text-sm font-black">1.1</span>
+                  <h2 className="text-xl sm:text-2xl md:text-3xl font-black text-slate-800">What Makes a Fire?</h2>
                 </div>
-                <div className="text-slate-600 leading-relaxed text-base space-y-4 font-medium">
+                <div className="text-slate-600 leading-relaxed text-sm sm:text-base space-y-3 sm:space-y-4 font-medium">
                   <p>
                     Have you ever seen a stool with three legs? If you take one leg away, the stool falls over.{" "}
                     <strong className="text-slate-800">Fire is just like that!</strong> It needs three things to exist, and we call this the "fire triangle."
                     If you take any one of them away, the fire goes out.
                   </p>
-                  <ul className="space-y-4 bg-white p-6 rounded-2xl border-[3px] border-orange-100 shadow-sm">
-                    <li className="flex gap-4 items-start">
-                      <span className="text-red-400 text-xl mt-0.5">🔥</span>
+                  <ul className="space-y-3 sm:space-y-4 bg-white p-4 sm:p-6 rounded-2xl border-[3px] border-orange-100 shadow-sm">
+                    <li className="flex gap-3 sm:gap-4 items-start">
+                      <span className="text-red-400 text-lg sm:text-xl mt-0.5">🔥</span>
                       <div>
-                        <strong className="text-slate-800 block">Heat</strong>
-                        <span className="text-sm text-slate-500">This is something hot, like a spark or a flame, that gets the fire started.</span>
+                        <strong className="text-slate-800 block text-sm sm:text-base">Heat</strong>
+                        <span className="text-xs sm:text-sm text-slate-500">This is something hot, like a spark or a flame, that gets the fire started.</span>
                       </div>
                     </li>
-                    <li className="flex gap-4 items-start">
-                      <span className="text-amber-400 text-xl mt-0.5">🌲</span>
+                    <li className="flex gap-3 sm:gap-4 items-start">
+                      <span className="text-amber-400 text-lg sm:text-xl mt-0.5">🌲</span>
                       <div>
-                        <strong className="text-slate-800 block">Fuel</strong>
-                        <span className="text-sm text-slate-500">This is anything that can burn, like paper, wood, or cloth.</span>
+                        <strong className="text-slate-800 block text-sm sm:text-base">Fuel</strong>
+                        <span className="text-xs sm:text-sm text-slate-500">This is anything that can burn, like paper, wood, or cloth.</span>
                       </div>
                     </li>
-                    <li className="flex gap-4 items-start">
-                      <span className="text-blue-400 text-xl mt-0.5">💨</span>
+                    <li className="flex gap-3 sm:gap-4 items-start">
+                      <span className="text-blue-400 text-lg sm:text-xl mt-0.5">💨</span>
                       <div>
-                        <strong className="text-slate-800 block">Air (Oxygen)</strong>
-                        <span className="text-sm text-slate-500">Fire needs to breathe, just like we do! It uses a part of the air called oxygen to stay alive.</span>
+                        <strong className="text-slate-800 block text-sm sm:text-base">Air (Oxygen)</strong>
+                        <span className="text-xs sm:text-sm text-slate-500">Fire needs to breathe, just like we do! It uses a part of the air called oxygen to stay alive.</span>
                       </div>
                     </li>
                   </ul>
@@ -359,11 +359,11 @@ const ModuleOnePage = () => {
 
               {/* Fire Triangle Image */}
               <div className="order-1 md:order-2">
-                <div className="bg-white rounded-[2rem] overflow-hidden border-[4px] border-orange-200 shadow-sm transform hover:rotate-0 rotate-1 transition-transform duration-500 flex items-center justify-center p-4">
+                <div className="bg-white rounded-[1.5rem] sm:rounded-[2rem] overflow-hidden border-[3px] sm:border-[4px] border-orange-200 shadow-sm transform hover:rotate-0 rotate-1 transition-transform duration-500 flex items-center justify-center p-3 sm:p-4">
                   <img
                     src="/modules/assets/images/m1.png"
                     alt="The Fire Triangle — Heat, Fuel, Oxygen"
-                    className="w-full h-auto max-h-72 object-contain"
+                    className="w-full h-auto max-h-48 sm:max-h-60 md:max-h-72 object-contain"
                   />
                 </div>
               </div>
@@ -372,7 +372,7 @@ const ModuleOnePage = () => {
 
           {/* ── Section 1.2 — Grown-Up Tools (unlocked after section1) ── */}
           <section className={cn(
-            "relative bg-white rounded-[2rem] border-[4px] border-red-200 p-8 sm:p-12 overflow-hidden shadow-sm transition-all duration-500",
+            "relative bg-white rounded-[2rem] border-[4px] border-red-200 p-5 sm:p-8 md:p-12 overflow-hidden shadow-sm transition-all duration-500",
             !section1Done && "opacity-30 pointer-events-none select-none",
             section2Done && "border-green-200"
           )}>
@@ -390,13 +390,13 @@ const ModuleOnePage = () => {
             )}
 
             <div className="relative z-10">
-              <div className="flex items-center gap-3 mb-8">
-                <span className="bg-red-100 text-red-600 border-2 border-red-200 shadow-sm px-3 py-1 rounded-xl text-sm font-black">1.2</span>
-                <h2 className="text-3xl font-black text-slate-800">Grown-Up Tools</h2>
+              <div className="flex items-center gap-2 sm:gap-3 mb-5 sm:mb-8">
+                <span className="bg-red-100 text-red-600 border-2 border-red-200 shadow-sm px-2 py-0.5 sm:px-3 sm:py-1 rounded-xl text-xs sm:text-sm font-black">1.2</span>
+                <h2 className="text-xl sm:text-2xl md:text-3xl font-black text-slate-800">Grown-Up Tools</h2>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                <div className="md:col-span-2 text-slate-600 space-y-5 leading-relaxed text-base font-medium">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-5 sm:gap-6 md:gap-8">
+                <div className="md:col-span-2 text-slate-600 space-y-3 sm:space-y-5 leading-relaxed text-sm sm:text-base font-medium">
                   <p>
                     You know that grown-ups use special tools for their jobs, like power saws or even cars.
                     These tools are very helpful, but they can be very dangerous if they aren't used correctly,
@@ -423,12 +423,12 @@ const ModuleOnePage = () => {
                 </div>
 
                 {/* Golden Rule Card */}
-                <div className="bg-red-50 border-[3px] border-red-200 rounded-2xl p-6 flex flex-col items-center justify-center text-center shadow-sm hover:scale-105 transition-transform duration-300">
-                  <div className="bg-red-500 w-12 h-12 rounded-full flex items-center justify-center mb-4 shadow-md border-[3px] border-white">
-                    <span className="text-white text-xl">✋</span>
+                <div className="bg-red-50 border-[3px] border-red-200 rounded-xl sm:rounded-2xl p-4 sm:p-6 flex flex-col items-center justify-center text-center shadow-sm hover:scale-105 transition-transform duration-300">
+                  <div className="bg-red-500 w-10 h-10 sm:w-12 sm:h-12 rounded-full flex items-center justify-center mb-3 sm:mb-4 shadow-md border-[3px] border-white">
+                    <span className="text-white text-lg sm:text-xl">✋</span>
                   </div>
-                  <h3 className="text-red-600 font-black mb-3 uppercase tracking-wider text-xs">Powerful Rule</h3>
-                  <p className="text-slate-700 font-medium italic text-sm leading-relaxed">
+                  <h3 className="text-red-600 font-black mb-2 sm:mb-3 uppercase tracking-wider text-[10px] sm:text-xs">Powerful Rule</h3>
+                  <p className="text-slate-700 font-medium italic text-xs sm:text-sm leading-relaxed">
                     "If you find matches or a lighter,{" "}
                     <span className="text-red-500 font-black">do not touch them</span>.
                     Go and tell a grown-up right away."
@@ -440,7 +440,7 @@ const ModuleOnePage = () => {
 
           {/* ── Element Mixer Lab (unlocked after section2) ── */}
           <section className={cn(
-            "relative bg-purple-50 rounded-[2rem] border-[4px] border-purple-200 p-8 sm:p-12 shadow-sm transition-all duration-500",
+            "relative bg-purple-50 rounded-[2rem] border-[4px] border-purple-200 p-5 sm:p-8 md:p-12 shadow-sm transition-all duration-500",
             !section2Done && "opacity-30 pointer-events-none select-none",
             labCompleted && "border-green-200"
           )}>
@@ -457,21 +457,21 @@ const ModuleOnePage = () => {
               </div>
             )}
 
-            <div className="text-center mb-10">
-              <div className="flex items-center justify-center gap-3 mb-3">
-                <FlaskConical className="h-7 w-7 text-purple-500" />
-                <h2 className="text-3xl font-black text-purple-900">The Element Mixer Lab</h2>
+            <div className="text-center mb-6 sm:mb-8 md:mb-10">
+              <div className="flex items-center justify-center gap-2 sm:gap-3 mb-2 sm:mb-3">
+                <FlaskConical className="h-5 w-5 sm:h-7 sm:w-7 text-purple-500" />
+                <h2 className="text-xl sm:text-2xl md:text-3xl font-black text-purple-900">The Element Mixer Lab</h2>
               </div>
-              <p className="text-slate-600 font-bold leading-relaxed">
+              <p className="text-slate-600 font-bold leading-relaxed text-sm sm:text-base">
                 By understanding what fire needs to start, you are already taking a huge step in preventing fires.
                 <br />Prove your knowledge by building the Fire Triangle below!
               </p>
             </div>
 
-            <div className="flex flex-col lg:flex-row gap-10 items-center justify-center select-none">
+            <div className="flex flex-col lg:flex-row gap-6 sm:gap-8 md:gap-10 items-center justify-center select-none">
 
               {/* ── Item Inventory (draggable) ── */}
-              <div className="grid grid-cols-2 gap-4 shrink-0">
+              <div className="grid grid-cols-2 gap-2.5 sm:gap-4 shrink-0">
                 {LAB_ITEMS.map((item) => {
                   const inPit = pitItems.includes(item.id)
                   return (
@@ -481,14 +481,14 @@ const ModuleOnePage = () => {
                       onDragStart={(e) => handleDragStart(e, item)}
                       onClick={() => handleItemDrop(item)}
                       className={cn(
-                        "p-4 rounded-2xl border-2 text-center w-32 shadow-lg transition-all select-none cursor-pointer hover:-translate-y-1 active:scale-95",
+                        "p-3 sm:p-4 rounded-xl sm:rounded-2xl border-2 text-center w-[6.5rem] sm:w-32 shadow-lg transition-all select-none cursor-pointer hover:-translate-y-1 active:scale-95",
                         item.bg,
                         inPit && item.correct ? "opacity-50" : ""
                       )}
                     >
-                      <div className="text-3xl mb-2 pointer-events-none">{item.icon}</div>
-                      <p className="font-black text-white text-sm pointer-events-none">{item.label}</p>
-                      <p className="text-xs text-white/60 mt-0.5 pointer-events-none">{item.role}</p>
+                      <div className="text-2xl sm:text-3xl mb-1.5 sm:mb-2 pointer-events-none">{item.icon}</div>
+                      <p className="font-black text-white text-xs sm:text-sm pointer-events-none">{item.label}</p>
+                      <p className="text-[10px] sm:text-xs text-white/60 mt-0.5 pointer-events-none">{item.role}</p>
                     </div>
                   )
                 })}
@@ -498,7 +498,7 @@ const ModuleOnePage = () => {
               <div className="flex flex-col items-center gap-3">
                 <div
                   className={cn(
-                    "relative w-60 h-60 sm:w-72 sm:h-72 rounded-full border-4 border-dashed flex flex-col items-center justify-center overflow-hidden transition-all duration-300 bg-white",
+                    "relative w-44 h-44 sm:w-60 sm:h-60 md:w-72 md:h-72 rounded-full border-4 border-dashed flex flex-col items-center justify-center overflow-hidden transition-all duration-300 bg-white",
                     labCompleted
                       ? "border-[#ff4b3e] shadow-[0_0_50px_rgba(255,75,62,0.4)]"
                       : isDragOver
@@ -516,7 +516,7 @@ const ModuleOnePage = () => {
                   {/* Fire glow blob — only when all 3 correct items are present */}
                   {labCompleted && !pitWater && (
                     <div
-                      className="absolute bottom-8 w-20 h-20 rounded-full opacity-100 scale-125"
+                      className="absolute bottom-6 sm:bottom-8 w-14 h-14 sm:w-20 sm:h-20 rounded-full opacity-100 scale-125"
                       style={{
                         background: "radial-gradient(circle, #fbbf24 0%, #f97316 50%, #ef4444 100%)",
                         filter: "blur(6px)",
@@ -527,7 +527,7 @@ const ModuleOnePage = () => {
 
                   {/* Items badge row — top of circle */}
                   {!pitWater && pitItems.length > 0 && (
-                    <div className="absolute top-10 flex items-center gap-2 z-20">
+                    <div className="absolute top-6 sm:top-10 flex items-center gap-1.5 sm:gap-2 z-20">
                       {pitItems.map((id) => {
                         const item = LAB_ITEMS.find(i => i.id === id)
                         if (!item) return null
@@ -536,7 +536,7 @@ const ModuleOnePage = () => {
                           : id === "fan"   ? "bg-blue-800/80 border-blue-600"
                           : "bg-cyan-800/80 border-cyan-600"
                         return (
-                          <div key={id} className={cn("h-10 w-10 rounded-full border-2 flex items-center justify-center text-xl shadow-md", badgeColor)}
+                          <div key={id} className={cn("h-8 w-8 sm:h-10 sm:w-10 rounded-full border-2 flex items-center justify-center text-base sm:text-xl shadow-md", badgeColor)}
                             style={{ animation: "popIn 0.3s cubic-bezier(0.175,0.885,0.32,1.275)" }}
                           >
                             {item.icon}
@@ -548,11 +548,11 @@ const ModuleOnePage = () => {
 
                   {/* Fire emoji — bottom of circle */}
                   {labCompleted && (
-                    <div className="z-20 text-4xl" style={{ marginTop: 20 }}>🔥</div>
+                    <div className="z-20 text-2xl sm:text-4xl" style={{ marginTop: 14 }}>🔥</div>
                   )}
 
                   {/* Water splash */}
-                  {pitWater && <div className="text-5xl animate-bounce z-10">💦</div>}
+                  {pitWater && <div className="text-3xl sm:text-5xl animate-bounce z-10">💦</div>}
 
                   {/* Placeholder */}
                   {pitItems.length === 0 && !pitWater && !labCompleted && (
@@ -564,7 +564,7 @@ const ModuleOnePage = () => {
 
                 {/* Status message — BELOW pit */}
                 <p className={cn(
-                  "text-sm font-bold text-center transition-colors min-h-[20px]",
+                  "text-xs sm:text-sm font-bold text-center transition-colors min-h-[20px]",
                   labCompleted ? "text-orange-500" : "text-slate-500"
                 )}>
                   {labCompleted ? "⚠️ FIRE STARTED! The Triangle is complete!" : pitMessage}
