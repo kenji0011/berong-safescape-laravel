@@ -482,4 +482,17 @@
     .ss-module-connector {
         width: 1rem;
     }
+
+    /* Reduce all shared buttons on mobile */
+    .ss-btn {
+        padding: 0.5rem 1rem;
+        font-size: 0.75rem;
+    }
+
+    .ss-section-badge {
+        width: 2.25rem;
+        height: 2.25rem;
+        font-size: 1.1rem;
+        border-width: 3px !important;
+    }
 }

@@ -127,15 +127,15 @@
         </div>
     </nav>
 
-    <main class="max-w-5xl mx-auto p-6 space-y-24">
+    <main class="max-w-5xl mx-auto p-4 sm:p-6 space-y-12 sm:space-y-24">
 
         <!-- HEADER -->
-        <section class="fade-in text-center max-w-3xl mx-auto space-y-4" style="animation-delay: 0.1s;">
+        <section class="fade-in text-center max-w-3xl mx-auto space-y-3 sm:space-y-4" style="animation-delay: 0.1s;">
             <h1
-                class="text-4xl md:text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-green-500 drop-shadow-sm">
+                class="text-3xl sm:text-4xl md:text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-green-500 drop-shadow-sm">
                 Get Out & Stay Out!
             </h1>
-            <p class="text-lg text-slate-600 font-bold leading-relaxed max-w-2xl mx-auto">
+            <p class="text-base sm:text-lg text-slate-600 font-bold leading-relaxed max-w-2xl mx-auto">
                 A hero always has a strategy. Learn to navigate the danger zone, check your path, and show integrity by
                 never going back inside.
             </p>
@@ -144,7 +144,7 @@
         <!-- VIDEO -->
         <section id="section-video" class="fade-in ss-section bg-white rounded-[2rem] border-[4px] border-blue-200 shadow-sm p-6 sm:p-10 text-center" style="animation-delay: 0.2s;">
             <div class="ss-section-badge bg-green-500 border-[3px] border-white shadow-sm text-white"><i class="fa-regular fa-circle-check"></i></div>
-            <h2 class="text-3xl font-black text-blue-600 mb-6 drop-shadow-sm">Watch the Intro Video</h2>
+            <h2 class="text-2xl sm:text-3xl font-black text-blue-600 mb-4 sm:mb-6 drop-shadow-sm">Watch the Intro Video</h2>
             <div
                 class="w-full aspect-video bg-slate-100 rounded-3xl overflow-hidden shadow-sm border-[4px] border-blue-200 relative group">
                 <video id="module-video" controls class="w-full h-full object-cover" onplay="onVideoPlay()" onended="onVideoEnd()">
@@ -155,16 +155,16 @@
         </section>
 
         <!-- PART 1: STRATEGIC CONTENT -->
-        <section id="section-content" class="fade-in ss-section bg-slate-50 rounded-[2rem] p-8 md:p-12 border-[4px] border-slate-200 shadow-sm" style="animation-delay: 0.3s;">
+        <section id="section-content" class="fade-in ss-section bg-slate-50 rounded-[2rem] p-5 sm:p-8 md:p-12 border-[4px] border-slate-200 shadow-sm" style="animation-delay: 0.3s;">
             <div class="ss-section-badge bg-green-500 border-[3px] border-white shadow-sm text-white"><i class="fa-regular fa-circle-check"></i></div>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
-                <div class="space-y-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-12 items-center">
+                <div class="space-y-4 sm:space-y-6">
                     <div>
                         <div class="flex items-center gap-3 mb-2">
                             <span class="bg-blue-100 text-blue-600 border-2 border-blue-200 shadow-sm px-3 py-1 rounded-xl text-sm font-black">3.1</span>
-                            <h2 class="text-3xl font-black text-slate-800">Two Ways Out</h2>
+                            <h2 class="text-2xl sm:text-3xl font-black text-slate-800">Two Ways Out</h2>
                         </div>
-                        <p class="text-slate-600 font-medium leading-relaxed">
+                        <p class="text-slate-600 font-medium leading-relaxed text-sm sm:text-base">
                             Every room needs a primary exit (usually the door) and a backup plan (usually a window).
                             If smoke blocks one path, <strong class="text-slate-800 uppercase">reroute immediately</strong>.
                         </p>
@@ -172,9 +172,9 @@
                     <div>
                         <div class="flex items-center gap-3 mb-2">
                             <span class="bg-blue-100 text-blue-600 border-2 border-blue-200 shadow-sm px-3 py-1 rounded-xl text-sm font-black">3.2</span>
-                            <h2 class="text-3xl font-black text-slate-800">The Hand Check Algorithm</h2>
+                            <h2 class="text-2xl sm:text-3xl font-black text-slate-800">The Hand Check Algorithm</h2>
                         </div>
-                        <p class="text-slate-600 font-medium leading-relaxed">
+                        <p class="text-slate-600 font-medium leading-relaxed text-sm sm:text-base">
                             Before opening a closed door, you must run a safety check.
                             Use the <strong class="text-orange-500 font-black">back of your hand</strong> to touch the door and
                             knob.
@@ -184,14 +184,14 @@
                         </p>
                     </div>
 
-                    <button id="btn-content-read" onclick="markContentRead()" class="bg-blue-500 text-white font-black py-3 px-6 rounded-full border-[3px] border-white shadow-[0_4px_0_#1d4ed8] hover:-translate-y-0.5 active:translate-y-1 active:shadow-none transition-all uppercase tracking-wide mt-4">
+                    <button id="btn-content-read" onclick="markContentRead()" class="bg-blue-500 text-white font-black py-2.5 px-5 sm:py-3 sm:px-6 rounded-full border-[3px] border-white shadow-[0_4px_0_#1d4ed8] hover:-translate-y-0.5 active:translate-y-1 active:shadow-none transition-all uppercase tracking-wide mt-4 text-sm sm:text-base">
                         <i class="fa-solid fa-check"></i> I understand the escape plan
                     </button>
                 </div>
 
                 <!-- Interactive Blueprint SCANNER -->
                 <div
-                    class="bg-white rounded-[2rem] p-2 border-[4px] border-blue-200 shadow-sm relative min-h-[300px] overflow-hidden group">
+                    class="bg-white rounded-[1.5rem] sm:rounded-[2rem] p-2 border-[3px] sm:border-[4px] border-blue-200 shadow-sm relative min-h-[220px] sm:min-h-[300px] overflow-hidden group">
                     <div class="scan-line z-20"></div>
                     <div
                         class="absolute top-0 left-0 w-full bg-white/90 border-b-2 border-blue-100 p-3 z-20 flex justify-between items-center backdrop-blur-sm">
@@ -200,7 +200,7 @@
                         <span class="text-xs font-bold text-slate-500 uppercase">Floor: 2 | Room: 4B</span>
                     </div>
 
-                    <div class="relative w-full h-80 bg-slate-50 flex items-center justify-center overflow-hidden rounded-2xl border-2 border-slate-200 mt-8">
+                    <div class="relative w-full h-56 sm:h-80 bg-slate-50 flex items-center justify-center overflow-hidden rounded-xl sm:rounded-2xl border-2 border-slate-200 mt-8">
                         <img src="../assets/images/blueprint.png" alt="Room Blueprint"
                             class="w-full h-full object-contain"
                             onerror="this.classList.add('hidden'); this.nextElementSibling.classList.remove('hidden');">
@@ -315,7 +315,7 @@
                 <h3 class="text-green-600 text-3xl font-black mb-3 drop-shadow-sm">ESCAPE SUCCESSFUL</h3>
                 <p class="text-slate-600 font-bold text-lg mb-6">You navigated the smoke and showed perfect integrity.</p>
                 <button onclick="scrollToQuiz()"
-                    class="bg-blue-500 text-white font-black px-10 py-4 rounded-full border-[3px] border-blue-600 shadow-[0_4px_0_#1d4ed8] hover:-translate-y-0.5 active:translate-y-1 active:shadow-none transition-all uppercase tracking-wide text-lg">
+                    class="bg-blue-500 text-white font-black px-8 py-3 sm:px-10 sm:py-4 rounded-full border-[3px] border-blue-600 shadow-[0_4px_0_#1d4ed8] hover:-translate-y-0.5 active:translate-y-1 active:shadow-none transition-all uppercase tracking-wide text-base sm:text-lg">
                     Take Final Certification <i class="fa-solid fa-arrow-down ml-2"></i>
                 </button>
             </div>
@@ -326,19 +326,19 @@
             class="fade-in ss-section bg-yellow-50 rounded-[2rem] p-8 md:p-12 border-[4px] border-yellow-300 shadow-sm"
             style="animation-delay: 0.6s;">
             <div class="ss-section-badge bg-green-500 border-[3px] border-white shadow-sm text-white"><i class="fa-regular fa-circle-check"></i></div>
-            <div class="text-center mb-10">
-                <h2 class="text-3xl font-black text-yellow-900 mb-3 drop-shadow-sm"><i
+            <div class="text-center mb-8 sm:mb-10">
+                <h2 class="text-2xl sm:text-3xl font-black text-yellow-900 mb-3 drop-shadow-sm"><i
                         class="fa-solid fa-graduation-cap text-orange-500 mr-2"></i> Strategic Certification</h2>
-                <p class="text-slate-700 font-bold text-lg">Prove your knowledge. Score <span class="text-red-500 font-black">4/5</span>
+                <p class="text-slate-700 font-bold text-base sm:text-lg">Prove your knowledge. Score <span class="text-red-500 font-black">4/5</span>
                     to pass.</p>
             </div>
 
             <div id="quiz-container" class="max-w-2xl mx-auto space-y-6"></div>
 
-            <div id="quiz-result" class="hidden text-center mt-10 p-8 bg-white rounded-[2rem] border-[4px] border-green-200 shadow-sm">
-                <div class="text-6xl mb-6 drop-shadow-md" id="result-icon"></div>
-                <h3 class="text-3xl font-black text-green-700 mb-3 drop-shadow-sm" id="result-title"></h3>
-                <p class="text-slate-600 font-bold mb-8 text-lg" id="result-desc"></p>
+            <div id="quiz-result" class="hidden text-center mt-8 sm:mt-10 p-6 sm:p-8 bg-white rounded-[2rem] border-[4px] border-green-200 shadow-sm">
+                <div class="text-5xl sm:text-6xl mb-4 sm:mb-6 drop-shadow-md" id="result-icon"></div>
+                <h3 class="text-2xl sm:text-3xl font-black text-green-700 mb-3 drop-shadow-sm" id="result-title"></h3>
+                <p class="text-slate-600 font-bold mb-6 sm:mb-8 text-base sm:text-lg" id="result-desc"></p>
 
                 <div class="flex flex-col-reverse sm:flex-row items-center justify-center gap-4 sm:gap-6">
                     <button id="btn-retake" onclick="renderQuiz()"
