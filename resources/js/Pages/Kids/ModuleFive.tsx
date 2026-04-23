@@ -50,7 +50,7 @@ const ModuleFivePage = ({ moduleNum }: { moduleNum: number }) => {
       if (!iframe.contentWindow) return;
       const iframeDoc = iframe.contentWindow.document;
 
-      iframeDoc.body.style.backgroundColor = '#0f1729'; 
+      iframeDoc.body.style.backgroundColor = 'transparent'; 
       iframeDoc.documentElement.style.overflow = 'hidden';
 
       const nav = iframeDoc.querySelector('.ss-nav') as HTMLElement;
@@ -59,6 +59,7 @@ const ModuleFivePage = ({ moduleNum }: { moduleNum: number }) => {
       const resizeIframe = () => {
         setTimeout(() => {
           if (!iframeDoc.documentElement) return;
+          iframe.style.height = '0px'; // Reset height to allow shrinking
           const height = iframeDoc.documentElement.scrollHeight;
           iframe.style.height = `${height}px`;
         }, 50);
@@ -75,27 +76,17 @@ const ModuleFivePage = ({ moduleNum }: { moduleNum: number }) => {
         if (isExamPassed && !alreadyInjected) {
           setModuleCompleted(true);
           
-          // Find the certificate button or the completion container to inject after
-          const certificateBtn = iframeDoc.getElementById('btn-view-cert') || iframeDoc.querySelector('button[onclick*="showCertificate"]');
-          const completionContainer = certificateBtn?.closest('div') || certificateBtn?.parentElement || examResult;
+          const certificateBtn = iframeDoc.getElementById('btn-view-cert');
+          const btnContainer = certificateBtn?.parentElement;
           
-          if (completionContainer) {
-            const ctaDiv = iframeDoc.createElement('div');
-            ctaDiv.id = 'post-test-cta';
-            ctaDiv.style.cssText = 'text-align:center; margin-top:16px; padding:16px; background:linear-gradient(135deg,#10b981,#059669); border-radius:16px; border:2px solid rgba(255,255,255,0.2);';
-            ctaDiv.innerHTML = `
-              <p style="color:rgba(255,255,255,0.9); font-size:13px; font-weight:700; margin-bottom:10px; letter-spacing:0.5px;">
-                📋 Ready for the final challenge?
-              </p>
-              <a href="/assessment/post-test" 
-                 style="display:inline-flex; align-items:center; gap:8px; padding:12px 28px; background:white; color:#059669; font-weight:900; font-size:15px; border-radius:999px; text-decoration:none; box-shadow:0 4px 0 #047857; border:2px solid white; transition:all 0.2s; text-transform:uppercase; letter-spacing:1px;"
-                 onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 0 #047857'"
-                 onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 0 #047857'"
-              >
-                📝 Take Post-Test Assessment →
-              </a>
-            `;
-            completionContainer.appendChild(ctaDiv);
+          if (btnContainer) {
+            const ctaBtn = iframeDoc.createElement('a');
+            ctaBtn.id = 'post-test-cta';
+            ctaBtn.href = '/assessment/post-test';
+            ctaBtn.className = 'bg-yellow-400 text-red-600 font-black px-6 py-3 sm:px-10 sm:py-4 text-sm sm:text-base rounded-full border-[3px] border-white shadow-[0_4px_0_#b45309] hover:-translate-y-0.5 active:translate-y-1 active:shadow-[0_0px_0_#b45309] transition-all uppercase tracking-wide text-center w-full sm:w-auto block whitespace-nowrap';
+            ctaBtn.innerHTML = `Take Post-Test <i class="fa-solid fa-arrow-right ml-2"></i>`;
+            
+            btnContainer.appendChild(ctaBtn);
             resizeIframe();
           }
         }
@@ -139,29 +130,29 @@ const ModuleFivePage = ({ moduleNum }: { moduleNum: number }) => {
 
       {/* ── Sub Header ── */}
       <div className="bg-white border-b border-slate-200 py-3 px-4 sm:px-6 lg:px-8 shadow-sm z-20 relative">
-        <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-4 w-full sm:w-auto">
-            <Link href="/kids/safescape" className="inline-flex items-center gap-2 px-4 py-2 bg-white rounded-full text-slate-700 font-bold hover:text-slate-900 border-2 border-slate-200 shadow-sm transition-all text-sm whitespace-nowrap">
-              <ArrowLeft className="h-4 w-4" />
-              Back to Dashboard
-            </Link>
+        <div className="max-w-7xl mx-auto flex flex-row items-center justify-between gap-2 sm:gap-4">
+          <div className="flex items-center gap-2 sm:gap-4">
+            <Link href="/kids/safescape" className="inline-flex items-center justify-center gap-2 p-2 sm:px-4 sm:py-2 bg-white rounded-full text-slate-700 font-bold hover:text-slate-900 border-[3px] border-slate-200 shadow-[0_3px_0_#cbd5e1] hover:-translate-y-0.5 active:translate-y-1 active:shadow-[0_0px_0_#cbd5e1] transition-all text-sm whitespace-nowrap"><ArrowLeft className="h-4 w-4" /><span className="hidden sm:inline">Back to Dashboard</span></Link>
             <div className="hidden sm:flex items-center gap-2">
               <Flame className="h-5 w-5 text-[#ff4b3e]" />
               <h1 className="text-xl font-black text-slate-800">SafeScape Fire Safety Course</h1>
             </div>
           </div>
-          <div className="flex items-center gap-4 sm:gap-6">
+          <div className="flex items-center gap-2 sm:gap-6">
             {/* Module dots */}
             <div className="flex items-center gap-1 sm:gap-2">
               {[1, 2, 3, 4, 5].map((n) => (
                 <React.Fragment key={n}>
-                  <div className={cn(
-                    "h-8 w-8 rounded-full flex items-center justify-center text-sm font-black transition-all shrink-0",
-                    n === currentModule
-                      ? "bg-[#ff4b3e] text-white shadow-md shadow-red-500/30 ring-2 ring-red-200"
-                      : "bg-slate-100 text-slate-400 border border-slate-200"
-                  )}>{n}</div>
-                  {n < 5 && <div className="h-0.5 w-3 sm:w-6 bg-slate-200 rounded shrink-0" />}
+                  <Link
+                    href={`/kids/safescape/${n}`}
+                    className={cn(
+                      "h-8 w-8 sm:h-10 sm:w-10 rounded-full flex items-center justify-center text-xs sm:text-sm font-black transition-all shrink-0 border-[3px] focus:outline-none",
+                      n === currentModule
+                        ? "bg-[#ff4b3e] text-white border-white shadow-[0_4px_0_#991b1b] -translate-y-0.5 pointer-events-none"
+                        : "bg-white text-slate-400 border-slate-200 shadow-[0_3px_0_#cbd5e1] hover:-translate-y-0.5 hover:shadow-[0_4px_0_#cbd5e1] hover:text-slate-600 active:translate-y-1 active:shadow-[0_0px_0_#cbd5e1]"
+                    )}
+                  >{n}</Link>
+                  {n < 5 && <div className="h-0.5 w-2 sm:w-6 bg-slate-200 rounded shrink-0" />}
                 </React.Fragment>
               ))}
             </div>
@@ -226,12 +217,13 @@ const ModuleFivePage = ({ moduleNum }: { moduleNum: number }) => {
       )}
 
       {/* ── Dark Module Content Area ── */}
-      <div className="flex-1 bg-[#0f1729] flex flex-col w-full">
+      <div className="flex-1 bg-blue-50 bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] [background-size:16px_16px] flex flex-col w-full">
         <iframe 
           src={`/modules/module_${currentModule}/index.html`}
           className="w-full border-none m-0 p-0"
-          style={{ minHeight: 'calc(100vh - 140px)' }}
+          style={{ minHeight: '3000px' }}
           onLoad={handleIframeLoad}
+          loading="eager"
           allow="fullscreen; autoplay; encrypted-media"
           title={`SafeScape Module ${currentModule}`}
         />

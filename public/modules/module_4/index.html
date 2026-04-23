@@ -84,7 +84,7 @@
     </style>
 </head>
 
-<body class="bg-slate-900 text-slate-100 font-sans min-h-screen">
+<body class="bg-transparent text-slate-800 font-sans min-h-screen">
 
     <!-- NAVIGATION -->
     <nav class="ss-nav">
@@ -120,70 +120,70 @@
         <!-- HEADER -->
         <section class="fade-in text-center max-w-3xl mx-auto space-y-4" style="animation-delay: 0.1s;">
             <h1
-                class="text-4xl md:text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-gray-200 to-slate-400">
+                class="text-4xl md:text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-slate-500 to-slate-800 drop-shadow-sm">
                 Get Low and Go!
             </h1>
-            <p class="text-lg text-slate-300 leading-relaxed">
+            <p class="text-lg text-slate-600 font-bold leading-relaxed max-w-2xl mx-auto">
                 Fire creates more than just flames. It creates a dark, toxic enemy called smoke.
                 Learn the physics of why staying low is the only way to survive.
             </p>
         </section>
 
         <!-- CARDS PROGRESS -->
-        <div class="text-center">
-            <p class="text-slate-400 text-sm">Complete all 5 cards to unlock the final check</p>
-            <p class="text-orange-400 font-bold">Cards completed: <span id="cards-done">0</span>/5</p>
+        <div class="text-center bg-white rounded-3xl p-6 border-[4px] border-orange-200 shadow-sm max-w-sm mx-auto">
+            <p class="text-slate-500 font-bold text-sm uppercase tracking-widest mb-2">Unlock the Final Check</p>
+            <p class="text-orange-500 font-black text-xl">Cards completed: <span id="cards-done" class="text-3xl text-orange-600 ml-1">0</span>/5</p>
         </div>
 
         <!-- CARD 1: PHYSICS OF SMOKE -->
         <section id="card-1"
-            class="fade-in bg-slate-800 rounded-2xl overflow-hidden shadow-xl border border-slate-700 info-card relative"
+            class="fade-in bg-white rounded-[2rem] overflow-hidden shadow-sm border-[4px] border-orange-200 info-card relative"
             style="animation-delay: 0.2s;">
             <div class="grid grid-cols-1 md:grid-cols-2">
-                <div class="p-8 flex flex-col justify-center space-y-4">
-                    <h2 class="text-2xl font-bold text-orange-400"><i class="fa-solid fa-wind mr-2"></i> The Physics of
+                <div class="p-8 md:p-10 flex flex-col justify-center space-y-6">
+                    <h2 class="text-3xl font-black text-orange-600 drop-shadow-sm"><i class="fa-solid fa-wind mr-2 text-orange-400"></i> The Physics of
                         Heat</h2>
-                    <p class="text-slate-300 leading-relaxed">
+                    <p class="text-slate-600 font-medium leading-relaxed">
                         Heat creates energy. Because hot air is lighter than cold air, it rises rapidly to the ceiling.
                         This pushes the cooler, cleaner air down to the floor.
                     </p>
-                    <div class="bg-slate-900/50 p-4 rounded-lg border-l-4 border-green-500">
-                        <p class="text-sm text-green-300 font-bold">The Green Zone:</p>
-                        <p class="text-sm text-slate-400">The safest air is 1-2 feet off the ground.</p>
+                    <div class="bg-green-50 p-5 rounded-2xl border-[3px] border-green-200 shadow-sm">
+                        <p class="text-sm text-green-700 font-black uppercase tracking-wider mb-1">The Green Zone:</p>
+                        <p class="text-sm text-slate-700 font-bold">The safest air is 1-2 feet off the ground.</p>
                     </div>
 
                     <!-- Q&A Section -->
-                    <div class="mt-4 pt-4 border-t border-slate-700">
-                        <div id="qa-1" class="space-y-3">
-                            <p class="text-sm text-yellow-400 font-semibold"><i
+                    <div class="mt-4 pt-6 border-t-2 border-slate-100">
+                        <div id="qa-1" class="space-y-4">
+                            <p class="text-sm text-yellow-600 font-black uppercase tracking-widest"><i
                                     class="fa-solid fa-question-circle mr-1"></i> Think About It:</p>
-                            <p class="text-slate-300 text-sm">Why does hot air rise to the ceiling?</p>
-                            <div class="flex gap-2">
+                            <p class="text-slate-800 font-bold text-lg">Why does hot air rise to the ceiling?</p>
+                            <div class="flex gap-3 flex-wrap">
                                 <input type="text" id="answer-1"
-                                    class="qa-input flex-1 bg-slate-900 border border-slate-600 rounded-lg px-4 py-2 text-sm text-white focus:outline-none"
+                                    class="qa-input flex-1 min-w-[200px] bg-slate-50 border-2 border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-800 focus:outline-none font-bold"
                                     placeholder="Type your answer...">
                                 <button onclick="submitAnswer(1)"
-                                    class="bg-orange-600 hover:bg-orange-700 px-4 py-2 rounded-lg text-sm font-bold transition-colors">Submit</button>
+                                    class="bg-orange-500 text-white border-[3px] border-orange-600 hover:bg-orange-400 px-6 py-3 rounded-xl text-sm font-black transition-all shadow-[0_4px_0_#c2410c] hover:-translate-y-0.5 active:translate-y-1 active:shadow-none uppercase tracking-wide">Submit</button>
                             </div>
                             <div id="reveal-1"
-                                class="hidden answer-reveal bg-green-900/30 border border-green-600 rounded-lg p-3">
-                                <p class="text-green-400 text-sm font-bold"><i class="fa-solid fa-lightbulb mr-1"></i>
+                                class="hidden answer-reveal bg-green-100 border-[3px] border-green-300 rounded-2xl p-5 shadow-sm mt-4">
+                                <p class="text-green-700 text-sm font-black uppercase tracking-widest mb-2"><i class="fa-solid fa-lightbulb mr-1 text-yellow-500"></i>
                                     Answer:</p>
-                                <p class="text-white text-sm">Hot air rises because it is lighter (less dense) than cold
+                                <p class="text-slate-700 text-sm font-bold leading-relaxed">Hot air rises because it is lighter (less dense) than cold
                                     air. The heat makes air molecules move faster and spread apart!</p>
                             </div>
                         </div>
                     </div>
                 </div>
                 <!-- IMAGE PLACEHOLDER 1 -->
-                <div class="bg-slate-900 p-6 flex items-center justify-center">
-                    <div class="relative w-full max-w-sm">
+                <div class="bg-slate-50 p-6 flex items-center justify-center border-l-2 border-slate-100">
+                    <div class="relative w-full max-w-sm rounded-2xl border-[4px] border-slate-200 shadow-sm overflow-hidden bg-white">
                         <img src="../assets/images/card1_stratification.jpg"
-                            class="w-full rounded-xl shadow-lg opacity-90 hover:opacity-100 transition-opacity"
+                            class="w-full h-auto"
                             onerror="this.classList.add('hidden'); this.nextElementSibling.classList.remove('hidden');">
-                        <div class="text-center text-slate-500 hidden py-16">
-                            <i class="fa-solid fa-layer-group text-5xl mb-2"></i>
-                            <p class="font-mono text-sm">[ card1_stratification.jpg ]</p>
+                        <div class="text-center text-slate-400 hidden py-24">
+                            <i class="fa-solid fa-layer-group text-6xl mb-3 text-slate-300"></i>
+                            <p class="font-bold text-sm tracking-widest uppercase">[ card1_stratification.jpg ]</p>
                         </div>
                     </div>
                 </div>
@@ -192,50 +192,50 @@
 
         <!-- CARD 2: THE TOXIC CLOUD -->
         <section id="card-2"
-            class="fade-in bg-slate-800 rounded-2xl overflow-hidden shadow-xl border border-slate-700 info-card relative"
+            class="fade-in bg-white rounded-[2rem] overflow-hidden shadow-sm border-[4px] border-red-200 info-card relative"
             style="animation-delay: 0.3s;">
             <div class="grid grid-cols-1 md:grid-cols-2">
                 <!-- Image Left on Desktop for Variety -->
-                <div class="order-2 md:order-1 bg-slate-900 p-6 flex items-center justify-center">
-                    <div class="relative w-full max-w-sm">
+                <div class="order-2 md:order-1 bg-slate-50 p-6 flex items-center justify-center border-r-2 border-slate-100">
+                    <div class="relative w-full max-w-sm rounded-2xl border-[4px] border-slate-200 shadow-sm overflow-hidden bg-white">
                         <img src="../assets/images/card2_toxic.jpg"
-                            class="w-full rounded-xl shadow-lg opacity-90 hover:opacity-100 transition-opacity"
+                            class="w-full h-auto"
                             onerror="this.classList.add('hidden'); this.nextElementSibling.classList.remove('hidden');">
-                        <div class="text-center text-slate-500 hidden py-16">
-                            <i class="fa-solid fa-skull-crossbones text-5xl mb-2"></i>
-                            <p class="font-mono text-sm">[ card2_toxic.jpg ]</p>
+                        <div class="text-center text-slate-400 hidden py-24">
+                            <i class="fa-solid fa-skull-crossbones text-6xl mb-3 text-slate-300"></i>
+                            <p class="font-bold text-sm tracking-widest uppercase">[ card2_toxic.jpg ]</p>
                         </div>
                     </div>
                 </div>
 
-                <div class="order-1 md:order-2 p-8 flex flex-col justify-center space-y-4">
-                    <h2 class="text-2xl font-bold text-red-500"><i class="fa-solid fa-biohazard mr-2"></i> The Toxic
+                <div class="order-1 md:order-2 p-8 md:p-10 flex flex-col justify-center space-y-6">
+                    <h2 class="text-3xl font-black text-red-600 drop-shadow-sm"><i class="fa-solid fa-biohazard mr-2 text-red-400"></i> The Toxic
                         Cloud</h2>
-                    <p class="text-slate-300 leading-relaxed">
+                    <p class="text-slate-600 font-medium leading-relaxed">
                         Smoke isn't just dark air; it is full of toxic chemicals and particles.
                         Breathing it in can make you sleepy, confused, or hurt your lungs instantly.
                     </p>
-                    <p class="text-slate-400 text-sm italic">"Most injuries in fires come from the smoke, not the
+                    <p class="text-red-500 font-bold text-sm italic bg-red-50 p-3 rounded-xl border-[3px] border-red-100 inline-block">"Most injuries in fires come from the smoke, not the
                         flames."</p>
 
                     <!-- Q&A Section -->
-                    <div class="mt-4 pt-4 border-t border-slate-700">
-                        <div id="qa-2" class="space-y-3">
-                            <p class="text-sm text-yellow-400 font-semibold"><i
+                    <div class="mt-4 pt-6 border-t-2 border-slate-100">
+                        <div id="qa-2" class="space-y-4">
+                            <p class="text-sm text-yellow-600 font-black uppercase tracking-widest"><i
                                     class="fa-solid fa-question-circle mr-1"></i> Think About It:</p>
-                            <p class="text-slate-300 text-sm">What causes more injuries in a fire - flames or smoke?</p>
-                            <div class="flex gap-2">
+                            <p class="text-slate-800 font-bold text-lg">What causes more injuries in a fire - flames or smoke?</p>
+                            <div class="flex gap-3 flex-wrap">
                                 <input type="text" id="answer-2"
-                                    class="qa-input flex-1 bg-slate-900 border border-slate-600 rounded-lg px-4 py-2 text-sm text-white focus:outline-none"
+                                    class="qa-input flex-1 min-w-[200px] bg-slate-50 border-2 border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-800 focus:outline-none font-bold"
                                     placeholder="Type your answer...">
                                 <button onclick="submitAnswer(2)"
-                                    class="bg-orange-600 hover:bg-orange-700 px-4 py-2 rounded-lg text-sm font-bold transition-colors">Submit</button>
+                                    class="bg-orange-500 text-white border-[3px] border-orange-600 hover:bg-orange-400 px-6 py-3 rounded-xl text-sm font-black transition-all shadow-[0_4px_0_#c2410c] hover:-translate-y-0.5 active:translate-y-1 active:shadow-none uppercase tracking-wide">Submit</button>
                             </div>
                             <div id="reveal-2"
-                                class="hidden answer-reveal bg-green-900/30 border border-green-600 rounded-lg p-3">
-                                <p class="text-green-400 text-sm font-bold"><i class="fa-solid fa-lightbulb mr-1"></i>
+                                class="hidden answer-reveal bg-green-100 border-[3px] border-green-300 rounded-2xl p-5 shadow-sm mt-4">
+                                <p class="text-green-700 text-sm font-black uppercase tracking-widest mb-2"><i class="fa-solid fa-lightbulb mr-1 text-yellow-500"></i>
                                     Answer:</p>
-                                <p class="text-white text-sm">Smoke causes more injuries! It contains toxic gases like
+                                <p class="text-slate-700 text-sm font-bold leading-relaxed">Smoke causes more injuries! It contains toxic gases like
                                     carbon monoxide that can knock you unconscious before flames even reach you.</p>
                             </div>
                         </div>
@@ -246,41 +246,41 @@
 
         <!-- CARD 3: THE CRAWL TECHNIQUE -->
         <section id="card-3"
-            class="fade-in bg-slate-800 rounded-2xl overflow-hidden shadow-xl border border-slate-700 info-card relative"
+            class="fade-in bg-white rounded-[2rem] overflow-hidden shadow-sm border-[4px] border-blue-200 info-card relative"
             style="animation-delay: 0.4s;">
             <div class="grid grid-cols-1 md:grid-cols-2">
-                <div class="p-8 flex flex-col justify-center space-y-4">
-                    <h2 class="text-2xl font-bold text-blue-400"><i class="fa-solid fa-person-crawling mr-2"></i> Hands
+                <div class="p-8 md:p-10 flex flex-col justify-center space-y-6">
+                    <h2 class="text-3xl font-black text-blue-600 drop-shadow-sm"><i class="fa-solid fa-person-crawling mr-2 text-blue-400"></i> Hands
                         and Knees</h2>
-                    <p class="text-slate-300 leading-relaxed">
+                    <p class="text-slate-600 font-medium leading-relaxed">
                         Don't slither like a snake! Crawl on your hands and knees.
                         This keeps your head in the 'Clean Air Zone' but allows you to move fast.
                     </p>
-                    <ul class="list-disc list-inside text-slate-400 space-y-1">
-                        <li>Keep head slightly up to navigate.</li>
-                        <li>Move quickly but calmly.</li>
-                        <li>Stay near walls if visibility is zero.</li>
+                    <ul class="list-none text-slate-600 space-y-2 font-bold">
+                        <li><i class="fa-solid fa-check text-green-500 mr-2"></i> Keep head slightly up to navigate.</li>
+                        <li><i class="fa-solid fa-check text-green-500 mr-2"></i> Move quickly but calmly.</li>
+                        <li><i class="fa-solid fa-check text-green-500 mr-2"></i> Stay near walls if visibility is zero.</li>
                     </ul>
 
                     <!-- Q&A Section -->
-                    <div class="mt-4 pt-4 border-t border-slate-700">
-                        <div id="qa-3" class="space-y-3">
-                            <p class="text-sm text-yellow-400 font-semibold"><i
+                    <div class="mt-4 pt-6 border-t-2 border-slate-100">
+                        <div id="qa-3" class="space-y-4">
+                            <p class="text-sm text-yellow-600 font-black uppercase tracking-widest"><i
                                     class="fa-solid fa-question-circle mr-1"></i> Think About It:</p>
-                            <p class="text-slate-300 text-sm">Why should you crawl on hands and knees instead of
+                            <p class="text-slate-800 font-bold text-lg">Why should you crawl on hands and knees instead of
                                 slithering on your belly?</p>
-                            <div class="flex gap-2">
+                            <div class="flex gap-3 flex-wrap">
                                 <input type="text" id="answer-3"
-                                    class="qa-input flex-1 bg-slate-900 border border-slate-600 rounded-lg px-4 py-2 text-sm text-white focus:outline-none"
+                                    class="qa-input flex-1 min-w-[200px] bg-slate-50 border-2 border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-800 focus:outline-none font-bold"
                                     placeholder="Type your answer...">
                                 <button onclick="submitAnswer(3)"
-                                    class="bg-orange-600 hover:bg-orange-700 px-4 py-2 rounded-lg text-sm font-bold transition-colors">Submit</button>
+                                    class="bg-orange-500 text-white border-[3px] border-orange-600 hover:bg-orange-400 px-6 py-3 rounded-xl text-sm font-black transition-all shadow-[0_4px_0_#c2410c] hover:-translate-y-0.5 active:translate-y-1 active:shadow-none uppercase tracking-wide">Submit</button>
                             </div>
                             <div id="reveal-3"
-                                class="hidden answer-reveal bg-green-900/30 border border-green-600 rounded-lg p-3">
-                                <p class="text-green-400 text-sm font-bold"><i class="fa-solid fa-lightbulb mr-1"></i>
+                                class="hidden answer-reveal bg-green-100 border-[3px] border-green-300 rounded-2xl p-5 shadow-sm mt-4">
+                                <p class="text-green-700 text-sm font-black uppercase tracking-widest mb-2"><i class="fa-solid fa-lightbulb mr-1 text-yellow-500"></i>
                                     Answer:</p>
-                                <p class="text-white text-sm">Crawling on hands and knees lets you move faster while
+                                <p class="text-slate-700 text-sm font-bold leading-relaxed">Crawling on hands and knees lets you move faster while
                                     still keeping your head in the clean air zone near the floor. Slithering is too
                                     slow!</p>
                             </div>
@@ -288,14 +288,14 @@
                     </div>
                 </div>
                 <!-- IMAGE PLACEHOLDER 3 -->
-                <div class="bg-slate-900 p-6 flex items-center justify-center">
-                    <div class="relative w-full max-w-sm">
+                <div class="bg-slate-50 p-6 flex items-center justify-center border-l-2 border-slate-100">
+                    <div class="relative w-full max-w-sm rounded-2xl border-[4px] border-slate-200 shadow-sm overflow-hidden bg-white">
                         <img src="../assets/images/card3_crawl.jpg"
-                            class="w-full rounded-xl shadow-lg opacity-90 hover:opacity-100 transition-opacity"
+                            class="w-full h-auto"
                             onerror="this.classList.add('hidden'); this.nextElementSibling.classList.remove('hidden');">
-                        <div class="text-center text-slate-500 hidden py-16">
-                            <i class="fa-solid fa-person-running text-5xl mb-2"></i>
-                            <p class="font-mono text-sm">[ card3_crawl.jpg ]</p>
+                        <div class="text-center text-slate-400 hidden py-24">
+                            <i class="fa-solid fa-person-running text-6xl mb-3 text-slate-300"></i>
+                            <p class="font-bold text-sm tracking-widest uppercase">[ card3_crawl.jpg ]</p>
                         </div>
                     </div>
                 </div>
@@ -304,51 +304,51 @@
 
         <!-- CARD 4: THE VISIBILITY TRAP -->
         <section id="card-4"
-            class="fade-in bg-slate-800 rounded-2xl overflow-hidden shadow-xl border border-slate-700 info-card relative"
+            class="fade-in bg-white rounded-[2rem] overflow-hidden shadow-sm border-[4px] border-slate-300 info-card relative"
             style="animation-delay: 0.5s;">
             <div class="grid grid-cols-1 md:grid-cols-2">
                 <!-- Image Left on Desktop -->
-                <div class="order-2 md:order-1 bg-slate-900 p-6 flex items-center justify-center">
-                    <div class="relative w-full max-w-sm">
+                <div class="order-2 md:order-1 bg-slate-50 p-6 flex items-center justify-center border-r-2 border-slate-100">
+                    <div class="relative w-full max-w-sm rounded-2xl border-[4px] border-slate-200 shadow-sm overflow-hidden bg-white">
                         <img src="../assets/images/card4_darkness.jpg"
-                            class="w-full rounded-xl shadow-lg opacity-90 hover:opacity-100 transition-opacity"
+                            class="w-full h-auto"
                             onerror="this.classList.add('hidden'); this.nextElementSibling.classList.remove('hidden');">
-                        <div class="text-center text-slate-500 hidden py-16">
-                            <i class="fa-solid fa-eye-slash text-5xl mb-2"></i>
-                            <p class="font-mono text-sm">[ card4_darkness.jpg ]</p>
+                        <div class="text-center text-slate-400 hidden py-24">
+                            <i class="fa-solid fa-eye-slash text-6xl mb-3 text-slate-300"></i>
+                            <p class="font-bold text-sm tracking-widest uppercase">[ card4_darkness.jpg ]</p>
                         </div>
                     </div>
                 </div>
 
-                <div class="order-1 md:order-2 p-8 flex flex-col justify-center space-y-4">
-                    <h2 class="text-2xl font-bold text-purple-400"><i class="fa-solid fa-moon mr-2"></i> Pitch Black
+                <div class="order-1 md:order-2 p-8 md:p-10 flex flex-col justify-center space-y-6">
+                    <h2 class="text-3xl font-black text-slate-800 drop-shadow-sm"><i class="fa-solid fa-moon mr-2 text-slate-500"></i> Pitch Black
                     </h2>
-                    <p class="text-slate-300 leading-relaxed">
-                        In movies, smoke looks grey. In real life, smoke is <strong class="text-white">pitch
+                    <p class="text-slate-600 font-medium leading-relaxed">
+                        In movies, smoke looks grey. In real life, smoke is <strong class="text-slate-800 uppercase bg-slate-100 px-2 py-1 rounded">pitch
                             black</strong>.
                         You often cannot see your own hand in front of your face.
                     </p>
-                    <p class="text-slate-300">Getting low helps you see the floorboards and exit paths.</p>
+                    <p class="text-slate-600 font-bold">Getting low helps you see the floorboards and exit paths.</p>
 
                     <!-- Q&A Section -->
-                    <div class="mt-4 pt-4 border-t border-slate-700">
-                        <div id="qa-4" class="space-y-3">
-                            <p class="text-sm text-yellow-400 font-semibold"><i
+                    <div class="mt-4 pt-6 border-t-2 border-slate-100">
+                        <div id="qa-4" class="space-y-4">
+                            <p class="text-sm text-yellow-600 font-black uppercase tracking-widest"><i
                                     class="fa-solid fa-question-circle mr-1"></i> Think About It:</p>
-                            <p class="text-slate-300 text-sm">How is real smoke different from smoke you see in movies?
+                            <p class="text-slate-800 font-bold text-lg">How is real smoke different from smoke you see in movies?
                             </p>
-                            <div class="flex gap-2">
+                            <div class="flex gap-3 flex-wrap">
                                 <input type="text" id="answer-4"
-                                    class="qa-input flex-1 bg-slate-900 border border-slate-600 rounded-lg px-4 py-2 text-sm text-white focus:outline-none"
+                                    class="qa-input flex-1 min-w-[200px] bg-slate-50 border-2 border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-800 focus:outline-none font-bold"
                                     placeholder="Type your answer...">
                                 <button onclick="submitAnswer(4)"
-                                    class="bg-orange-600 hover:bg-orange-700 px-4 py-2 rounded-lg text-sm font-bold transition-colors">Submit</button>
+                                    class="bg-orange-500 text-white border-[3px] border-orange-600 hover:bg-orange-400 px-6 py-3 rounded-xl text-sm font-black transition-all shadow-[0_4px_0_#c2410c] hover:-translate-y-0.5 active:translate-y-1 active:shadow-none uppercase tracking-wide">Submit</button>
                             </div>
                             <div id="reveal-4"
-                                class="hidden answer-reveal bg-green-900/30 border border-green-600 rounded-lg p-3">
-                                <p class="text-green-400 text-sm font-bold"><i class="fa-solid fa-lightbulb mr-1"></i>
+                                class="hidden answer-reveal bg-green-100 border-[3px] border-green-300 rounded-2xl p-5 shadow-sm mt-4">
+                                <p class="text-green-700 text-sm font-black uppercase tracking-widest mb-2"><i class="fa-solid fa-lightbulb mr-1 text-yellow-500"></i>
                                     Answer:</p>
-                                <p class="text-white text-sm">Real smoke is pitch black, not grey like in movies! You
+                                <p class="text-slate-700 text-sm font-bold leading-relaxed">Real smoke is pitch black, not grey like in movies! You
                                     can't see anything - not even your own hand in front of your face.</p>
                             </div>
                         </div>
@@ -359,41 +359,41 @@
 
         <!-- CARD 5: THE SHIRT FILTER -->
         <section id="card-5"
-            class="fade-in bg-slate-800 rounded-2xl overflow-hidden shadow-xl border border-slate-700 info-card relative"
+            class="fade-in bg-white rounded-[2rem] overflow-hidden shadow-sm border-[4px] border-teal-200 info-card relative"
             style="animation-delay: 0.6s;">
             <div class="grid grid-cols-1 md:grid-cols-2">
-                <div class="p-8 flex flex-col justify-center space-y-4">
-                    <h2 class="text-2xl font-bold text-teal-400"><i class="fa-solid fa-shirt mr-2"></i> Use a Filter
+                <div class="p-8 md:p-10 flex flex-col justify-center space-y-6">
+                    <h2 class="text-3xl font-black text-teal-600 drop-shadow-sm"><i class="fa-solid fa-shirt mr-2 text-teal-400"></i> Use a Filter
                     </h2>
-                    <p class="text-slate-300 leading-relaxed">
+                    <p class="text-slate-600 font-medium leading-relaxed">
                         If you can, pull your shirt up over your nose or use a cloth.
                         This acts as a basic filter against large soot particles, helping you breathe a little easier.
                     </p>
-                    <div class="bg-slate-900/50 p-4 rounded-lg border-l-4 border-teal-500">
-                        <p class="text-sm text-teal-300 font-bold">Pro Tip:</p>
-                        <p class="text-sm text-slate-400">Do not waste time looking for a wet towel. Just use your shirt
+                    <div class="bg-teal-50 p-5 rounded-2xl border-[3px] border-teal-200 shadow-sm">
+                        <p class="text-sm text-teal-700 font-black uppercase tracking-wider mb-1">Pro Tip:</p>
+                        <p class="text-sm text-slate-700 font-bold">Do not waste time looking for a wet towel. Just use your shirt
                             and GO.</p>
                     </div>
 
                     <!-- Q&A Section -->
-                    <div class="mt-4 pt-4 border-t border-slate-700">
-                        <div id="qa-5" class="space-y-3">
-                            <p class="text-sm text-yellow-400 font-semibold"><i
+                    <div class="mt-4 pt-6 border-t-2 border-slate-100">
+                        <div id="qa-5" class="space-y-4">
+                            <p class="text-sm text-yellow-600 font-black uppercase tracking-widest"><i
                                     class="fa-solid fa-question-circle mr-1"></i> Think About It:</p>
-                            <p class="text-slate-300 text-sm">What can you use to cover your nose and mouth if you don't
+                            <p class="text-slate-800 font-bold text-lg">What can you use to cover your nose and mouth if you don't
                                 have a mask?</p>
-                            <div class="flex gap-2">
+                            <div class="flex gap-3 flex-wrap">
                                 <input type="text" id="answer-5"
-                                    class="qa-input flex-1 bg-slate-900 border border-slate-600 rounded-lg px-4 py-2 text-sm text-white focus:outline-none"
+                                    class="qa-input flex-1 min-w-[200px] bg-slate-50 border-2 border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-800 focus:outline-none font-bold"
                                     placeholder="Type your answer...">
                                 <button onclick="submitAnswer(5)"
-                                    class="bg-orange-600 hover:bg-orange-700 px-4 py-2 rounded-lg text-sm font-bold transition-colors">Submit</button>
+                                    class="bg-orange-500 text-white border-[3px] border-orange-600 hover:bg-orange-400 px-6 py-3 rounded-xl text-sm font-black transition-all shadow-[0_4px_0_#c2410c] hover:-translate-y-0.5 active:translate-y-1 active:shadow-none uppercase tracking-wide">Submit</button>
                             </div>
                             <div id="reveal-5"
-                                class="hidden answer-reveal bg-green-900/30 border border-green-600 rounded-lg p-3">
-                                <p class="text-green-400 text-sm font-bold"><i class="fa-solid fa-lightbulb mr-1"></i>
+                                class="hidden answer-reveal bg-green-100 border-[3px] border-green-300 rounded-2xl p-5 shadow-sm mt-4">
+                                <p class="text-green-700 text-sm font-black uppercase tracking-widest mb-2"><i class="fa-solid fa-lightbulb mr-1 text-yellow-500"></i>
                                     Answer:</p>
-                                <p class="text-white text-sm">Your shirt! Just pull it up over your nose. Any cloth
+                                <p class="text-slate-700 text-sm font-bold leading-relaxed">Your shirt! Just pull it up over your nose. Any cloth
                                     works as a basic filter against soot particles. Don't waste time looking for a wet
                                     towel - just GO!</p>
                             </div>
@@ -401,14 +401,14 @@
                     </div>
                 </div>
                 <!-- IMAGE PLACEHOLDER 5 -->
-                <div class="bg-slate-900 p-6 flex items-center justify-center">
-                    <div class="relative w-full max-w-sm">
+                <div class="bg-slate-50 p-6 flex items-center justify-center border-l-2 border-slate-100">
+                    <div class="relative w-full max-w-sm rounded-2xl border-[4px] border-slate-200 shadow-sm overflow-hidden bg-white">
                         <img src="../assets/images/card5_filter.jpg"
-                            class="w-full rounded-xl shadow-lg opacity-90 hover:opacity-100 transition-opacity"
+                            class="w-full h-auto"
                             onerror="this.classList.add('hidden'); this.nextElementSibling.classList.remove('hidden');">
-                        <div class="text-center text-slate-500 hidden py-16">
-                            <i class="fa-solid fa-mask-face text-5xl mb-2"></i>
-                            <p class="font-mono text-sm">[ card5_filter.jpg ]</p>
+                        <div class="text-center text-slate-400 hidden py-24">
+                            <i class="fa-solid fa-mask-face text-6xl mb-3 text-slate-300"></i>
+                            <p class="font-bold text-sm tracking-widest uppercase">[ card5_filter.jpg ]</p>
                         </div>
                     </div>
                 </div>
@@ -417,37 +417,45 @@
 
         <!-- INTERACTIVE KNOWLEDGE CHECK -->
         <section id="section-check"
-            class="fade-in ss-section max-w-2xl mx-auto bg-slate-900 p-8 rounded-2xl border-2 border-slate-600 text-center space-y-6"
+            class="fade-in ss-section w-full bg-yellow-50 p-8 md:p-12 rounded-[3rem] border-[4px] border-yellow-300 text-center space-y-6 shadow-sm"
             style="animation-delay: 0.7s;">
-            <div class="ss-section-badge"><i class="fa-solid fa-check"></i></div>
+            <div class="ss-section-badge bg-green-500 border-[3px] border-white shadow-sm text-white"><i class="fa-regular fa-circle-check"></i></div>
 
-            <div id="check-locked" class="">
-                <i class="fa-solid fa-lock text-4xl text-slate-600 mb-4"></i>
-                <h3 class="text-xl font-bold text-slate-500">Complete All Cards First</h3>
-                <p class="text-slate-600 text-sm">Answer all 5 questions above to unlock the final check</p>
+            <div id="check-locked" class="py-8">
+                <i class="fa-solid fa-lock text-5xl text-yellow-300 mb-6"></i>
+                <h3 class="text-2xl font-black text-slate-800 drop-shadow-sm">Complete All Cards First</h3>
+                <p class="text-slate-600 font-bold mt-2">Answer all 5 questions above to unlock the final check</p>
             </div>
 
             <div id="check-unlocked" class="hidden">
-                <h3 class="text-2xl font-bold text-white mb-6"><i
-                        class="fa-solid fa-clipboard-check text-yellow-400 mr-2"></i> True or False</h3>
-                <p class="text-slate-400 text-sm mb-4">Answer all 5 questions correctly to complete the module</p>
+                <h3 class="text-3xl font-black text-yellow-900 mb-2 drop-shadow-sm"><i
+                        class="fa-solid fa-clipboard-check text-orange-500 mr-2"></i> True or False</h3>
+                <p class="text-slate-700 font-bold mb-8">Answer all 5 questions correctly to complete the module</p>
 
-                <div id="tf-questions" class="space-y-4 text-left">
+                <div id="tf-questions" class="space-y-6 text-left">
                     <!-- Questions rendered by JS -->
                 </div>
 
-                <div id="check-result" class="hidden font-bold text-xl transition-all mt-6"></div>
-            </div>
+                <div id="check-result" class="hidden text-center mt-10 p-8 bg-white rounded-[2rem] border-[4px] border-green-200 shadow-sm">
+                    <div class="text-6xl mb-6 drop-shadow-md" id="result-icon"></div>
+                    <h3 class="text-3xl font-black text-green-600 mb-2 drop-shadow-sm" id="result-title"></h3>
+                    <p class="text-slate-600 font-bold mb-8 text-lg" id="result-desc"></p>
 
-            <a href="../module_5/index.html" id="btn-next" class="hidden mt-6 ss-btn ss-btn-success inline-block">
-                Continue to Module 5 <i class="fa-solid fa-arrow-right ml-2"></i>
-            </a>
+                    <div class="flex flex-col-reverse sm:flex-row items-center justify-center gap-4 sm:gap-6">
+                        <button id="btn-review" onclick="toggleReview()"
+                            class="text-sm font-bold text-slate-500 hover:text-slate-800 underline uppercase tracking-wide mt-2 sm:mt-0 whitespace-nowrap">Review Answers</button>
+                        <a href="../module_5/index.html" id="btn-next-module" class="hidden bg-yellow-400 text-red-600 font-black px-6 py-3 sm:px-10 sm:py-4 text-sm sm:text-base rounded-full border-[3px] border-white shadow-[0_4px_0_#b45309] hover:-translate-y-0.5 active:translate-y-1 active:shadow-[0_0px_0_#b45309] transition-all uppercase tracking-wide text-center w-full sm:w-auto">
+                            Go to Module 5 <i class="fa-solid fa-arrow-right ml-2"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
         </section>
 
 
     </main>
 
-    <footer class="bg-slate-950 text-slate-500 py-8 text-center text-sm border-t border-slate-800 mt-12">
+    <footer class="bg-transparent text-slate-500 py-8 text-center text-sm border-t-2 border-slate-300 mt-12 font-bold uppercase tracking-widest">
         <p>SafeScape Intelligent Systems Project</p>
         <p class="mt-2 text-xs opacity-50">Module 4: Get Low & Go</p>
     </footer>
@@ -516,7 +524,13 @@
         }
 
         function updateSectionStates() {
+            // Completed states
             if (localState.finalCheckPassed) document.getElementById('section-check').classList.add('completed');
+
+            // Locked states (sequential)
+            const secCheck = document.getElementById('section-check');
+            if (!localState.allCardsCompleted) secCheck.classList.add('locked');
+            else secCheck.classList.remove('locked');
         }
 
 
@@ -600,15 +614,15 @@
 
             tfQuestions.forEach((q, idx) => {
                 const div = document.createElement('div');
-                div.className = 'bg-slate-800 p-4 rounded-xl border border-slate-600';
+                div.className = 'bg-white p-6 rounded-3xl border-[3px] border-yellow-200 shadow-sm';
                 div.id = `tf-q-${idx}`;
                 div.innerHTML = `
-                    <p class="text-white text-sm mb-3">${idx + 1}. "${q.statement}"</p>
-                    <div class="flex gap-2">
-                        <button onclick="answerTF(${idx}, true)" class="tf-btn flex-1 bg-slate-700 hover:bg-slate-600 py-2 rounded-lg border border-slate-500 text-sm font-bold text-white transition-colors">TRUE</button>
-                        <button onclick="answerTF(${idx}, false)" class="tf-btn flex-1 bg-slate-700 hover:bg-slate-600 py-2 rounded-lg border border-slate-500 text-sm font-bold text-white transition-colors">FALSE</button>
+                    <p class="text-slate-800 font-black text-lg mb-4">${idx + 1}. "${q.statement}"</p>
+                    <div class="flex gap-3">
+                        <button onclick="answerTF(${idx}, true)" class="tf-btn flex-1 bg-white hover:bg-slate-50 py-3 rounded-xl border-2 border-slate-200 text-sm font-black text-slate-600 transition-all shadow-sm hover:-translate-y-0.5 active:translate-y-1 active:shadow-none uppercase tracking-wide">TRUE</button>
+                        <button onclick="answerTF(${idx}, false)" class="tf-btn flex-1 bg-white hover:bg-slate-50 py-3 rounded-xl border-2 border-slate-200 text-sm font-black text-slate-600 transition-all shadow-sm hover:-translate-y-0.5 active:translate-y-1 active:shadow-none uppercase tracking-wide">FALSE</button>
                     </div>
-                    <div id="tf-feedback-${idx}" class="hidden mt-2 text-sm"></div>
+                    <div id="tf-feedback-${idx}" class="hidden mt-4 text-sm font-bold bg-slate-50 p-3 rounded-xl border-2 border-slate-100"></div>
                 `;
                 container.appendChild(div);
             });
@@ -619,6 +633,9 @@
                     restoreTFAnswer(idx, ans);
                 }
             });
+
+            // Check completion state on load
+            checkTFComplete();
         }
 
         function answerTF(idx, userAnswer) {
@@ -627,28 +644,38 @@
             const feedback = document.getElementById(`tf-feedback-${idx}`);
             const correct = tfQuestions[idx].answer === userAnswer;
 
-            // Disable buttons
-            buttons.forEach(b => b.disabled = true);
+            // Clean up hover/active classes on all buttons to prevent weird effects when disabled
+            buttons.forEach(b => {
+                b.disabled = true;
+                b.classList.remove('hover:bg-slate-50', 'hover:-translate-y-0.5', 'active:translate-y-1', 'active:shadow-none', 'shadow-sm');
+                b.classList.add('opacity-50', 'cursor-not-allowed'); // Make them look disabled
+            });
 
             // Store answer
             localState.tfAnswers[idx] = userAnswer;
 
             if (correct) {
                 if (userAnswer) {
-                    buttons[0].classList.add('bg-green-600', 'border-green-400');
+                    buttons[0].classList.add('bg-green-500', 'border-green-600', 'text-white', 'opacity-100');
+                    buttons[0].classList.remove('text-slate-600', 'bg-white', 'opacity-50');
                 } else {
-                    buttons[1].classList.add('bg-green-600', 'border-green-400');
+                    buttons[1].classList.add('bg-green-500', 'border-green-600', 'text-white', 'opacity-100');
+                    buttons[1].classList.remove('text-slate-600', 'bg-white', 'opacity-50');
                 }
-                feedback.innerHTML = '<span class="text-green-400"><i class="fa-solid fa-check mr-1"></i> Correct!</span>';
+                feedback.innerHTML = '<span class="text-green-600"><i class="fa-solid fa-check mr-2"></i> Correct!</span>';
             } else {
                 if (userAnswer) {
-                    buttons[0].classList.add('bg-red-900', 'border-red-400');
-                    buttons[1].classList.add('bg-green-600', 'border-green-400');
+                    buttons[0].classList.add('bg-red-500', 'border-red-600', 'text-white');
+                    buttons[0].classList.remove('text-slate-600', 'bg-white');
+                    buttons[1].classList.add('bg-green-500', 'border-green-600', 'text-white');
+                    buttons[1].classList.remove('text-slate-600', 'bg-white');
                 } else {
-                    buttons[1].classList.add('bg-red-900', 'border-red-400');
-                    buttons[0].classList.add('bg-green-600', 'border-green-400');
+                    buttons[1].classList.add('bg-red-500', 'border-red-600', 'text-white');
+                    buttons[1].classList.remove('text-slate-600', 'bg-white');
+                    buttons[0].classList.add('bg-green-500', 'border-green-600', 'text-white');
+                    buttons[0].classList.remove('text-slate-600', 'bg-white');
                 }
-                feedback.innerHTML = '<span class="text-red-400"><i class="fa-solid fa-xmark mr-1"></i> Incorrect</span>';
+                feedback.innerHTML = '<span class="text-red-500"><i class="fa-solid fa-xmark mr-2"></i> Incorrect</span>';
             }
             feedback.classList.remove('hidden');
 
@@ -664,26 +691,64 @@
             const feedback = document.getElementById(`tf-feedback-${idx}`);
             const correct = tfQuestions[idx].answer === userAnswer;
 
-            buttons.forEach(b => b.disabled = true);
+            buttons.forEach(b => {
+                b.disabled = true;
+                b.classList.remove('hover:bg-slate-50', 'hover:-translate-y-0.5', 'active:translate-y-1', 'active:shadow-none', 'shadow-sm');
+                b.classList.add('opacity-50', 'cursor-not-allowed');
+            });
 
             if (correct) {
                 if (userAnswer) {
-                    buttons[0].classList.add('bg-green-600', 'border-green-400');
+                    buttons[0].classList.add('bg-green-500', 'border-green-600', 'text-white', 'opacity-100');
+                    buttons[0].classList.remove('text-slate-600', 'bg-white', 'opacity-50');
                 } else {
-                    buttons[1].classList.add('bg-green-600', 'border-green-400');
+                    buttons[1].classList.add('bg-green-500', 'border-green-600', 'text-white', 'opacity-100');
+                    buttons[1].classList.remove('text-slate-600', 'bg-white', 'opacity-50');
                 }
-                feedback.innerHTML = '<span class="text-green-400"><i class="fa-solid fa-check mr-1"></i> Correct!</span>';
+                feedback.innerHTML = '<span class="text-green-600"><i class="fa-solid fa-check mr-2"></i> Correct!</span>';
             } else {
                 if (userAnswer) {
-                    buttons[0].classList.add('bg-red-900', 'border-red-400');
-                    buttons[1].classList.add('bg-green-600', 'border-green-400');
+                    buttons[0].classList.add('bg-red-500', 'border-red-600', 'text-white');
+                    buttons[0].classList.remove('text-slate-600', 'bg-white');
+                    buttons[1].classList.add('bg-green-500', 'border-green-600', 'text-white');
+                    buttons[1].classList.remove('text-slate-600', 'bg-white');
                 } else {
-                    buttons[1].classList.add('bg-red-900', 'border-red-400');
-                    buttons[0].classList.add('bg-green-600', 'border-green-400');
+                    buttons[1].classList.add('bg-red-500', 'border-red-600', 'text-white');
+                    buttons[1].classList.remove('text-slate-600', 'bg-white');
+                    buttons[0].classList.add('bg-green-500', 'border-green-600', 'text-white');
+                    buttons[0].classList.remove('text-slate-600', 'bg-white');
                 }
-                feedback.innerHTML = '<span class="text-red-400"><i class="fa-solid fa-xmark mr-1"></i> Incorrect</span>';
+                feedback.innerHTML = '<span class="text-red-500"><i class="fa-solid fa-xmark mr-2"></i> Incorrect</span>';
             }
             feedback.classList.remove('hidden');
+        }
+
+        let reviewMode = false;
+        function toggleReview() {
+            reviewMode = !reviewMode;
+            const tfQuestionsDiv = document.getElementById('tf-questions');
+            const headerH3 = document.getElementById('check-unlocked').querySelector('h3');
+            const headerP = document.getElementById('check-unlocked').querySelector('p');
+            
+            if (reviewMode) {
+                tfQuestionsDiv.classList.remove('hidden');
+                headerH3.classList.remove('hidden');
+                headerP.classList.remove('hidden');
+                document.getElementById('btn-review').innerText = "Hide Answers";
+                // Scroll to the questions
+                setTimeout(() => {
+                    tfQuestionsDiv.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }, 150);
+            } else {
+                tfQuestionsDiv.classList.add('hidden');
+                headerH3.classList.add('hidden');
+                headerP.classList.add('hidden');
+                document.getElementById('btn-review').innerText = "Review Answers";
+                // Scroll back to result card
+                setTimeout(() => {
+                    document.getElementById('check-result').scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }, 150);
+            }
         }
 
         function checkTFComplete() {
@@ -692,16 +757,26 @@
 
             const allCorrect = localState.tfAnswers.every((ans, idx) => tfQuestions[idx].answer === ans);
             const result = document.getElementById('check-result');
-            const btn = document.getElementById('btn-next');
+            const btn = document.getElementById('btn-next-module');
 
             // Calculate and save score
             const correctCount = localState.tfAnswers.filter((ans, idx) => tfQuestions[idx].answer === ans).length;
             SafeScapeProgress.submitQuizResult(moduleNum, correctCount, 5);
 
             if (allCorrect) {
-                result.innerHTML = "<span class='text-green-400'><i class='fa-solid fa-check mr-2'></i>All correct! You understand smoke behavior!</span>";
+                document.getElementById('result-icon').innerText = "🏆";
+                document.getElementById('result-title').innerText = "SMOKE EXPERT!";
+                document.getElementById('result-title').className = "text-3xl font-black text-green-600 mb-2 drop-shadow-sm";
+                document.getElementById('result-desc').innerText = "You understand smoke behavior!";
+                
                 result.classList.remove('hidden');
                 btn.classList.remove('hidden');
+
+                if (!reviewMode) {
+                    document.getElementById('tf-questions').classList.add('hidden');
+                    document.getElementById('check-unlocked').querySelector('h3').classList.add('hidden');
+                    document.getElementById('check-unlocked').querySelector('p').classList.add('hidden');
+                }
 
                 if (!localState.finalCheckPassed) {
                     localState.finalCheckPassed = true;
@@ -709,8 +784,11 @@
                     showToast('success', '🎉 Module 4 complete! Module 5 unlocked!');
                 }
             } else {
-                const correctCount = localState.tfAnswers.filter((ans, idx) => tfQuestions[idx].answer === ans).length;
-                result.innerHTML = `<span class='text-orange-400'><i class='fa-solid fa-info-circle mr-2'></i>You got ${correctCount}/5 correct. Review the answers above!</span>`;
+                document.getElementById('result-icon').innerText = "⚠️";
+                document.getElementById('result-title').innerText = "REVIEW THE PHYSICS";
+                document.getElementById('result-title').className = "text-3xl font-black text-orange-500 mb-2 drop-shadow-sm";
+                document.getElementById('result-desc').innerText = `You got ${correctCount}/5 correct. Review the answers!`;
+                
                 result.classList.remove('hidden');
 
                 // Still allow progression if they answered all

@@ -81,7 +81,7 @@ const CertificatePage = () => {
           </Link>
         </div>
 
-        <div className="max-w-5xl mx-auto w-full px-4 sm:px-6 flex-1 flex flex-col items-center justify-center pt-16 sm:pt-0">
+        <div className="max-w-4xl mx-auto w-full px-4 sm:px-6 flex-1 flex flex-col items-center justify-start sm:justify-center pt-20 sm:pt-0 pb-8">
           
           <div className="text-center mb-8">
             <h1 className="text-4xl sm:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-amber-600 to-orange-600 tracking-tight drop-shadow-sm flex items-center justify-center gap-3">
@@ -91,11 +91,11 @@ const CertificatePage = () => {
             <p className="text-amber-900/60 font-bold mt-2 text-lg">You've successfully completed your Fire Safety Training!</p>
           </div>
 
-          <div className="w-full bg-white/90 backdrop-blur-2xl border border-white/60 rounded-3xl sm:rounded-[2.5rem] p-3 sm:p-10 shadow-[0_25px_60px_rgba(245,158,11,0.15)] flex flex-col items-center">
+          <div className="w-full bg-white/90 backdrop-blur-2xl border border-white/60 rounded-3xl sm:rounded-[2.5rem] p-3 sm:p-8 shadow-[0_25px_60px_rgba(245,158,11,0.15)] flex flex-col items-center">
             
             <div 
               ref={certificateRef} 
-              className="relative w-full max-w-4xl select-none shadow-xl border border-amber-100 bg-white" 
+              className="relative w-full max-w-3xl select-none shadow-xl border border-amber-100 bg-white" 
               style={{ aspectRatio: '1123/794', containerType: 'inline-size' }}
             >
               <img 
@@ -135,7 +135,7 @@ const CertificatePage = () => {
             </div>
 
             {/* Action */}
-            <div className="mt-8 flex justify-center w-full">
+            <div className="mt-6 flex justify-center w-full">
               <button 
                 onClick={handleDownload}
                 disabled={downloading}

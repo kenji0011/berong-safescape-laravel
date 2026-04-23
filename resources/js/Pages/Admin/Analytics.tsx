@@ -73,6 +73,11 @@ export default function AnalyticsDashboard({
   const [schoolAnalytics, setSchoolAnalytics] = useState<any>(null)
   const [feedbackAnalytics, setFeedbackAnalytics] = useState<any>(null)
   const [activeTab, setActiveTab] = useState("overview")
+  const [expandedFeature, setExpandedFeature] = useState<string | null>(null)
+
+  const toggleFeature = (featureName: string) => {
+    setExpandedFeature(expandedFeature === featureName ? null : featureName)
+  }
 
   useEffect(() => {
     if (authLoading) return
@@ -87,6 +92,17 @@ export default function AnalyticsDashboard({
       fetchAllData()
     } else {
       setLoading(false)
+      
+      // Fetch missing secondary data silently when using Inertia initial data
+      if (!schoolAnalytics && !feedbackAnalytics) {
+        Promise.all([
+          axios.get('/api/admin/school-analytics').catch(() => ({ data: null })),
+          axios.get('/api/admin/feedback-analytics').catch(() => ({ data: null })),
+        ]).then(([schoolRes, feedbackRes]) => {
+          if (schoolRes.data) setSchoolAnalytics(schoolRes.data)
+          if (feedbackRes.data) setFeedbackAnalytics(feedbackRes.data)
+        }).catch(err => console.error(err))
+      }
     }
   }, [user, router, authLoading, initialSummaryData])
 
@@ -954,17 +970,58 @@ export default function AnalyticsDashboard({
                 <div className="space-y-3 sm:space-y-4">
                   {(feedbackAnalytics?.byFeatureName || []).map((f: any) => (
                     <div key={f.featureName} className="bg-slate-50 rounded-xl sm:rounded-2xl border-2 border-slate-100 p-4 sm:p-5 transition-colors hover:bg-slate-100">
-                      <div className="flex items-center justify-between mb-2">
+                      <div 
+                        className="flex items-center justify-between mb-2 cursor-pointer group" 
+                        onClick={() => toggleFeature(f.featureName)}
+                      >
                         <div>
-                          <span className="font-black text-slate-700 text-sm sm:text-base uppercase tracking-tight">{f.featureName}</span>
+                          <span className="font-black text-slate-700 text-sm sm:text-base uppercase tracking-tight group-hover:text-slate-900 transition-colors">{f.featureName}</span>
                           <span className="ml-2 bg-slate-200 text-slate-500 px-2 py-0.5 rounded-full font-bold text-[10px] capitalize">{f.featureType}</span>
                         </div>
-                        <span className="font-black text-yellow-600 text-base sm:text-lg">{f.avgRating}★</span>
+                        <div className="flex items-center gap-3">
+                          <span className="font-black text-yellow-600 text-base sm:text-lg">
+                            {f.avgRating}★
+                          </span>
+                          <div className={`flex items-center gap-1.5 px-4 py-2 rounded-xl border-[3px] transition-all duration-200 shadow-[0_3px_0_rgba(0,0,0,0.1)] active:translate-y-[3px] active:shadow-none ${expandedFeature === f.featureName ? 'bg-slate-800 text-white border-slate-900 shadow-[0_3px_0_#0f172a]' : 'bg-white text-slate-600 border-slate-200 hover:border-slate-300 hover:bg-slate-50 group-hover:border-slate-300 shadow-[0_3px_0_#e2e8f0]'}`}>
+                            <span className="text-xs sm:text-sm font-black uppercase tracking-wider">
+                              {expandedFeature === f.featureName ? 'Hide' : 'View Reviews'}
+                            </span>
+                            <ChevronDown className={`h-4 w-4 sm:h-5 sm:w-5 transition-transform duration-300 ${expandedFeature === f.featureName ? 'rotate-180' : ''}`} strokeWidth={3} />
+                          </div>
+                        </div>
                       </div>
                       <div className="w-full h-3 bg-slate-200 rounded-full overflow-hidden border border-slate-300">
                         <div className="h-full bg-yellow-400 rounded-full transition-all duration-1000" style={{ width: `${(f.avgRating / 5) * 100}%` }} />
                       </div>
                       <p className="font-bold text-slate-400 text-[10px] sm:text-xs mt-1.5">{f.totalCount} reviews</p>
+                      
+                      {/* Accordion Content for Reviews */}
+                      {expandedFeature === f.featureName && (
+                        <div className="mt-4 space-y-3 border-t-2 border-slate-200 pt-4 animate-in slide-in-from-top-2 fade-in duration-200">
+                          {(f.reviews && f.reviews.length > 0) ? (
+                            f.reviews.map((review: any) => (
+                              <div key={review.id} className="bg-white rounded-xl p-3 border-2 border-slate-100 shadow-sm">
+                                <div className="flex items-center justify-between mb-1">
+                                  <span className="font-bold text-slate-700 text-xs sm:text-sm">{review.user?.name || 'Anonymous'}</span>
+                                  <div className="flex items-center gap-0.5">
+                                    {Array.from({ length: 5 }).map((_, i) => (
+                                      <Star key={i} className={`h-3 w-3 ${i < review.rating ? 'text-yellow-400 fill-yellow-400' : 'text-slate-200'}`} />
+                                    ))}
+                                  </div>
+                                </div>
+                                {review.comments ? (
+                                  <p className="text-slate-600 text-xs mt-1.5 leading-relaxed">{review.comments}</p>
+                                ) : (
+                                  <p className="text-slate-400 text-xs italic mt-1.5">No comment provided</p>
+                                )}
+                                <p className="text-slate-400 text-[9px] mt-2.5 font-bold uppercase tracking-wider">{new Date(review.created_at).toLocaleDateString()}</p>
+                              </div>
+                            ))
+                          ) : (
+                            <p className="text-slate-400 text-xs font-bold text-center py-4 bg-white rounded-xl border-2 border-slate-100 border-dashed">No written reviews yet.</p>
+                          )}
+                        </div>
+                      )}
                     </div>
                   ))}
                   {(!feedbackAnalytics?.byFeatureName || feedbackAnalytics.byFeatureName.length === 0) && (

@@ -195,6 +195,7 @@ const ModuleOnePage = () => {
         body: JSON.stringify({ moduleNum: 1, sectionData: { videoWatched: true, section1Read: true, section2Read: true, elementMixerCompleted: true }, completed: true }),
       })
       setModuleCompleted(true)
+      router.visit('/kids/safescape/2')
     } catch (_) {
       showToast("Error saving progress. Try again.", "info")
     } finally {
@@ -204,33 +205,36 @@ const ModuleOnePage = () => {
 
   // ─────────────────────────────────────────────
   return (
-    <div className="min-h-screen bg-slate-50 font-sans flex flex-col">
+    <div className="min-h-screen bg-blue-50 bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] [background-size:16px_16px] font-sans flex flex-col">
 
       {/* ── Sub Header ── */}
       <div className="bg-white border-b border-slate-200 py-3 px-4 sm:px-6 lg:px-8 shadow-sm z-20 relative">
-        <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-4 w-full sm:w-auto">
-            <Link href="/kids/safescape" className="inline-flex items-center gap-2 px-4 py-2 bg-white rounded-full text-slate-700 font-bold hover:text-slate-900 border-2 border-slate-200 shadow-sm transition-all text-sm whitespace-nowrap">
+        <div className="max-w-7xl mx-auto flex flex-row items-center justify-between gap-2 sm:gap-4">
+          <div className="flex items-center gap-2 sm:gap-4">
+            <Link href="/kids/safescape" className="inline-flex items-center justify-center gap-2 p-2 sm:px-4 sm:py-2 bg-white rounded-full text-slate-700 font-bold hover:text-slate-900 border-[3px] border-slate-200 shadow-[0_3px_0_#cbd5e1] hover:-translate-y-0.5 active:translate-y-1 active:shadow-[0_0px_0_#cbd5e1] transition-all text-sm whitespace-nowrap">
               <ArrowLeft className="h-4 w-4" />
-              Back to Dashboard
+              <span className="hidden sm:inline">Back to Dashboard</span>
             </Link>
             <div className="hidden sm:flex items-center gap-2">
               <Flame className="h-5 w-5 text-[#ff4b3e]" />
               <h1 className="text-xl font-black text-slate-800">SafeScape Fire Safety Course</h1>
             </div>
           </div>
-          <div className="flex items-center gap-4 sm:gap-6">
+          <div className="flex items-center gap-2 sm:gap-6">
             {/* Module dots */}
             <div className="flex items-center gap-1 sm:gap-2">
               {[1, 2, 3, 4, 5].map((n) => (
                 <React.Fragment key={n}>
-                  <div className={cn(
-                    "h-8 w-8 rounded-full flex items-center justify-center text-sm font-black transition-all shrink-0",
-                    n === 1
-                      ? "bg-[#ff4b3e] text-white shadow-md shadow-red-500/30 ring-2 ring-red-200"
-                      : "bg-slate-100 text-slate-400 border border-slate-200"
-                  )}>{n}</div>
-                  {n < 5 && <div className="h-0.5 w-3 sm:w-6 bg-slate-200 rounded shrink-0" />}
+                  <Link
+                    href={`/kids/safescape/${n}`}
+                    className={cn(
+                      "h-8 w-8 sm:h-10 sm:w-10 rounded-full flex items-center justify-center text-xs sm:text-sm font-black transition-all shrink-0 border-[3px] focus:outline-none",
+                      n === 1
+                        ? "bg-[#ff4b3e] text-white border-white shadow-[0_4px_0_#991b1b] -translate-y-0.5 pointer-events-none"
+                        : "bg-white text-slate-400 border-slate-200 shadow-[0_3px_0_#cbd5e1] hover:-translate-y-0.5 hover:shadow-[0_4px_0_#cbd5e1] hover:text-slate-600 active:translate-y-1 active:shadow-[0_0px_0_#cbd5e1]"
+                    )}
+                  >{n}</Link>
+                  {n < 5 && <div className="h-0.5 w-2 sm:w-6 bg-slate-200 rounded shrink-0" />}
                 </React.Fragment>
               ))}
             </div>
@@ -242,18 +246,18 @@ const ModuleOnePage = () => {
         </div>
       </div>
 
-      {/* ── Dark Module Content Area ── */}
-      <div className="flex-1 bg-[#0f1729]">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10 space-y-16">
+      {/* ── Module Content Area ── */}
+      <div className="flex-1">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 space-y-20">
 
 
 
           {/* ── Intro ── */}
-          <div className="text-center max-w-3xl mx-auto">
-            <h1 className="text-4xl sm:text-5xl md:text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-[#ff4b3e] to-[#ff8c00] mb-6 leading-tight">
+          <div className="text-center max-w-3xl mx-auto space-y-4">
+            <h1 className="text-4xl sm:text-5xl md:text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-[#ff4b3e] to-[#ff8c00] leading-tight drop-shadow-sm">
               Fire is a Tool, Not a Toy
             </h1>
-            <p className="text-lg text-slate-300 leading-relaxed">
+            <p className="text-lg text-slate-600 font-bold leading-relaxed max-w-2xl mx-auto">
               To be a fire safety hero, the first thing you need to do is understand what fire is and respect its power.
               Just like some tools are only for grown-ups to use, fire is also something that needs to be handled with great care.
               This module will help you understand why fire is a tool for adults and not a toy for kids.
@@ -261,14 +265,14 @@ const ModuleOnePage = () => {
           </div>
 
           {/* ── Video Section ── */}
-          <div className={cn("relative rounded-2xl overflow-hidden border border-slate-700 bg-slate-900 shadow-2xl transition-all", videoStarted && "ring-2 ring-green-500/30")}>
-            {/* Green checkmark badge when done */}
+          <section className={cn("relative bg-white rounded-[2rem] border-[4px] border-blue-200 shadow-sm p-6 sm:p-10 text-center transition-all", videoStarted && "border-green-200")}>
             {videoStarted && (
-              <div className="absolute top-3 right-3 z-10 h-8 w-8 rounded-full bg-green-500 flex items-center justify-center shadow-lg">
+              <div className="absolute top-4 right-4 z-10 h-10 w-10 rounded-full bg-green-500 border-[3px] border-white shadow-sm flex items-center justify-center">
                 <CheckCircle className="h-5 w-5 text-white" />
               </div>
             )}
-            <div className="aspect-video w-full">
+            <h2 className="text-3xl font-black text-blue-600 mb-6 drop-shadow-sm">Watch the Intro Video</h2>
+            <div className="w-full aspect-video bg-slate-100 rounded-3xl overflow-hidden shadow-sm border-[4px] border-blue-200 relative">
               <video
                 ref={videoRef}
                 controls
@@ -279,63 +283,61 @@ const ModuleOnePage = () => {
                 Your browser doesn't support HTML5 video.
               </video>
             </div>
-            <p className="text-center text-slate-500 text-sm py-3 border-t border-slate-800">
-              Watch the video to continue
-            </p>
-          </div>
+            <p className="text-center text-slate-500 font-bold text-sm mt-6 pt-6 border-t-2 border-slate-100 uppercase tracking-widest">Watch the video to continue</p>
+          </section>
 
           {/* ── Section 1.1 — What Makes a Fire? (unlocked after video) ── */}
-          <div className={cn(
-            "relative rounded-2xl border border-slate-700 bg-slate-800/60 p-6 sm:p-10 transition-all duration-500",
+          <section className={cn(
+            "relative bg-orange-50/50 rounded-[2rem] border-[4px] border-orange-200 p-8 sm:p-12 shadow-sm transition-all duration-500",
             !videoStarted && "opacity-30 pointer-events-none select-none",
-            section1Done && "ring-2 ring-green-500/30"
+            section1Done && "border-green-200"
           )}>
             {section1Done && (
-              <div className="absolute top-4 right-4 h-8 w-8 rounded-full bg-green-500 flex items-center justify-center shadow-lg">
+              <div className="absolute top-4 right-4 h-10 w-10 rounded-full bg-green-500 border-[3px] border-white shadow-sm flex items-center justify-center">
                 <CheckCircle className="h-5 w-5 text-white" />
               </div>
             )}
             {!videoStarted && (
-              <div className="absolute inset-0 flex items-center justify-center z-10">
-                <p className="text-slate-400 font-bold text-lg bg-slate-900/80 px-6 py-3 rounded-xl">
+              <div className="absolute inset-0 rounded-[2rem] bg-white/60 backdrop-blur-[2px] flex items-center justify-center z-10">
+                <p className="text-slate-500 font-bold text-lg bg-white px-6 py-3 rounded-full border-2 border-slate-200 shadow-sm">
                   🎬 Watch the video first to unlock
                 </p>
               </div>
             )}
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-10 items-center">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
               {/* Text content */}
               <div className="space-y-6 order-2 md:order-1">
                 <div className="flex items-center gap-3 mb-2">
-                  <span className="bg-slate-700 text-[#ff8c00] px-3 py-1 rounded text-sm font-mono font-bold">1.1</span>
-                  <h2 className="text-3xl font-black text-white">What Makes a Fire?</h2>
+                  <span className="bg-orange-100 text-orange-600 border-2 border-orange-200 shadow-sm px-3 py-1 rounded-xl text-sm font-black">1.1</span>
+                  <h2 className="text-3xl font-black text-slate-800">What Makes a Fire?</h2>
                 </div>
-                <div className="text-slate-300 leading-relaxed text-base space-y-4">
+                <div className="text-slate-600 leading-relaxed text-base space-y-4 font-medium">
                   <p>
                     Have you ever seen a stool with three legs? If you take one leg away, the stool falls over.{" "}
-                    <strong className="text-white">Fire is just like that!</strong> It needs three things to exist, and we call this the "fire triangle."
+                    <strong className="text-slate-800">Fire is just like that!</strong> It needs three things to exist, and we call this the "fire triangle."
                     If you take any one of them away, the fire goes out.
                   </p>
-                  <ul className="space-y-4 bg-slate-900/60 p-6 rounded-xl border border-slate-700">
+                  <ul className="space-y-4 bg-white p-6 rounded-2xl border-[3px] border-orange-100 shadow-sm">
                     <li className="flex gap-4 items-start">
                       <span className="text-red-400 text-xl mt-0.5">🔥</span>
                       <div>
-                        <strong className="text-white block">Heat</strong>
-                        <span className="text-sm text-slate-400">This is something hot, like a spark or a flame, that gets the fire started.</span>
+                        <strong className="text-slate-800 block">Heat</strong>
+                        <span className="text-sm text-slate-500">This is something hot, like a spark or a flame, that gets the fire started.</span>
                       </div>
                     </li>
                     <li className="flex gap-4 items-start">
                       <span className="text-amber-400 text-xl mt-0.5">🌲</span>
                       <div>
-                        <strong className="text-white block">Fuel</strong>
-                        <span className="text-sm text-slate-400">This is anything that can burn, like paper, wood, or cloth.</span>
+                        <strong className="text-slate-800 block">Fuel</strong>
+                        <span className="text-sm text-slate-500">This is anything that can burn, like paper, wood, or cloth.</span>
                       </div>
                     </li>
                     <li className="flex gap-4 items-start">
                       <span className="text-blue-400 text-xl mt-0.5">💨</span>
                       <div>
-                        <strong className="text-white block">Air (Oxygen)</strong>
-                        <span className="text-sm text-slate-400">Fire needs to breathe, just like we do! It uses a part of the air called oxygen to stay alive.</span>
+                        <strong className="text-slate-800 block">Air (Oxygen)</strong>
+                        <span className="text-sm text-slate-500">Fire needs to breathe, just like we do! It uses a part of the air called oxygen to stay alive.</span>
                       </div>
                     </li>
                   </ul>
@@ -344,10 +346,10 @@ const ModuleOnePage = () => {
                   onClick={handleSection1}
                   disabled={section1Done}
                   className={cn(
-                    "inline-flex items-center gap-2 px-6 py-3 rounded-full font-black text-sm transition-all shadow-sm",
+                    "inline-flex items-center gap-2 font-black text-sm transition-all uppercase tracking-wide",
                     section1Done
-                      ? "bg-green-700 text-green-100 cursor-default"
-                      : "bg-slate-700 text-white border border-slate-500 hover:bg-slate-600 hover:border-slate-400 active:scale-95"
+                      ? "bg-green-500 text-white px-6 py-3 rounded-full border-[3px] border-green-600 shadow-[0_4px_0_#15803d] cursor-default"
+                      : "bg-orange-400 hover:bg-orange-500 text-white px-6 py-3 rounded-full border-[3px] border-white shadow-[0_4px_0_#c2410c] hover:-translate-y-0.5 active:translate-y-1 active:shadow-none"
                   )}
                 >
                   <CheckCircle className="h-4 w-4" />
@@ -357,7 +359,7 @@ const ModuleOnePage = () => {
 
               {/* Fire Triangle Image */}
               <div className="order-1 md:order-2">
-                <div className="bg-white rounded-2xl overflow-hidden border-4 border-slate-700 shadow-xl transform hover:rotate-0 rotate-1 transition-transform duration-500 flex items-center justify-center p-4">
+                <div className="bg-white rounded-[2rem] overflow-hidden border-[4px] border-orange-200 shadow-sm transform hover:rotate-0 rotate-1 transition-transform duration-500 flex items-center justify-center p-4">
                   <img
                     src="/modules/assets/images/m1.png"
                     alt="The Fire Triangle — Heat, Fuel, Oxygen"
@@ -366,38 +368,35 @@ const ModuleOnePage = () => {
                 </div>
               </div>
             </div>
-          </div>
+          </section>
 
           {/* ── Section 1.2 — Grown-Up Tools (unlocked after section1) ── */}
-          <div className={cn(
-            "relative rounded-2xl border border-slate-700 bg-gradient-to-br from-slate-800 to-slate-900 p-6 sm:p-10 overflow-hidden shadow-2xl transition-all duration-500",
+          <section className={cn(
+            "relative bg-white rounded-[2rem] border-[4px] border-red-200 p-8 sm:p-12 overflow-hidden shadow-sm transition-all duration-500",
             !section1Done && "opacity-30 pointer-events-none select-none",
-            section2Done && "ring-2 ring-green-500/30"
+            section2Done && "border-green-200"
           )}>
             {section2Done && (
-              <div className="absolute top-4 right-4 h-8 w-8 rounded-full bg-green-500 flex items-center justify-center shadow-lg">
+              <div className="absolute top-4 right-4 h-10 w-10 rounded-full bg-green-500 border-[3px] border-white shadow-sm flex items-center justify-center">
                 <CheckCircle className="h-5 w-5 text-white" />
               </div>
             )}
             {!section1Done && (
-              <div className="absolute inset-0 flex items-center justify-center z-10">
-                <p className="text-slate-400 font-bold text-lg bg-slate-900/80 px-6 py-3 rounded-xl">
+              <div className="absolute inset-0 rounded-[2rem] bg-white/60 backdrop-blur-[2px] flex items-center justify-center z-10">
+                <p className="text-slate-500 font-bold text-lg bg-white px-6 py-3 rounded-full border-2 border-slate-200 shadow-sm">
                   ✅ Complete Section 1.1 first
                 </p>
               </div>
             )}
 
-            {/* Background decoration */}
-            <div className="absolute -top-10 -right-10 text-9xl opacity-5 pointer-events-none select-none">⚠️</div>
-
             <div className="relative z-10">
               <div className="flex items-center gap-3 mb-8">
-                <span className="bg-orange-900/60 text-[#ff8c00] px-3 py-1 rounded text-sm font-mono font-bold border border-orange-500/30">1.2</span>
-                <h2 className="text-3xl font-black text-white">Grown-Up Tools</h2>
+                <span className="bg-red-100 text-red-600 border-2 border-red-200 shadow-sm px-3 py-1 rounded-xl text-sm font-black">1.2</span>
+                <h2 className="text-3xl font-black text-slate-800">Grown-Up Tools</h2>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                <div className="md:col-span-2 text-slate-300 space-y-5 leading-relaxed text-base">
+                <div className="md:col-span-2 text-slate-600 space-y-5 leading-relaxed text-base font-medium">
                   <p>
                     You know that grown-ups use special tools for their jobs, like power saws or even cars.
                     These tools are very helpful, but they can be very dangerous if they aren't used correctly,
@@ -405,17 +404,17 @@ const ModuleOnePage = () => {
                   </p>
                   <p>
                     Matches and lighters are the same. They are tools that grown-ups use to light candles or start a barbecue.
-                    They are <span className="text-red-400 font-bold underline decoration-red-500/50">not toys</span>.
+                    They are <span className="text-red-500 font-black">not toys</span>.
                     Because they create heat, they can easily start a dangerous fire if they fall into the wrong hands.
                   </p>
                   <button
                     onClick={handleSection2}
                     disabled={section2Done}
                     className={cn(
-                      "inline-flex items-center gap-2 px-6 py-3 rounded-full font-black text-sm transition-all shadow-sm mt-2",
+                      "inline-flex items-center gap-2 font-black text-sm transition-all uppercase tracking-wide mt-2",
                       section2Done
-                        ? "bg-green-700 text-green-100 cursor-default"
-                        : "bg-slate-700 text-white border border-slate-500 hover:bg-slate-600 hover:border-slate-400 active:scale-95"
+                        ? "bg-green-500 text-white px-6 py-3 rounded-full border-[3px] border-green-600 shadow-[0_4px_0_#15803d] cursor-default"
+                        : "bg-red-500 hover:bg-red-600 text-white px-6 py-3 rounded-full border-[3px] border-white shadow-[0_4px_0_#991b1b] hover:-translate-y-0.5 active:translate-y-1 active:shadow-none"
                     )}
                   >
                     <CheckCircle className="h-4 w-4" />
@@ -424,35 +423,35 @@ const ModuleOnePage = () => {
                 </div>
 
                 {/* Golden Rule Card */}
-                <div className="bg-red-950/40 border border-red-500/30 rounded-2xl p-6 flex flex-col items-center justify-center text-center shadow-lg hover:scale-105 transition-transform duration-300">
-                  <div className="bg-red-500 w-12 h-12 rounded-full flex items-center justify-center mb-4 shadow-md">
+                <div className="bg-red-50 border-[3px] border-red-200 rounded-2xl p-6 flex flex-col items-center justify-center text-center shadow-sm hover:scale-105 transition-transform duration-300">
+                  <div className="bg-red-500 w-12 h-12 rounded-full flex items-center justify-center mb-4 shadow-md border-[3px] border-white">
                     <span className="text-white text-xl">✋</span>
                   </div>
-                  <h3 className="text-red-300 font-black mb-3 uppercase tracking-wider text-xs">Powerful Rule</h3>
-                  <p className="text-white font-medium italic text-sm leading-relaxed">
+                  <h3 className="text-red-600 font-black mb-3 uppercase tracking-wider text-xs">Powerful Rule</h3>
+                  <p className="text-slate-700 font-medium italic text-sm leading-relaxed">
                     "If you find matches or a lighter,{" "}
-                    <span className="text-red-400 font-bold">do not touch them</span>.
+                    <span className="text-red-500 font-black">do not touch them</span>.
                     Go and tell a grown-up right away."
                   </p>
                 </div>
               </div>
             </div>
-          </div>
+          </section>
 
           {/* ── Element Mixer Lab (unlocked after section2) ── */}
-          <div className={cn(
-            "relative rounded-2xl border border-slate-700 bg-slate-800 p-6 sm:p-10 shadow-2xl transition-all duration-500",
+          <section className={cn(
+            "relative bg-purple-50 rounded-[2rem] border-[4px] border-purple-200 p-8 sm:p-12 shadow-sm transition-all duration-500",
             !section2Done && "opacity-30 pointer-events-none select-none",
-            labCompleted && "ring-2 ring-green-500/30"
+            labCompleted && "border-green-200"
           )}>
             {labCompleted && (
-              <div className="absolute top-4 right-4 h-8 w-8 rounded-full bg-green-500 flex items-center justify-center shadow-lg">
+              <div className="absolute top-4 right-4 h-10 w-10 rounded-full bg-green-500 border-[3px] border-white shadow-sm flex items-center justify-center">
                 <CheckCircle className="h-5 w-5 text-white" />
               </div>
             )}
             {!section2Done && (
-              <div className="absolute inset-0 flex items-center justify-center z-10 rounded-2xl">
-                <p className="text-slate-400 font-bold text-lg bg-slate-900/80 px-6 py-3 rounded-xl">
+              <div className="absolute inset-0 rounded-[2rem] bg-white/60 backdrop-blur-[2px] flex items-center justify-center z-10">
+                <p className="text-slate-500 font-bold text-lg bg-white px-6 py-3 rounded-full border-2 border-slate-200 shadow-sm">
                   ✅ Complete Section 1.2 first
                 </p>
               </div>
@@ -460,10 +459,10 @@ const ModuleOnePage = () => {
 
             <div className="text-center mb-10">
               <div className="flex items-center justify-center gap-3 mb-3">
-                <FlaskConical className="h-7 w-7 text-purple-400" />
-                <h2 className="text-3xl font-black text-white">The Element Mixer Lab</h2>
+                <FlaskConical className="h-7 w-7 text-purple-500" />
+                <h2 className="text-3xl font-black text-purple-900">The Element Mixer Lab</h2>
               </div>
-              <p className="text-slate-400 leading-relaxed">
+              <p className="text-slate-600 font-bold leading-relaxed">
                 By understanding what fire needs to start, you are already taking a huge step in preventing fires.
                 <br />Prove your knowledge by building the Fire Triangle below!
               </p>
@@ -480,8 +479,9 @@ const ModuleOnePage = () => {
                       key={item.id}
                       draggable
                       onDragStart={(e) => handleDragStart(e, item)}
+                      onClick={() => handleItemDrop(item)}
                       className={cn(
-                        "p-4 rounded-2xl border-2 text-center w-32 shadow-lg transition-all select-none cursor-grab active:cursor-grabbing hover:-translate-y-1 active:scale-95",
+                        "p-4 rounded-2xl border-2 text-center w-32 shadow-lg transition-all select-none cursor-pointer hover:-translate-y-1 active:scale-95",
                         item.bg,
                         inPit && item.correct ? "opacity-50" : ""
                       )}
@@ -498,7 +498,7 @@ const ModuleOnePage = () => {
               <div className="flex flex-col items-center gap-3">
                 <div
                   className={cn(
-                    "relative w-60 h-60 sm:w-72 sm:h-72 rounded-full border-4 border-dashed flex flex-col items-center justify-center overflow-hidden transition-all duration-300 bg-slate-900",
+                    "relative w-60 h-60 sm:w-72 sm:h-72 rounded-full border-4 border-dashed flex flex-col items-center justify-center overflow-hidden transition-all duration-300 bg-white",
                     labCompleted
                       ? "border-[#ff4b3e] shadow-[0_0_50px_rgba(255,75,62,0.4)]"
                       : isDragOver
@@ -556,8 +556,8 @@ const ModuleOnePage = () => {
 
                   {/* Placeholder */}
                   {pitItems.length === 0 && !pitWater && !labCompleted && (
-                    <p className="text-slate-600 font-black text-xs sm:text-sm uppercase tracking-widest text-center z-10 px-8">
-                      DROP ITEMS HERE
+                    <p className="text-slate-500 font-black text-xs sm:text-sm uppercase tracking-widest text-center z-10 px-8">
+                      TAP OR DROP HERE
                     </p>
                   )}
                 </div>
@@ -565,7 +565,7 @@ const ModuleOnePage = () => {
                 {/* Status message — BELOW pit */}
                 <p className={cn(
                   "text-sm font-bold text-center transition-colors min-h-[20px]",
-                  labCompleted ? "text-orange-400" : "text-slate-400"
+                  labCompleted ? "text-orange-500" : "text-slate-500"
                 )}>
                   {labCompleted ? "⚠️ FIRE STARTED! The Triangle is complete!" : pitMessage}
                 </p>
@@ -574,36 +574,36 @@ const ModuleOnePage = () => {
                 <button
                   type="button"
                   onClick={resetPit}
-                  className="text-xs text-slate-500 hover:text-white underline transition-colors"
+                  className="text-xs text-slate-400 hover:text-slate-700 underline transition-colors"
                 >
                   Clear Pit &amp; Restart
                 </button>
               </div>
             </div>
-          </div>
+          </section>
 
           {/* ── Module 1 Complete Card ── */}
           {mixerEverCompleted && (
-            <div className="rounded-2xl bg-green-950/30 border border-green-500/40 p-8 sm:p-12 text-center shadow-xl">
-              <div className="h-16 w-16 rounded-full bg-green-500 flex items-center justify-center mx-auto mb-6 shadow-lg">
+            <div className="rounded-[2rem] bg-white border-[4px] border-green-200 p-8 sm:p-12 text-center shadow-sm">
+              <div className="h-16 w-16 rounded-full bg-green-500 border-[3px] border-white flex items-center justify-center mx-auto mb-6 shadow-md">
                 <CheckCircle className="h-9 w-9 text-white" strokeWidth={2.5} />
               </div>
-              <h2 className="text-3xl sm:text-4xl font-black text-white mb-3">Module 1 Complete!</h2>
-              <p className="text-slate-300 mb-8 max-w-md mx-auto leading-relaxed">
+              <h2 className="text-3xl sm:text-4xl font-black text-slate-800 mb-3">Module 1 Complete!</h2>
+              <p className="text-slate-600 font-bold mb-8 max-w-md mx-auto leading-relaxed">
                 Great job! You've learned about the Fire Triangle and why fire tools are for grown-ups only.
               </p>
               {!moduleCompleted ? (
                 <button
                   onClick={completeModule}
                   disabled={saving}
-                  className="inline-flex items-center gap-3 bg-gradient-to-r from-[#ff4b3e] to-[#ff8c00] text-white font-black text-lg px-8 py-4 rounded-full shadow-[0_4px_0_#9a3412] hover:-translate-y-0.5 hover:shadow-[0_6px_0_#9a3412] active:translate-y-1 active:shadow-none transition-all disabled:opacity-60"
+                  className="inline-flex items-center gap-2 sm:gap-3 bg-yellow-400 text-red-600 font-black text-sm sm:text-lg px-6 py-3 sm:px-10 sm:py-4 rounded-full border-[3px] border-white shadow-[0_4px_0_#b45309] hover:-translate-y-0.5 hover:shadow-[0_6px_0_#b45309] active:translate-y-1 active:shadow-[0_0px_0_#b45309] transition-all uppercase tracking-wide disabled:opacity-60"
                 >
                   {saving ? "Saving..." : "Continue to Module 2 →"}
                 </button>
               ) : (
                 <Link
-                  href="/kids/safescape"
-                  className="inline-flex items-center gap-3 bg-gradient-to-r from-[#ff4b3e] to-[#ff8c00] text-white font-black text-lg px-8 py-4 rounded-full shadow-[0_4px_0_#9a3412] hover:-translate-y-0.5 hover:shadow-[0_6px_0_#9a3412] active:translate-y-1 active:shadow-none transition-all"
+                  href="/kids/safescape/2"
+                  className="inline-flex items-center gap-2 sm:gap-3 bg-yellow-400 text-red-600 font-black text-sm sm:text-lg px-6 py-3 sm:px-10 sm:py-4 rounded-full border-[3px] border-white shadow-[0_4px_0_#b45309] hover:-translate-y-0.5 hover:shadow-[0_6px_0_#b45309] active:translate-y-1 active:shadow-[0_0px_0_#b45309] transition-all uppercase tracking-wide"
                 >
                   Continue to Module 2 →
                 </Link>
@@ -612,9 +612,9 @@ const ModuleOnePage = () => {
           )}
 
           {/* ── Footer ── */}
-          <div className="text-center py-8 border-t border-slate-800">
-            <p className="text-slate-600 text-sm">SafeScape Intelligent Systems Project</p>
-            <p className="text-slate-700 text-xs mt-1 opacity-50">Module 1: Fire is a Tool, Not a Toy</p>
+          <div className="text-center py-8 border-t-2 border-slate-200">
+            <p className="text-slate-500 text-sm font-bold uppercase tracking-widest">SafeScape Intelligent Systems Project</p>
+            <p className="text-slate-400 text-xs mt-1 opacity-50">Module 1: Fire is a Tool, Not a Toy</p>
           </div>
 
         </div>

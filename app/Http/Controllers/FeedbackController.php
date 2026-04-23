@@ -53,6 +53,16 @@ class FeedbackController extends Controller
             ->groupBy('featureName', 'featureType')
             ->orderByDesc('avgRating')
             ->get();
+            
+        // Attach recent reviews to each feature
+        foreach ($byFeatureName as $feature) {
+            $feature->reviews = UserFeedback::with('user:id,name,firstName,lastName')
+                ->where('featureName', $feature->featureName)
+                ->where('featureType', $feature->featureType)
+                ->orderByDesc('created_at')
+                ->limit(10)
+                ->get();
+        }
 
         // Recent feedback with user names
         $recentFeedback = UserFeedback::with('user:id,name,firstName,lastName')

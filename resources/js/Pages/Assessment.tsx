@@ -43,6 +43,7 @@ export default function Assessment({ type }: AssessmentProps) {
     const [feedbackHover, setFeedbackHover] = useState(0)
     const [feedbackSubmitting, setFeedbackSubmitting] = useState(false)
     const [feedbackSuccess, setFeedbackSuccess] = useState(false)
+    const [feedbackComment, setFeedbackComment] = useState("")
 
     const isPreTest = type === 'preTest'
     const title = isPreTest ? "Pre-Test Assessment" : "Post-Test Assessment"
@@ -78,6 +79,18 @@ export default function Assessment({ type }: AssessmentProps) {
             ...prev,
             [questionId]: answerIndex
         }))
+
+        // Auto-advance to the next question
+        if (currentQuestionIndex < questions.length - 1) {
+            setTimeout(() => {
+                setCurrentQuestionIndex(prev => {
+                    if (questions[prev]?.id === questionId) {
+                        return prev + 1
+                    }
+                    return prev
+                })
+            }, 500)
+        }
     }
 
     const handleSubmit = async () => {
@@ -124,7 +137,7 @@ export default function Assessment({ type }: AssessmentProps) {
                 featureName: isPreTest ? 'Pre-Test Assessment' : 'Post-Test Assessment',
                 featureType: 'quiz',
                 rating: feedbackRating,
-                comments: ''
+                comments: feedbackComment
             })
             setFeedbackSuccess(true)
         } catch(err) {
@@ -161,25 +174,25 @@ export default function Assessment({ type }: AssessmentProps) {
         return (
             <div className="min-h-screen bg-slate-50 py-12 px-4 selection:bg-orange-500 selection:text-white">
                 <Head title={`${title} Results - SafeScape`} />
-                <Card className="w-full max-w-lg mx-auto border-none shadow-[0_8px_30px_rgba(0,0,0,0.12)] rounded-3xl overflow-hidden">
-                    <div className="bg-gradient-to-r from-red-600 via-orange-500 to-orange-400 p-6 text-center rounded-t-3xl">
-                        <div className="mx-auto w-20 h-20 bg-white rounded-full flex items-center justify-center mb-4 shadow-lg">
-                            <Check className="w-10 h-10 text-green-500" />
+                <Card className="w-full max-w-md mx-auto border-[4px] border-slate-200 shadow-[0_8px_0_#e2e8f0] rounded-[2rem] overflow-hidden">
+                    <div className="bg-gradient-to-r from-red-600 via-orange-500 to-orange-400 p-5 text-center border-b-[4px] border-orange-600">
+                        <div className="mx-auto w-14 h-14 bg-white rounded-full flex items-center justify-center mb-3 shadow-[0_4px_0_rgba(0,0,0,0.1)] border-[3px] border-white">
+                            <Check className="w-7 h-7 text-green-500" strokeWidth={4} />
                         </div>
-                        <h2 className="text-2xl font-bold text-white">Assessment Complete! 🎉</h2>
-                        <p className="text-white/80 text-sm mt-1">{title}</p>
+                        <h2 className="text-xl font-black text-white tracking-wide">Assessment Complete! 🎉</h2>
+                        <p className="text-white/90 text-xs font-bold mt-1 uppercase tracking-wider">{title}</p>
                     </div>
                     
                     <CardContent className="space-y-6 p-6">
-                        <div className="text-center p-6 bg-orange-50 rounded-2xl border-2 border-orange-200">
-                            <p className="text-sm text-orange-600 font-semibold mb-2">Your Score</p>
-                            <div className="text-5xl font-black" style={{ color: rating.color }}>
+                        <div className="text-center p-5 bg-orange-50 rounded-2xl border-[3px] border-orange-200">
+                            <p className="text-xs text-orange-600 font-black tracking-widest uppercase mb-1">Your Score</p>
+                            <div className="text-4xl font-black" style={{ color: rating.color }}>
                                 {result.score} / {result.maxScore}
                             </div>
-                            <p className="text-lg font-bold mt-2" style={{ color: rating.color }}>
+                            <p className="text-base font-bold mt-1" style={{ color: rating.color }}>
                                 {rating.label}
                             </p>
-                            <p className="text-sm text-slate-500 mt-4">
+                            <p className="text-xs text-slate-500 mt-3 font-medium">
                                 {isPreTest 
                                     ? "This is your baseline score. Complete modules and activities to unlock the Post-Test!" 
                                     : "Great job completing your final assessment!"}
@@ -188,52 +201,78 @@ export default function Assessment({ type }: AssessmentProps) {
 
                         {/* Inline Feedback Widget - Post-Test only */}
                         {!isPreTest && (
-                            <div className="bg-slate-50 border-2 border-slate-200 rounded-2xl p-4 text-center mt-2 mb-4 animate-in fade-in slide-in-from-bottom-4">
+                            <div className="bg-white border-[3px] border-blue-100 rounded-[1.5rem] p-5 sm:p-6 text-center mt-6 mb-2 shadow-sm animate-in fade-in slide-in-from-bottom-4 relative overflow-hidden">
+                                {/* Decorative blobs */}
+                                <div className="absolute -right-8 -top-8 w-32 h-32 bg-blue-50 rounded-full blur-3xl pointer-events-none"></div>
+                                <div className="absolute -left-8 -bottom-8 w-24 h-24 bg-orange-50 rounded-full blur-2xl pointer-events-none"></div>
+                                
                                 {feedbackSuccess ? (
-                                    <div className="flex flex-col items-center">
-                                        <Check className="h-6 w-6 text-green-500 mb-2" />
-                                        <p className="text-sm font-bold text-slate-700">Thanks for your feedback!</p>
+                                    <div className="flex flex-col items-center relative z-10 py-4">
+                                        <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mb-4 border-4 border-green-200 shadow-inner">
+                                            <Check className="h-8 w-8 text-green-500" strokeWidth={3} />
+                                        </div>
+                                        <h3 className="text-xl sm:text-2xl font-black text-slate-800 mb-1">Thank You!</h3>
+                                        <p className="text-sm sm:text-base font-bold text-slate-500">Your feedback helps make SafeScape better for everyone.</p>
                                     </div>
                                 ) : (
-                                    <>
-                                        <p className="text-xs font-black text-slate-500 uppercase tracking-wider mb-3">Rate your Assessment Experience</p>
-                                        <div className="flex justify-center gap-2 mb-2">
+                                    <div className="relative z-10">
+                                        <h3 className="text-base sm:text-xl font-black text-slate-800 mb-1">Help Us Improve</h3>
+                                        <p className="text-[10px] sm:text-xs font-bold text-slate-500 uppercase tracking-widest mb-4">Rate your Assessment Experience</p>
+                                        
+                                        <div className="flex justify-center gap-2 mb-4 bg-slate-50 py-3 sm:py-4 rounded-2xl border-2 border-slate-100 w-fit mx-auto px-4 sm:px-6 shadow-inner">
                                             {[1, 2, 3, 4, 5].map((star) => (
                                                 <button
                                                     key={star}
                                                     onClick={() => !feedbackSubmitting && setFeedbackRating(star)}
                                                     onMouseEnter={() => !feedbackSubmitting && setFeedbackHover(star)}
                                                     onMouseLeave={() => !feedbackSubmitting && setFeedbackHover(0)}
-                                                    className="p-1 transition-all hover:scale-110"
+                                                    className="p-1 transition-transform hover:scale-110 hover:-translate-y-1 active:scale-95 outline-none"
                                                 >
                                                     <Star 
                                                         className={`h-6 w-6 sm:h-8 sm:w-8 transition-colors ${
                                                             (feedbackHover || feedbackRating) >= star 
-                                                                ? "text-yellow-400 fill-yellow-400" 
-                                                                : "text-slate-200"
+                                                                ? "text-yellow-400 fill-yellow-400 drop-shadow-sm" 
+                                                                : "text-slate-200 fill-slate-100"
                                                         }`} 
                                                     />
                                                 </button>
                                             ))}
                                         </div>
+                                        
                                         {feedbackRating > 0 && (
-                                            <Button 
-                                                onClick={handleFeedbackSubmit}
-                                                disabled={feedbackSubmitting}
-                                                className="bg-blue-500 hover:bg-blue-600 text-white rounded-full font-bold px-6 py-2 mt-2 h-auto"
-                                            >
-                                                {feedbackSubmitting ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
-                                                Submit Rating
-                                            </Button>
+                                            <div className="mt-6 space-y-4 animate-in fade-in slide-in-from-top-4 duration-300">
+                                                <div className="text-left">
+                                                    <label className="text-[10px] sm:text-xs font-black text-slate-500 uppercase tracking-widest ml-1 mb-2 block">Additional Comments (Optional)</label>
+                                                    <textarea
+                                                        className="w-full text-sm bg-slate-50 border-2 border-slate-200 rounded-xl p-3 focus:outline-none focus:border-blue-400 focus:bg-white transition-all resize-none font-medium text-slate-700 placeholder:text-slate-400 shadow-inner"
+                                                        rows={2}
+                                                        placeholder="What could we do better?"
+                                                        value={feedbackComment}
+                                                        onChange={(e) => setFeedbackComment(e.target.value)}
+                                                        disabled={feedbackSubmitting}
+                                                    />
+                                                </div>
+                                                <Button 
+                                                    onClick={handleFeedbackSubmit}
+                                                    disabled={feedbackSubmitting}
+                                                    className="w-full bg-blue-500 hover:bg-blue-600 text-white rounded-full font-black text-sm py-4 shadow-[0_3px_0_#1e40af] hover:shadow-[0_3px_0_#1e40af] active:translate-y-[3px] active:shadow-none transition-all flex items-center justify-center gap-2 border-[2px] border-blue-700"
+                                                >
+                                                    {feedbackSubmitting ? (
+                                                        <><Loader2 className="h-5 w-5 animate-spin" /> Submitting...</>
+                                                    ) : (
+                                                        <>Submit Feedback</>
+                                                    )}
+                                                </Button>
+                                            </div>
                                         )}
-                                    </>
+                                    </div>
                                 )}
                             </div>
                         )}
 
                         <Button 
                             onClick={handleContinue}
-                            className="w-full bg-yellow-400 text-red-600 font-extrabold py-6 rounded-full text-lg shadow-[0_4px_0_#b45309] hover:-translate-y-0.5 hover:shadow-[0_6px_0_#b45309] active:translate-y-1 active:shadow-[0_0px_0_#b45309] transition-all flex items-center justify-center gap-2"
+                            className="w-full bg-yellow-400 hover:bg-yellow-300 text-red-700 font-extrabold py-5 rounded-full text-base border-[3px] border-yellow-500 shadow-[0_4px_0_#ca8a04] hover:-translate-y-0.5 hover:shadow-[0_5px_0_#ca8a04] active:translate-y-[4px] active:shadow-none transition-all flex items-center justify-center gap-2"
                         >
                             🚀 {isPreTest ? "Start Learning" : "Return to Dashboard"}
                             <ChevronRight className="h-5 w-5" />
@@ -245,7 +284,7 @@ export default function Assessment({ type }: AssessmentProps) {
     }
 
     return (
-        <div className="min-h-screen bg-slate-50 py-8 px-4 sm:px-6 lg:px-8 selection:bg-orange-500 selection:text-white">
+        <div className="min-h-screen bg-blue-50 bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] [background-size:16px_16px] py-8 px-4 sm:px-6 lg:px-8 selection:bg-orange-500 selection:text-white">
             <Head title={`${title} - SafeScape`} />
             
             <div className="max-w-3xl mx-auto mb-6 flex items-center gap-4">
@@ -261,7 +300,7 @@ export default function Assessment({ type }: AssessmentProps) {
                 </div>
             </div>
 
-            <Card className="max-w-3xl mx-auto border-2 border-slate-200 shadow-sm rounded-3xl overflow-hidden">
+            <Card className="max-w-2xl mx-auto border-[4px] border-blue-200 shadow-[0_8px_0_#bfdbfe] rounded-[2rem] overflow-hidden bg-white">
                 {loading ? (
                     <div className="flex flex-col items-center justify-center py-24">
                         <Loader2 className="h-12 w-12 animate-spin text-orange-500 mb-4" />
@@ -288,9 +327,9 @@ export default function Assessment({ type }: AssessmentProps) {
                                     {Math.round(((currentQuestionIndex) / questions.length) * 100)}% Completed
                                 </span>
                             </div>
-                            <div className="w-full bg-slate-100 rounded-full h-2.5 overflow-hidden">
+                            <div className="w-full bg-slate-100 rounded-full h-4 overflow-hidden border-2 border-slate-200 shadow-inner">
                                 <div
-                                    className="bg-orange-500 h-2.5 rounded-full transition-all duration-300 ease-out"
+                                    className="bg-green-500 h-4 rounded-full transition-all duration-300 ease-out"
                                     style={{ width: `${((currentQuestionIndex) / questions.length) * 100}%` }}
                                 />
                             </div>
@@ -305,11 +344,11 @@ export default function Assessment({ type }: AssessmentProps) {
                                 </div>
                             )}
 
-                            <div className="mb-8 p-6 sm:p-8 bg-blue-50/50 rounded-[2rem] border-2 border-blue-100 relative">
-                                <span className="absolute -top-3 sm:-top-4 left-6 px-4 py-1.5 bg-blue-100 text-blue-700 font-black text-xs sm:text-sm uppercase tracking-widest rounded-full border-2 border-blue-200">
+                            <div className="mb-6 p-5 sm:p-6 bg-blue-600 rounded-[1.5rem] border-[3px] border-blue-700 shadow-[0_4px_0_#1d4ed8] relative mt-4">
+                                <span className="absolute -top-3 sm:-top-4 left-6 px-3 py-1 bg-yellow-400 text-orange-800 font-black text-[10px] sm:text-xs uppercase tracking-widest rounded-full border-[2px] border-yellow-500 shadow-sm">
                                     {questions[currentQuestionIndex].category}
                                 </span>
-                                <h3 className="text-xl sm:text-2xl font-black text-slate-800 leading-tight">
+                                <h3 className="text-lg sm:text-xl font-black text-white leading-tight mt-1">
                                     {questions[currentQuestionIndex].question}
                                 </h3>
                             </div>
@@ -325,10 +364,10 @@ export default function Assessment({ type }: AssessmentProps) {
                                         <div 
                                             key={index} 
                                             className={`
-                                                flex items-center space-x-3 p-4 sm:p-5 rounded-2xl border-[3px] transition-all cursor-pointer group
+                                                flex items-center space-x-3 p-3 sm:p-4 rounded-xl border-[2px] transition-all cursor-pointer group
                                                 ${isSelected 
-                                                    ? 'bg-orange-50 border-orange-400 rotate-0 shadow-[0_4px_0_#fb923c] -translate-y-1' 
-                                                    : 'bg-white border-slate-200 hover:border-orange-200 hover:bg-orange-50/50 active:scale-[0.98]'
+                                                    ? 'bg-green-50 border-green-500 shadow-[0_4px_0_#22c55e] -translate-y-1' 
+                                                    : 'bg-white border-slate-200 shadow-[0_4px_0_#e2e8f0] hover:border-blue-300 hover:bg-blue-50 hover:-translate-y-1 hover:shadow-[0_6px_0_#93c5fd] active:shadow-none active:translate-y-[2px]'
                                                 }
                                             `}
                                             onClick={() => handleAnswerQuestion(questions[currentQuestionIndex].id, index)}
@@ -337,13 +376,13 @@ export default function Assessment({ type }: AssessmentProps) {
                                                 value={index.toString()} 
                                                 id={`q-${questions[currentQuestionIndex].id}-opt-${index}`} 
                                                 className={`h-6 w-6 border-2 transition-all ${
-                                                    isSelected ? 'border-orange-500 fill-orange-500 text-orange-500' : 'border-slate-300 group-hover:border-orange-300'
+                                                    isSelected ? 'border-green-600 fill-green-600 text-green-600' : 'border-slate-300 group-hover:border-blue-400'
                                                 }`}
                                             />
                                             <Label 
                                                 htmlFor={`q-${questions[currentQuestionIndex].id}-opt-${index}`}
                                                 className={`text-base sm:text-lg font-bold cursor-pointer w-full leading-snug ${
-                                                    isSelected ? 'text-orange-900' : 'text-slate-700 group-hover:text-slate-900'
+                                                    isSelected ? 'text-green-900' : 'text-slate-700 group-hover:text-slate-900'
                                                 }`}
                                             >
                                                 {option}
@@ -355,12 +394,14 @@ export default function Assessment({ type }: AssessmentProps) {
                         </CardContent>
 
                         {/* Navigation Footer */}
-                        <div className="bg-slate-50 px-6 py-5 border-t-2 border-slate-200 flex justify-between items-center">
+                        <div className="bg-slate-50 px-6 py-4 border-t-[3px] border-slate-200 flex justify-between items-center rounded-b-[2rem]">
                             <Button 
                                 variant="outline" 
                                 disabled={currentQuestionIndex === 0 || submitting} 
                                 onClick={() => setCurrentQuestionIndex(prev => prev - 1)}
-                                className="rounded-full font-black px-6 border-2 border-slate-300 border-b-[4px] active:border-b-2 active:translate-y-[2px]"
+                                className={`rounded-full font-black px-5 border-[2px] active:translate-y-[2px] transition-all shadow-[0_2px_0_#cbd5e1] active:shadow-none h-10 ${
+                                    currentQuestionIndex === 0 || submitting ? 'opacity-50 border-slate-200 shadow-none' : 'border-slate-300 bg-white hover:bg-slate-100'
+                                }`}
                             >
                                 <ChevronLeft className="h-5 w-5 mr-1" /> Back
                             </Button>
@@ -382,17 +423,7 @@ export default function Assessment({ type }: AssessmentProps) {
                                     )}
                                 </Button>
                             ) : (
-                                <Button 
-                                    onClick={() => setCurrentQuestionIndex(prev => prev + 1)}
-                                    disabled={answers[questions[currentQuestionIndex].id] === undefined}
-                                    className={`rounded-full font-black px-8 border-2 border-b-[4px] active:border-b-2 active:translate-y-[2px] shadow-sm transition-all ${
-                                        answers[questions[currentQuestionIndex].id] === undefined
-                                            ? 'bg-slate-200 text-slate-400 border-slate-300 shadow-none'
-                                            : 'bg-orange-500 hover:bg-orange-400 text-white border-orange-600 shadow-[0_4px_0_#ea580c] hover:shadow-[0_4px_0_#ea580c]'
-                                    }`}
-                                >
-                                    Next <ChevronRight className="h-5 w-5 ml-1" />
-                                </Button>
+                                <div />
                             )}
                         </div>
                     </>
