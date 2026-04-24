@@ -56,7 +56,7 @@ export function ContentCard({ content, onClick }: ContentCardProps) {
     <>
       {/* Visual Header Section */}
       <div className={cn(
-        "relative h-52 sm:h-60 w-full flex items-center justify-center bg-gradient-to-br overflow-hidden z-0 shrink-0",
+        "relative h-40 sm:h-60 w-full flex items-center justify-center bg-gradient-to-br overflow-hidden z-0 shrink-0",
         typeGradients[content.type] || "from-slate-400 to-slate-600"
       )}>
         {/* Subtle Glassmorphism Patterns / Lighting */}
@@ -65,22 +65,22 @@ export function ContentCard({ content, onClick }: ContentCardProps) {
         <div className="absolute -bottom-24 -left-24 w-64 h-64 bg-black/10 blur-[50px] rounded-full pointer-events-none"></div>
 
         {/* Status badges */}
-        <div className="absolute top-5 right-5 flex flex-col gap-2 z-20">
+        <div className="absolute top-3 right-3 sm:top-5 sm:right-5 flex flex-col gap-1.5 sm:gap-2 z-20">
           {content.isNew && (
-            <div className="bg-white text-rose-500 font-extrabold text-[11px] sm:text-xs tracking-wider uppercase px-4 py-1.5 rounded-full shadow-lg animate-pulse border border-rose-100">
+            <div className="bg-white text-rose-500 font-extrabold text-[9px] sm:text-xs tracking-wider uppercase px-3 py-1 sm:px-4 sm:py-1.5 rounded-full shadow-lg animate-pulse border border-rose-100">
               New!
             </div>
           )}
           {content.isCompleted && (
-            <div className="bg-[#10B981] text-white font-extrabold text-[11px] sm:text-xs tracking-wider uppercase px-4 py-1.5 rounded-full shadow-lg flex items-center gap-1.5 border border-emerald-400">
-              <CheckCircle className="h-3.5 w-3.5 sm:h-4 sm:w-4" /> Done
+            <div className="bg-[#10B981] text-white font-extrabold text-[9px] sm:text-xs tracking-wider uppercase px-3 py-1 sm:px-4 sm:py-1.5 rounded-full shadow-lg flex items-center gap-1.5 border border-emerald-400">
+              <CheckCircle className="h-3 w-3 sm:h-4 sm:w-4" /> Done
             </div>
           )}
         </div>
 
         {/* Top left type indicator */}
-        <div className="absolute top-5 left-5 z-20">
-           <div className="bg-black/20 backdrop-blur-md text-white font-bold text-[10px] sm:text-xs tracking-widest uppercase px-4 py-1.5 rounded-full border border-white/20 shadow-sm">
+        <div className="absolute top-3 left-3 sm:top-5 sm:left-5 z-20">
+           <div className="bg-black/20 backdrop-blur-md text-white font-bold text-[9px] sm:text-xs tracking-widest uppercase px-3 py-1 sm:px-4 sm:py-1.5 rounded-full border border-white/20 shadow-sm">
              {content.type}
            </div>
         </div>
@@ -98,23 +98,23 @@ export function ContentCard({ content, onClick }: ContentCardProps) {
            !content.isLocked && "group-hover:scale-110 group-hover:-translate-y-1"
         )}>
           {content.emoji ? (
-            <div className="text-8xl sm:text-9xl drop-shadow-2xl">{content.emoji}</div>
+            <div className="text-7xl sm:text-9xl drop-shadow-2xl">{content.emoji}</div>
           ) : content.imageUrl && !imageError ? (
             <img
               src={content.imageUrl}
               alt={content.title}
-              className="w-36 h-36 sm:w-44 sm:h-44 object-contain drop-shadow-2xl"
+              className="w-28 h-28 sm:w-44 sm:h-44 object-contain drop-shadow-2xl"
               onError={() => setImageError(true)}
             />
           ) : (
-            <div className="text-8xl sm:text-9xl drop-shadow-2xl">{typeIcons[content.type]}</div>
+            <div className="text-7xl sm:text-9xl drop-shadow-2xl">{typeIcons[content.type]}</div>
           )}
         </div>
 
         {/* Detail Badges Bottom */}
         {content.difficulty && (
-          <div className="absolute bottom-5 right-5 z-20">
-            <div className={cn("font-bold text-[10px] sm:text-xs uppercase tracking-wider px-3 py-1.5 rounded-full shadow-md", badgeColors[content.difficulty] || "bg-slate-500 text-white")}>
+          <div className="absolute bottom-3 right-3 sm:bottom-5 sm:right-5 z-20">
+            <div className={cn("font-bold text-[9px] sm:text-xs uppercase tracking-wider px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-full shadow-md", badgeColors[content.difficulty] || "bg-slate-500 text-white")}>
               {content.difficulty}
             </div>
           </div>
@@ -122,22 +122,22 @@ export function ContentCard({ content, onClick }: ContentCardProps) {
       </div>
 
       {/* Text Content Section */}
-      <div className="p-6 sm:p-8 flex-1 flex flex-col bg-white z-10 relative">
-        <h3 className="font-extrabold text-2xl sm:text-3xl text-slate-800 leading-tight mb-3 group-hover:text-[#4F46E5] transition-colors line-clamp-2">
+      <div className="p-5 sm:p-8 flex-1 flex flex-col bg-white z-10 relative">
+        <h3 className="font-extrabold text-xl sm:text-3xl text-slate-800 leading-tight mb-2 sm:mb-3 group-hover:text-[#4F46E5] transition-colors line-clamp-2">
           {content.title}
         </h3>
 
         {content.description && (
-          <p className="text-sm sm:text-base text-slate-500 font-medium leading-relaxed mb-8 line-clamp-2">
+          <p className="text-[13px] sm:text-base text-slate-500 font-medium leading-relaxed mb-4 sm:mb-8 line-clamp-2">
             {content.description}
           </p>
         )}
 
         {/* Footer Actions */}
-        <div className="mt-auto flex items-center justify-between pt-5 border-t-2 border-slate-50">
+        <div className="mt-auto flex items-center justify-between pt-4 sm:pt-5 border-t-2 border-slate-50">
           {content.duration ? (
-            <div className="flex items-center gap-1.5 text-sm font-bold text-slate-400">
-              <Play className="h-4 w-4" />
+            <div className="flex items-center gap-1 sm:gap-1.5 text-xs sm:text-sm font-bold text-slate-400">
+              <Play className="h-3 w-3 sm:h-4 sm:w-4" />
               <span>{content.duration}</span>
             </div>
           ) : (
@@ -145,12 +145,12 @@ export function ContentCard({ content, onClick }: ContentCardProps) {
           )}
 
           {!content.isLocked ? (
-            <div className="flex items-center gap-2 text-[#4F46E5] bg-indigo-50/50 px-5 py-2.5 rounded-2xl font-bold text-sm sm:text-base transition-colors group-hover:bg-[#4F46E5] group-hover:text-white shadow-sm hover:shadow-md">
+            <div className="flex items-center gap-1.5 sm:gap-2 text-[#4F46E5] bg-indigo-50/50 px-4 py-2 sm:px-5 sm:py-2.5 rounded-xl sm:rounded-2xl font-bold text-[13px] sm:text-base transition-colors group-hover:bg-[#4F46E5] group-hover:text-white shadow-sm hover:shadow-md">
               <span>{content.type === "game" ? "Play Now" : content.type === "video" ? "Watch" : "Start"}</span>
-              <ArrowRight className="h-4 w-4 sm:h-5 sm:w-5 group-hover:translate-x-1 transition-transform" />
+              <ArrowRight className="h-3.5 w-3.5 sm:h-5 sm:w-5 group-hover:translate-x-1 transition-transform" />
             </div>
           ) : (
-            <div className="text-xs sm:text-sm font-bold text-slate-400 uppercase tracking-wider bg-slate-100 px-4 py-2 rounded-xl">
+            <div className="text-[10px] sm:text-sm font-bold text-slate-400 uppercase tracking-wider bg-slate-100 px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg sm:rounded-xl">
               Locked
             </div>
           )}
@@ -164,7 +164,7 @@ export function ContentCard({ content, onClick }: ContentCardProps) {
       <div
         onClick={(e) => { e.preventDefault(); if (onClick) onClick(); }}
         className={cn(
-          "group relative flex flex-col h-full w-full rounded-[2.5rem] overflow-hidden bg-white transition-all duration-500 ease-out",
+          "group relative flex flex-col h-full w-full rounded-3xl sm:rounded-[2.5rem] overflow-hidden bg-white transition-all duration-500 ease-out",
           "opacity-60 cursor-not-allowed filter grayscale-[0.3]"
         )}
       >
@@ -178,7 +178,7 @@ export function ContentCard({ content, onClick }: ContentCardProps) {
       href={content.href}
       onClick={() => { if (onClick) onClick() }}
       className={cn(
-         "group relative flex flex-col h-full w-full rounded-[2.5rem] overflow-hidden bg-white transition-all duration-500 ease-out",
+         "group relative flex flex-col h-full w-full rounded-3xl sm:rounded-[2.5rem] overflow-hidden bg-white transition-all duration-500 ease-out",
          "hover:shadow-[0_20px_40px_rgba(0,0,0,0.12)] hover:-translate-y-2 cursor-pointer shadow-[0_8px_30px_rgba(0,0,0,0.06)] border border-slate-100"
       )}
     >

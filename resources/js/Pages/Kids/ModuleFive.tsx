@@ -9,6 +9,7 @@ const ModuleFivePage = ({ moduleNum }: { moduleNum: number }) => {
   const { user } = useAuth()
   const currentModule = moduleNum || 5
   const [moduleCompleted, setModuleCompleted] = useState(false)
+  const [iframeLoading, setIframeLoading] = useState(true)
 
   useEffect(() => {
     const handleMessage = async (e: MessageEvent) => {
@@ -45,6 +46,7 @@ const ModuleFivePage = ({ moduleNum }: { moduleNum: number }) => {
   }, []);
 
   const handleIframeLoad = (e: React.SyntheticEvent<HTMLIFrameElement, Event>) => {
+    setIframeLoading(false);
     const iframe = e.target as HTMLIFrameElement;
     try {
       if (!iframe.contentWindow) return;
@@ -56,13 +58,30 @@ const ModuleFivePage = ({ moduleNum }: { moduleNum: number }) => {
       const nav = iframeDoc.querySelector('.ss-nav') as HTMLElement;
       if (nav) nav.style.display = 'none';
 
+      // Dynamically resize iframe to content height without breaking scroll momentum
       const resizeIframe = () => {
-        setTimeout(() => {
-          if (!iframeDoc.documentElement) return;
-          iframe.style.height = '0px'; // Reset height to allow shrinking
-          const height = iframeDoc.documentElement.scrollHeight;
-          iframe.style.height = `${height}px`;
-        }, 50);
+        if (!iframeDoc.documentElement) return;
+        
+        const main = iframeDoc.querySelector('main');
+        const footer = iframeDoc.querySelector('footer');
+        
+        if (main && footer) {
+          const winScroll = iframeDoc.defaultView?.scrollY || 0;
+          const bottom = Math.max(
+            main.getBoundingClientRect().bottom + winScroll,
+            footer.getBoundingClientRect().bottom + winScroll
+          );
+          
+          const newHeight = bottom + 20; // 20px safety buffer
+          const currentHeight = parseInt(iframe.style.height) || 0;
+          
+          if (Math.abs(newHeight - currentHeight) > 10) {
+            iframe.style.height = `${newHeight}px`;
+          }
+        } else {
+          // Fallback if structure is missing
+          iframe.style.height = `${iframeDoc.body.scrollHeight}px`;
+        }
       };
 
       // Check if the congratulations/completion screen appeared inside the iframe
@@ -217,11 +236,34 @@ const ModuleFivePage = ({ moduleNum }: { moduleNum: number }) => {
       )}
 
       {/* ── Dark Module Content Area ── */}
-      <div className="flex-1 bg-blue-50 bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] [background-size:16px_16px] flex flex-col w-full">
+      <div className="flex-1 bg-blue-50 bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] [background-size:16px_16px] flex flex-col w-full relative">
+        
+        {/* Skeleton Loader */}
+        {iframeLoading && (
+          <div className="absolute inset-0 z-10 flex flex-col items-center justify-center pt-10 pb-20 px-4 pointer-events-none">
+            <div className="w-16 h-16 sm:w-20 sm:h-20 bg-white rounded-2xl shadow-sm border-[3px] border-blue-200 flex items-center justify-center mb-6 animate-bounce">
+              <Flame className="h-8 w-8 sm:h-10 sm:w-10 text-[#ff4b3e] animate-pulse" />
+            </div>
+            <div className="flex flex-col items-center gap-3 w-full max-w-2xl px-2 sm:px-6">
+              <div className="h-6 sm:h-10 w-48 sm:w-64 bg-blue-200/50 rounded-full animate-pulse"></div>
+              <div className="h-4 sm:h-5 w-64 sm:w-96 bg-blue-200/50 rounded-full animate-pulse delay-75 mb-6"></div>
+              
+              <div className="w-full space-y-4">
+                <div className="h-48 sm:h-64 w-full bg-white/60 rounded-[2rem] border-[3px] border-blue-200/50 animate-pulse delay-150"></div>
+                <div className="h-32 sm:h-48 w-full bg-white/60 rounded-[2rem] border-[3px] border-blue-200/50 animate-pulse delay-200"></div>
+              </div>
+            </div>
+            <p className="mt-8 text-blue-400 font-bold tracking-widest uppercase text-sm animate-pulse delay-300">Loading Module Content...</p>
+          </div>
+        )}
+
         <iframe 
           src={`/modules/module_${currentModule}/index.html`}
-          className="w-full border-none m-0 p-0"
-          style={{ minHeight: '3000px' }}
+          className={cn(
+            "w-full border-none m-0 p-0 transition-opacity duration-700",
+            iframeLoading ? "opacity-0" : "opacity-100"
+          )}
+          style={{ minHeight: '800px' }}
           onLoad={handleIframeLoad}
           loading="eager"
           allow="fullscreen; autoplay; encrypted-media"

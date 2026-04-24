@@ -124,7 +124,7 @@ const KidsDashboardPage = ({}: KidsPageProps) => {
       {!isMobile && !reduceMotion && (
         <>
           <Particles
-            className="z-0"
+            className="!fixed !inset-0 z-0"
             quantity={100}
             color="#ef4444"
             size={2.5}
@@ -132,7 +132,7 @@ const KidsDashboardPage = ({}: KidsPageProps) => {
             ease={80}
           />
           <Particles
-            className="z-0"
+            className="!fixed !inset-0 z-0"
             quantity={60}
             color="#f97316"
             size={3}
@@ -140,7 +140,7 @@ const KidsDashboardPage = ({}: KidsPageProps) => {
             ease={60}
           />
           <Particles
-            className="z-0"
+            className="!fixed !inset-0 z-0"
             quantity={40}
             color="#fbbf24"
             size={2}

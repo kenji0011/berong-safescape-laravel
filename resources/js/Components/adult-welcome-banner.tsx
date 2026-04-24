@@ -8,38 +8,38 @@ export function AdultWelcomeBanner() {
     const firstName = user?.name?.split(' ')[0] || 'Safety Hero'
 
     return (
-        <div className="relative overflow-hidden bg-gradient-to-br from-orange-900 via-amber-700 to-orange-950 rounded-3xl shadow-xl mb-8 border border-orange-500/30 text-center">
+        <div className="relative overflow-hidden bg-slate-900 rounded-[2rem] sm:rounded-[2.5rem] border-[3px] sm:border-[4px] border-slate-800 shadow-[0_6px_0_#0f172a] sm:shadow-[0_8px_0_#0f172a] mb-6 sm:mb-8 text-center transition-all hover:shadow-[0_8px_0_#0f172a] sm:hover:shadow-[0_12px_0_#0f172a] hover:-translate-y-1">
             {/* Abstract background graphics */}
-            <div className="absolute inset-0">
-                <div className="absolute top-0 right-0 w-64 h-64 bg-orange-500/20 rounded-full blur-3xl -mr-16 -mt-16"></div>
-                <div className="absolute bottom-0 left-0 w-64 h-64 bg-amber-500/10 rounded-full blur-3xl -ml-16 -mb-16"></div>
-                <div className="absolute inset-0 bg-[url('/noise.png')] opacity-10 mix-blend-overlay"></div>
+            <div className="absolute inset-0 z-0 overflow-hidden">
+                <div className="absolute top-0 right-0 w-[30rem] sm:w-[40rem] h-[30rem] sm:h-[40rem] bg-gradient-to-bl from-orange-500/20 via-red-500/10 to-transparent rounded-full blur-3xl -mr-20 sm:-mr-32 -mt-20 sm:-mt-32"></div>
+                <div className="absolute bottom-0 left-0 w-[20rem] sm:w-[30rem] h-[20rem] sm:h-[30rem] bg-gradient-to-tr from-blue-500/10 to-transparent rounded-full blur-3xl -ml-16 sm:-ml-20 -mb-16 sm:-mb-20"></div>
+                <div className="absolute inset-0 bg-[url('/noise.png')] opacity-20 mix-blend-overlay"></div>
+                {/* Subtle grid pattern for a modern technical look */}
+                <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:32px_32px]"></div>
             </div>
 
-
-
             {/* Main content */}
-            <div className="relative z-10 px-8 py-10 sm:px-12 sm:py-12 flex flex-col items-center">
-                {/* <div className="mb-4 inline-flex items-center justify-center p-3 bg-orange-800 rounded-2xl ring-1 ring-orange-400 shadow-lg shadow-orange-900/20">
-                    
-                </div> */}
+            <div className="relative z-10 px-4 py-6 sm:px-10 sm:py-10 flex flex-col items-center">
+                {/* Floating Fire Icon */}
+                <div className="mb-3 sm:mb-5 h-10 w-10 sm:h-12 sm:w-12 bg-gradient-to-br from-[#ff4b3e] to-[#ff8c00] rounded-xl sm:rounded-2xl flex items-center justify-center shadow-lg border-2 border-white/20 transform -rotate-3 hover:rotate-0 transition-transform">
+                    <Flame className="h-5 w-5 sm:h-6 sm:w-6 text-white drop-shadow-md" strokeWidth={2.5} />
+                </div>
 
-                <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-3 tracking-tight drop-shadow-xl">
-                    Welcome home, <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-200 to-amber-200">{firstName}</span>!
-
+                <h1 className="text-2xl sm:text-4xl md:text-5xl font-black text-white mb-2 sm:mb-3 tracking-tight drop-shadow-xl">
+                    Welcome home, <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-amber-300 drop-shadow-[0_2px_10px_rgba(251,146,60,0.4)]">{firstName}</span>!
                 </h1>
 
-                <p className="text-orange-100/90 text-lg sm:text-xl max-w-2xl mx-auto mb-6 font-medium leading-relaxed drop-shadow-sm">
-                    Protecting your family starts with knowledge. <br className="hidden sm:block" /> Explore the latest fire safety articles and simulations today.
+                <p className="text-slate-300 text-xs sm:text-base md:text-lg max-w-2xl mx-auto mb-5 sm:mb-6 font-medium leading-relaxed px-2">
+                    Protecting your family starts with knowledge. <br className="hidden sm:block" /> Explore the latest fire safety articles and interactive simulations today.
                 </p>
 
-                <div className="flex flex-wrap justify-center gap-4">
-                    <span className="inline-flex items-center gap-2.5 px-6 py-2.5 rounded-full bg-black/30 backdrop-blur-md border border-white/10 text-white text-sm font-bold shadow-2xl transition-all hover:bg-black/40">
-                        <BookOpen className="h-4 w-4 text-orange-400" strokeWidth={2.5} />
+                <div className="flex flex-row flex-wrap justify-center gap-2 sm:gap-3 w-full sm:w-auto px-2 sm:px-0">
+                    <span className="inline-flex flex-1 sm:flex-initial items-center justify-center gap-1.5 sm:gap-2 px-3 py-1.5 sm:px-5 sm:py-2.5 rounded-full bg-white/10 backdrop-blur-md border-[2px] border-white/20 text-white text-[10px] sm:text-xs md:text-sm font-black tracking-wide uppercase shadow-xl transition-all hover:bg-white/20 hover:-translate-y-0.5 whitespace-nowrap">
+                        <BookOpen className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-orange-400" strokeWidth={2.5} />
                         Articles
                     </span>
-                    <span className="inline-flex items-center gap-2.5 px-6 py-2.5 rounded-full bg-black/30 backdrop-blur-md border border-white/10 text-white text-sm font-bold shadow-2xl transition-all hover:bg-black/40">
-                        <Flame className="h-4 w-4 text-red-500" strokeWidth={2.5} />
+                    <span className="inline-flex flex-1 sm:flex-initial items-center justify-center gap-1.5 sm:gap-2 px-3 py-1.5 sm:px-5 sm:py-2.5 rounded-full bg-white/10 backdrop-blur-md border-[2px] border-white/20 text-white text-[10px] sm:text-xs md:text-sm font-black tracking-wide uppercase shadow-xl transition-all hover:bg-white/20 hover:-translate-y-0.5 whitespace-nowrap">
+                        <Flame className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-red-400" strokeWidth={2.5} />
                         Simulations
                     </span>
                 </div>

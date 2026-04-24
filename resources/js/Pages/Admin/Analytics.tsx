@@ -600,7 +600,7 @@ export default function AnalyticsDashboard({
           {/* Demographics Tab */}
           <TabsContent value="demographics" className="mt-4 sm:mt-6">
             {demographicData && (
-              <div className="grid grid-cols-2 gap-3 sm:gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-6">
                 
                 {/* Gender */}
                 <div className="bg-white rounded-2xl sm:rounded-[2rem] border-2 border-slate-200 border-b-[4px] sm:border-b-[6px] p-5 sm:p-6 lg:p-8 relative overflow-hidden group hover:-translate-y-1 transition-all flex flex-col">

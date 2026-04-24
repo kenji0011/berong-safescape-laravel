@@ -694,6 +694,12 @@ class AdminController extends Controller
         $barangay    = $this->getBarangayAnalytics();
         $demographics = $this->getDemographicAnalytics();
         $knowledge   = $this->getKnowledgeAnalytics();
+        
+        $schoolRes = app(\App\Http\Controllers\SchoolAnalyticsController::class)->analytics();
+        $schoolData = json_decode($schoolRes->getContent(), true);
+        
+        $feedbackRes = app(\App\Http\Controllers\FeedbackController::class)->analytics();
+        $feedbackData = json_decode($feedbackRes->getContent(), true);
 
         $filename = 'safescape_analytics_' . now()->format('Y-m-d') . '.csv';
 
@@ -703,7 +709,7 @@ class AdminController extends Controller
             'Cache-Control'       => 'no-cache, no-store, must-revalidate',
         ];
 
-        $callback = function () use ($summary, $barangay, $demographics, $knowledge) {
+        $callback = function () use ($summary, $barangay, $demographics, $knowledge, $schoolData, $feedbackData) {
             $out = fopen('php://output', 'w');
 
             // ── SUMMARY ──────────────────────────────────────────────
@@ -777,6 +783,50 @@ class AdminController extends Controller
                     $k['incorrectAnswers'],
                 ]);
             }
+            fputcsv($out, []);
+
+            // ── SCHOOL ANALYTICS ──────────────────────────────────────
+            fputcsv($out, ['=== SCHOOL LEADERBOARD ===']);
+            fputcsv($out, ['Rank', 'School Name', 'Type', 'Students', 'Avg Pre-Test', 'Avg Post-Test', 'Increase', 'Completion Rate (%)']);
+            
+            if (isset($schoolData['schools']) && is_array($schoolData['schools'])) {
+                $rank = 1;
+                foreach ($schoolData['schools'] as $school) {
+                    $increase = $school['averagePreTestScore'] > 0 
+                        ? round((($school['averagePostTestScore'] - $school['averagePreTestScore']) / $school['averagePreTestScore']) * 100) 
+                        : 0;
+                        
+                    $increaseStr = $increase > 0 ? "+{$increase}%" : "{$increase}%";
+                        
+                    fputcsv($out, [
+                        $rank++,
+                        $school['name'] ?? 'Unknown',
+                        $school['type'] ?? 'Unknown',
+                        $school['totalStudents'] ?? 0,
+                        $school['averagePreTestScore'] ?? 0,
+                        $school['averagePostTestScore'] ?? 0,
+                        $increaseStr,
+                        ($school['averageCompletionRate'] ?? 0) . '%'
+                    ]);
+                }
+            }
+            fputcsv($out, []);
+
+            // ── FEEDBACK ANALYTICS ────────────────────────────────────
+            fputcsv($out, ['=== FEEDBACK BY FEATURE ===']);
+            fputcsv($out, ['Feature Name', 'Type', 'Average Rating', 'Total Reviews']);
+            
+            if (isset($feedbackData['byFeatureName']) && is_array($feedbackData['byFeatureName'])) {
+                foreach ($feedbackData['byFeatureName'] as $feature) {
+                    fputcsv($out, [
+                        $feature['featureName'] ?? 'Unknown',
+                        $feature['featureType'] ?? 'Unknown',
+                        ($feature['avgRating'] ?? 0) . '/5',
+                        $feature['totalCount'] ?? 0
+                    ]);
+                }
+            }
+            fputcsv($out, []);
 
             fclose($out);
         };

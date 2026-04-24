@@ -69,25 +69,25 @@ export function Footer() {
   };
 
   return (
-    <footer className="bg-[#0f172a] text-white pt-12 pb-8 sm:pt-16 sm:pb-10">
-      <div className="max-w-7xl mx-auto px-6 sm:px-8">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-x-6 gap-y-10 sm:gap-x-8 sm:gap-y-12">
+    <footer className="bg-[#0f172a] text-white pt-8 pb-6 sm:pt-16 sm:pb-10">
+      <div className="max-w-7xl mx-auto px-5 sm:px-8">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-x-4 gap-y-8 sm:gap-x-8 sm:gap-y-12">
           {/* BFP Logo and Description Column */}
           <div className="col-span-2 md:col-span-1 pr-0 sm:pr-6">
-            <div className="flex items-center gap-4">
-              <img src="/berong_profile.png" alt="Berong Mascot" className="w-14 h-14 sm:w-16 sm:h-16 object-contain drop-shadow-md" />
+            <div className="flex items-center gap-3 sm:gap-4">
+              <img src="/berong_profile.png" alt="Berong Mascot" className="w-12 h-12 sm:w-16 sm:h-16 object-contain drop-shadow-md" />
               <div>
-                <h3 className="text-xl font-bold text-white tracking-wide">BFP Berong</h3>
-                <p className="text-sm text-slate-400 leading-tight mt-0.5">Fire Safety Education<br/>Platform</p>
+                <h3 className="text-lg sm:text-xl font-bold text-white tracking-wide">BFP Berong</h3>
+                <p className="text-[13px] sm:text-sm text-slate-400 leading-tight mt-0.5">Fire Safety Education<br/>Platform</p>
               </div>
             </div>
-            <p className="mt-6 text-sm md:text-[15px] text-slate-400 font-medium leading-relaxed max-w-[280px]">
+            <p className="mt-4 sm:mt-6 text-[13px] sm:text-[15px] text-slate-400 font-medium leading-relaxed max-w-[280px]">
               Empowering communities with knowledge and skills for fire safety.
             </p>
-            <div className="mt-5">
+            <div className="mt-4 sm:mt-5">
               {socialMediaLinks.map((social, index) => (
                 <Link key={index} href={social.url} target="_blank" rel="noopener noreferrer">
-                  <Button className="bg-white hover:bg-slate-200 text-black font-bold h-9 px-5 rounded-md text-[13px] shadow-sm transition-colors">
+                  <Button className="bg-white hover:bg-slate-200 text-black font-bold h-8 sm:h-9 px-4 sm:px-5 rounded-md text-[12px] sm:text-[13px] shadow-sm transition-colors">
                     {social.name}
                   </Button>
                 </Link>
@@ -98,13 +98,13 @@ export function Footer() {
           {/* Footer Link Columns */}
           {footerColumns.map((column, index) => (
             <div key={index} className="col-span-1">
-              <h4 className="text-base font-bold text-white mb-5">{column.title}</h4>
-              <ul className="space-y-1.5">
+              <h4 className="text-[15px] sm:text-base font-bold text-white mb-3 sm:mb-5">{column.title}</h4>
+              <ul className="space-y-1 sm:space-y-1.5">
                 {column.links.map((link, linkIndex) => (
                   <li key={linkIndex}>
                     <button
                       onClick={() => handleLinkClick(link)}
-                      className="text-sm md:text-[15px] text-slate-400 hover:text-white font-medium transition-colors block text-left w-full py-1.5"
+                      className="text-[13px] sm:text-[15px] text-slate-400 hover:text-white font-medium transition-colors block text-left w-full py-1 sm:py-1.5"
                     >
                       {link.name}
                     </button>
@@ -115,8 +115,8 @@ export function Footer() {
           ))}
         </div>
 
-        <div className="mt-16 pt-8 border-t border-slate-800/60 flex justify-center items-center">
-          <p className="text-[13px] text-slate-500 font-medium">
+        <div className="mt-8 sm:mt-16 pt-6 sm:pt-8 border-t border-slate-800/60 flex justify-center items-center">
+          <p className="text-[11px] sm:text-[13px] text-slate-500 font-medium text-center">
             &copy; {new Date().getFullYear()} BFP Sta.Cruz Laguna. All rights reserved.
           </p>
         </div>

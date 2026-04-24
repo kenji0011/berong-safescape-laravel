@@ -195,3 +195,26 @@ html.reduce-motion .backdrop-blur-xl {
   backdrop-filter: none !important;
   -webkit-backdrop-filter: none !important;
 }
+
+/* ============================================
+   TEXT SIZE - Global Accessibility Scaling
+   ============================================
+   Scales ONLY font-size across the site while
+   keeping layout, spacing, and design intact.
+   
+   Strategy:
+   1. Root font-size scales all rem-based 
+      Tailwind utilities (text-sm, text-base, etc.)
+   2. The .text-scalable wrapper inherits this and
+      provides a percentage-based cascade for children
+   ============================================ */
+
+/* ── Large Text (approx +12%) ── */
+html.text-size-large {
+  font-size: 18px; /* default 16px → 18px */
+}
+
+/* ── Extra Large Text (approx +25%) ── */
+html.text-size-xlarge {
+  font-size: 20px; /* default 16px → 20px */
+}

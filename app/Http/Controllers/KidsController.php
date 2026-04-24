@@ -120,12 +120,21 @@ class KidsController extends Controller
 
         $module = KidsModule::findOrFail($validated['moduleId']);
 
+        $existing = SafeScapeProgress::where('userId', $user->id)
+            ->where('moduleNum', $module->dayNumber)
+            ->first();
+
+        $isCompleted = $validated['completed'];
+        if ($existing && $existing->completed) {
+            $isCompleted = true; // Never un-complete a module
+        }
+
         SafeScapeProgress::updateOrCreate(
             ['userId' => $user->id, 'moduleNum' => $module->dayNumber],
             [
                 'sectionData'  => json_encode([]),
-                'completed'    => $validated['completed'],
-                'completedAt'  => $validated['completed'] ? now() : null,
+                'completed'    => $isCompleted,
+                'completedAt'  => $isCompleted ? ($existing->completedAt ?? now()) : null,
             ]
         );
 
@@ -167,12 +176,21 @@ class KidsController extends Controller
             'completed'   => 'required|boolean',
         ]);
 
+        $existing = SafeScapeProgress::where('userId', $user->id)
+            ->where('moduleNum', $validated['moduleNum'])
+            ->first();
+
+        $isCompleted = $validated['completed'];
+        if ($existing && $existing->completed) {
+            $isCompleted = true; // Never un-complete a module
+        }
+
         SafeScapeProgress::updateOrCreate(
             ['userId' => $user->id, 'moduleNum' => $validated['moduleNum']],
             [
                 'sectionData' => json_encode($validated['sectionData'] ?? []),
-                'completed'   => $validated['completed'],
-                'completedAt' => $validated['completed'] ? now() : null,
+                'completed'   => $isCompleted,
+                'completedAt' => $isCompleted ? ($existing->completedAt ?? now()) : null,
             ]
         );
 

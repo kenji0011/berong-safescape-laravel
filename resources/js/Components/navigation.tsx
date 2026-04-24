@@ -5,7 +5,7 @@ import { useState, useEffect } from "react"
 import { useAuth } from "@/lib/auth-context"
 import { useSettings } from "@/lib/settings-context"
 import { Button } from "@/components/ui/button"
-import { LogOut, User, Menu, X, Home, Users, Briefcase, Baby, Shield, Info, Settings, ChevronDown, Zap } from "lucide-react"
+import { LogOut, User, Menu, X, Home, Users, Briefcase, Baby, Shield, Info, Settings, ChevronDown, Zap, Type } from "lucide-react"
 import { NotificationPopover } from "@/components/ui/notification-popover"
 import GooeyNav from "@/components/ui/gooey-nav"
 import {
@@ -17,7 +17,7 @@ import {
 
 export function Navigation() {
   const { user, logout, isAuthenticated } = useAuth()
-  const { reduceMotion, toggleReduceMotion } = useSettings()
+  const { reduceMotion, toggleReduceMotion, textSize, setTextSize } = useSettings()
   const { url } = usePage();
   const isDashboard = url === '/';
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
@@ -224,6 +224,21 @@ export function Navigation() {
 
                       <div className="h-[1px] bg-slate-100 my-1" />
 
+                      {/* Text Size Control */}
+                      <div className="py-2 px-2.5">
+                        <span className="flex items-center gap-2 text-sm font-medium text-slate-700 mb-2">
+                          <Type className="h-4 w-4 text-blue-500" />
+                          Text Size
+                        </span>
+                        <div className="flex bg-slate-100 rounded-md p-1 border border-slate-200">
+                          <button onClick={(e) => { e.preventDefault(); setTextSize('normal'); }} className={`flex-1 py-1 rounded text-xs font-bold transition-all ${textSize === 'normal' ? 'bg-white text-slate-800 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}>A</button>
+                          <button onClick={(e) => { e.preventDefault(); setTextSize('large'); }} className={`flex-1 py-1 rounded text-sm font-bold transition-all ${textSize === 'large' ? 'bg-white text-slate-800 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}>A</button>
+                          <button onClick={(e) => { e.preventDefault(); setTextSize('xlarge'); }} className={`flex-1 py-1 rounded text-base font-bold transition-all ${textSize === 'xlarge' ? 'bg-white text-slate-800 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}>A</button>
+                        </div>
+                      </div>
+
+                      <div className="h-[1px] bg-slate-100 my-1" />
+
                       <DropdownMenuItem 
                         onClick={logout} 
                         className="focus:bg-red-50 focus:text-red-700 rounded-lg cursor-pointer py-2 px-2.5 transition-colors group flex items-center justify-between text-sm font-bold tracking-wide text-red-600 mt-1"
@@ -273,6 +288,21 @@ export function Navigation() {
                         </span>
                         <div className={`relative w-9 h-5 rounded-full transition-colors duration-200 ${reduceMotion ? 'bg-red-500' : 'bg-slate-300'}`}>
                           <div className={`absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform duration-200 ${reduceMotion ? 'translate-x-4' : 'translate-x-0'}`} />
+                        </div>
+                      </div>
+
+                      <div className="h-[1px] bg-slate-100 my-1" />
+
+                      {/* Text Size Control */}
+                      <div className="py-2.5 px-3">
+                        <span className="flex items-center gap-2 text-sm font-medium text-slate-700 mb-2">
+                          <Type className="h-4 w-4 text-blue-500" />
+                          Text Size
+                        </span>
+                        <div className="flex bg-slate-100 rounded-md p-1 border border-slate-200">
+                          <button onClick={(e) => { e.preventDefault(); setTextSize('normal'); }} className={`flex-1 py-1 rounded text-xs font-bold transition-all ${textSize === 'normal' ? 'bg-white text-slate-800 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}>A</button>
+                          <button onClick={(e) => { e.preventDefault(); setTextSize('large'); }} className={`flex-1 py-1 rounded text-sm font-bold transition-all ${textSize === 'large' ? 'bg-white text-slate-800 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}>A</button>
+                          <button onClick={(e) => { e.preventDefault(); setTextSize('xlarge'); }} className={`flex-1 py-1 rounded text-base font-bold transition-all ${textSize === 'xlarge' ? 'bg-white text-slate-800 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}>A</button>
                         </div>
                       </div>
                     </DropdownMenuContent>
@@ -416,6 +446,34 @@ export function Navigation() {
               </span>
               <div className={`relative w-10 h-6 rounded-full transition-colors duration-200 ${reduceMotion ? 'bg-red-500' : 'bg-slate-600'}`}>
                 <div className={`absolute top-1 left-1 w-4 h-4 bg-white rounded-full shadow transition-transform duration-200 ${reduceMotion ? 'translate-x-4' : 'translate-x-0'}`} />
+              </div>
+            </div>
+
+            {/* Font Size Control (Mobile) */}
+            <div className="px-6 py-3">
+              <div className="flex items-center gap-3 mb-3">
+                <Type className="h-5 w-5 text-blue-400 shrink-0" strokeWidth={2.5} />
+                <span className="text-[15px] font-bold text-white">Text Size</span>
+              </div>
+              <div className="flex bg-[#1e293b] rounded-lg p-1 border border-slate-700/50">
+                <button
+                  onClick={() => setTextSize('normal')}
+                  className={`flex-1 py-2 rounded-md text-sm font-bold transition-all ${textSize === 'normal' ? 'bg-yellow-400 text-black shadow-sm' : 'text-slate-300 hover:text-white'}`}
+                >
+                  Aa
+                </button>
+                <button
+                  onClick={() => setTextSize('large')}
+                  className={`flex-1 py-2 rounded-md text-base font-bold transition-all ${textSize === 'large' ? 'bg-yellow-400 text-black shadow-sm' : 'text-slate-300 hover:text-white'}`}
+                >
+                  Aa
+                </button>
+                <button
+                  onClick={() => setTextSize('xlarge')}
+                  className={`flex-1 py-2 rounded-md text-lg font-bold transition-all ${textSize === 'xlarge' ? 'bg-yellow-400 text-black shadow-sm' : 'text-slate-300 hover:text-white'}`}
+                >
+                  Aa
+                </button>
               </div>
             </div>
 

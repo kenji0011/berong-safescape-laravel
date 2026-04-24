@@ -955,24 +955,24 @@ export default function AdminPage({
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header */}
-        <div className="mb-6 sm:mb-8">
-          <div className="flex items-center justify-between">
-            <div>
-              <div className="flex items-center gap-2 sm:gap-3 mb-2">
-                <Shield className="h-6 w-6 sm:h-8 sm:w-8 text-primary" />
-                <h1 className="text-2xl sm:text-3xl font-bold text-foreground">Admin Panel</h1>
+        <div className="mb-6 sm:mb-8 bg-white p-6 rounded-[2rem] border-[3px] border-slate-200 shadow-[0_8px_0_#cbd5e1] flex items-center justify-between">
+          <div>
+            <div className="flex items-center gap-3 mb-1">
+              <div className="bg-red-100 p-2 rounded-xl">
+                <Shield className="h-6 w-6 sm:h-8 sm:w-8 text-[#d60000]" strokeWidth={2.5} />
               </div>
-              <p className="text-sm sm:text-base text-muted-foreground">Manage content, users, and platform settings</p>
+              <h1 className="text-2xl sm:text-3xl font-black text-slate-800 tracking-tight">Admin Panel</h1>
             </div>
-            <button
-              onClick={() => router.visit("/admin/analytics")}
-              className="flex items-center gap-2 bg-[#ff6b00] text-white font-extrabold px-4 sm:px-5 pb-2 pt-2.5 rounded-xl text-sm shadow-[0_4px_0_#c2410c] hover:-translate-y-0.5 hover:shadow-[0_6px_0_#c2410c] active:translate-y-1 active:shadow-[0_0px_0_#c2410c] transition-all"
-            >
-              <BarChart3 className="h-4 w-4" />
-              <span className="hidden sm:inline">Community Analytics</span>
-              <span className="sm:hidden">Analytics</span>
-            </button>
+            <p className="text-sm sm:text-base text-slate-500 font-medium">Manage content, users, and platform settings</p>
           </div>
+          <button
+            onClick={() => router.visit("/admin/analytics")}
+            className="flex items-center gap-2 bg-[#ff6b00] text-white font-extrabold px-5 sm:px-6 pb-2.5 pt-3 rounded-2xl text-sm sm:text-base shadow-[0_6px_0_#c2410c] hover:-translate-y-1 hover:shadow-[0_8px_0_#c2410c] active:translate-y-1 active:shadow-[0_0px_0_#c2410c] transition-all"
+          >
+            <BarChart3 className="h-5 w-5" strokeWidth={2.5} />
+            <span className="hidden sm:inline">Community Analytics</span>
+            <span className="sm:hidden">Analytics</span>
+          </button>
         </div>
 
         {/* Alerts moved to individual tabs */}
@@ -980,47 +980,47 @@ export default function AdminPage({
         {/* Admin Tabs */}
         <Tabs defaultValue="carousel" className="space-y-6">
           {/* Mobile: Icons only, evenly spaced */}
-          <TabsList className="flex w-full sm:grid sm:grid-cols-6 bg-muted/50 p-1.5 rounded-xl gap-1">
+          <TabsList className="flex w-full sm:grid sm:grid-cols-6 bg-slate-200/70 p-2 rounded-[1.5rem] gap-2 shadow-inner h-auto border-2 border-slate-200">
             <TabsTrigger
               value="carousel"
-              className="flex-1 font-bold text-slate-500 data-[state=active]:bg-[#d60000] data-[state=active]:text-white transition-all rounded-lg sm:rounded-xl py-2.5 sm:py-3 px-1 sm:px-4 data-[state=active]:shadow-[0_4px_0_#991b1b] data-[state=active]:translate-y-0 translate-y-1 hover:-translate-y-0.5 hover:bg-slate-200 data-[state=active]:hover:-translate-y-0.5 data-[state=active]:hover:shadow-[0_6px_0_#991b1b]"
+              className="flex-1 font-bold text-slate-500 data-[state=active]:bg-[#d60000] data-[state=active]:text-white transition-all rounded-xl py-3 px-2 sm:px-4 data-[state=active]:shadow-[0_4px_0_#991b1b] hover:bg-white hover:text-slate-700 data-[state=active]:hover:text-white"
             >
-              <ImageIcon className="h-5 w-5 sm:h-4 sm:w-4 sm:mr-2" />
+              <ImageIcon className="h-5 w-5 sm:h-4 sm:w-4 sm:mr-2" strokeWidth={2.5} />
               <span className="hidden sm:inline text-sm">Carousel</span>
             </TabsTrigger>
             <TabsTrigger
               value="blogs"
-              className="flex-1 font-bold text-slate-500 data-[state=active]:bg-[#d60000] data-[state=active]:text-white transition-all rounded-lg sm:rounded-xl py-2.5 sm:py-3 px-1 sm:px-4 data-[state=active]:shadow-[0_4px_0_#991b1b] data-[state=active]:translate-y-0 translate-y-1 hover:-translate-y-0.5 hover:bg-slate-200 data-[state=active]:hover:-translate-y-0.5 data-[state=active]:hover:shadow-[0_6px_0_#991b1b]"
+              className="flex-1 font-bold text-slate-500 data-[state=active]:bg-[#d60000] data-[state=active]:text-white transition-all rounded-xl py-3 px-2 sm:px-4 data-[state=active]:shadow-[0_4px_0_#991b1b] hover:bg-white hover:text-slate-700 data-[state=active]:hover:text-white"
             >
-              <FileText className="h-5 w-5 sm:h-4 sm:w-4 sm:mr-2" />
+              <FileText className="h-5 w-5 sm:h-4 sm:w-4 sm:mr-2" strokeWidth={2.5} />
               <span className="hidden sm:inline text-sm">Blogs</span>
             </TabsTrigger>
             <TabsTrigger
               value="videos"
-              className="flex-1 font-bold text-slate-500 data-[state=active]:bg-[#d60000] data-[state=active]:text-white transition-all rounded-lg sm:rounded-xl py-2.5 sm:py-3 px-1 sm:px-4 data-[state=active]:shadow-[0_4px_0_#991b1b] data-[state=active]:translate-y-0 translate-y-1 hover:-translate-y-0.5 hover:bg-slate-200 data-[state=active]:hover:-translate-y-0.5 data-[state=active]:hover:shadow-[0_6px_0_#991b1b]"
+              className="flex-1 font-bold text-slate-500 data-[state=active]:bg-[#d60000] data-[state=active]:text-white transition-all rounded-xl py-3 px-2 sm:px-4 data-[state=active]:shadow-[0_4px_0_#991b1b] hover:bg-white hover:text-slate-700 data-[state=active]:hover:text-white"
             >
-              <Video className="h-5 w-5 sm:h-4 sm:w-4 sm:mr-2" />
+              <Video className="h-5 w-5 sm:h-4 sm:w-4 sm:mr-2" strokeWidth={2.5} />
               <span className="hidden sm:inline text-sm">Videos</span>
             </TabsTrigger>
             <TabsTrigger
               value="users"
-              className="flex-1 font-bold text-slate-500 data-[state=active]:bg-[#d60000] data-[state=active]:text-white transition-all rounded-lg sm:rounded-xl py-2.5 sm:py-3 px-1 sm:px-4 data-[state=active]:shadow-[0_4px_0_#991b1b] data-[state=active]:translate-y-0 translate-y-1 hover:-translate-y-0.5 hover:bg-slate-200 data-[state=active]:hover:-translate-y-0.5 data-[state=active]:hover:shadow-[0_6px_0_#991b1b]"
+              className="flex-1 font-bold text-slate-500 data-[state=active]:bg-[#d60000] data-[state=active]:text-white transition-all rounded-xl py-3 px-2 sm:px-4 data-[state=active]:shadow-[0_4px_0_#991b1b] hover:bg-white hover:text-slate-700 data-[state=active]:hover:text-white"
             >
-              <Users className="h-5 w-5 sm:h-4 sm:w-4 sm:mr-2" />
+              <Users className="h-5 w-5 sm:h-4 sm:w-4 sm:mr-2" strokeWidth={2.5} />
               <span className="hidden sm:inline text-sm">Users</span>
             </TabsTrigger>
             <TabsTrigger
               value="quick-questions"
-              className="flex-1 font-bold text-slate-500 data-[state=active]:bg-[#d60000] data-[state=active]:text-white transition-all rounded-lg sm:rounded-xl py-2.5 sm:py-3 px-1 sm:px-4 data-[state=active]:shadow-[0_4px_0_#991b1b] data-[state=active]:translate-y-0 translate-y-1 hover:-translate-y-0.5 hover:bg-slate-200 data-[state=active]:hover:-translate-y-0.5 data-[state=active]:hover:shadow-[0_6px_0_#991b1b]"
+              className="flex-1 font-bold text-slate-500 data-[state=active]:bg-[#d60000] data-[state=active]:text-white transition-all rounded-xl py-3 px-2 sm:px-4 data-[state=active]:shadow-[0_4px_0_#991b1b] hover:bg-white hover:text-slate-700 data-[state=active]:hover:text-white"
             >
-              <HelpCircle className="h-5 w-5 sm:h-4 sm:w-4 sm:mr-2" />
+              <HelpCircle className="h-5 w-5 sm:h-4 sm:w-4 sm:mr-2" strokeWidth={2.5} />
               <span className="hidden sm:inline text-sm">Q&A</span>
             </TabsTrigger>
             <TabsTrigger
               value="fire-codes"
-              className="flex-1 font-bold text-slate-500 data-[state=active]:bg-[#d60000] data-[state=active]:text-white transition-all rounded-lg sm:rounded-xl py-2.5 sm:py-3 px-1 sm:px-4 data-[state=active]:shadow-[0_4px_0_#991b1b] data-[state=active]:translate-y-0 translate-y-1 hover:-translate-y-0.5 hover:bg-slate-200 data-[state=active]:hover:-translate-y-0.5 data-[state=active]:hover:shadow-[0_6px_0_#991b1b]"
+              className="flex-1 font-bold text-slate-500 data-[state=active]:bg-[#d60000] data-[state=active]:text-white transition-all rounded-xl py-3 px-2 sm:px-4 data-[state=active]:shadow-[0_4px_0_#991b1b] hover:bg-white hover:text-slate-700 data-[state=active]:hover:text-white"
             >
-              <BookOpen className="h-5 w-5 sm:h-4 sm:w-4 sm:mr-2" />
+              <BookOpen className="h-5 w-5 sm:h-4 sm:w-4 sm:mr-2" strokeWidth={2.5} />
               <span className="hidden sm:inline text-sm">Fire Codes</span>
             </TabsTrigger>
           </TabsList>
@@ -1081,54 +1081,60 @@ export default function AdminPage({
 
           {/* Carousel Management */}
           <TabsContent value="carousel" className="space-y-6">
-            <ImageUpload
-              key={carouselUploadKey}
-              title="Upload Carousel Image"
-              description="Upload an image to generate a URL for the carousel"
-              onUploadComplete={(url) => setNewCarousel({ ...newCarousel, url })}
-            />
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <ImageUpload
+                key={carouselUploadKey}
+                title="Upload Carousel Image"
+                description="Upload an image to generate a URL for the carousel"
+                onUploadComplete={(url) => setNewCarousel({ ...newCarousel, url })}
+              />
 
-            <Card>
-              <CardHeader>
-                <CardTitle>Add New Carousel Image</CardTitle>
-                <CardDescription>Add images to the dashboard carousel</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="carousel-title">Title</Label>
-                    <Input
-                      id="carousel-title"
-                      placeholder="Image title"
-                      value={newCarousel.title}
-                      onChange={(e) => setNewCarousel({ ...newCarousel, title: e.target.value })}
-                    />
+              <Card className="rounded-[1.5rem] border-[3px] border-slate-200 shadow-sm hover:shadow-[0_4px_0_#e2e8f0] overflow-hidden bg-white transition-all h-full flex flex-col">
+                <CardHeader>
+                  <CardTitle className="text-xl font-bold text-slate-800">Add New Carousel Image</CardTitle>
+                  <CardDescription className="text-slate-500 font-medium">Add images to the dashboard carousel</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4 flex-1 flex flex-col justify-between">
+                  <div>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="carousel-title" className="font-bold text-slate-700">Title</Label>
+                        <Input
+                          id="carousel-title"
+                          placeholder="Image title"
+                          value={newCarousel.title}
+                          onChange={(e) => setNewCarousel({ ...newCarousel, title: e.target.value })}
+                          className="border-2 border-slate-200 focus-visible:ring-red-500 rounded-xl"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="carousel-alt" className="font-bold text-slate-700">Alt Text</Label>
+                        <Input
+                          id="carousel-alt"
+                          placeholder="Image description"
+                          value={newCarousel.alt}
+                          onChange={(e) => setNewCarousel({ ...newCarousel, alt: e.target.value })}
+                          className="border-2 border-slate-200 focus-visible:ring-red-500 rounded-xl"
+                        />
+                      </div>
+                    </div>
                   </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="carousel-alt">Alt Text</Label>
-                    <Input
-                      id="carousel-alt"
-                      placeholder="Image description"
-                      value={newCarousel.alt}
-                      onChange={(e) => setNewCarousel({ ...newCarousel, alt: e.target.value })}
-                    />
+                  {/* Image URL is now set automatically from the upload component - hidden from user */}
+                  <div className="flex flex-wrap items-center gap-4 mt-6">
+                    <button
+                      type="button"
+                      onClick={handleAddCarousel}
+                      className="inline-flex items-center justify-center bg-[#d60000] text-white font-extrabold px-6 pb-2.5 pt-3 rounded-xl text-sm shadow-[0_4px_0_#991b1b] hover:-translate-y-0.5 hover:shadow-[0_6px_0_#991b1b] active:translate-y-1 active:shadow-[0_0px_0_#991b1b] transition-all"
+                    >
+                      <Plus className="h-5 w-5 mr-2" strokeWidth={2.5} />
+                      Add Image
+                    </button>
+                    {success && <div className="text-sm font-bold text-green-700 flex items-center gap-2 bg-green-50 border-2 border-green-200 px-4 py-2 rounded-xl animate-in fade-in zoom-in-95 duration-300"><CheckCircle className="h-4 w-4"/> {success}</div>}
+                    {error && <div className="text-sm font-bold text-red-700 flex items-center gap-2 bg-red-50 border-2 border-red-200 px-4 py-2 rounded-xl animate-in fade-in zoom-in-95 duration-300"><AlertCircle className="h-4 w-4"/> {error}</div>}
                   </div>
-                </div>
-                {/* Image URL is now set automatically from the upload component - hidden from user */}
-                <div className="flex flex-wrap items-center gap-4">
-                  <button
-                    type="button"
-                    onClick={handleAddCarousel}
-                    className="inline-flex items-center justify-center bg-[#d60000] text-white font-extrabold px-5 pb-2 pt-2.5 rounded-xl text-sm shadow-[0_4px_0_#991b1b] hover:-translate-y-0.5 hover:shadow-[0_6px_0_#991b1b] active:translate-y-1 active:shadow-[0_0px_0_#991b1b] transition-all"
-                  >
-                    <Plus className="h-4 w-4 mr-2" />
-                    Add Image
-                  </button>
-                  {success && <div className="text-sm font-bold text-green-700 flex items-center gap-2 bg-green-50 border-2 border-green-200 px-4 py-2 rounded-xl animate-in fade-in zoom-in-95 duration-300"><CheckCircle className="h-4 w-4"/> {success}</div>}
-                  {error && <div className="text-sm font-bold text-red-700 flex items-center gap-2 bg-red-50 border-2 border-red-200 px-4 py-2 rounded-xl animate-in fade-in zoom-in-95 duration-300"><AlertCircle className="h-4 w-4"/> {error}</div>}
-                </div>
-              </CardContent>
-            </Card>
+                </CardContent>
+              </Card>
+            </div>
 
             <SortableCarouselList
               images={carouselImages}
@@ -1139,76 +1145,83 @@ export default function AdminPage({
 
           {/* Blog Management */}
           <TabsContent value="blogs" className="space-y-6">
-            <ImageUpload
-              key={blogUploadKey}
-              title="Upload Blog Image"
-              description="Upload an image to generate a URL for the blog post"
-              onUploadComplete={(url) => setNewBlog({ ...newBlog, imageUrl: url })}
-            />
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <ImageUpload
+                key={blogUploadKey}
+                title="Upload Blog Image"
+                description="Upload an image to generate a URL for the blog post"
+                onUploadComplete={(url) => setNewBlog({ ...newBlog, imageUrl: url })}
+              />
 
-            <Card>
-              <CardHeader>
-                <CardTitle>Add New Blog Post</CardTitle>
-                <CardDescription>Create educational content for adult and professional sections</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="blog-title">Title</Label>
-                    <Input
-                      id="blog-title"
-                      placeholder="Blog post title"
-                      value={newBlog.title}
-                      onChange={(e) => setNewBlog({ ...newBlog, title: e.target.value })}
-                    />
+              <Card className="rounded-[1.5rem] border-[3px] border-slate-200 shadow-sm hover:shadow-[0_4px_0_#e2e8f0] overflow-hidden bg-white transition-all h-full flex flex-col">
+                <CardHeader>
+                  <CardTitle className="text-xl font-bold text-slate-800">Add New Blog Post</CardTitle>
+                  <CardDescription className="text-slate-500 font-medium">Create educational content for adult and professional sections</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4 flex-1 flex flex-col justify-between">
+                  <div className="space-y-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="blog-title" className="font-bold text-slate-700">Title</Label>
+                        <Input
+                          id="blog-title"
+                          placeholder="Blog post title"
+                          value={newBlog.title}
+                          onChange={(e) => setNewBlog({ ...newBlog, title: e.target.value })}
+                          className="border-2 border-slate-200 focus-visible:ring-red-500 rounded-xl"
+                        />
+                      </div>
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="blog-category" className="font-bold text-slate-700">Category</Label>
+                      <select
+                        id="blog-category"
+                        className="w-full h-10 px-3 rounded-xl border-2 border-slate-200 focus-visible:ring-red-500 bg-background"
+                        value={newBlog.category}
+                        onChange={(e) => setNewBlog({ ...newBlog, category: e.target.value as "adult" | "professional" })}
+                      >
+                        <option value="adult">Adult</option>
+                      </select>
+                    </div>
+                    {/* Image URL is now set automatically from the upload component - hidden from user */}
+                    <div className="space-y-2">
+                      <Label htmlFor="blog-excerpt" className="font-bold text-slate-700">Excerpt</Label>
+                      <Textarea
+                        id="blog-excerpt"
+                        placeholder="Brief description"
+                        value={newBlog.excerpt}
+                        onChange={(e) => setNewBlog({ ...newBlog, excerpt: e.target.value })}
+                        rows={2}
+                        className="border-2 border-slate-200 focus-visible:ring-red-500 rounded-xl"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="blog-content" className="font-bold text-slate-700">Content</Label>
+                      <Textarea
+                        id="blog-content"
+                        placeholder="Full blog content"
+                        value={newBlog.content}
+                        onChange={(e) => setNewBlog({ ...newBlog, content: e.target.value })}
+                        rows={6}
+                        className="border-2 border-slate-200 focus-visible:ring-red-500 rounded-xl"
+                      />
+                    </div>
                   </div>
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="blog-category">Category</Label>
-                  <select
-                    id="blog-category"
-                    className="w-full h-10 px-3 rounded-md border-input bg-background"
-                    value={newBlog.category}
-                    onChange={(e) => setNewBlog({ ...newBlog, category: e.target.value as "adult" | "professional" })}
-                  >
-                    <option value="adult">Adult</option>
-                  </select>
-                </div>
-                {/* Image URL is now set automatically from the upload component - hidden from user */}
-                <div className="space-y-2">
-                  <Label htmlFor="blog-excerpt">Excerpt</Label>
-                  <Textarea
-                    id="blog-excerpt"
-                    placeholder="Brief description"
-                    value={newBlog.excerpt}
-                    onChange={(e) => setNewBlog({ ...newBlog, excerpt: e.target.value })}
-                    rows={2}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="blog-content">Content</Label>
-                  <Textarea
-                    id="blog-content"
-                    placeholder="Full blog content"
-                    value={newBlog.content}
-                    onChange={(e) => setNewBlog({ ...newBlog, content: e.target.value })}
-                    rows={6}
-                  />
-                </div>
-                <div className="flex flex-wrap items-center gap-4">
-                  <button
-                    type="button"
-                    onClick={handleAddBlog}
-                    className="inline-flex items-center justify-center bg-[#d60000] text-white font-extrabold px-5 pb-2 pt-2.5 rounded-xl text-sm shadow-[0_4px_0_#991b1b] hover:-translate-y-0.5 hover:shadow-[0_6px_0_#991b1b] active:translate-y-1 active:shadow-[0_0px_0_#991b1b] transition-all"
-                  >
-                    <Plus className="h-4 w-4 mr-2" />
-                    Add Blog Post
-                  </button>
-                  {success && <div className="text-sm font-bold text-green-700 flex items-center gap-2 bg-green-50 border-2 border-green-200 px-4 py-2 rounded-xl animate-in fade-in zoom-in-95 duration-300"><CheckCircle className="h-4 w-4"/> {success}</div>}
-                  {error && <div className="text-sm font-bold text-red-700 flex items-center gap-2 bg-red-50 border-2 border-red-200 px-4 py-2 rounded-xl animate-in fade-in zoom-in-95 duration-300"><AlertCircle className="h-4 w-4"/> {error}</div>}
-                </div>
-              </CardContent>
-            </Card>
+                  <div className="flex flex-wrap items-center gap-4 mt-6">
+                    <button
+                      type="button"
+                      onClick={handleAddBlog}
+                      className="inline-flex items-center justify-center bg-[#d60000] text-white font-extrabold px-6 pb-2.5 pt-3 rounded-xl text-sm shadow-[0_4px_0_#991b1b] hover:-translate-y-0.5 hover:shadow-[0_6px_0_#991b1b] active:translate-y-1 active:shadow-[0_0px_0_#991b1b] transition-all"
+                    >
+                      <Plus className="h-5 w-5 mr-2" strokeWidth={2.5} />
+                      Add Blog Post
+                    </button>
+                    {success && <div className="text-sm font-bold text-green-700 flex items-center gap-2 bg-green-50 border-2 border-green-200 px-4 py-2 rounded-xl animate-in fade-in zoom-in-95 duration-300"><CheckCircle className="h-4 w-4"/> {success}</div>}
+                    {error && <div className="text-sm font-bold text-red-700 flex items-center gap-2 bg-red-50 border-2 border-red-200 px-4 py-2 rounded-xl animate-in fade-in zoom-in-95 duration-300"><AlertCircle className="h-4 w-4"/> {error}</div>}
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
 
             <SortableContentList
               items={blogPosts}
@@ -1218,9 +1231,9 @@ export default function AdminPage({
               onDelete={handleDeleteBlog}
               renderContent={(post) => (
                 <>
-                  <div className="flex items-center gap-2 mb-1">
-                    <h4 className="font-semibold">{post.title}</h4>
-                    <span className="text-xs px-2 py-1 rounded bg-accent/10 text-accent capitalize">
+                  <div className="flex flex-wrap items-start sm:items-center gap-2 mb-2">
+                    <h4 className="font-bold text-slate-800 w-full sm:w-auto">{post.title}</h4>
+                    <span className="text-xs font-bold px-2 py-1 rounded-md bg-slate-100 text-slate-600 capitalize shrink-0">
                       {post.category}
                     </span>
                   </div>
@@ -1235,57 +1248,61 @@ export default function AdminPage({
 
           {/* Video Management */}
           <TabsContent value="videos" className="space-y-6">
-            <Card>
+            <Card className="rounded-[1.5rem] border-[3px] border-slate-200 shadow-sm hover:shadow-[0_4px_0_#e2e8f0] overflow-hidden bg-white transition-all mb-6">
               <CardHeader>
-                <CardTitle>Add New Video</CardTitle>
-                <CardDescription>Add educational videos for different sections</CardDescription>
+                <CardTitle className="text-xl font-bold text-slate-800">Add New Video</CardTitle>
+                <CardDescription className="text-slate-500 font-medium">Add educational videos for different sections</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="video-title">Title</Label>
+                  <Label htmlFor="video-title" className="font-bold text-slate-700">Title</Label>
                   <Input
                     id="video-title"
                     placeholder="Video title"
                     value={newVideo.title}
                     onChange={(e) => setNewVideo({ ...newVideo, title: e.target.value })}
+                    className="border-2 border-slate-200 focus-visible:ring-red-500 rounded-xl"
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="video-description">Description</Label>
+                  <Label htmlFor="video-description" className="font-bold text-slate-700">Description</Label>
                   <Textarea
                     id="video-description"
                     placeholder="Video description"
                     value={newVideo.description}
                     onChange={(e) => setNewVideo({ ...newVideo, description: e.target.value })}
                     rows={2}
+                    className="border-2 border-slate-200 focus-visible:ring-red-500 rounded-xl"
                   />
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="video-youtube-id">YouTube URL or ID</Label>
+                    <Label htmlFor="video-youtube-id" className="font-bold text-slate-700">YouTube URL or ID</Label>
                     <Input
                       id="video-youtube-id"
                       placeholder="Paste full URL or video ID"
                       value={newVideo.youtubeId}
                       onChange={(e) => setNewVideo({ ...newVideo, youtubeId: e.target.value })}
+                      className="border-2 border-slate-200 focus-visible:ring-red-500 rounded-xl"
                     />
                   </div>
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="video-duration">Duration</Label>
+                  <Label htmlFor="video-duration" className="font-bold text-slate-700">Duration</Label>
                   <Input
                     id="video-duration"
                     placeholder="Duration (e.g., 15:30)"
                     value={newVideo.duration}
                     onChange={(e) => setNewVideo({ ...newVideo, duration: e.target.value })}
+                    className="border-2 border-slate-200 focus-visible:ring-red-500 rounded-xl"
                   />
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="video-category">Category</Label>
+                    <Label htmlFor="video-category" className="font-bold text-slate-700">Category</Label>
                     <select
                       id="video-category"
-                      className="w-full h-10 px-3 rounded-md border-input bg-background"
+                      className="w-full h-10 px-3 rounded-xl border-2 border-slate-200 focus-visible:ring-red-500 bg-background"
                       value={newVideo.category}
                       onChange={(e) => setNewVideo({ ...newVideo, category: e.target.value as "professional" | "adult" | "kids" })}
                     >
@@ -1298,12 +1315,12 @@ export default function AdminPage({
                       id="video-active"
                       checked={newVideo.isActive}
                       onChange={(e) => setNewVideo({ ...newVideo, isActive: e.target.checked })}
-                      className="mr-2 h-4 w-4 rounded border-input text-primary focus:ring-primary"
+                      className="mr-2 h-5 w-5 rounded border-2 border-slate-300 text-red-600 focus:ring-red-500 transition-all"
                     />
-                    <Label htmlFor="video-active">Active</Label>
+                    <Label htmlFor="video-active" className="font-bold text-slate-700">Active</Label>
                   </div>
                 </div>
-                <div className="flex flex-wrap items-center gap-4">
+                <div className="flex flex-wrap items-center gap-4 mt-2">
                   <button
                     type="button"
                     onClick={handleAddVideo}
@@ -1326,12 +1343,12 @@ export default function AdminPage({
               onDelete={handleDeleteVideo}
               renderContent={(video) => (
                 <>
-                  <div className="flex items-center gap-2 mb-1">
-                    <h4 className="font-semibold">{video.title}</h4>
-                    <span className={`text-xs px-2 py-1 rounded ${video.isActive ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
+                  <div className="flex flex-wrap items-start sm:items-center gap-2 mb-2">
+                    <h4 className="font-bold text-slate-800 w-full sm:w-auto">{video.title}</h4>
+                    <span className={`text-xs font-bold px-2 py-1 rounded-md shrink-0 ${video.isActive ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
                       {video.isActive ? 'Active' : 'Inactive'}
                     </span>
-                    <span className="text-xs px-2 py-1 rounded bg-accent/10 text-accent capitalize">
+                    <span className="text-xs font-bold px-2 py-1 rounded-md bg-slate-100 text-slate-600 capitalize shrink-0">
                       {video.category}
                     </span>
                   </div>
@@ -1346,82 +1363,90 @@ export default function AdminPage({
 
           {/* User Management */}
           <TabsContent value="users" className="space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>User Management</CardTitle>
-                <CardDescription>Manage user permissions and access levels</CardDescription>
+            <Card className="rounded-[2rem] border-[3px] border-slate-200 shadow-[0_8px_0_#cbd5e1] overflow-hidden bg-slate-50 transition-all mb-6">
+              <CardHeader className="px-6 pt-6 pb-2">
+                <div className="flex items-center gap-3">
+                  <div className="bg-white border-2 border-slate-200 p-2 rounded-xl shadow-sm">
+                    <Users className="h-6 w-6 text-[#d60000]" strokeWidth={2.5} />
+                  </div>
+                  <div>
+                    <CardTitle className="text-2xl font-black text-slate-800 tracking-tight">User Management</CardTitle>
+                    <CardDescription className="text-slate-500 font-medium mt-1">Manage user permissions and access levels</CardDescription>
+                  </div>
+                </div>
               </CardHeader>
-              <CardContent>
-                <div className="mb-4 relative">
+              <CardContent className="px-6 pb-6 pt-4">
+                <div className="mb-6 relative">
                   <Input
                     type="text"
                     placeholder="Search users by name, email, or role..."
                     value={userSearchQuery}
                     onChange={(e) => setUserSearchQuery(e.target.value)}
-                    className="pl-10"
+                    className="pl-12 border-[3px] border-slate-200 focus-visible:ring-red-500 rounded-2xl h-14 text-base shadow-inner bg-white font-medium"
                     autoComplete="off"
                   />
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+                  <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 h-6 w-6 text-slate-400" strokeWidth={2.5} />
                 </div>
                 <div className="space-y-4">
                   {filteredUsers.length === 0 ? (
-                    <p className="text-muted-foreground text-center py-8">No users found</p>
+                    <p className="text-slate-500 font-medium text-center py-8">No users found</p>
                   ) : (
                     filteredUsers.map((u) => (
-                      <div key={u.id} className="p-4 border rounded-lg">
-                        <div className="flex items-center justify-between mb-3">
+                      <div key={u.id} className="p-5 border-2 border-slate-200 bg-white rounded-2xl shadow-sm hover:shadow-[0_4px_0_#e2e8f0] hover:-translate-y-0.5 transition-all">
+                        <div className="flex items-center justify-between mb-4 pb-4 border-b-2 border-slate-100">
                           <div>
-                            <h4 className="font-semibold">{u.name}</h4>
-                            <p className="text-sm text-muted-foreground">{u.email}</p>
-                            <p className="text-xs text-muted-foreground">
-                              Age: {u.age} • Role: {u.role}
-                            </p>
+                            <h4 className="font-bold text-lg text-slate-800">{u.name}</h4>
+                            <p className="text-sm text-slate-500 font-medium">{u.email}</p>
+                            <div className="flex items-center gap-2 mt-2">
+                              <span className="text-xs font-bold text-slate-600 bg-slate-100 px-2 py-1 rounded-lg">Age: {u.age}</span>
+                              <span className="text-xs font-bold text-slate-600 bg-slate-100 px-2 py-1 rounded-lg capitalize">Role: {u.role}</span>
+                            </div>
                           </div>
                         </div>
                         <div className="flex flex-wrap gap-2 sm:gap-3">
                           <button
                             type="button"
                             onClick={() => promptRoleChange(u.id, "accessKids", u.name, u.permissions.accessKids ? "remove" : "add")}
-                            className={`inline-flex items-center justify-center font-extrabold px-4 pb-1.5 pt-2 rounded-xl text-xs sm:text-sm transition-all ${
+                            className={`inline-flex items-center justify-center font-extrabold px-4 pb-2 pt-2.5 rounded-xl text-xs sm:text-sm transition-all ${
                               u.permissions.accessKids
-                                ? "bg-slate-600 text-white shadow-[0_4px_0_#1e293b] hover:-translate-y-0.5 hover:shadow-[0_6px_0_#1e293b] hover:bg-red-600 hover:shadow-[0_4px_0_#991b1b] active:translate-y-1 active:shadow-[0_0px_0_#991b1b]"
-                                : "bg-white border-2 border-slate-200 text-slate-500 shadow-[0_4px_0_#e2e8f0] hover:-translate-y-0.5 hover:shadow-[0_6px_0_#e2e8f0] hover:bg-slate-50 active:translate-y-1 active:shadow-[0_0px_0_#e2e8f0]"
+                                ? "bg-slate-600 text-white shadow-[0_4px_0_#334155] hover:-translate-y-0.5 hover:shadow-[0_6px_0_#334155] hover:bg-red-600 hover:shadow-[0_4px_0_#991b1b] active:translate-y-1 active:shadow-[0_0px_0_#991b1b]"
+                                : "bg-white border-2 border-slate-200 text-slate-500 shadow-[0_4px_0_#e2e8f0] hover:-translate-y-0.5 hover:shadow-[0_6px_0_#e2e8f0] hover:bg-slate-50 hover:text-slate-700 active:translate-y-1 active:shadow-[0_0px_0_#e2e8f0]"
                             }`}
                           >
-                            Kids Access {u.permissions.accessKids && <Trash2 className="h-3 w-3 ml-2 inline opacity-0 group-hover:opacity-100 transition-opacity" style={{ opacity: 0.7 }} />}
+                            Kids Access {u.permissions.accessKids && <Trash2 className="h-4 w-4 ml-2 inline opacity-0 group-hover:opacity-100 transition-opacity" strokeWidth={2.5} style={{ opacity: 0.7 }} />}
                           </button>
                           <button
                             type="button"
                             onClick={() => promptRoleChange(u.id, "accessAdult", u.name, u.permissions.accessAdult ? "remove" : "add")}
-                            className={`inline-flex items-center justify-center font-extrabold px-4 pb-1.5 pt-2 rounded-xl text-xs sm:text-sm transition-all ${
+                            className={`inline-flex items-center justify-center font-extrabold px-4 pb-2 pt-2.5 rounded-xl text-xs sm:text-sm transition-all ${
                               u.permissions.accessAdult
-                                ? "bg-teal-700 text-white shadow-[0_4px_0_#134e4a] hover:-translate-y-0.5 hover:shadow-[0_6px_0_#134e4a] hover:bg-red-600 hover:shadow-[0_4px_0_#991b1b] active:translate-y-1 active:shadow-[0_0px_0_#991b1b]"
-                                : "bg-white border-2 border-slate-200 text-slate-500 shadow-[0_4px_0_#e2e8f0] hover:-translate-y-0.5 hover:shadow-[0_6px_0_#e2e8f0] hover:bg-slate-50 active:translate-y-1 active:shadow-[0_0px_0_#e2e8f0]"
+                                ? "bg-teal-700 text-white shadow-[0_4px_0_#0f766e] hover:-translate-y-0.5 hover:shadow-[0_6px_0_#0f766e] hover:bg-red-600 hover:shadow-[0_4px_0_#991b1b] active:translate-y-1 active:shadow-[0_0px_0_#991b1b]"
+                                : "bg-white border-2 border-slate-200 text-slate-500 shadow-[0_4px_0_#e2e8f0] hover:-translate-y-0.5 hover:shadow-[0_6px_0_#e2e8f0] hover:bg-slate-50 hover:text-slate-700 active:translate-y-1 active:shadow-[0_0px_0_#e2e8f0]"
                             }`}
                           >
-                            Adult Access {u.permissions.accessAdult && <Trash2 className="h-3 w-3 ml-2 inline opacity-0 group-hover:opacity-100 transition-opacity" style={{ opacity: 0.7 }} />}
+                            Adult Access {u.permissions.accessAdult && <Trash2 className="h-4 w-4 ml-2 inline opacity-0 group-hover:opacity-100 transition-opacity" strokeWidth={2.5} style={{ opacity: 0.7 }} />}
                           </button>
                           <button
                             type="button"
                             onClick={() => promptRoleChange(u.id, "accessProfessional", u.name, u.permissions.accessProfessional ? "remove" : "add")}
-                            className={`inline-flex items-center justify-center font-extrabold px-4 pb-1.5 pt-2 rounded-xl text-xs sm:text-sm transition-all ${
+                            className={`inline-flex items-center justify-center font-extrabold px-4 pb-2 pt-2.5 rounded-xl text-xs sm:text-sm transition-all ${
                               u.permissions.accessProfessional
                                 ? "bg-[#d60000] text-white shadow-[0_4px_0_#991b1b] hover:-translate-y-0.5 hover:shadow-[0_6px_0_#991b1b] hover:bg-red-600 hover:shadow-[0_4px_0_#991b1b] active:translate-y-1 active:shadow-[0_0px_0_#991b1b]"
-                                : "bg-white border-2 border-slate-200 text-slate-500 shadow-[0_4px_0_#e2e8f0] hover:-translate-y-0.5 hover:shadow-[0_6px_0_#e2e8f0] hover:bg-slate-50 active:translate-y-1 active:shadow-[0_0px_0_#e2e8f0]"
+                                : "bg-white border-2 border-slate-200 text-slate-500 shadow-[0_4px_0_#e2e8f0] hover:-translate-y-0.5 hover:shadow-[0_6px_0_#e2e8f0] hover:bg-slate-50 hover:text-slate-700 active:translate-y-1 active:shadow-[0_0px_0_#e2e8f0]"
                             }`}
                           >
-                            Professional Access {u.permissions.accessProfessional && <Trash2 className="h-3 w-3 ml-2 inline opacity-0 group-hover:opacity-100 transition-opacity" style={{ opacity: 0.7 }} />}
+                            Professional Access {u.permissions.accessProfessional && <Trash2 className="h-4 w-4 ml-2 inline opacity-0 group-hover:opacity-100 transition-opacity" strokeWidth={2.5} style={{ opacity: 0.7 }} />}
                           </button>
                           <button
                             type="button"
                             onClick={() => promptRoleChange(u.id, "isAdmin", u.name, u.permissions.isAdmin ? "remove" : "add")}
-                            className={`inline-flex items-center justify-center font-extrabold px-4 pb-1.5 pt-2 rounded-xl text-xs sm:text-sm transition-all ${
+                            className={`inline-flex items-center justify-center font-extrabold px-4 pb-2 pt-2.5 rounded-xl text-xs sm:text-sm transition-all ${
                               u.permissions.isAdmin
-                                ? "bg-slate-900 text-white shadow-[0_4px_0_#000000] hover:-translate-y-0.5 hover:shadow-[0_6px_0_#000000] hover:bg-red-600 hover:shadow-[0_4px_0_#991b1b] active:translate-y-1 active:shadow-[0_0px_0_#991b1b]"
-                                : "bg-white border-2 border-slate-200 text-slate-500 shadow-[0_4px_0_#e2e8f0] hover:-translate-y-0.5 hover:shadow-[0_6px_0_#e2e8f0] hover:bg-slate-50 active:translate-y-1 active:shadow-[0_0px_0_#e2e8f0]"
+                                ? "bg-slate-900 text-white shadow-[0_4px_0_#0f172a] hover:-translate-y-0.5 hover:shadow-[0_6px_0_#0f172a] hover:bg-red-600 hover:shadow-[0_4px_0_#991b1b] active:translate-y-1 active:shadow-[0_0px_0_#991b1b]"
+                                : "bg-white border-2 border-slate-200 text-slate-500 shadow-[0_4px_0_#e2e8f0] hover:-translate-y-0.5 hover:shadow-[0_6px_0_#e2e8f0] hover:bg-slate-50 hover:text-slate-700 active:translate-y-1 active:shadow-[0_0px_0_#e2e8f0]"
                             }`}
                           >
-                            Admin {u.permissions.isAdmin && <Trash2 className="h-3 w-3 ml-2 inline opacity-0 group-hover:opacity-100 transition-opacity" style={{ opacity: 0.7 }} />}
+                            Admin {u.permissions.isAdmin && <Trash2 className="h-4 w-4 ml-2 inline opacity-0 group-hover:opacity-100 transition-opacity" strokeWidth={2.5} style={{ opacity: 0.7 }} />}
                           </button>
                         </div>
                       </div>
@@ -1434,20 +1459,20 @@ export default function AdminPage({
 
           {/* Quick Questions Management */}
           <TabsContent value="quick-questions" className="space-y-6">
-            <Card>
+            <Card className="rounded-[1.5rem] border-[3px] border-slate-200 shadow-sm hover:shadow-[0_4px_0_#e2e8f0] overflow-hidden bg-white transition-all mb-6">
               <CardHeader>
-                <CardTitle>Add New Quick Question</CardTitle>
-                <CardDescription>Create frequently asked questions for the chatbot</CardDescription>
+                <CardTitle className="text-xl font-bold text-slate-800">Add New Quick Question</CardTitle>
+                <CardDescription className="text-slate-500 font-medium">Create frequently asked questions for the chatbot</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="grid md:grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="qq-category">Category</Label>
+                    <Label htmlFor="qq-category" className="font-bold text-slate-700">Category</Label>
                     <Select
                       value={newQuickQuestion.category}
                       onValueChange={(value) => setNewQuickQuestion({ ...newQuickQuestion, category: value })}
                     >
-                      <SelectTrigger id="qq-category">
+                      <SelectTrigger id="qq-category" className="border-2 border-slate-200 focus:ring-red-500 rounded-xl h-10">
                         <SelectValue placeholder="Select category" />
                       </SelectTrigger>
                       <SelectContent>
@@ -1459,12 +1484,12 @@ export default function AdminPage({
                     </Select>
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="qq-active">Status</Label>
+                    <Label htmlFor="qq-active" className="font-bold text-slate-700">Status</Label>
                     <Select
                       value={newQuickQuestion.isActive ? "active" : "inactive"}
                       onValueChange={(value) => setNewQuickQuestion({ ...newQuickQuestion, isActive: value === "active" })}
                     >
-                      <SelectTrigger id="qq-active">
+                      <SelectTrigger id="qq-active" className="border-2 border-slate-200 focus:ring-red-500 rounded-xl h-10">
                         <SelectValue placeholder="Select status" />
                       </SelectTrigger>
                       <SelectContent>
@@ -1475,25 +1500,27 @@ export default function AdminPage({
                   </div>
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="qq-question">Question</Label>
+                  <Label htmlFor="qq-question" className="font-bold text-slate-700">Question</Label>
                   <Input
                     id="qq-question"
                     placeholder="Enter the question"
                     value={newQuickQuestion.questionText}
                     onChange={(e) => setNewQuickQuestion({ ...newQuickQuestion, questionText: e.target.value })}
+                    className="border-2 border-slate-200 focus-visible:ring-red-500 rounded-xl"
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="qq-response">Response</Label>
+                  <Label htmlFor="qq-response" className="font-bold text-slate-700">Response</Label>
                   <Textarea
                     id="qq-response"
                     placeholder="Enter the response"
                     value={newQuickQuestion.responseText}
                     onChange={(e) => setNewQuickQuestion({ ...newQuickQuestion, responseText: e.target.value })}
                     rows={4}
+                    className="border-2 border-slate-200 focus-visible:ring-red-500 rounded-xl"
                   />
                 </div>
-                <div className="flex flex-wrap items-center gap-4">
+                <div className="flex flex-wrap items-center gap-4 mt-2">
                   <button
                     type="button"
                     onClick={handleAddQuickQuestion}
@@ -1508,34 +1535,41 @@ export default function AdminPage({
               </CardContent>
             </Card>
 
-            <Card>
-              <CardHeader>
-                <CardTitle>Current Quick Questions</CardTitle>
-                <CardDescription>{quickQuestions.length} questions in database</CardDescription>
+            <Card className="rounded-[2rem] border-[3px] border-slate-200 shadow-[0_8px_0_#cbd5e1] overflow-hidden bg-slate-50 transition-all mb-6">
+              <CardHeader className="px-6 pt-6 pb-2">
+                <div className="flex items-center gap-3">
+                  <div className="bg-white border-2 border-slate-200 p-2 rounded-xl shadow-sm">
+                    <HelpCircle className="h-6 w-6 text-[#d60000]" strokeWidth={2.5} />
+                  </div>
+                  <div>
+                    <CardTitle className="text-2xl font-black text-slate-800 tracking-tight">Current Quick Questions</CardTitle>
+                    <CardDescription className="text-slate-500 font-medium mt-1">{quickQuestions.length} questions in database</CardDescription>
+                  </div>
+                </div>
               </CardHeader>
-              <CardContent>
+              <CardContent className="px-6 pb-6 pt-4">
                 <div className="space-y-4">
                   {quickQuestions.length === 0 ? (
-                    <p className="text-muted-foreground text-center py-8">No quick questions yet</p>
+                    <p className="text-slate-500 font-medium text-center py-8">No quick questions yet</p>
                   ) : (
                     quickQuestions.map((question) => (
-                      <div key={question.id} className="flex items-start justify-between p-4 border rounded-lg">
-                        <div className="flex-1">
-                          <div className="flex items-center gap-2 mb-1">
-                            <h4 className="font-semibold">{question.questionText}</h4>
-                            <span className={`text-xs px-2 py-1 rounded ${question.isActive ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
+                      <div key={question.id} className="flex items-start justify-between gap-2 sm:gap-3 p-3 sm:p-4 border-2 border-slate-200 rounded-2xl bg-white shadow-sm hover:shadow-[0_4px_0_#e2e8f0] hover:-translate-y-0.5 transition-all">
+                        <div className="flex-1 min-w-0">
+                          <div className="flex flex-wrap items-start sm:items-center gap-2 mb-2">
+                            <h4 className="font-bold text-slate-800 w-full sm:w-auto">{question.questionText}</h4>
+                            <span className={`text-xs px-2 py-1 rounded-md font-bold shrink-0 ${question.isActive ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
                               {question.isActive ? 'Active' : 'Inactive'}
                             </span>
-                            <span className="text-xs px-2 py-1 rounded bg-accent/10 text-accent capitalize">
+                            <span className="text-xs px-2 py-1 rounded-md font-bold bg-slate-100 text-slate-600 capitalize shrink-0">
                               {question.category}
                             </span>
                           </div>
-                          <p className="text-sm text-muted-foreground mt-2">{question.responseText}</p>
+                          <p className="text-sm text-slate-500 mt-2">{question.responseText}</p>
                         </div>
                         <button
                           type="button"
                           onClick={() => handleDeleteQuickQuestion(question.id)}
-                          className="ml-4 flex items-center justify-center bg-red-600 text-white font-extrabold h-10 w-10 pb-1 rounded-xl text-sm shadow-[0_4px_0_#991b1b] hover:-translate-y-0.5 hover:shadow-[0_6px_0_#991b1b] active:translate-y-1 active:shadow-[0_0px_0_#991b1b] transition-all"
+                          className="ml-2 sm:ml-4 flex items-center justify-center bg-[#d60000] text-white font-extrabold h-9 w-9 sm:h-10 sm:w-10 pb-1 rounded-xl text-sm shadow-[0_4px_0_#991b1b] hover:-translate-y-0.5 hover:shadow-[0_6px_0_#991b1b] active:translate-y-1 active:shadow-[0_0px_0_#991b1b] transition-all shrink-0"
                           aria-label="Delete question"
                         >
                           <Trash2 className="h-4 w-4" />
@@ -1550,52 +1584,56 @@ export default function AdminPage({
 
           {/* Fire Codes Management */}
           <TabsContent value="fire-codes" className="space-y-6">
-            <Card>
+            <Card className="rounded-[1.5rem] border-[3px] border-slate-200 shadow-sm hover:shadow-[0_4px_0_#e2e8f0] overflow-hidden bg-white transition-all mb-6">
               <CardHeader>
-                <CardTitle>Add New Fire Code Section</CardTitle>
-                <CardDescription>Add sections to the Fire Code & Regulations</CardDescription>
+                <CardTitle className="text-xl font-bold text-slate-800">Add New Fire Code Section</CardTitle>
+                <CardDescription className="text-slate-500 font-medium">Add sections to the Fire Code & Regulations</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="fc-title">Title</Label>
+                  <Label htmlFor="fc-title" className="font-bold text-slate-700">Title</Label>
                   <Input
                     id="fc-title"
                     placeholder="Section title"
                     value={newFireCode.title}
                     onChange={(e) => setNewFireCode({ ...newFireCode, title: e.target.value })}
+                    className="border-2 border-slate-200 focus-visible:ring-red-500 rounded-xl"
                   />
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="fc-section-num">Section Number</Label>
+                    <Label htmlFor="fc-section-num" className="font-bold text-slate-700">Section Number</Label>
                     <Input
                       id="fc-section-num"
                       placeholder="e.g., 1.1, 2.3.1, etc."
                       value={newFireCode.sectionNum}
                       onChange={(e) => setNewFireCode({ ...newFireCode, sectionNum: e.target.value })}
+                      className="border-2 border-slate-200 focus-visible:ring-red-500 rounded-xl"
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="fc-parent-section">Parent Section (Optional)</Label>
+                    <Label htmlFor="fc-parent-section" className="font-bold text-slate-700">Parent Section (Optional)</Label>
                     <Input
                       id="fc-parent-section"
                       placeholder="Parent section ID"
                       value={newFireCode.parentSectionId}
                       onChange={(e) => setNewFireCode({ ...newFireCode, parentSectionId: e.target.value })}
+                      className="border-2 border-slate-200 focus-visible:ring-red-500 rounded-xl"
                     />
                   </div>
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="fc-content">Content</Label>
+                  <Label htmlFor="fc-content" className="font-bold text-slate-700">Content</Label>
                   <Textarea
                     id="fc-content"
                     placeholder="Section content"
                     rows={6}
                     value={newFireCode.content}
                     onChange={(e) => setNewFireCode({ ...newFireCode, content: e.target.value })}
+                    className="border-2 border-slate-200 focus-visible:ring-red-500 rounded-xl"
                   />
                 </div>
-                <div className="flex flex-wrap items-center gap-4">
+                <div className="flex flex-wrap items-center gap-4 mt-2">
                   <button
                     type="button"
                     onClick={handleAddFireCode}
@@ -1610,34 +1648,41 @@ export default function AdminPage({
               </CardContent>
             </Card>
 
-            <Card>
-              <CardHeader>
-                <CardTitle>Current Fire Code Sections</CardTitle>
-                <CardDescription>Fire Code & Regulations sections in the database</CardDescription>
+            <Card className="rounded-[2rem] border-[3px] border-slate-200 shadow-[0_8px_0_#cbd5e1] overflow-hidden bg-slate-50 transition-all mb-6">
+              <CardHeader className="px-6 pt-6 pb-2">
+                <div className="flex items-center gap-3">
+                  <div className="bg-white border-2 border-slate-200 p-2 rounded-xl shadow-sm">
+                    <BookOpen className="h-6 w-6 text-[#d60000]" strokeWidth={2.5} />
+                  </div>
+                  <div>
+                    <CardTitle className="text-2xl font-black text-slate-800 tracking-tight">Current Fire Code Sections</CardTitle>
+                    <CardDescription className="text-slate-500 font-medium mt-1">Fire Code & Regulations sections in the database</CardDescription>
+                  </div>
+                </div>
               </CardHeader>
-              <CardContent>
+              <CardContent className="px-6 pb-6 pt-4">
                 <div className="space-y-4">
                   {fireCodeSections.length === 0 ? (
-                    <p className="text-muted-foreground text-center py-8">No fire code sections yet</p>
+                    <p className="text-slate-500 font-medium text-center py-8">No fire code sections yet</p>
                   ) : (
                     fireCodeSections.map((section) => (
-                      <div key={section.id} className="flex items-start justify-between p-4 border rounded-lg">
-                        <div className="flex-1">
-                          <div className="flex items-center gap-2 mb-1">
-                            <h4 className="font-semibold">{section.title}</h4>
-                            <span className="text-xs px-2 py-1 rounded bg-accent/10 text-accent">
+                      <div key={section.id} className="flex items-start justify-between gap-2 sm:gap-3 p-3 sm:p-4 border-2 border-slate-200 rounded-2xl bg-white shadow-sm hover:shadow-[0_4px_0_#e2e8f0] hover:-translate-y-0.5 transition-all">
+                        <div className="flex-1 min-w-0">
+                          <div className="flex flex-wrap items-start sm:items-center gap-2 mb-2">
+                            <h4 className="font-bold text-slate-800 w-full sm:w-auto">{section.title}</h4>
+                            <span className="text-xs font-bold px-2 py-1 rounded-md bg-slate-100 text-slate-600 shrink-0">
                               {section.sectionNum}
                             </span>
                           </div>
-                          <p className="text-sm text-muted-foreground line-clamp-2">{section.content}</p>
-                          <p className="text-xs text-muted-foreground mt-2">
+                          <p className="text-sm text-slate-500 line-clamp-2">{section.content}</p>
+                          <p className="text-xs text-slate-400 mt-2 font-medium">
                             Last updated: {new Date(section.updatedAt).toLocaleDateString()}
                           </p>
                         </div>
                         <button
                           type="button"
                           onClick={() => handleDeleteFireCode(section.id)}
-                          className="ml-4 flex items-center justify-center bg-red-600 text-white font-extrabold h-10 w-10 pb-1 rounded-xl text-sm shadow-[0_4px_0_#991b1b] hover:-translate-y-0.5 hover:shadow-[0_6px_0_#991b1b] active:translate-y-1 active:shadow-[0_0px_0_#991b1b] transition-all"
+                          className="ml-2 sm:ml-4 flex items-center justify-center bg-[#d60000] text-white font-extrabold h-9 w-9 sm:h-10 sm:w-10 pb-1 rounded-xl text-sm shadow-[0_4px_0_#991b1b] hover:-translate-y-0.5 hover:shadow-[0_6px_0_#991b1b] active:translate-y-1 active:shadow-[0_0px_0_#991b1b] transition-all shrink-0"
                           aria-label="Delete section"
                         >
                           <Trash2 className="h-4 w-4" />

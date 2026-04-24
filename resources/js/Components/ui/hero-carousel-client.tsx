@@ -44,7 +44,7 @@ export function HeroCarouselClient({ images }: HeroCarouselClientProps) {
                 <CarouselContent>
                     {images.map((image, index) => (
                         <CarouselItem key={image.id}>
-                            <div className="relative isolate w-full h-[50vh] sm:h-[70vh] min-h-[400px] overflow-hidden rounded-[2.5rem] shadow-2xl border border-gray-200 group/slide [mask-image:radial-gradient(white,black)] [-webkit-mask-image:-webkit-radial-gradient(white,black)]">
+                            <div className="relative isolate w-full h-[40vh] sm:h-[50vh] min-h-[300px] overflow-hidden rounded-[2.5rem] shadow-2xl border border-gray-200 group/slide [mask-image:radial-gradient(white,black)] [-webkit-mask-image:-webkit-radial-gradient(white,black)]">
                                 <img
                                     src={image.imageUrl}
                                     alt={image.altText ?? image.title}
@@ -54,11 +54,11 @@ export function HeroCarouselClient({ images }: HeroCarouselClientProps) {
                                 {/* Gradient Overlay - Bottom Left aligned */}
                                 <div className="absolute inset-0 bg-gradient-to-t from-gray-900/90 via-gray-900/40 to-transparent flex flex-col justify-end items-start p-6 pb-12 sm:p-10 sm:pb-16 md:p-14 md:pb-20 pointer-events-none rounded-[2.5rem]">
                                     <div className="relative z-10 text-white w-full max-w-5xl pointer-events-auto">
-                                        <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black mb-4 sm:mb-6 drop-shadow-2xl tracking-tight leading-tight">
+                                        <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black mb-3 sm:mb-5 drop-shadow-2xl tracking-tight leading-tight">
                                             {image.title}
                                         </h1>
                                         {image.altText && (
-                                            <p className="text-base sm:text-xl md:text-2xl font-medium text-gray-200 drop-shadow-md max-w-3xl">
+                                            <p className="text-sm sm:text-lg md:text-xl font-medium text-gray-200 drop-shadow-md max-w-3xl">
                                                 {image.altText}
                                             </p>
                                         )}

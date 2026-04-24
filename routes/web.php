@@ -93,13 +93,11 @@ Route::get('/about', function () {
     })->name('adult.blog.show');
     
     Route::get('/professional', function () {
-        $videos = \App\Models\Video::where('isActive', true)
-            ->where('category', 'professional')
-            ->orderBy('created_at', 'desc')
-            ->get();
-            
         return Inertia::render('ProfessionalDashboard', [
-            'initialVideos' => $videos,
+            'initialVideos' => Inertia::defer(fn () => \App\Models\Video::where('isActive', true)
+                ->where('category', 'professional')
+                ->orderBy('created_at', 'desc')
+                ->get()),
         ]);
     })->name('professional');
     

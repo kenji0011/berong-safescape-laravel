@@ -22,12 +22,12 @@ interface ModuleData {
 }
 
 // Static metadata per module (game names, icons) since these are hardcoded per module
-const MODULE_META: Record<number, { gameIcon: string; gameLabel: string }> = {
-  1: { gameIcon: "🎮", gameLabel: "Element Mixer Lab"   },
-  2: { gameIcon: "🎵", gameLabel: "Rhythm Marshal Game" },
-  3: { gameIcon: "🌫️", gameLabel: "Smoke Labyrinth Game" },
-  4: { gameIcon: "☁️", gameLabel: "Smoke Physics"       },
-  5: { gameIcon: "🌟", gameLabel: "Hero Certificate"    },
+const MODULE_META: Record<number, { gameIcon: string; gameLabel: string; bgImage: string }> = {
+  1: { gameIcon: "🎮", gameLabel: "Element Mixer Lab", bgImage: "/fire-safety-training-session.jpg" },
+  2: { gameIcon: "🎵", gameLabel: "Rhythm Marshal Game", bgImage: "/bfp-firefighters-in-action.jpg" },
+  3: { gameIcon: "🌫️", gameLabel: "Smoke Labyrinth Game", bgImage: "/family-fire-escape-plan.jpg" },
+  4: { gameIcon: "☁️", gameLabel: "Smoke Physics", bgImage: "/smoke-detector-alarm-maintenance.jpg" },
+  5: { gameIcon: "🌟", gameLabel: "Hero Certificate", bgImage: "/fire_safety_certificate.png" },
 }
 
 // Static fallback if API hasn't seeded yet
@@ -176,36 +176,36 @@ const CourseHubPage = () => {
           </div>
 
           {/* ── Hero Section ── */}
-          <div className="flex flex-col items-center text-center mb-16 space-y-6 relative">
-            <div className="absolute top-0 right-0 lg:-right-12 text-6xl opacity-20 transform rotate-12 pointer-events-none">✨</div>
-            <div className="absolute bottom-10 left-0 lg:-left-12 text-6xl opacity-20 transform -rotate-12 pointer-events-none">🔥</div>
+          <div className="flex flex-col items-center text-center mb-10 sm:mb-16 space-y-4 sm:space-y-6 relative">
+            <div className="absolute top-0 right-0 lg:-right-12 text-4xl sm:text-6xl opacity-20 transform rotate-12 pointer-events-none">✨</div>
+            <div className="absolute bottom-10 left-0 lg:-left-12 text-4xl sm:text-6xl opacity-20 transform -rotate-12 pointer-events-none">🔥</div>
             
-            <span className="inline-block px-4 py-1.5 bg-orange-100 text-orange-600 font-black text-xs uppercase tracking-widest rounded-full border-2 border-orange-200 shadow-sm">
+            <span className="inline-block px-3 py-1 sm:px-4 sm:py-1.5 bg-orange-100 text-orange-600 font-black text-[10px] sm:text-xs uppercase tracking-widest rounded-full border-2 border-orange-200 shadow-sm">
               🔥 FIRE SAFETY TRAINING COURSE
             </span>
-            <h1 className="text-5xl sm:text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-[#ff4b3e] to-[#ff8c00] leading-tight drop-shadow-sm">
+            <h1 className="text-4xl sm:text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-[#ff4b3e] to-[#ff8c00] leading-tight drop-shadow-sm px-2">
               Become a Fire Safety Hero!
             </h1>
-            <p className="text-lg font-bold text-slate-500 max-w-2xl leading-relaxed">
+            <p className="text-base sm:text-lg font-bold text-slate-500 max-w-2xl leading-relaxed px-4">
               Complete 5 exciting modules to learn how to protect yourself, your family,
               and your friends from fire hazards.
             </p>
 
-            <div className="flex flex-col items-center mt-4 gap-3">
-              <span className="text-slate-500 font-bold text-sm uppercase tracking-wider">Welcome, Fire Safety Hero:</span>
-              <div className="flex items-center gap-3 bg-white border-[3px] border-yellow-400 px-6 py-3 rounded-2xl shadow-[0_6px_0_#facc15] transform -rotate-1 hover:rotate-0 transition-transform">
-                <div className="text-2xl">👨‍🚒</div>
-                <span className="text-2xl font-black text-slate-800">{user?.name || "Fire Safety Hero"}</span>
+            <div className="flex flex-col items-center mt-2 sm:mt-4 gap-2 sm:gap-3">
+              <span className="text-slate-500 font-bold text-xs sm:text-sm uppercase tracking-wider">Welcome, Fire Safety Hero:</span>
+              <div className="flex items-center gap-2 sm:gap-3 bg-white border-[3px] border-yellow-400 px-4 py-2 sm:px-6 sm:py-3 rounded-xl sm:rounded-2xl shadow-[0_4px_0_#facc15] sm:shadow-[0_6px_0_#facc15] transform -rotate-1 hover:rotate-0 transition-transform">
+                <div className="text-xl sm:text-2xl">👨‍🚒</div>
+                <span className="text-lg sm:text-2xl font-black text-slate-800">{user?.name || "Fire Safety Hero"}</span>
               </div>
             </div>
 
             {/* Progress bar */}
-            <div className="w-full max-w-xl mt-12 bg-white p-6 rounded-[2rem] border-4 border-slate-100 shadow-sm">
-              <div className="flex items-center justify-between text-sm font-black text-slate-500 mb-3 uppercase tracking-wider">
+            <div className="w-full max-w-xl mt-8 sm:mt-12 bg-white p-4 sm:p-6 rounded-[1.5rem] sm:rounded-[2rem] border-4 border-slate-100 shadow-sm">
+              <div className="flex flex-col sm:flex-row items-center justify-between text-xs sm:text-sm font-black text-slate-500 mb-3 uppercase tracking-wider gap-1">
                 <span>Course Progress</span>
                 <span className="text-orange-500">{completedCount} of 5 modules completed</span>
               </div>
-              <div className="h-4 w-full bg-slate-100 rounded-full overflow-hidden border-2 border-slate-200">
+              <div className="h-3 sm:h-4 w-full bg-slate-100 rounded-full overflow-hidden border-2 border-slate-200">
                 <div
                   className="h-full bg-gradient-to-r from-[#ff4b3e] to-[#ff8c00] rounded-full transition-all duration-700"
                   style={{ width: `${overallProgress}%` }}
@@ -236,7 +236,7 @@ const CourseHubPage = () => {
                   <div
                     key={module.id}
                     className={cn(
-                      "relative rounded-3xl p-6 flex flex-col transition-all duration-200 bg-white",
+                      "relative overflow-hidden rounded-3xl flex flex-col transition-all duration-200 bg-white group",
                       module.isCompleted
                         ? "border-[4px] border-green-200 shadow-sm"
                         : module.isLocked
@@ -244,111 +244,129 @@ const CourseHubPage = () => {
                         : "border-[4px] border-[#ff4b3e] shadow-[0_8px_0_#ff4b3e] hover:-translate-y-1 hover:shadow-[0_12px_0_#ff4b3e]"
                     )}
                   >
-                    {/* Completed badge */}
-                    {module.isCompleted && (
-                      <div className="absolute top-4 right-4 h-8 w-8 rounded-full bg-green-500 flex items-center justify-center shadow-md border-2 border-white">
-                        <CheckCircle className="h-5 w-5 text-white" />
+                    {/* Top Header Background Image (EDITH Style) */}
+                    {meta?.bgImage && (
+                      <div className="absolute top-0 left-0 w-full h-48 sm:h-56 z-0 pointer-events-none overflow-hidden rounded-t-3xl">
+                        <img 
+                          src={meta.bgImage} 
+                          alt="" 
+                          className={cn(
+                            "absolute inset-0 w-full h-full object-cover mix-blend-multiply transition-all duration-500",
+                            module.isLocked ? "opacity-20 grayscale" : "opacity-30 group-hover:opacity-40 group-hover:scale-105"
+                          )} 
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-white via-white/40 to-transparent"></div>
                       </div>
                     )}
 
-                    {/* Adaptive Learning Badge */}
-                    {module.recommendedAction && !module.isLocked && (
-                      <div className={cn(
-                        "absolute top-4 left-4 px-3 py-1 rounded-full text-[10px] sm:text-xs font-black uppercase tracking-widest border-2 shadow-sm",
-                        module.recommendedAction === 'Priority Review' ? 'bg-red-50 text-red-500 border-red-200' : 
-                        module.recommendedAction === 'Needs Practice' ? 'bg-orange-50 text-orange-500 border-orange-200' : 
-                        'bg-green-50 text-green-500 border-green-200'
-                      )}>
-                        {module.recommendedAction}
-                      </div>
-                    )}
-
-                    {/* Day number */}
-                    <h3 className={cn(
-                      "text-5xl font-black mb-2 mt-4",
-                      module.isCompleted ? "text-green-500" : !module.isLocked ? "text-[#ff4b3e]" : "text-slate-300"
-                    )}>
-                      {numLabel}
-                    </h3>
-
-                    {/* Title */}
-                    <h4 className={cn("text-xl font-black mb-4", module.isLocked ? "text-slate-400" : "text-slate-800")}>
-                      {module.title}
-                    </h4>
-
-                    {/* Lock overlay */}
-                    {module.isLocked && (
-                      <div className="absolute inset-0 rounded-[1.5rem] z-10 flex flex-col items-center justify-center bg-slate-100/60 backdrop-blur-[2px]">
-                        <div className="bg-white p-4 rounded-full shadow-sm mb-3 border-2 border-slate-200">
-                          <Lock className="h-6 w-6 text-slate-400" />
+                    {/* Content Container (Layered above background) */}
+                    <div className="relative z-10 p-6 flex flex-col flex-1">
+                      {/* Completed badge */}
+                      {module.isCompleted && (
+                        <div className="absolute top-0 right-0 sm:top-2 sm:right-2 h-8 w-8 rounded-full bg-green-500 flex items-center justify-center shadow-md border-2 border-white">
+                          <CheckCircle className="h-5 w-5 text-white" />
                         </div>
-                        <span className="text-sm font-bold text-slate-500 text-center px-6 bg-white py-1.5 px-4 rounded-full border-2 border-slate-200 shadow-sm">
-                          Complete Module {module.dayNumber - 1} to unlock
-                        </span>
-                      </div>
-                    )}
-
-                    {/* Description */}
-                    <p className={cn("text-sm leading-relaxed mb-6 flex-1 font-medium", module.isLocked ? "text-slate-400" : "text-slate-600")}>
-                      {module.description}
-                    </p>
-
-                    {/* Game label */}
-                    {meta && (
-                      <div className={cn(
-                        "flex items-center gap-2 text-xs font-bold mb-6 w-fit px-3 py-1.5 rounded-xl border-2",
-                        module.isCompleted ? "bg-green-50 text-green-600 border-green-100" : module.isLocked ? "bg-slate-50 text-slate-400 border-slate-200" : "bg-blue-50 text-blue-600 border-blue-100"
-                      )}>
-                        <span className="text-base">{meta.gameIcon}</span>
-                        {meta.gameLabel}
-                      </div>
-                    )}
-
-                    {/* Progress bar (in-progress modules) */}
-                    {!module.isCompleted && !module.isLocked && module.progress > 0 && (
-                      <div className="mb-6">
-                        <div className="h-2 bg-slate-100 rounded-full overflow-hidden border border-slate-200">
-                          <div
-                            className="h-full bg-gradient-to-r from-[#ff4b3e] to-[#ff8c00] rounded-full"
-                            style={{ width: `${module.progress}%` }}
-                          />
-                        </div>
-                        <p className="text-[11px] font-bold text-slate-500 mt-1.5 uppercase tracking-wider">{module.progress}% complete</p>
-                      </div>
-                    )}
-
-                    {/* CTA Button */}
-                    <div className="mt-auto border-t-2 border-slate-100 pt-5 flex items-center justify-between">
-                      {module.isCompleted ? (
-                        <>
-                          <span className="text-xs font-black tracking-widest text-green-500 uppercase">Completed</span>
-                          <Link
-                            href={moduleRoute}
-                            className="flex items-center gap-2 bg-green-500 hover:bg-green-400 text-white font-black px-5 py-2 rounded-full text-sm border-2 border-green-600 border-b-[4px] active:border-b-2 active:translate-y-[2px] transition-all"
-                          >
-                            <CheckCircle className="h-4 w-4" /> Review
-                          </Link>
-                        </>
-                      ) : module.isLocked ? (
-                        <>
-                          <span className="text-xs font-black tracking-widest text-slate-400 uppercase">Locked</span>
-                          <div className="flex items-center gap-2 bg-slate-100 text-slate-400 font-bold px-5 py-2 rounded-full text-sm border-2 border-slate-200">
-                            <Lock className="h-3.5 w-3.5" /> Locked
-                          </div>
-                        </>
-                      ) : (
-                        <>
-                          <span className="text-xs font-black tracking-widest text-orange-500 uppercase">
-                            {module.progress > 0 ? "In Progress" : "Available"}
-                          </span>
-                          <Link
-                            href={moduleRoute}
-                            className="flex items-center gap-2 bg-yellow-400 hover:bg-yellow-300 text-red-600 font-black px-6 py-2.5 rounded-full text-sm border-2 border-white shadow-[0_4px_0_#b45309] hover:-translate-y-0.5 hover:shadow-[0_6px_0_#b45309] active:translate-y-1 active:shadow-[0_0px_0_#b45309] transition-all uppercase tracking-wide"
-                          >
-                            {module.progress > 0 ? "Continue" : "Start"} →
-                          </Link>
-                        </>
                       )}
+
+                      {/* Adaptive Learning Badge */}
+                      {module.recommendedAction && !module.isLocked && (
+                        <div className={cn(
+                          "absolute top-0 left-0 sm:top-2 sm:left-2 px-3 py-1 rounded-full text-[10px] sm:text-xs font-black uppercase tracking-widest border-2 shadow-sm bg-white/90 backdrop-blur-sm",
+                          module.recommendedAction === 'Priority Review' ? 'text-red-500 border-red-200' : 
+                          module.recommendedAction === 'Needs Practice' ? 'text-orange-500 border-orange-200' : 
+                          'text-green-500 border-green-200'
+                        )}>
+                          {module.recommendedAction}
+                        </div>
+                      )}
+
+                      {/* Day number */}
+                      <h3 className={cn(
+                        "text-5xl font-black mb-2 mt-4 drop-shadow-[0_2px_4px_rgba(255,255,255,0.8)]",
+                        module.isCompleted ? "text-green-500" : !module.isLocked ? "text-[#ff4b3e]" : "text-slate-300"
+                      )}>
+                        {numLabel}
+                      </h3>
+
+                      {/* Title */}
+                      <h4 className={cn("text-xl font-black mb-4", module.isLocked ? "text-slate-400" : "text-slate-800")}>
+                        {module.title}
+                      </h4>
+
+                      {/* Lock overlay */}
+                      {module.isLocked && (
+                        <div className="absolute inset-0 rounded-[1.5rem] z-10 flex flex-col items-center justify-center bg-slate-100/40 backdrop-blur-[2px] m-2">
+                          <div className="bg-white p-4 rounded-full shadow-sm mb-3 border-2 border-slate-200">
+                            <Lock className="h-6 w-6 text-slate-400" />
+                          </div>
+                          <span className="text-sm font-bold text-slate-500 text-center bg-white py-1.5 px-4 rounded-full border-2 border-slate-200 shadow-sm">
+                            Complete Module {module.dayNumber - 1} to unlock
+                          </span>
+                        </div>
+                      )}
+
+                      {/* Description */}
+                      <p className={cn("text-sm leading-relaxed mb-6 flex-1 font-medium", module.isLocked ? "text-slate-400" : "text-slate-600")}>
+                        {module.description}
+                      </p>
+
+                      {/* Game label */}
+                      {meta && (
+                        <div className={cn(
+                          "flex items-center gap-2 text-xs font-bold mb-6 w-fit px-3 py-1.5 rounded-xl border-2",
+                          module.isCompleted ? "bg-green-50 text-green-600 border-green-100" : module.isLocked ? "bg-slate-50 text-slate-400 border-slate-200" : "bg-blue-50 text-blue-600 border-blue-100"
+                        )}>
+                          <span className="text-base">{meta.gameIcon}</span>
+                          {meta.gameLabel}
+                        </div>
+                      )}
+
+                      {/* Progress bar (in-progress modules) */}
+                      {!module.isCompleted && !module.isLocked && module.progress > 0 && (
+                        <div className="mb-6">
+                          <div className="h-2 bg-slate-100 rounded-full overflow-hidden border border-slate-200">
+                            <div
+                              className="h-full bg-gradient-to-r from-[#ff4b3e] to-[#ff8c00] rounded-full"
+                              style={{ width: `${module.progress}%` }}
+                            />
+                          </div>
+                          <p className="text-[11px] font-bold text-slate-500 mt-1.5 uppercase tracking-wider">{module.progress}% complete</p>
+                        </div>
+                      )}
+
+                      {/* CTA Button */}
+                      <div className="mt-auto border-t-2 border-slate-100 pt-5 flex items-center justify-between relative z-20">
+                        {module.isCompleted ? (
+                          <>
+                            <span className="text-xs font-black tracking-widest text-green-500 uppercase">Completed</span>
+                            <Link
+                              href={moduleRoute}
+                              className="flex items-center gap-2 bg-green-500 hover:bg-green-400 text-white font-black px-5 py-2 rounded-full text-sm border-2 border-green-600 border-b-[4px] active:border-b-2 active:translate-y-[2px] transition-all"
+                            >
+                              <CheckCircle className="h-4 w-4" /> Review
+                            </Link>
+                          </>
+                        ) : module.isLocked ? (
+                          <>
+                            <span className="text-xs font-black tracking-widest text-slate-400 uppercase">Locked</span>
+                            <div className="flex items-center gap-2 bg-slate-100 text-slate-400 font-bold px-5 py-2 rounded-full text-sm border-2 border-slate-200">
+                              <Lock className="h-3.5 w-3.5" /> Locked
+                            </div>
+                          </>
+                        ) : (
+                          <>
+                            <span className="text-xs font-black tracking-widest text-orange-500 uppercase">
+                              {module.progress > 0 ? "In Progress" : "Available"}
+                            </span>
+                            <Link
+                              href={moduleRoute}
+                              className="flex items-center gap-2 bg-yellow-400 hover:bg-yellow-300 text-red-600 font-black px-6 py-2.5 rounded-full text-sm border-2 border-white shadow-[0_4px_0_#b45309] hover:-translate-y-0.5 hover:shadow-[0_6px_0_#b45309] active:translate-y-1 active:shadow-[0_0px_0_#b45309] transition-all uppercase tracking-wide"
+                            >
+                              {module.progress > 0 ? "Continue" : "Start"} →
+                            </Link>
+                          </>
+                        )}
+                      </div>
                     </div>
                   </div>
                 )

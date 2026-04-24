@@ -124,94 +124,100 @@ export function ImageUpload({ onUploadComplete, title = "Image Upload", descript
   };
 
   return (
-    <Card>
+    <Card className="rounded-[1.5rem] border-[3px] border-slate-200 shadow-sm hover:shadow-[0_4px_0_#e2e8f0] overflow-hidden bg-white transition-all h-full flex flex-col">
       <CardHeader>
-        <CardTitle className="text-lg">{title}</CardTitle>
-        <CardDescription>{description}</CardDescription>
+        <CardTitle className="text-xl font-bold text-slate-800">{title}</CardTitle>
+        <CardDescription className="text-slate-500 font-medium">{description}</CardDescription>
       </CardHeader>
-      <CardContent>
-        <div
-          className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center cursor-pointer hover:border-primary transition-colors"
-          onDragOver={handleDragOver}
-          onDrop={handleDrop}
-          onClick={() => fileInputRef.current?.click()}
-        >
-          <input
-            type="file"
-            ref={fileInputRef}
-            onChange={handleFileChange}
-            accept="image/*"
-            className="hidden"
-          />
-          <div className="flex flex-col items-center justify-center gap-2">
-            <Upload className="h-8 w-8 text-muted-foreground" />
-            <p className="text-sm text-muted-foreground">
-              {file ? file.name : 'Click or drag an image to upload'}
-            </p>
-            <p className="text-xs text-muted-foreground">
-              Maximum file size: 15MB
-            </p>
-          </div>
-        </div>
-
+      <CardContent className="flex-1 flex flex-col justify-center">
         {error && (
-          <p className="text-sm text-destructive mt-2">{error}</p>
-        )}
-
-        {previewUrl && !uploadUrl && (
-          <div className="mt-4">
-            <div className="flex justify-center">
-              <img
-                src={previewUrl}
-                alt="Preview"
-                className="max-h-48 rounded-md object-contain"
-              />
-            </div>
-            <div className="mt-4 flex justify-center">
-              <Button
-                onClick={handleUpload}
-                disabled={isUploading}
-                className="w-full md:w-auto"
-              >
-                {isUploading ? (
-                  <>
-                    <span className="mr-2">Uploading...</span>
-                    <div className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent"></div>
-                  </>
-                ) : (
-                  <>
-                    <Upload className="h-4 w-4 mr-2" />
-                    Upload Image
-                  </>
-                )}
-              </Button>
-            </div>
+          <div className="mb-4 p-3 bg-red-50 border-2 border-red-200 rounded-xl flex items-center gap-2">
+            <span className="text-sm font-bold text-red-700">{error}</span>
           </div>
         )}
-
-        {uploadUrl && (
-          <div className="mt-4 space-y-4">
-            <div className="flex justify-center">
-              <img
-                src={uploadUrl}
-                alt="Uploaded"
-                className="max-h-48 rounded-md object-contain"
-              />
+        
+        <div className={`grid gap-6 ${previewUrl || uploadUrl ? 'grid-cols-1 sm:grid-cols-2' : 'grid-cols-1'} h-full items-stretch`}>
+          <div
+            className="border-[3px] border-dashed border-slate-300 rounded-[1.5rem] p-6 text-center cursor-pointer bg-slate-50 hover:bg-slate-100 hover:border-slate-400 transition-all shadow-inner flex flex-col items-center justify-center min-h-[200px]"
+            onDragOver={handleDragOver}
+            onDrop={handleDrop}
+            onClick={() => fileInputRef.current?.click()}
+          >
+            <input
+              type="file"
+              ref={fileInputRef}
+              onChange={handleFileChange}
+              accept="image/*"
+              className="hidden"
+            />
+            <div className="flex flex-col items-center justify-center gap-3">
+              <div className="bg-white p-3 rounded-full shadow-sm border-2 border-slate-200">
+                <Upload className="h-6 w-6 text-slate-400" />
+              </div>
+              <div>
+                <p className="text-sm font-bold text-slate-700">
+                  {file ? file.name : 'Click or drag image'}
+                </p>
+                <p className="text-xs font-medium text-slate-500 mt-1">
+                  Max size: 15MB
+                </p>
+              </div>
             </div>
-
-            {/* Success message instead of showing the raw Base64 URL */}
-            <div className="flex items-center justify-center gap-2 p-3 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg">
-              <Check className="h-5 w-5 text-green-600 dark:text-green-400" />
-              <span className="text-sm font-medium text-green-700 dark:text-green-300">
-                Image Uploaded Successfully
-              </span>
-            </div>
-
-            <p className="text-sm text-muted-foreground text-center">
-              Your image is ready. Fill in the other fields and submit.
-            </p>
           </div>
-        )}
+
+          {(previewUrl || uploadUrl) && (
+            <div className="flex flex-col items-center justify-between border-2 border-slate-200 bg-slate-50 rounded-[1.5rem] p-4 shadow-sm min-h-[200px]">
+              {previewUrl && !uploadUrl && (
+                <>
+                  <div className="flex-1 w-full flex items-center justify-center bg-white rounded-xl border-2 border-slate-200 mb-4 overflow-hidden p-2">
+                    <img
+                      src={previewUrl}
+                      alt="Preview"
+                      className="max-h-32 object-contain"
+                    />
+                  </div>
+                  <Button
+                    onClick={handleUpload}
+                    disabled={isUploading}
+                    className="w-full bg-[#d60000] text-white font-extrabold h-11 rounded-xl text-sm shadow-[0_4px_0_#991b1b] hover:-translate-y-0.5 hover:shadow-[0_6px_0_#991b1b] active:translate-y-1 active:shadow-[0_0px_0_#991b1b] transition-all"
+                  >
+                    {isUploading ? (
+                      <>
+                        <span className="mr-2">Uploading...</span>
+                        <div className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent"></div>
+                      </>
+                    ) : (
+                      <>
+                        <Upload className="h-4 w-4 mr-2" strokeWidth={2.5} />
+                        Upload Image
+                      </>
+                    )}
+                  </Button>
+                </>
+              )}
+
+              {uploadUrl && (
+                <>
+                  <div className="flex-1 w-full flex items-center justify-center bg-white rounded-xl border-2 border-slate-200 mb-4 overflow-hidden p-2">
+                    <img
+                      src={uploadUrl}
+                      alt="Uploaded"
+                      className="max-h-32 object-contain"
+                    />
+                  </div>
+                  <div className="w-full flex flex-col gap-2">
+                    <div className="w-full flex items-center justify-center gap-2 p-2.5 bg-green-50 border-2 border-green-200 rounded-xl">
+                      <Check className="h-5 w-5 text-green-600" strokeWidth={2.5} />
+                      <span className="text-sm font-bold text-green-700">
+                        Upload Success!
+                      </span>
+                    </div>
+                  </div>
+                </>
+              )}
+            </div>
+          )}
+        </div>
       </CardContent>
     </Card>
   );
