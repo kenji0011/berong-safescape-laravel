@@ -267,12 +267,16 @@ export default function ProfilePage() {
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 relative z-10">
         {/* Header */}
-        <div className="mb-6 sm:mb-8">
-          <div className="flex items-center gap-2 sm:gap-3 mb-2">
-            <User className="h-6 w-6 sm:h-8 sm:w-8 text-red-600" />
-            <h1 className="text-3xl sm:text-4xl font-black text-slate-800 tracking-tight">User Profile</h1>
+        <div className="mb-6 sm:mb-8 bg-white p-6 rounded-[2rem] border-[3px] border-slate-200 shadow-[0_8px_0_#cbd5e1] flex items-center justify-between">
+          <div>
+            <div className="flex items-center gap-3 mb-1">
+              <div className="bg-red-100 p-2 rounded-xl">
+                <User className="h-6 w-6 sm:h-8 sm:w-8 text-[#d60000]" strokeWidth={2.5} />
+              </div>
+              <h1 className="text-2xl sm:text-3xl font-black text-slate-800 tracking-tight">User Profile</h1>
+            </div>
+            <p className="text-sm sm:text-base text-slate-500 font-medium">Manage your account settings and view your assessment scores.</p>
           </div>
-          <p className="text-sm sm:text-base text-slate-500 font-medium tracking-wide">Manage your account settings and view your assessment scores.</p>
         </div>
 
         {/* Alerts */}
@@ -351,7 +355,7 @@ export default function ProfilePage() {
               </div>
               <Button 
                 onClick={handleUpdateProfile} 
-                className="w-full bg-[#e11d48] text-white border-[3px] border-white shadow-[0_4px_0_#9f1239] hover:-translate-y-0.5 hover:shadow-[0_6px_0_#9f1239] hover:bg-[#e11d48] active:translate-y-1 active:shadow-[0_0px_0_#9f1239] rounded-full font-black uppercase tracking-wider py-6 transition-all"
+                className="w-full bg-[#e11d48] text-white shadow-[0_4px_0_#9f1239] hover:-translate-y-0.5 hover:shadow-[0_6px_0_#9f1239] hover:bg-[#e11d48] active:translate-y-1 active:shadow-[0_0px_0_#9f1239] rounded-full font-black uppercase tracking-wider py-6 transition-all"
               >
                 <User className="h-5 w-5 mr-2" strokeWidth={2.5} />
                 Update Profile
@@ -443,7 +447,7 @@ export default function ProfilePage() {
               </div>
               <Button
                 onClick={handleChangePassword}
-                className="w-full bg-slate-800 text-white border-[3px] border-white shadow-[0_4px_0_#0f172a] hover:-translate-y-0.5 hover:shadow-[0_6px_0_#0f172a] hover:bg-slate-800 active:translate-y-1 active:shadow-[0_0px_0_#0f172a] rounded-full font-black uppercase tracking-wider py-6 transition-all"
+                className="w-full bg-slate-800 text-white shadow-[0_4px_0_#0f172a] hover:-translate-y-0.5 hover:shadow-[0_6px_0_#0f172a] hover:bg-slate-800 active:translate-y-1 active:shadow-[0_0px_0_#0f172a] rounded-full font-black uppercase tracking-wider py-6 transition-all"
                 disabled={passwordLoading}
               >
                 {passwordLoading ? (

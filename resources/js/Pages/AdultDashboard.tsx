@@ -112,7 +112,7 @@ const AdultPageClient = ({ initialBlogs }: AdultPageClientProps) => {
                                 </p>
                                 
                                 <div className="mt-auto pt-4 border-t-[3px] border-dashed border-slate-100">
-                                    <button className="w-full bg-red-500 hover:bg-red-600 text-white font-black py-2 sm:py-3 px-3 sm:px-5 rounded-full border-[2px] sm:border-[3px] border-white shadow-[0_4px_0_#991b1b] group-hover:shadow-[0_6px_0_#991b1b] group-hover:-translate-y-0.5 active:translate-y-[4px] active:shadow-[0_0px_0_#991b1b] transition-all flex items-center justify-center gap-2 uppercase tracking-wide text-[10px] sm:text-xs">
+                                    <button className="w-full bg-red-500 hover:bg-red-600 text-white font-black py-2 sm:py-3 px-3 sm:px-5 rounded-full shadow-[0_4px_0_#991b1b] group-hover:shadow-[0_6px_0_#991b1b] group-hover:-translate-y-0.5 active:translate-y-[4px] active:shadow-[0_0px_0_#991b1b] transition-all flex items-center justify-center gap-2 uppercase tracking-wide text-[10px] sm:text-xs">
                                         Launch Simulator
                                         <ArrowRight className="h-3 w-3 sm:h-4 sm:w-4" strokeWidth={3} />
                                     </button>
@@ -189,13 +189,17 @@ const AdultPageClient = ({ initialBlogs }: AdultPageClientProps) => {
                                         
                                         {/* Content Area */}
                                         <div className="p-3 sm:p-5 flex flex-col flex-1 bg-white">
-                                            <h3 className="font-black text-xs sm:text-lg text-slate-800 line-clamp-2 mb-1 sm:mb-2 group-hover:text-red-600 transition-colors leading-tight">
-                                                {blog.title}
-                                            </h3>
+                                            <div className="min-h-[2.5rem] sm:min-h-[3.5rem]">
+                                                <h3 className="font-black text-xs sm:text-lg text-slate-800 line-clamp-2 mb-1 sm:mb-2 group-hover:text-red-600 transition-colors leading-tight">
+                                                    {blog.title}
+                                                </h3>
+                                            </div>
                                             
-                                            <p className="hidden sm:block text-sm font-bold text-slate-500 line-clamp-3 mb-4 flex-1">
-                                                {blog.excerpt || ''}
-                                            </p>
+                                            <div className="hidden sm:block flex-1 min-h-[4.5rem]">
+                                                <p className="text-sm font-bold text-slate-500 line-clamp-3 mb-4">
+                                                    {blog.excerpt || ''}
+                                                </p>
+                                            </div>
                                             
                                             {/* Metadata Footer */}
                                             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between text-[9px] sm:text-xs font-bold text-slate-500 pt-2 sm:pt-4 border-t-2 sm:border-t-[3px] border-dashed border-slate-100 mt-auto gap-1 sm:gap-0">
