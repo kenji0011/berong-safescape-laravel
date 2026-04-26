@@ -43,9 +43,26 @@ const MemoryGamePage = () => {
     initGame()
   }, [])
 
+  const [soundEffects] = useState({
+    click: new Audio('/sounds/click.mp3'),
+    match: new Audio('/sounds/match.mp3'),
+    wrong: new Audio('/sounds/wrong.mp3'),
+    win: new Audio('/sounds/win.mp3')
+  })
+
+  const playSound = (type: 'click' | 'match' | 'wrong' | 'win') => {
+    const audio = soundEffects[type]
+    if (audio) {
+      audio.currentTime = 0
+      audio.volume = 0.4
+      audio.play().catch(e => console.log("Audio play failed:", e))
+    }
+  }
+
   const handleCardClick = (index: number) => {
     if (isLocked || cards[index].isFlipped || cards[index].isMatched) return
 
+    playSound('click')
     const newCards = [...cards]
     newCards[index].isFlipped = true
     setCards(newCards)
@@ -60,14 +77,22 @@ const MemoryGamePage = () => {
       const [first, second] = newFlippedIndices
 
       if (newCards[first].emoji === newCards[second].emoji) {
-        newCards[first].isMatched = true
-        newCards[second].isMatched = true
-        setCards(newCards)
-        setMatches((prev) => prev + 1)
-        setFlippedIndices([])
-        setIsLocked(false)
+        setTimeout(() => {
+          newCards[first].isMatched = true
+          newCards[second].isMatched = true
+          setCards(newCards)
+          setMatches((prev) => {
+            const next = prev + 1
+            if (next === 6) playSound('win')
+            else playSound('match')
+            return next
+          })
+          setFlippedIndices([])
+          setIsLocked(false)
+        }, 500)
       } else {
         setTimeout(() => {
+          playSound('wrong')
           const resetCards = [...newCards]
           resetCards[first].isFlipped = false
           resetCards[second].isFlipped = false
@@ -81,10 +106,15 @@ const MemoryGamePage = () => {
 
   if (matches === 6) {
     return (
-      <div className="min-h-screen relative flex flex-col font-sans bg-gradient-to-br from-[#F0FDFA] via-[#CCFBF1] to-[#99F6E4] selection:bg-teal-300 selection:text-teal-900">
-        <div className="absolute top-0 right-0 w-full h-full overflow-hidden pointer-events-none z-0">
-          <div className="absolute top-10 -right-20 w-80 h-80 rounded-full bg-teal-400/30 blur-3xl opacity-70 animate-pulse duration-1000" />
-          <div className="absolute bottom-10 -left-20 w-96 h-96 rounded-full bg-cyan-400/30 blur-3xl opacity-70" />
+      <div className="min-h-screen relative flex flex-col font-sans bg-blue-50 selection:bg-teal-300 selection:text-teal-900">
+        {/* Heroic Background */}
+        <div className="absolute inset-0 z-0">
+          <img 
+            src="/challenges-bg.png" 
+            alt="" 
+            className="w-full h-full object-cover opacity-30 mix-blend-multiply" 
+          />
+          <div className="absolute inset-0 bg-gradient-to-b from-blue-50/80 via-white/40 to-blue-50/90"></div>
         </div>
         
         <div className="relative z-10 w-full flex-1 flex items-center justify-center pt-6 pb-12">
@@ -104,7 +134,7 @@ const MemoryGamePage = () => {
                   Play Again
                 </button>
                 <Link 
-                  href="/kids" 
+                  href="/kids/challenges" 
                   className="flex-1 bg-white text-slate-600 border-2 border-slate-200 hover:border-teal-300 hover:bg-teal-50 shadow-sm hover:shadow-md hover:-translate-y-1 active:translate-y-0 px-8 py-4 rounded-full font-bold text-lg transition-all duration-300 flex items-center justify-center text-center"
                 >
                   Go Back
@@ -118,17 +148,22 @@ const MemoryGamePage = () => {
   }
 
   return (
-    <div className="min-h-screen relative flex flex-col font-sans bg-gradient-to-br from-[#F0FDFA] via-[#CCFBF1] to-[#99F6E4] selection:bg-teal-300 selection:text-teal-900">
-      <div className="absolute top-0 right-0 w-full h-full overflow-hidden pointer-events-none z-0">
-        <div className="absolute top-20 -left-32 w-96 h-96 rounded-full bg-teal-400/20 blur-3xl opacity-60" />
-        <div className="absolute bottom-20 -right-20 w-80 h-80 rounded-full bg-cyan-400/30 blur-3xl opacity-60 animate-pulse duration-1000" />
+    <div className="min-h-screen relative flex flex-col font-sans bg-blue-50 selection:bg-teal-300 selection:text-teal-900">
+      {/* Heroic Background */}
+      <div className="absolute inset-0 z-0">
+        <img 
+          src="/challenges-bg.png" 
+          alt="" 
+          className="w-full h-full object-cover opacity-30 mix-blend-multiply" 
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-blue-50/80 via-white/40 to-blue-50/90"></div>
       </div>
 
       <div className="relative z-10 w-full flex-1 flex flex-col py-4 pb-28 sm:pb-4">
         {/* Ghost Header - absolute positioned to save vertical space */}
         <div className="absolute top-2 left-4 z-20">
           <Link 
-            href="/kids" 
+            href="/kids/challenges" 
             className="inline-flex items-center gap-2 text-slate-500 font-bold hover:text-teal-600 transition-all text-sm bg-white/60 backdrop-blur-sm px-4 py-2 rounded-full border border-white/60 shadow-sm"
           >
             <ArrowLeft className="h-4 w-4" />
@@ -136,8 +171,8 @@ const MemoryGamePage = () => {
           </Link>
         </div>
 
-        <div className="max-w-4xl mx-auto w-full px-4 sm:px-6 flex-1 flex items-center justify-center pt-12 sm:pt-0">
-          <div className="w-full bg-white/90 backdrop-blur-2xl border border-white/60 rounded-[2.5rem] p-6 sm:p-8 shadow-[0_25px_60px_rgba(20,184,166,0.15)] overflow-hidden lg:max-h-[85vh] flex flex-col">
+        <div className="max-w-4xl mx-auto w-full px-4 sm:px-6 flex-1 flex items-start justify-center pt-12 sm:pt-4">
+          <div className="w-full bg-white/90 backdrop-blur-2xl border border-white/60 rounded-[2.5rem] p-6 sm:p-8 shadow-[0_25px_60px_rgba(20,184,166,0.15)] overflow-hidden lg:max-h-[85vh] flex flex-col animate-in fade-in slide-in-from-bottom-8 duration-700">
             
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-6">
               <h2 className="text-2xl sm:text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-teal-600 to-cyan-600 tracking-tight">

@@ -33,7 +33,7 @@ export function ContentCard({ content, onClick }: ContentCardProps) {
   const typeGradients: Record<string, string> = {
     game: "from-[#14B8A6] to-[#0D9488]", // Teal 
     video: "from-[#EC4899] to-[#F43F5E]", // Pink/Rose
-    activity: "from-[#F59E0B] to-[#EA580C]", // Amber/Orange
+    activity: "from-[#fcd34d] via-[#fbbf24] to-[#f59e0b]", // Bright Vibrant Gold/Amber
     module: "from-[#4F46E5] to-[#7C3AED]", // Indigo/Violet
     exam: "from-[#EF4444] to-[#B91C1C]", // Red
   }
@@ -56,101 +56,124 @@ export function ContentCard({ content, onClick }: ContentCardProps) {
     <>
       {/* Visual Header Section */}
       <div className={cn(
-        "relative h-40 sm:h-60 w-full flex items-center justify-center bg-gradient-to-br overflow-hidden z-0 shrink-0",
+        "relative h-40 sm:h-52 w-full flex items-center justify-center bg-gradient-to-br overflow-hidden z-0 shrink-0 transition-all duration-500",
         typeGradients[content.type] || "from-slate-400 to-slate-600"
       )}>
         {/* Subtle Glassmorphism Patterns / Lighting */}
         <div className="absolute inset-0 bg-white/10 opacity-30 mix-blend-overlay bg-[url('/noise.png')] pointer-events-none"></div>
-        <div className="absolute -top-24 -right-24 w-64 h-64 bg-white/20 blur-[50px] rounded-full pointer-events-none transition-transform duration-700 group-hover:scale-150"></div>
-        <div className="absolute -bottom-24 -left-24 w-64 h-64 bg-black/10 blur-[50px] rounded-full pointer-events-none"></div>
+        <div className="absolute -top-16 -right-16 w-48 h-48 bg-white/20 blur-[40px] rounded-full pointer-events-none transition-transform duration-700 group-hover:scale-150"></div>
+        <div className="absolute -bottom-16 -left-16 w-48 h-48 bg-black/10 blur-[40px] rounded-full pointer-events-none"></div>
 
-        {/* Status badges */}
-        <div className="absolute top-3 right-3 sm:top-5 sm:right-5 flex flex-col gap-1.5 sm:gap-2 z-20">
+        {/* Quest Type Label (Top Left) */}
+        <div className="absolute top-3 left-3 z-20">
+           <div className={cn(
+             "backdrop-blur-md text-white font-black text-[9px] sm:text-[10px] tracking-widest uppercase px-3 py-1 rounded-full border-2 border-white/30 shadow-lg",
+             content.type === "module" ? "bg-yellow-500/80" : "bg-black/30"
+           )}>
+             {content.type === "module" ? "⭐ MISSION" : content.type}
+           </div>
+        </div>
+
+        {/* Status badges (Top Right) */}
+        <div className="absolute top-3 right-3 flex flex-col gap-1.5 z-20">
           {content.isNew && (
-            <div className="bg-white text-rose-500 font-extrabold text-[9px] sm:text-xs tracking-wider uppercase px-3 py-1 sm:px-4 sm:py-1.5 rounded-full shadow-lg animate-pulse border border-rose-100">
+            <div className="bg-white text-rose-500 font-black text-[9px] sm:text-[10px] tracking-wider uppercase px-3 py-1 rounded-full shadow-xl animate-bounce border-2 border-rose-100">
               New!
             </div>
           )}
           {content.isCompleted && (
-            <div className="bg-[#10B981] text-white font-extrabold text-[9px] sm:text-xs tracking-wider uppercase px-3 py-1 sm:px-4 sm:py-1.5 rounded-full shadow-lg flex items-center gap-1.5 border border-emerald-400">
-              <CheckCircle className="h-3 w-3 sm:h-4 sm:w-4" /> Done
+            <div className="bg-[#10B981] text-white font-black text-[9px] sm:text-[10px] tracking-wider uppercase px-3 py-1 rounded-full shadow-xl flex items-center gap-1.5 border-2 border-emerald-400">
+              <CheckCircle className="h-3 w-3" /> DONE
             </div>
           )}
         </div>
 
-        {/* Top left type indicator */}
-        <div className="absolute top-3 left-3 sm:top-5 sm:left-5 z-20">
-           <div className="bg-black/20 backdrop-blur-md text-white font-bold text-[9px] sm:text-xs tracking-widest uppercase px-3 py-1 sm:px-4 sm:py-1.5 rounded-full border border-white/20 shadow-sm">
-             {content.type}
-           </div>
-        </div>
-
         {/* Lock overlay */}
         {content.isLocked && (
-          <div className="absolute inset-0 bg-slate-900/40 backdrop-blur-[2px] flex items-center justify-center z-30">
-            <Lock className="h-16 w-16 text-white/90 drop-shadow-2xl" />
+          <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-[3px] flex items-center justify-center z-30">
+            <div className="bg-white/10 p-4 rounded-full border-2 border-white/20">
+              <Lock className="h-10 w-10 text-white drop-shadow-2xl" />
+            </div>
           </div>
         )}
 
         {/* Central Graphic */}
         <div className={cn(
-           "z-10 transition-transform duration-500",
-           !content.isLocked && "group-hover:scale-110 group-hover:-translate-y-1"
+           "absolute inset-0 z-10 transition-all duration-700 flex items-center justify-center",
+           !content.isLocked && "group-hover:scale-110"
         )}>
           {content.emoji ? (
-            <div className="text-7xl sm:text-9xl drop-shadow-2xl">{content.emoji}</div>
+            <div className="text-5xl sm:text-8xl drop-shadow-2xl group-hover:-translate-y-2 transition-transform duration-500">{content.emoji}</div>
           ) : content.imageUrl && !imageError ? (
-            <img
-              src={content.imageUrl}
-              alt={content.title}
-              className="w-28 h-28 sm:w-44 sm:h-44 object-contain drop-shadow-2xl"
-              onError={() => setImageError(true)}
-            />
+            <div className="relative w-full h-full">
+               <img
+                 src={content.imageUrl}
+                 alt={content.title}
+                 className="w-full h-full object-cover transition-all duration-700"
+                 onError={() => setImageError(true)}
+               />
+               {/* Subtle Overlay to make text/status more readable if needed, though they are already positioned well */}
+               <div className="absolute inset-0 bg-black/5 group-hover:bg-transparent transition-colors duration-500"></div>
+            </div>
           ) : (
-            <div className="text-7xl sm:text-9xl drop-shadow-2xl">{typeIcons[content.type]}</div>
+            <div className="text-5xl sm:text-8xl drop-shadow-2xl group-hover:-translate-y-2 transition-transform duration-500">{typeIcons[content.type]}</div>
           )}
         </div>
 
-        {/* Detail Badges Bottom */}
-        {content.difficulty && (
-          <div className="absolute bottom-3 right-3 sm:bottom-5 sm:right-5 z-20">
-            <div className={cn("font-bold text-[9px] sm:text-xs uppercase tracking-wider px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-full shadow-md", badgeColors[content.difficulty] || "bg-slate-500 text-white")}>
-              {content.difficulty}
+        {/* Badge Reward Preview (Bottom Right) */}
+        {content.type === "module" && !content.isCompleted && (
+          <div className="absolute bottom-3 right-3 z-20 group-hover:translate-y-[-2px] transition-transform">
+            <div className="bg-white/90 backdrop-blur-sm p-1.5 rounded-xl border-2 border-yellow-400 shadow-lg flex items-center gap-1.5">
+               <div className="bg-yellow-100 h-6 w-6 rounded-full flex items-center justify-center text-sm">🎖️</div>
+               <div className="flex flex-col">
+                  <span className="text-[7px] font-black text-slate-800 leading-tight">Badge</span>
+               </div>
             </div>
           </div>
         )}
       </div>
 
       {/* Text Content Section */}
-      <div className="p-5 sm:p-8 flex-1 flex flex-col bg-white z-10 relative">
-        <h3 className="font-extrabold text-xl sm:text-3xl text-slate-800 leading-tight mb-2 sm:mb-3 group-hover:text-[#4F46E5] transition-colors line-clamp-2">
+      <div className="p-4 sm:p-6 flex-1 flex flex-col bg-white z-10 relative">
+        <h3 className="font-black text-lg sm:text-xl text-slate-800 leading-tight mb-2 group-hover:text-indigo-600 transition-colors line-clamp-1 tracking-tight">
           {content.title}
         </h3>
 
         {content.description && (
-          <p className="text-[13px] sm:text-base text-slate-500 font-medium leading-relaxed mb-4 sm:mb-8 line-clamp-2">
+          <p className="text-[12px] sm:text-[13px] text-slate-500 font-bold leading-relaxed mb-4 sm:mb-6 line-clamp-2">
             {content.description}
           </p>
         )}
 
         {/* Footer Actions */}
-        <div className="mt-auto flex items-center justify-between pt-4 sm:pt-5 border-t-2 border-slate-50">
+        <div className="mt-auto flex items-center justify-between pt-4 border-t-2 border-slate-50">
           {content.duration ? (
-            <div className="flex items-center gap-1 sm:gap-1.5 text-xs sm:text-sm font-bold text-slate-400">
-              <Play className="h-3 w-3 sm:h-4 sm:w-4" />
+            <div className="flex items-center gap-1.5 text-[10px] sm:text-xs font-black text-slate-400 uppercase tracking-wide">
+              <Play className="h-3 w-3 sm:h-4 sm:w-4 fill-slate-400" />
               <span>{content.duration}</span>
             </div>
           ) : (
-            <div />
+            <div className="flex items-center gap-1.5 text-[10px] sm:text-xs font-black text-slate-400 uppercase tracking-wide">
+               {content.difficulty && (
+                 <span className={cn("px-2 py-0.5 rounded-md text-white", badgeColors[content.difficulty])}>
+                    {content.difficulty}
+                 </span>
+               )}
+            </div>
           )}
 
           {!content.isLocked ? (
-            <div className="flex items-center gap-1.5 sm:gap-2 text-[#4F46E5] bg-indigo-50/50 px-4 py-2 sm:px-5 sm:py-2.5 rounded-xl sm:rounded-2xl font-bold text-[13px] sm:text-base transition-colors group-hover:bg-[#4F46E5] group-hover:text-white shadow-sm hover:shadow-md">
-              <span>{content.type === "game" ? "Play Now" : content.type === "video" ? "Watch" : "Start"}</span>
-              <ArrowRight className="h-3.5 w-3.5 sm:h-5 sm:w-5 group-hover:translate-x-1 transition-transform" />
+            <div className={cn(
+              "flex items-center gap-1.5 sm:gap-2 px-4 py-2 sm:px-5 sm:py-2.5 rounded-xl sm:rounded-2xl font-black text-[11px] sm:text-sm transition-all shadow-md active:translate-y-0.5 active:shadow-none",
+              (content.type === "module" || content.type === "activity")
+                ? "bg-yellow-400 text-amber-900 shadow-[0_3px_0_0_#ca8a04] sm:shadow-[0_4px_0_0_#ca8a04] hover:bg-yellow-300" 
+                : "bg-indigo-600 text-white shadow-[0_3px_0_0_#4338ca] sm:shadow-[0_4px_0_0_#4338ca] hover:bg-indigo-500"
+            )}>
+              <span>{content.type === "game" ? "PLAY" : content.type === "video" ? "WATCH" : "START"}</span>
+              <ArrowRight className="h-3.5 w-3.5 sm:h-4 sm:w-4 group-hover:translate-x-1 transition-transform" strokeWidth={3} />
             </div>
           ) : (
-            <div className="text-[10px] sm:text-sm font-bold text-slate-400 uppercase tracking-wider bg-slate-100 px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg sm:rounded-xl">
+            <div className="text-[10px] sm:text-xs font-black text-slate-400 uppercase tracking-widest bg-slate-50 px-4 py-2 rounded-xl border border-slate-100">
               Locked
             </div>
           )}
@@ -165,7 +188,8 @@ export function ContentCard({ content, onClick }: ContentCardProps) {
         onClick={(e) => { e.preventDefault(); if (onClick) onClick(); }}
         className={cn(
           "group relative flex flex-col h-full w-full rounded-3xl sm:rounded-[2.5rem] overflow-hidden bg-white transition-all duration-500 ease-out",
-          "opacity-60 cursor-not-allowed filter grayscale-[0.3]"
+          "opacity-60 cursor-not-allowed filter grayscale-[0.3]",
+          content.type === "module" && "ring-4 ring-yellow-400 shadow-[0_0_20px_rgba(250,204,21,0.3)]"
         )}
       >
         {innerContent}
@@ -179,7 +203,8 @@ export function ContentCard({ content, onClick }: ContentCardProps) {
       onClick={() => { if (onClick) onClick() }}
       className={cn(
          "group relative flex flex-col h-full w-full rounded-3xl sm:rounded-[2.5rem] overflow-hidden bg-white transition-all duration-500 ease-out",
-         "hover:shadow-[0_20px_40px_rgba(0,0,0,0.12)] hover:-translate-y-2 cursor-pointer shadow-[0_8px_30px_rgba(0,0,0,0.06)] border border-slate-100"
+         "hover:shadow-[0_20px_40px_rgba(0,0,0,0.12)] hover:-translate-y-2 cursor-pointer shadow-[0_8px_30px_rgba(0,0,0,0.06)] border border-slate-100",
+         content.type === "module" && "ring-4 ring-yellow-400 shadow-[0_10px_30px_rgba(250,204,21,0.2)] hover:shadow-[0_20px_40px_rgba(250,204,21,0.4)]"
       )}
     >
       {innerContent}

@@ -13,11 +13,11 @@ interface KidsNavBarProps {
 
 export function KidsNavBar({ activeCategory, onCategoryChange }: KidsNavBarProps) {
   const categories = [
-    { id: "all" as ContentCategory, label: "All", icon: Home, color: "bg-slate-500 hover:bg-slate-400", shadow: "shadow-[0_4px_0_0_#334155] hover:shadow-[0_6px_0_0_#334155]" },
-    { id: "videos" as ContentCategory, label: "Videos", icon: Video, color: "bg-purple-500 hover:bg-purple-400", shadow: "shadow-[0_4px_0_0_#7e22ce] hover:shadow-[0_6px_0_0_#7e22ce]" },
-    { id: "games" as ContentCategory, label: "Games", icon: Gamepad2, color: "bg-green-500 hover:bg-green-400", shadow: "shadow-[0_4px_0_0_#15803d] hover:shadow-[0_6px_0_0_#15803d]" },
-    { id: "activities" as ContentCategory, label: "Activities", icon: Sparkles, color: "bg-yellow-400 hover:bg-yellow-300", shadow: "shadow-[0_4px_0_0_#b45309] hover:shadow-[0_6px_0_0_#b45309]" },
-    { id: "modules" as ContentCategory, label: "My Lessons", icon: BookOpen, color: "bg-blue-500 hover:bg-blue-400", shadow: "shadow-[0_4px_0_0_#1d4ed8] hover:shadow-[0_6px_0_0_#1d4ed8]" },
+    { id: "all" as ContentCategory, label: "All Missions", icon: Home, color: "bg-slate-500 hover:bg-slate-400", shadow: "shadow-[0_6px_0_0_#334155] hover:shadow-[0_4px_0_0_#334155]" },
+    { id: "videos" as ContentCategory, label: "Mission Intel", icon: Video, color: "bg-[#9333ea] hover:bg-[#a855f7]", shadow: "shadow-[0_6px_0_0_#6b21a8] hover:shadow-[0_4px_0_0_#6b21a8]" },
+    { id: "games" as ContentCategory, label: "Training Ground", icon: Gamepad2, color: "bg-[#16a34a] hover:bg-[#22c55e]", shadow: "shadow-[0_6px_0_0_#166534] hover:shadow-[0_4px_0_0_#166534]" },
+    { id: "activities" as ContentCategory, label: "Challenges", icon: Sparkles, color: "bg-[#eab308] hover:bg-[#facc15]", shadow: "shadow-[0_6px_0_0_#854d0e] hover:shadow-[0_4px_0_0_#854d0e]" },
+    { id: "modules" as ContentCategory, label: "My Progress", icon: BookOpen, color: "bg-[#2563eb] hover:bg-[#3b82f6]", shadow: "shadow-[0_6px_0_0_#1e40af] hover:shadow-[0_4px_0_0_#1e40af]" },
   ]
 
   return (

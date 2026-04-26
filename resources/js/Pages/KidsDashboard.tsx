@@ -4,14 +4,13 @@ import { useEffect, useState } from "react"
 import { router } from '@inertiajs/react'
 import { useAuth } from "@/lib/auth-context"
 import { Navigation } from "@/Components/navigation"
-import { KidsWelcomeBanner } from "@/components/kids-welcome-banner"
-import { KidsNavBar, ContentCategory } from "@/components/kids-nav-bar"
-import { ContentGrid } from "@/components/content-grid"
-import type { ContentCardData } from "@/components/content-card"
+import { KidsWelcomeBanner } from "@/Components/kids-welcome-banner"
+import { ContentGrid } from "@/Components/content-grid"
+import { ContentCard, ContentCardData } from "@/Components/content-card"
 import { Footer } from "@/Components/footer"
 import DashboardLayout from "@/Layouts/DashboardLayout"
 import React from "react"
-import Particles from "@/components/ui/particles"
+import Particles from "@/Components/ui/particles"
 import { useSettings } from "@/lib/settings-context"
 
 interface KidsPageProps {
@@ -22,9 +21,7 @@ interface KidsPageProps {
 const KidsDashboardPage = ({}: KidsPageProps) => {
   const { user, isAuthenticated, isLoading } = useAuth()
   const { reduceMotion } = useSettings()
-  const [activeCategory, setActiveCategory] = useState<ContentCategory>("all")
   const [allContent, setAllContent] = useState<ContentCardData[]>([])
-  const [filteredContent, setFilteredContent] = useState<ContentCardData[]>([])
   const [isMobile, setIsMobile] = useState(false)
 
   useEffect(() => {
@@ -34,92 +31,98 @@ const KidsDashboardPage = ({}: KidsPageProps) => {
     return () => window.removeEventListener('resize', handleResize)
   }, [])
 
-  // Load content
+  const [completedModules, setCompletedModules] = useState<number[]>([])
+
+  // Load content and progress
   useEffect(() => {
-    // Create content array with games, videos, and modules
-    const content: ContentCardData[] = [
-      // SafeScape Course - The main learning course
-      {
-        id: "safescape-course",
-        title: "🔥 SafeScape Fire Safety Course",
-        description: "Complete 5 exciting modules to become a Fire Safety Hero! Learn about the Fire Triangle, escape plans, and more!",
-        type: "module",
-        emoji: "🛡️",
-        href: "/kids/safescape",
-        isNew: true,
-        category: "modules"
-      },
+    const fetchData = async () => {
+      try {
+        let completedIds: number[] = []
+        
+        // Fetch progress
+        const progressResponse = await fetch('/api/kids/safescape')
+        if (progressResponse.ok) {
+          const progressData = await progressResponse.json()
+          completedIds = progressData.completedModules || []
+          setCompletedModules(completedIds)
+        }
 
-      // Games
-      // (Games mapped for replacement next month)
+        // Create content array with games, videos, and modules
+        const content: ContentCardData[] = [
+          {
+            id: "safescape-course",
+            title: "🔥 SafeScape Fire Safety Course",
+            description: "Complete 5 exciting modules to become a Fire Safety Hero! Learn about the Fire Triangle, escape plans, and more!",
+            type: "module",
+            emoji: "🛡️",
+            href: "/kids/safescape",
+            isNew: true,
+            category: "modules",
+            isCompleted: completedIds.length >= 5
+          },
+          {
+            id: "video-game",
+            title: "🎮 Fire Safety Adventure",
+            description: "The ultimate 3D fire safety game is under development. Prepare for an epic mission!",
+            type: "game",
+            emoji: "🕹️",
+            href: "#",
+            isLocked: true,
+            category: "games",
+            duration: "Coming Soon!"
+          },
+          {
+            id: "video-portal",
+            title: "🎬 Mission Intel",
+            description: "Watch exciting videos and learn how to be a Fire Safety Hero! New intel added every week.",
+            type: "video",
+            emoji: "📺",
+            href: "/kids/videos",
+            duration: "Full Library",
+            category: "videos"
+          },
+          // Unified Activity Portal (Shown in "All" view)
+          {
+            id: "activity-portal",
+            title: "✨ Challenge Center",
+            description: "Test your skills with quizzes and memory games! Earn extra points and show off your knowledge.",
+            type: "activity",
+            emoji: "🏆",
+            href: "/kids/challenges",
+            difficulty: "medium",
+            category: "activities"
+          },
+          {
+            id: "more-content",
+            title: "✨ More Missions Coming!",
+            description: "We're busy building new adventures for our Fire Safety Heroes! Keep practicing your skills.",
+            type: "activity",
+            emoji: "🚀",
+            href: "#",
+            isLocked: true,
+            category: "activities",
+            duration: "More contents soon!"
+          },
+        ]
 
-      // Videos
-      {
-        id: "video-1",
-        title: "Fire Safety Basics",
-        description: "Learn the fundamentals of staying safe from fire",
-        type: "video",
-        emoji: "📺",
-        href: "/kids/videos",
-        duration: "5 min",
-        category: "videos"
-      },
-      {
-        id: "video-2",
-        title: "Stop, Drop, and Roll",
-        description: "What to do if your clothes catch fire",
-        type: "video",
-        emoji: "🎬",
-        href: "/kids/videos",
-        duration: "3 min",
-        category: "videos"
-      },
+        setAllContent(content)
+      } catch (err) {
+        console.error("Failed to fetch dashboard data:", err)
+      }
+    }
 
-      // Activities
-      {
-        id: "activity-1",
-        title: "Fire Safety Quiz",
-        description: "Test your knowledge with fun questions!",
-        type: "activity",
-        emoji: "❓",
-        href: "/kids/quiz",
-        difficulty: "medium",
-        category: "activities"
-      },
-      {
-        id: "activity-2",
-        title: "Memory Game",
-        description: "Match fire safety symbols and tools",
-        type: "activity",
-        emoji: "🧠",
-        href: "/kids/memory-game",
-        difficulty: "easy",
-        category: "activities"
-      },
-    ]
-
-    setAllContent(content)
-    setFilteredContent(content)
+    fetchData()
   }, [])
 
-  // Filter content
-  useEffect(() => {
-    if (activeCategory === "all") {
-      setFilteredContent(allContent)
-    } else {
-      const categoryMap: { [key in ContentCategory]?: string } = {
-        games: "game",
-        videos: "video",
-        activities: "activity",
-        modules: "module"
-      }
-      const filterType = categoryMap[activeCategory]
-      setFilteredContent(allContent.filter(c => c.type === filterType || c.category === activeCategory))
-    }
-  }, [activeCategory, allContent])
+  const handleContentClick = (content: ContentCardData) => {
+    router.visit(content.href)
+  }
 
   return (
-    <div className="min-h-screen relative overflow-hidden">
+    <div 
+      className="min-h-screen relative overflow-hidden bg-cover bg-center bg-fixed"
+      style={{ backgroundImage: "url('/challenges-bg.png')" }}
+    >
       {/* Animated Particles Background - Fire themed (Hidden on Mobile or when Reduce Motion is on) */}
       {!isMobile && !reduceMotion && (
         <>
@@ -154,18 +157,13 @@ const KidsDashboardPage = ({}: KidsPageProps) => {
 
         <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           {/* Welcome Banner */}
-          <KidsWelcomeBanner />
-
-          {/* Navigation Bar */}
-          <KidsNavBar
-            activeCategory={activeCategory}
-            onCategoryChange={setActiveCategory}
-          />
+          <KidsWelcomeBanner completedModules={completedModules} />
 
           {/* Content Grid */}
           <ContentGrid
-            contents={filteredContent}
-            emptyMessage={`No ${activeCategory === "all" ? "" : activeCategory} content available yet. Check back soon! 🎉`}
+            contents={allContent}
+            onCardClick={handleContentClick}
+            emptyMessage="No content available yet. Check back soon! 🎉"
           />
         </main>
       </div>

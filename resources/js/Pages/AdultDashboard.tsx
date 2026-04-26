@@ -54,69 +54,67 @@ const AdultPageClient = ({ initialBlogs }: AdultPageClientProps) => {
                 </div>
 
                 {/* Feature Cards */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 md:gap-8 mb-8 sm:mb-12">
-                    <Link href="#articles-section" onClick={(e) => { e.preventDefault(); document.getElementById('articles-section')?.scrollIntoView({ behavior: 'smooth' }) }} className="block group h-full outline-none">
-                        <div className="relative overflow-hidden bg-white border-[3px] sm:border-[4px] border-white rounded-2xl sm:rounded-[1.5rem] shadow-[0_6px_0_#cbd5e1] sm:shadow-[0_8px_0_#cbd5e1] hover:shadow-[0_8px_0_#cbd5e1] sm:hover:shadow-[0_12px_0_#cbd5e1] hover:-translate-y-1 sm:hover:-translate-y-1.5 active:translate-y-[6px] sm:active:translate-y-[8px] active:shadow-[0_0px_0_#cbd5e1] transition-all duration-300 flex flex-col h-full">
-                            <div className="absolute inset-0 bg-gradient-to-br from-amber-50 to-orange-50/50 opacity-0 group-hover:opacity-100 transition-opacity z-0 pointer-events-none"></div>
-                            
-                            <div className="h-28 sm:h-40 w-full border-b-[4px] border-slate-100 relative overflow-hidden bg-slate-50">
-                                <img
-                                    src="/Articles Modal.png"
-                                    alt="Articles Background"
-                                    className="absolute inset-0 w-full h-full object-cover mix-blend-multiply opacity-30 group-hover:opacity-40 transition-opacity duration-500 group-hover:scale-105"
-                                />
-                                <div className="absolute inset-0 bg-gradient-to-t from-white to-transparent"></div>
-                                <div className="absolute bottom-2 sm:bottom-4 left-3 sm:left-4 bg-white p-2 sm:p-3 rounded-xl sm:rounded-2xl border-[3px] border-slate-100 shadow-sm transform -rotate-3 group-hover:rotate-0 transition-transform">
-                                    <BookOpen className="h-5 w-5 sm:h-7 sm:w-7 text-orange-500" strokeWidth={2.5} />
-                                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 mb-10 sm:mb-12">
+                    {/* Fire Safety Articles Feature */}
+                    <Link 
+                        href="#articles-section" 
+                        onClick={(e) => { e.preventDefault(); document.getElementById('articles-section')?.scrollIntoView({ behavior: 'smooth' }) }} 
+                        className="block group h-full outline-none"
+                    >
+                        <div className="relative overflow-hidden bg-white rounded-[2rem] p-4 flex items-center gap-4 sm:gap-6 shadow-[0_8px_0_#cbd5e1] hover:shadow-[0_12px_0_#cbd5e1] hover:-translate-y-1 transition-all duration-300 border-[3px] border-white h-full">
+                            {/* Subtle Background Image */}
+                            <div className="absolute inset-0 z-0 opacity-[0.05] group-hover:opacity-[0.08] transition-opacity duration-500">
+                                <img src="/Articles Modal.png" className="w-full h-full object-cover" alt="" />
                             </div>
-                            
-                            <div className="p-4 sm:p-6 flex-1 flex flex-col relative z-10 bg-white">
-                                <h3 className="text-lg sm:text-2xl font-black text-slate-800 mb-2 group-hover:text-orange-600 transition-colors">Fire Safety Articles</h3>
-                                <p className="text-slate-500 font-bold text-xs sm:text-sm leading-relaxed mb-4 sm:mb-5 flex-1">
-                                    Read comprehensive articles on home fire safety, prevention tips, and emergency preparedness.
+
+                            {/* Icon Box */}
+                            <div className="h-16 w-16 sm:h-20 sm:w-20 rounded-[1.5rem] bg-white border-[3px] border-slate-100 flex items-center justify-center shrink-0 shadow-sm z-10 group-hover:scale-105 transition-transform">
+                                <BookOpen className="h-8 w-8 sm:h-10 sm:w-10 text-orange-500" strokeWidth={2.5} />
+                            </div>
+
+                            {/* Content */}
+                            <div className="flex-1 z-10">
+                                <h3 className="text-xl sm:text-2xl font-black text-slate-800 leading-tight group-hover:text-orange-600 transition-colors">
+                                    Fire Safety Articles
+                                </h3>
+                                <p className="text-slate-500 font-bold text-xs sm:text-sm mt-1 sm:mt-1.5 line-clamp-1 sm:line-clamp-2">
+                                    {blogs.length} professional fire safety guides
                                 </p>
-                                
-                                <div className="mt-auto flex items-center justify-between pt-4 border-t-[3px] border-dashed border-slate-100">
-                                    <span className="text-orange-600 font-black text-[10px] sm:text-xs uppercase tracking-wider bg-orange-50 px-2 sm:px-3 py-1 sm:py-1.5 rounded-xl border-2 border-orange-100">
-                                        {blogs.length} articles
-                                    </span>
-                                    <div className="h-8 w-8 sm:h-10 sm:w-10 bg-slate-50 rounded-full border-2 border-slate-200 flex items-center justify-center text-slate-400 group-hover:bg-orange-500 group-hover:border-orange-600 group-hover:text-white transition-colors shadow-sm">
-                                        <ArrowRight className="h-4 w-4 sm:h-5 sm:w-5" strokeWidth={3} />
-                                    </div>
-                                </div>
+                            </div>
+
+                            {/* Arrow */}
+                            <div className="h-10 w-10 sm:h-12 sm:w-12 bg-slate-50 rounded-full border-[3px] border-slate-100 flex items-center justify-center text-slate-300 group-hover:bg-orange-500 group-hover:text-white group-hover:border-orange-600 transition-all z-10 shrink-0">
+                                <ArrowRight className="h-5 w-5 sm:h-6 sm:w-6" strokeWidth={3} />
                             </div>
                         </div>
                     </Link>
 
+                    {/* EDITH Feature */}
                     <Link href="/adult/simulation" className="block group h-full outline-none">
-                        <div className="relative overflow-hidden bg-white border-[3px] sm:border-[4px] border-white rounded-2xl sm:rounded-[1.5rem] shadow-[0_6px_0_#cbd5e1] sm:shadow-[0_8px_0_#cbd5e1] hover:shadow-[0_8px_0_#cbd5e1] sm:hover:shadow-[0_12px_0_#cbd5e1] hover:-translate-y-1 sm:hover:-translate-y-1.5 active:translate-y-[6px] sm:active:translate-y-[8px] active:shadow-[0_0px_0_#cbd5e1] transition-all duration-300 flex flex-col h-full">
-                            <div className="absolute inset-0 bg-gradient-to-br from-red-50 to-rose-50/50 opacity-0 group-hover:opacity-100 transition-opacity z-0 pointer-events-none"></div>
-                            
-                            <div className="h-28 sm:h-40 w-full border-b-[3px] sm:border-[4px] border-slate-100 relative overflow-hidden bg-slate-50">
-                                <img
-                                    src="/EDITH Modal.png"
-                                    alt="EDITH Background"
-                                    className="absolute inset-0 w-full h-full object-cover mix-blend-multiply opacity-30 group-hover:opacity-40 transition-opacity duration-500 group-hover:scale-105"
-                                />
-                                <div className="absolute inset-0 bg-gradient-to-t from-white to-transparent"></div>
-                                <div className="absolute bottom-2 sm:bottom-4 left-3 sm:left-4 bg-white p-2 sm:p-3 rounded-xl sm:rounded-2xl border-[2px] sm:border-[3px] border-slate-100 shadow-sm transform rotate-3 group-hover:rotate-0 transition-transform">
-                                    <Flame className="h-5 w-5 sm:h-7 sm:w-7 text-red-500" strokeWidth={2.5} />
-                                </div>
+                        <div className="relative overflow-hidden bg-white rounded-[2rem] p-4 flex items-center gap-4 sm:gap-6 shadow-[0_8px_0_#cbd5e1] hover:shadow-[0_12px_0_#cbd5e1] hover:-translate-y-1 transition-all duration-300 border-[3px] border-white h-full">
+                            {/* Subtle Background Image */}
+                            <div className="absolute inset-0 z-0 opacity-[0.05] group-hover:opacity-[0.08] transition-opacity duration-500">
+                                <img src="/EDITH Modal.png" className="w-full h-full object-cover" alt="" />
                             </div>
-                            
-                            <div className="p-4 sm:p-6 flex-1 flex flex-col relative z-10 bg-white">
-                                <h3 className="text-lg sm:text-2xl font-black text-slate-800 mb-2 group-hover:text-red-600 transition-colors">Exit Drill In The Home (EDITH)</h3>
-                                <p className="text-slate-500 font-bold text-xs sm:text-sm leading-relaxed mb-4 sm:mb-5 flex-1">
-                                    Interactive tool to visualize how fire spreads in different environments.
+
+                            {/* Icon Box */}
+                            <div className="h-16 w-16 sm:h-20 sm:w-20 rounded-[1.5rem] bg-white border-[3px] border-slate-100 flex items-center justify-center shrink-0 shadow-sm z-10 group-hover:scale-105 transition-transform">
+                                <Flame className="h-8 w-8 sm:h-10 sm:w-10 text-red-500" strokeWidth={2.5} />
+                            </div>
+
+                            {/* Content */}
+                            <div className="flex-1 z-10">
+                                <h3 className="text-xl sm:text-2xl font-black text-slate-800 leading-tight group-hover:text-red-600 transition-colors">
+                                    Exit Drill (EDITH)
+                                </h3>
+                                <p className="text-slate-500 font-bold text-xs sm:text-sm mt-1 sm:mt-1.5 line-clamp-1 sm:line-clamp-2">
+                                    Interactive home fire spread simulator
                                 </p>
-                                
-                                <div className="mt-auto pt-4 border-t-[3px] border-dashed border-slate-100">
-                                    <button className="w-full bg-red-500 hover:bg-red-600 text-white font-black py-2 sm:py-3 px-3 sm:px-5 rounded-full shadow-[0_4px_0_#991b1b] group-hover:shadow-[0_6px_0_#991b1b] group-hover:-translate-y-0.5 active:translate-y-[4px] active:shadow-[0_0px_0_#991b1b] transition-all flex items-center justify-center gap-2 uppercase tracking-wide text-[10px] sm:text-xs">
-                                        Launch Simulator
-                                        <ArrowRight className="h-3 w-3 sm:h-4 sm:w-4" strokeWidth={3} />
-                                    </button>
-                                </div>
+                            </div>
+
+                            {/* Arrow */}
+                            <div className="h-10 w-10 sm:h-12 sm:w-12 bg-slate-50 rounded-full border-[3px] border-slate-100 flex items-center justify-center text-slate-300 group-hover:bg-red-500 group-hover:text-white group-hover:border-red-600 transition-all z-10 shrink-0">
+                                <ArrowRight className="h-5 w-5 sm:h-6 sm:w-6" strokeWidth={3} />
                             </div>
                         </div>
                     </Link>

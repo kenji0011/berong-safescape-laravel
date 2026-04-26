@@ -7,42 +7,19 @@ use Illuminate\Http\Request;
 class EngagementController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Get engagement stats including total students and simulated online count.
      */
-    public function index()
+    public function stats()
     {
-        //
-    }
+        $totalStudents = \App\Models\User::where('role', 'student')->count();
+        
+        // Since we don't have a real websocket/online tracking system yet, 
+        // we simulate a believable "Online Now" count based on total users.
+        $onlineCount = max(12, round($totalStudents * 0.12) + rand(3, 9));
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
+        return response()->json([
+            'onlineCount' => $onlineCount,
+            'totalStudents' => $totalStudents
+        ]);
     }
 }

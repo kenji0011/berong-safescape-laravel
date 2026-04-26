@@ -11,6 +11,22 @@ const QuizPage = () => {
   const [isFinished, setIsFinished] = useState(false)
   const [isAnswerRevealed, setIsAnswerRevealed] = useState(false)
   
+  const [soundEffects] = useState({
+    click: new Audio('/sounds/click.mp3'),
+    match: new Audio('/sounds/match.mp3'),
+    wrong: new Audio('/sounds/wrong.mp3'),
+    win: new Audio('/sounds/win.mp3')
+  })
+
+  const playSound = (type: 'click' | 'match' | 'wrong' | 'win') => {
+    const audio = soundEffects[type]
+    if (audio) {
+      audio.currentTime = 0
+      audio.volume = 0.4
+      audio.play().catch(e => console.log("Audio play failed:", e))
+    }
+  }
+  
   const questions = [
     {
       text: "What should you do if your clothes catch on fire?",
@@ -50,6 +66,9 @@ const QuizPage = () => {
     if (!isAnswerRevealed) {
       if (selectedOption === questions[currentQuestionIndex].correctAnswer) {
         setScore(prev => prev + 1)
+        playSound('match')
+      } else {
+        playSound('wrong')
       }
       setIsAnswerRevealed(true)
       return
@@ -61,16 +80,21 @@ const QuizPage = () => {
       setIsAnswerRevealed(false)
     } else {
       setIsFinished(true)
+      playSound('win')
     }
   }
 
   if (isFinished) {
     return (
-      <div className="min-h-screen relative flex flex-col font-sans bg-gradient-to-br from-[#FFF7ED] via-[#FFEDD5] to-[#FED7AA] selection:bg-orange-300 selection:text-orange-900">
-        {/* Decorative Blob Background */}
-        <div className="absolute top-0 right-0 w-full h-full overflow-hidden pointer-events-none z-0">
-          <div className="absolute -top-32 -right-32 w-96 h-96 rounded-full bg-orange-400/20 blur-3xl opacity-70 animate-pulse" />
-          <div className="absolute bottom-10 -left-10 w-72 h-72 rounded-full bg-rose-400/20 blur-3xl opacity-70" />
+      <div className="min-h-screen relative flex flex-col font-sans bg-blue-50 selection:bg-orange-300 selection:text-orange-900">
+        {/* Heroic Background */}
+        <div className="absolute inset-0 z-0">
+          <img 
+            src="/challenges-bg.png" 
+            alt="" 
+            className="w-full h-full object-cover opacity-30 mix-blend-multiply" 
+          />
+          <div className="absolute inset-0 bg-gradient-to-b from-blue-50/80 via-white/40 to-blue-50/90"></div>
         </div>
 
         <div className="relative z-10 w-full flex-1 flex items-center justify-center pt-6 pb-12">
@@ -82,7 +106,7 @@ const QuizPage = () => {
                 You scored <span className="text-orange-600 font-black mx-1 text-2xl">{score}</span> out of {questions.length}
               </p>
               <Link 
-                href="/kids" 
+                href="/kids/challenges" 
                 className="bg-gradient-to-r from-orange-500 to-rose-500 text-white shadow-[0_8px_30px_rgba(249,115,22,0.3)] hover:shadow-[0_15px_40px_rgba(249,115,22,0.4)] hover:-translate-y-1 active:translate-y-0 px-10 py-5 rounded-full font-black text-lg transition-all duration-300 w-full mb-2 inline-flex items-center justify-center text-center"
               >
                 Back to Activities
@@ -98,18 +122,22 @@ const QuizPage = () => {
   const progressPercentage = ((currentQuestionIndex) / questions.length) * 100;
 
   return (
-    <div className="min-h-screen relative flex flex-col font-sans bg-gradient-to-br from-[#FFF7ED] via-[#FFEDD5] to-[#FED7AA] selection:bg-orange-300 selection:text-orange-900">
-      {/* Decorative Blob Background */}
-      <div className="absolute top-0 right-0 w-full h-full overflow-hidden pointer-events-none z-0">
-        <div className="absolute top-20 -left-32 w-96 h-96 rounded-full bg-orange-400/20 blur-3xl opacity-60" />
-        <div className="absolute bottom-20 -right-20 w-80 h-80 rounded-full bg-rose-400/20 blur-3xl opacity-60 animate-pulse duration-1000" />
+    <div className="min-h-screen relative flex flex-col font-sans bg-blue-50 selection:bg-orange-300 selection:text-orange-900">
+      {/* Heroic Background */}
+      <div className="absolute inset-0 z-0">
+        <img 
+          src="/challenges-bg.png" 
+          alt="" 
+          className="w-full h-full object-cover opacity-30 mix-blend-multiply" 
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-blue-50/80 via-white/40 to-blue-50/90"></div>
       </div>
 
       <div className="relative z-10 w-full flex-1 flex flex-col py-4 pb-28 sm:pb-4">
         {/* Ghost Header - absolute positioned to save vertical space */}
         <div className="absolute top-2 left-4 z-20">
           <Link 
-            href="/kids" 
+            href="/kids/challenges" 
             className="inline-flex items-center gap-2 text-slate-500 font-bold hover:text-orange-600 transition-all text-sm bg-white/60 backdrop-blur-sm px-4 py-2 rounded-full border border-white/60 shadow-sm"
           >
             <ArrowLeft className="h-4 w-4" />
@@ -152,7 +180,12 @@ const QuizPage = () => {
                 return (
                   <div 
                     key={index}
-                    onClick={() => { if (!isAnswerRevealed) setSelectedOption(index) }}
+                    onClick={() => { 
+                      if (!isAnswerRevealed) {
+                        setSelectedOption(index)
+                        playSound('click')
+                      } 
+                    }}
                     className={cn(
                       "w-full rounded-2xl p-4 sm:p-5 text-left font-bold text-base sm:text-lg transition-all duration-300 relative overflow-hidden group border-2 flex items-center justify-between",
                       !isAnswerRevealed && isSelected 

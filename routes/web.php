@@ -74,6 +74,10 @@ Route::get('/about', function () {
         return Inertia::render('Kids/MemoryGame');
     })->name('kids.memory');
 
+    Route::get('/kids/challenges', function () {
+        return Inertia::render('Kids/Challenges');
+    })->name('kids.challenges');
+
     Route::get('/kids/certificate', function () {
         return Inertia::render('Kids/Certificate');
     })->name('kids.certificate');
