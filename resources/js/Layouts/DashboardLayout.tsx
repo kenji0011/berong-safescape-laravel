@@ -9,11 +9,13 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         <RootLayout>
             <div className="min-h-screen relative flex flex-col">
                 <Navigation />
-                <div className="flex-1 w-full text-scalable">
+                <div className="flex-1 w-full text-scalable relative z-10">
                     {children}
                 </div>
-                <Footer />
-                <FeedbackWidget />
+                <div className="relative z-50">
+                    <Footer />
+                    <FeedbackWidget />
+                </div>
             </div>
         </RootLayout>
     );

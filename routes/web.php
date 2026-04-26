@@ -4,6 +4,7 @@ use App\Http\Controllers\ProfileController;
 use App\Models\BlogPost;
 use App\Models\KidsModule;
 use Illuminate\Foundation\Application;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -39,14 +40,21 @@ Route::get('/about', function () {
     })->name('profile');
 
     Route::get('/kids', function () {
-        $modules = KidsModule::where('isActive', true)->orderBy('dayNumber')->get();
         return Inertia::render('KidsDashboard', [
-            'modules' => $modules,
+            'modules' => Inertia::defer(fn () => KidsModule::where('isActive', true)->orderBy('dayNumber')->get()),
+            'progress' => Inertia::defer(fn () => [
+                'completedModules' => \App\Models\SafeScapeProgress::where('userId', Auth::id())
+                    ->where('completed', true)
+                    ->pluck('moduleNum')
+                    ->values()
+            ]),
         ]);
     })->name('kids');
 
     Route::get('/kids/safescape', function () {
-        return Inertia::render('Kids/CourseHub');
+        return Inertia::render('Kids/CourseHub', [
+            'initialModules' => Inertia::defer(fn () => app(\App\Http\Controllers\KidsController::class)->modules(request())->getData()),
+        ]);
     })->name('kids.course');
 
     Route::get('/kids/safescape/{moduleNum}', function ($moduleNum) {
@@ -73,6 +81,10 @@ Route::get('/about', function () {
     Route::get('/kids/memory-game', function () {
         return Inertia::render('Kids/MemoryGame');
     })->name('kids.memory');
+
+    Route::get('/kids/smoke-crawl', function () {
+        return Inertia::render('Kids/SmokeCrawl');
+    })->name('kids.smoke_crawl');
 
     Route::get('/kids/challenges', function () {
         return Inertia::render('Kids/Challenges');

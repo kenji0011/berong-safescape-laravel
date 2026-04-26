@@ -456,7 +456,7 @@ const ModuleOnePage = () => {
 
                 {/* Golden Rule Card */}
                 <div className="bg-red-50 border-[3px] border-red-200 rounded-xl sm:rounded-2xl p-4 sm:p-6 flex flex-col items-center justify-center text-center shadow-sm hover:scale-105 transition-transform duration-300">
-                  <div className="bg-red-500 w-10 h-10 sm:w-12 sm:h-12 rounded-full flex items-center justify-center mb-3 sm:mb-4 shadow-md border-[3px] border-white">
+            <div className="bg-red-500 w-10 h-10 sm:w-12 sm:h-12 rounded-full flex items-center justify-center mb-3 sm:mb-4 shadow-md border-[3px] border-white">
                     <span className="text-white text-lg sm:text-xl">✋</span>
                   </div>
                   <h3 className="text-red-600 font-black mb-2 sm:mb-3 uppercase tracking-wider text-[10px] sm:text-xs">Powerful Rule</h3>
@@ -616,30 +616,32 @@ const ModuleOnePage = () => {
 
           {/* ── Module 1 Complete Card ── */}
           {mixerEverCompleted && (
-            <div className="rounded-[2rem] bg-white border-[4px] border-green-200 p-8 sm:p-12 text-center shadow-sm">
-              <div className="h-16 w-16 rounded-full bg-green-500 border-[3px] border-white flex items-center justify-center mx-auto mb-6 shadow-md">
-                <CheckCircle className="h-9 w-9 text-white" strokeWidth={2.5} />
-              </div>
-              <h2 className="text-3xl sm:text-4xl font-black text-slate-800 mb-3">Module 1 Complete!</h2>
-              <p className="text-slate-600 font-bold mb-8 max-w-md mx-auto leading-relaxed">
+            <div className="bg-white rounded-3xl p-8 sm:p-12 border-4 border-green-200 shadow-sm text-center">
+              <CheckCircle className="h-16 w-16 text-green-500 mx-auto mb-4" />
+              <h2 className="text-3xl font-black text-slate-800 mb-2">Module 1 Complete!</h2>
+              <p className="text-slate-600 font-bold mb-8">
                 Great job! You've learned about the Fire Triangle and why fire tools are for grown-ups only.
               </p>
-              {!moduleCompleted ? (
-                <button
-                  onClick={completeModule}
-                  disabled={saving}
-                  className="inline-flex items-center gap-2 sm:gap-3 bg-yellow-400 text-red-600 font-black text-sm sm:text-lg px-6 py-3 sm:px-10 sm:py-4 rounded-full border-[3px] border-white shadow-[0_4px_0_#b45309] hover:-translate-y-0.5 hover:shadow-[0_6px_0_#b45309] active:translate-y-1 active:shadow-[0_0px_0_#b45309] transition-all uppercase tracking-wide disabled:opacity-60"
-                >
-                  {saving ? "Saving..." : "Continue to Module 2 →"}
-                </button>
-              ) : (
-                <Link
-                  href="/kids/safescape/2"
-                  className="inline-flex items-center gap-2 sm:gap-3 bg-yellow-400 text-red-600 font-black text-sm sm:text-lg px-6 py-3 sm:px-10 sm:py-4 rounded-full border-[3px] border-white shadow-[0_4px_0_#b45309] hover:-translate-y-0.5 hover:shadow-[0_6px_0_#b45309] active:translate-y-1 active:shadow-[0_0px_0_#b45309] transition-all uppercase tracking-wide"
-                >
-                  Continue to Module 2 →
-                </Link>
-              )}
+              <div className="flex justify-center">
+                {!moduleCompleted ? (
+                  <button
+                    onClick={completeModule}
+                    disabled={saving}
+                    className="bg-yellow-400 text-red-600 font-black px-10 py-4 rounded-full shadow-[0_4px_0_#b45309] hover:-translate-y-0.5 active:translate-y-1 active:shadow-none transition-all uppercase tracking-wide flex items-center gap-2 disabled:opacity-60"
+                  >
+                    {saving ? "Saving..." : "Continue to Module 2"}
+                    <ArrowLeft className="h-5 w-5 rotate-180" />
+                  </button>
+                ) : (
+                  <Link
+                    href="/kids/safescape/2"
+                    className="bg-yellow-400 text-red-600 font-black px-10 py-4 rounded-full shadow-[0_4px_0_#b45309] hover:-translate-y-0.5 active:translate-y-1 active:shadow-none transition-all uppercase tracking-wide flex items-center gap-2"
+                  >
+                    Continue to Module 2
+                    <ArrowLeft className="h-5 w-5 rotate-180" />
+                  </Link>
+                )}
+              </div>
             </div>
           )}
 

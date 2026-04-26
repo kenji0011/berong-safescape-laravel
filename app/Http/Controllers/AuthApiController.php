@@ -313,6 +313,7 @@ class AuthApiController extends Controller
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
             'email' => 'nullable|email|max:255|unique:users,email,' . $user->id,
+            'avatar' => 'nullable|string|max:50',
             'password' => 'required|string', // To confirm changes
         ]);
 
@@ -326,6 +327,9 @@ class AuthApiController extends Controller
 
         $user->name = $request->name;
         $user->email = $request->email;
+        if ($request->has('avatar')) {
+            $user->avatar = $request->avatar;
+        }
         $user->save();
 
         return response()->json([
@@ -335,10 +339,36 @@ class AuthApiController extends Controller
                 'username' => $user->username,
                 'name' => $user->name,
                 'email' => $user->email,
+                'avatar' => $user->avatar,
                 'role' => $user->role,
                 'age' => $user->age,
                 'profileCompleted' => $user->profileCompleted,
             ]
+        ]);
+    }
+
+    /**
+     * Update the authenticated user's avatar.
+     * PUT /api/auth/update-avatar
+     */
+    public function updateAvatar(Request $request)
+    {
+        $user = $request->user();
+
+        $validator = Validator::make($request->all(), [
+            'avatar' => 'required|string|max:50',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['success' => false, 'error' => $validator->errors()->first()], 422);
+        }
+
+        $user->avatar = $request->avatar;
+        $user->save();
+
+        return response()->json([
+            'success' => true,
+            'avatar' => $user->avatar
         ]);
     }
 

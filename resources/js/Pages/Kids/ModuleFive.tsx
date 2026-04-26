@@ -102,7 +102,7 @@ const ModuleFivePage = ({ moduleNum }: { moduleNum: number }) => {
             const ctaBtn = iframeDoc.createElement('a');
             ctaBtn.id = 'post-test-cta';
             ctaBtn.href = '/assessment/post-test';
-            ctaBtn.className = 'bg-yellow-400 text-red-600 font-black px-6 py-3 sm:px-10 sm:py-4 text-sm sm:text-base rounded-full border-[3px] border-white shadow-[0_4px_0_#b45309] hover:-translate-y-0.5 active:translate-y-1 active:shadow-[0_0px_0_#b45309] transition-all uppercase tracking-wide text-center w-full sm:w-auto block whitespace-nowrap';
+            ctaBtn.className = 'bg-yellow-400 text-red-600 font-black px-6 py-3 sm:px-10 sm:py-4 text-sm sm:text-base rounded-full shadow-[0_4px_0_#b45309] hover:-translate-y-0.5 active:translate-y-1 active:shadow-none transition-all uppercase tracking-wide text-center w-full sm:w-auto block whitespace-nowrap';
             ctaBtn.innerHTML = `Take Post-Test <i class="fa-solid fa-arrow-right ml-2"></i>`;
             
             btnContainer.appendChild(ctaBtn);
@@ -199,7 +199,7 @@ const ModuleFivePage = ({ moduleNum }: { moduleNum: number }) => {
             </div>
             <button
               onClick={() => router.visit('/assessment/post-test')}
-              className="w-full sm:w-auto bg-white hover:bg-yellow-50 text-green-700 font-black px-6 py-3.5 rounded-full border-2 border-white border-b-[4px] border-b-green-200 active:border-b-2 active:translate-y-[2px] shadow-lg transition-all flex items-center justify-center gap-2 text-sm sm:text-base shrink-0 uppercase tracking-wider"
+              className="w-full sm:w-auto bg-white hover:bg-yellow-50 text-green-700 font-black px-6 py-3.5 rounded-full border-b-[4px] border-b-green-200 active:border-b-2 active:translate-y-[2px] shadow-lg transition-all flex items-center justify-center gap-2 text-sm sm:text-base shrink-0 uppercase tracking-wider"
             >
               <ClipboardCheck className="h-5 w-5" />
               Take Post-Test
@@ -208,8 +208,6 @@ const ModuleFivePage = ({ moduleNum }: { moduleNum: number }) => {
           </div>
         </div>
       )}
-
-      {/* ── Post-Test Completed Banner ── */}
       {moduleCompleted && user?.postTestScore !== null && user?.postTestScore !== undefined && (
         <div className="bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500 px-4 sm:px-6 py-6 sm:py-8 relative overflow-hidden animate-in slide-in-from-top fade-in duration-500">
           <div className="absolute inset-0 bg-[url('/noise.png')] opacity-5" />
@@ -225,7 +223,7 @@ const ModuleFivePage = ({ moduleNum }: { moduleNum: number }) => {
             </div>
             <Link
               href="/kids/certificate"
-              className="w-full sm:w-auto bg-white hover:bg-blue-50 text-indigo-700 font-black px-6 py-3.5 rounded-full border-2 border-white border-b-[4px] border-b-blue-200 active:border-b-2 active:translate-y-[2px] shadow-lg transition-all flex items-center justify-center gap-2 text-sm sm:text-base shrink-0 uppercase tracking-wider"
+              className="w-full sm:w-auto bg-white hover:bg-blue-50 text-indigo-700 font-black px-6 py-3.5 rounded-full border-b-[4px] border-b-blue-200 active:border-b-2 active:translate-y-[2px] shadow-lg transition-all flex items-center justify-center gap-2 text-sm sm:text-base shrink-0 uppercase tracking-wider"
             >
               <Trophy className="h-5 w-5 text-yellow-500" />
               View Certificate
@@ -269,6 +267,7 @@ const ModuleFivePage = ({ moduleNum }: { moduleNum: number }) => {
           allow="fullscreen; autoplay; encrypted-media"
           title={`SafeScape Module ${currentModule}`}
         />
+
       </div>
     </div>
   )

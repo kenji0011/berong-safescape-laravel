@@ -74,29 +74,31 @@ export function ContentGrid({
                strokeDasharray="12,16"
                fill="none"
                strokeLinecap="round"
-               className="animate-[dash_60s_linear_infinite] opacity-60 drop-shadow-[0_0_8px_rgba(249,115,22,0.4)]"
+               className="opacity-60 drop-shadow-[0_0_8px_rgba(249,115,22,0.4)]"
              />
 
-             {/* Decorative Path Markers (Stars & Nodes) */}
-             <g className="opacity-40 fill-orange-500">
-               <circle cx="150" cy="220" r="6" />
-               <circle cx="500" cy="340" r="6" />
-               <circle cx="850" cy="220" r="6" />
-               <circle cx="150" cy="600" r="6" />
-               <circle cx="500" cy="720" r="6" />
-               <circle cx="850" cy="600" r="6" />
-               
-               {/* Small adventure stars along the curves */}
-               <text x="325" y="230" className="text-xl fill-yellow-500 animate-pulse">⭐</text>
-               <text x="675" y="320" className="text-xl fill-yellow-500 animate-pulse" style={{ animationDelay: '1s' }}>⭐</text>
-               <text x="500" y="420" className="text-2xl fill-orange-500">📍</text>
-               <text x="325" y="610" className="text-xl fill-yellow-500 animate-pulse" style={{ animationDelay: '2s' }}>⭐</text>
-               <text x="675" y="710" className="text-xl fill-yellow-500 animate-pulse" style={{ animationDelay: '3s' }}>⭐</text>
-             </g>
+              {/* Decorative Path Markers (Stars & Nodes) */}
+              <g className="opacity-40 fill-orange-500">
+                <circle cx="150" cy="220" r="6" />
+                <circle cx="500" cy="340" r="6" />
+                <circle cx="850" cy="220" r="6" />
+                <circle cx="150" cy="600" r="6" />
+                <circle cx="500" cy="720" r="6" />
+                <circle cx="850" cy="600" r="6" />
+                
+                {/* Small adventure stars along the curves */}
+                <text x="325" y="230" className="text-xl fill-yellow-500">⭐</text>
+                <text x="675" y="320" className="text-xl fill-yellow-500">⭐</text>
+                <text x="500" y="420" className="text-2xl fill-orange-500">📍</text>
+                <text x="325" y="610" className="text-xl fill-yellow-500">⭐</text>
+                <text x="675" y="710" className="text-xl fill-yellow-500">⭐</text>
+              </g>
 
-             {/* Roaming Fire Truck */}
+             {/* Static Fire Truck (at start of path) */}
              <text 
-               className="animate-roam-path text-4xl pointer-events-none drop-shadow-2xl z-50"
+               className="text-4xl pointer-events-none drop-shadow-2xl z-50"
+               x="150"
+               y="220"
                dominantBaseline="middle"
                textAnchor="middle"
              >
@@ -106,20 +108,20 @@ export function ContentGrid({
              {/* Decorative Landmarks Scattered in Background */}
              <g className="opacity-30 text-3xl pointer-events-none">
                 {/* Top Row Decor */}
-                <text x="320" y="120" className="animate-float">🌳</text>
-                <text x="680" y="150" className="animate-float" style={{ animationDelay: '1.5s' }}>🌲</text>
-                <text x="50" y="350" className="animate-float" style={{ animationDelay: '0.5s' }}>🏠</text>
+                <text x="320" y="120">🌳</text>
+                <text x="680" y="150">🌲</text>
+                <text x="50" y="350">🏠</text>
                 
                 {/* Middle Decor */}
-                <text x="900" y="380" className="animate-float" style={{ animationDelay: '2s' }}>🏢</text>
-                <text x="450" y="480" className="animate-float">🌲</text>
-                <text x="550" y="480" className="animate-float" style={{ animationDelay: '1s' }}>🌳</text>
+                <text x="900" y="380">🏢</text>
+                <text x="450" y="480">🌲</text>
+                <text x="550" y="480">🌳</text>
                 
                 {/* Bottom Row Decor */}
-                <text x="100" y="800" className="animate-float" style={{ animationDelay: '0.8s' }}>🏠</text>
-                <text x="850" y="850" className="animate-float" style={{ animationDelay: '2.5s' }}>🚒</text>
-                <text x="350" y="920" className="animate-float">🌳</text>
-                <text x="650" y="900" className="animate-float" style={{ animationDelay: '1.2s' }}>🏢</text>
+                <text x="100" y="800">🏠</text>
+                <text x="850" y="850">🚒</text>
+                <text x="350" y="920">🌳</text>
+                <text x="650" y="900">🏢</text>
              </g>
           </svg>
         </div>
@@ -176,38 +178,6 @@ export function ContentGrid({
         <div className="hidden md:flex absolute bottom-12 right-12 text-6xl text-rose-500 opacity-20 rotate-12 font-black pointer-events-none">
           ✕
         </div>
-      )}
-
-      {isMap && (
-        <style dangerouslySetInnerHTML={{ __html: `
-          @keyframes dash {
-            to {
-              stroke-dashoffset: -1000;
-            }
-          }
-          @keyframes roam {
-            from { offset-distance: 0%; }
-            to { offset-distance: 100%; }
-          }
-          @keyframes truck-flip {
-            0%, 30% { transform: scaleX(-1); }
-            40%, 60% { transform: scaleX(1); }
-            70%, 100% { transform: scaleX(-1); }
-          }
-          @keyframes float {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-10px); }
-          }
-          .animate-roam-path {
-            offset-path: path('M 150,220 C 300,220 350,340 500,340 S 700,220 850,220 C 950,220 950,410 500,410 C 50,410 50,600 150,600 C 300,600 350,720 500,720 S 700,600 850,600');
-            offset-rotate: 0deg;
-            animation: roam 40s linear infinite, truck-flip 40s linear infinite;
-            display: inline-block;
-          }
-          .animate-float {
-            animation: float 4s ease-in-out infinite;
-          }
-        ` }} />
       )}
     </div>
   )

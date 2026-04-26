@@ -28,6 +28,7 @@ class User extends Authenticatable
         'barangay',
         'school',
         'school_id',
+        'avatar',
         'occupation',
         'preTestScore',
         'postTestScore',

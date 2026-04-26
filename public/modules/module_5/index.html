@@ -647,18 +647,16 @@
 
             <div id="quiz-container" class="space-y-6 max-w-3xl mx-auto"></div>
 
-            <div id="exam-result" class="hidden text-center mt-8 sm:mt-12 w-full max-w-lg mx-auto">
-                <div class="text-6xl mb-4 drop-shadow-sm" id="result-icon"></div>
-                <h3 class="text-2xl sm:text-3xl font-black text-green-700 mb-2 uppercase tracking-wide drop-shadow-sm" id="result-title"></h3>
-                <p class="text-slate-600 font-bold text-base sm:text-lg mb-8" id="result-desc"></p>
-                <div class="flex flex-col-reverse sm:flex-row items-center justify-center gap-4 sm:gap-6 w-full">
+            <div id="exam-result" class="hidden text-center mt-6 sm:mt-10 p-4 sm:p-8 bg-white rounded-xl sm:rounded-[2rem] border-[3px] sm:border-[4px] border-green-200 shadow-sm">
+                <div class="text-4xl sm:text-6xl mb-3 sm:mb-6 drop-shadow-md" id="result-icon"></div>
+                <h3 class="text-xl sm:text-3xl font-black text-green-600 mb-1 sm:mb-2 drop-shadow-sm" id="result-title"></h3>
+                <p class="text-slate-600 font-bold mb-4 sm:mb-8 text-sm sm:text-lg" id="result-desc"></p>
+
+                <div class="flex flex-col-reverse sm:flex-row items-center justify-center gap-4 sm:gap-6">
                     <button id="btn-retake" onclick="loadExam()"
-                        class="hidden text-sm font-bold text-slate-500 hover:text-slate-800 underline uppercase tracking-wide mt-2 sm:mt-0 whitespace-nowrap">
-                        Retake Exam
-                    </button>
-                    <button id="btn-view-cert" onclick="showCertificate()" 
-                        class="hidden bg-green-500 hover:bg-green-400 text-white font-black px-6 py-3 sm:px-10 sm:py-4 text-sm sm:text-base rounded-full border-[3px] border-white shadow-[0_4px_0_#15803d] hover:-translate-y-0.5 active:translate-y-1 active:shadow-[0_0px_0_#15803d] transition-all uppercase tracking-wide text-center w-full sm:w-auto whitespace-nowrap">
-                        <i class="fa-solid fa-award mr-2"></i> View Certificate
+                        class="hidden text-xs sm:text-sm font-bold text-slate-500 hover:text-slate-800 underline uppercase tracking-wide mt-2 sm:mt-0 whitespace-nowrap">Retake Exam</button>
+                    <button id="btn-view-cert" onclick="showCertificate()" class="hidden bg-green-500 text-white font-black px-5 py-2 sm:px-10 sm:py-4 text-xs sm:text-base rounded-full shadow-[0_4px_0_#15803d] hover:-translate-y-0.5 active:translate-y-1 active:shadow-none transition-all uppercase tracking-wide text-center w-full sm:w-auto">
+                        View Certificate <i class="fa-solid fa-award ml-2"></i>
                     </button>
                 </div>
             </div>

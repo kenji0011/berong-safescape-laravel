@@ -1,5 +1,5 @@
 import React, { useState } from "react"
-import { Link } from '@inertiajs/react'
+import { Link, router } from '@inertiajs/react'
 import { ArrowLeft, CheckCircle, XCircle, Lightbulb } from "lucide-react"
 import DashboardLayout from "@/Layouts/DashboardLayout"
 import { cn } from "@/lib/utils"
@@ -86,32 +86,21 @@ const QuizPage = () => {
 
   if (isFinished) {
     return (
-      <div className="min-h-screen relative flex flex-col font-sans bg-blue-50 selection:bg-orange-300 selection:text-orange-900">
-        {/* Heroic Background */}
-        <div className="absolute inset-0 z-0">
-          <img 
-            src="/challenges-bg.png" 
-            alt="" 
-            className="w-full h-full object-cover opacity-30 mix-blend-multiply" 
-          />
-          <div className="absolute inset-0 bg-gradient-to-b from-blue-50/80 via-white/40 to-blue-50/90"></div>
-        </div>
-
-        <div className="relative z-10 w-full flex-1 flex items-center justify-center pt-6 pb-12">
-          <div className="max-w-xl mx-auto w-full px-4 sm:px-6">
-            <div className="w-full bg-white/80 backdrop-blur-xl border border-white/60 rounded-[3rem] p-10 sm:p-14 shadow-[0_20px_60px_rgba(234,88,12,0.15)] flex flex-col items-center text-center transform transition-all duration-700 animate-in fade-in zoom-in w-full max-w-full">
-              <div className="text-8xl md:text-9xl mb-6 animate-bounce-slow drop-shadow-2xl">🎉</div>
-              <h2 className="text-4xl sm:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-orange-600 to-rose-600 tracking-tight mb-4 drop-shadow-sm">Quiz Finished!</h2>
-              <p className="text-lg sm:text-xl font-bold text-slate-600 mb-10 bg-orange-50 px-6 py-3 rounded-2xl border border-orange-100 shadow-sm w-full">
-                You scored <span className="text-orange-600 font-black mx-1 text-2xl">{score}</span> out of {questions.length}
-              </p>
-              <Link 
-                href="/kids/challenges" 
-                className="bg-gradient-to-r from-orange-500 to-rose-500 text-white shadow-[0_8px_30px_rgba(249,115,22,0.3)] hover:shadow-[0_15px_40px_rgba(249,115,22,0.4)] hover:-translate-y-1 active:translate-y-0 px-10 py-5 rounded-full font-black text-lg transition-all duration-300 w-full mb-2 inline-flex items-center justify-center text-center"
-              >
-                Back to Activities
-              </Link>
-            </div>
+      <div className="min-h-screen flex items-center justify-center bg-blue-50 p-4">
+        <div className="bg-white rounded-[2rem] p-12 shadow-sm border-4 border-orange-100 text-center max-w-lg w-full">
+          <div className="text-7xl mb-6">🎉</div>
+          <h2 className="text-4xl font-black text-slate-800 mb-4">Quiz Finished!</h2>
+          <p className="text-2xl font-bold text-slate-600 mb-8">
+            Your Score: <span className="text-orange-500 text-4xl">{score}</span> / {questions.length}
+          </p>
+          <div className="flex justify-center">
+            <Link
+              href="/kids/challenges"
+              className="bg-yellow-400 text-red-600 font-black px-10 py-4 rounded-full shadow-[0_4px_0_#b45309] hover:-translate-y-0.5 active:translate-y-1 active:shadow-none transition-all uppercase tracking-wide flex items-center gap-2"
+            >
+              Back to Activities
+              <CheckCircle className="h-5 w-5" />
+            </Link>
           </div>
         </div>
       </div>

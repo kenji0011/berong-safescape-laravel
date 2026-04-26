@@ -58,17 +58,36 @@ const KidsChallengesPage = () => {
             difficulty: "medium",
             category: "activities"
           },
-          {
-            id: "activity-2",
-            title: "Memory Game",
-            description: "Match fire safety symbols and tools to sharpen your hero senses!",
-            type: "activity",
-            imageUrl: "/memory_game.jpg",
-            href: "/kids/memory-game",
-            difficulty: "easy",
-            category: "activities"
+            {
+              id: "activity-2",
+              title: "Memory Game",
+              description: "Match fire safety symbols and tools to sharpen your hero senses!",
+              type: "activity",
+              imageUrl: "/memory_game.jpg",
+              href: "/kids/memory-game",
+              difficulty: "easy",
+              category: "activities"
+            },
+            {
+              id: "activity-3",
+              title: "The Smoke Crawl",
+              description: "Stay low and find your way out of the smoke-filled maze!",
+              type: "activity",
+              imageUrl: "/smoke_crawl.png",
+              href: "/kids/smoke-crawl",
+              difficulty: "hard",
+              category: "activities"
+            }
+          ]
+
+        // Preload images to prevent "popping"
+        content.forEach(item => {
+          if (item.imageUrl) {
+            const img = new Image()
+            img.src = item.imageUrl
           }
-        ]
+        })
+
         setChallenges(content)
       } catch (err) {
         console.error("Failed to fetch challenges:", err)
@@ -80,7 +99,7 @@ const KidsChallengesPage = () => {
   }, [])
 
   return (
-    <div className="min-h-screen relative overflow-hidden bg-blue-50">
+    <div className="min-h-screen relative bg-blue-50">
       {/* Background Image with Overlay */}
       <div className="absolute inset-0 z-0">
         <img 
@@ -166,7 +185,7 @@ const KidsChallengesPage = () => {
               contents={challenges}
               variant="grid"
               isLoading={isLoadingContent}
-              skeletonCount={2}
+              skeletonCount={3}
               emptyMessage="More challenges coming soon! 🎉"
             />
           </div>

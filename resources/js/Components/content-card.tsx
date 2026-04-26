@@ -1,9 +1,10 @@
 "use client"
 
-import { useState } from "react"
+import React, { useState } from "react"
 import { Link } from '@inertiajs/react'
 import { Play, Lock, CheckCircle, ArrowRight } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { Skeleton } from "./ui/skeleton"
 
 export interface ContentCardData {
   id: string | number
@@ -26,8 +27,9 @@ interface ContentCardProps {
   onClick?: () => void
 }
 
-export function ContentCard({ content, onClick }: ContentCardProps) {
+export const ContentCard = React.memo(({ content, onClick }: ContentCardProps) => {
   const [imageError, setImageError] = useState(false)
+  const [imageLoading, setImageLoading] = useState(true)
 
   // Premium Gradients
   const typeGradients: Record<string, string> = {
@@ -77,7 +79,11 @@ export function ContentCard({ content, onClick }: ContentCardProps) {
         {/* Status badges (Top Right) */}
         <div className="absolute top-3 right-3 flex flex-col gap-1.5 z-20">
           {content.isNew && (
-            <div className="bg-white text-rose-500 font-black text-[9px] sm:text-[10px] tracking-wider uppercase px-3 py-1 rounded-full shadow-xl animate-bounce border-2 border-rose-100">
+            <div className="bg-gradient-to-r from-rose-500 to-pink-500 text-white font-black text-[9px] sm:text-[10px] tracking-widest uppercase px-3 py-1.5 rounded-full shadow-[0_4px_12px_rgba(244,63,94,0.4)] animate-bounce border-2 border-white/40 flex items-center gap-1.5 ring-2 ring-rose-500/20">
+              <span className="relative flex h-2 w-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-white"></span>
+              </span>
               New!
             </div>
           )}
@@ -106,14 +112,24 @@ export function ContentCard({ content, onClick }: ContentCardProps) {
             <div className="text-5xl sm:text-8xl drop-shadow-2xl group-hover:-translate-y-2 transition-transform duration-500">{content.emoji}</div>
           ) : content.imageUrl && !imageError ? (
             <div className="relative w-full h-full">
+               {imageLoading && (
+                 <Skeleton className="absolute inset-0 z-20 bg-slate-200/50" />
+               )}
                <img
                  src={content.imageUrl}
                  alt={content.title}
-                 className="w-full h-full object-cover transition-all duration-700"
-                 onError={() => setImageError(true)}
+                 className={cn(
+                   "w-full h-full object-cover transition-all duration-700",
+                   imageLoading ? "opacity-0" : "opacity-100"
+                 )}
+                 onLoad={() => setImageLoading(false)}
+                 onError={() => {
+                   setImageError(true)
+                   setImageLoading(false)
+                 }}
                />
                {/* Subtle Overlay to make text/status more readable if needed, though they are already positioned well */}
-               <div className="absolute inset-0 bg-black/5 group-hover:bg-transparent transition-colors duration-500"></div>
+               {!imageLoading && <div className="absolute inset-0 bg-black/5 group-hover:bg-transparent transition-colors duration-500"></div>}
             </div>
           ) : (
             <div className="text-5xl sm:text-8xl drop-shadow-2xl group-hover:-translate-y-2 transition-transform duration-500">{typeIcons[content.type]}</div>
@@ -210,5 +226,5 @@ export function ContentCard({ content, onClick }: ContentCardProps) {
       {innerContent}
     </Link>
   )
-}
+})
 

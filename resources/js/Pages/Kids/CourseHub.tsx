@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from "react"
-import { Link } from '@inertiajs/react'
-import { ArrowLeft, BookOpen, Trophy, Shield, CheckCircle, Lock, Flame, Star, ChevronRight, ClipboardCheck } from "lucide-react"
+import React, { useMemo } from "react"
+import { Link, Deferred } from '@inertiajs/react'
+import { ArrowLeft, BookOpen, Trophy, Shield, CheckCircle, Lock, Flame, ChevronRight, ClipboardCheck } from "lucide-react"
 import { useAuth } from "@/lib/auth-context"
 import DashboardLayout from "@/Layouts/DashboardLayout"
 import { cn } from "@/lib/utils"
@@ -21,13 +21,17 @@ interface ModuleData {
   recommendedAction?: string | null
 }
 
+interface CourseHubProps {
+  initialModules?: ModuleData[]
+}
+
 // Static metadata per module (game names, icons) since these are hardcoded per module
 const MODULE_META: Record<number, { gameIcon: string; gameLabel: string; bgImage: string }> = {
-  1: { gameIcon: "🎮", gameLabel: "Element Mixer Lab", bgImage: "/fire-safety-training-session.jpg" },
-  2: { gameIcon: "🎵", gameLabel: "Rhythm Marshal Game", bgImage: "/bfp-firefighters-in-action.jpg" },
-  3: { gameIcon: "🌫️", gameLabel: "Smoke Labyrinth Game", bgImage: "/family-fire-escape-plan.jpg" },
-  4: { gameIcon: "☁️", gameLabel: "Smoke Physics", bgImage: "/smoke-detector-alarm-maintenance.jpg" },
-  5: { gameIcon: "🌟", gameLabel: "Hero Certificate", bgImage: "/fire_safety_certificate.png" },
+  1: { gameIcon: "🎮", gameLabel: "Element Mixer Lab", bgImage: "/images/kids/module1.png" },
+  2: { gameIcon: "🎵", gameLabel: "Rhythm Marshal Game", bgImage: "/images/kids/module2.png" },
+  3: { gameIcon: "🌫️", gameLabel: "Smoke Labyrinth Game", bgImage: "/images/kids/module3.png" },
+  4: { gameIcon: "☁️", gameLabel: "Smoke Physics", bgImage: "/images/kids/module4.png" },
+  5: { gameIcon: "🌟", gameLabel: "Hero Certificate", bgImage: "/images/kids/module5.png" },
 }
 
 // Static fallback if API hasn't seeded yet
@@ -42,37 +46,16 @@ const STATIC_MODULES: ModuleData[] = [
 // ─────────────────────────────────────────────
 // CourseHub Page
 // ─────────────────────────────────────────────
-const CourseHubPage = () => {
+const CourseHubPage = ({ initialModules }: CourseHubProps) => {
   const { user } = useAuth()
-  const [modules, setModules]         = useState<ModuleData[]>(STATIC_MODULES)
-  const [loading, setLoading]         = useState(true)
-  const [overallProgress, setOverall] = useState(0)
-
-  // ── Fetch real progress ──
-  useEffect(() => {
-    const load = async () => {
-      try {
-        const res = await fetch("/api/kids/modules", { credentials: "include" })
-        if (res.ok) {
-          const data: ModuleData[] = await res.json()
-          if (data && data.length > 0) {
-            setModules(data)
-            const completed = data.filter(m => m.isCompleted).length
-            setOverall(Math.round((completed / data.length) * 100))
-          }
-        }
-      } catch (_) {
-        /* fall back to static data */
-      } finally {
-        setLoading(false)
-      }
-    }
-    load()
-  }, [])
-
-  const completedCount  = modules.filter(m => m.isCompleted).length
-  const inProgressCount = modules.filter(m => !m.isCompleted && !m.isLocked).length
-  const lockedCount     = modules.filter(m => m.isLocked).length
+  
+  const modules = initialModules || STATIC_MODULES
+  
+  const completedCount = useMemo(() => modules.filter(m => m.isCompleted).length, [modules])
+  const overallProgress = useMemo(() => {
+    if (modules.length === 0) return 0
+    return Math.round((completedCount / modules.length) * 100)
+  }, [modules, completedCount])
 
   // ─────────────────────────────────────────────
   return (
@@ -221,11 +204,11 @@ const CourseHubPage = () => {
             </h2>
           </div>
 
-          {loading ? (
+          <Deferred data="initialModules" fallback={
             <div className="flex items-center justify-center py-20">
               <div className="animate-spin rounded-full h-12 w-12 border-b-4 border-[#ff4b3e]" />
             </div>
-          ) : (
+          }>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {modules.map((module) => {
                 const meta = MODULE_META[module.dayNumber]
@@ -383,13 +366,25 @@ const CourseHubPage = () => {
               >
                 {/* Header Graphic Area */}
                 <div className={cn(
-                  "h-32 p-6 flex flex-col justify-end border-b-4",
-                  completedCount === 5 ? "bg-gradient-to-br from-yellow-300 to-yellow-500 border-yellow-200" : "bg-slate-100 border-slate-200"
+                  "h-48 sm:h-56 p-6 flex flex-col justify-end border-b-4 relative overflow-hidden",
+                  completedCount === 5 ? "bg-yellow-400 border-yellow-200" : "bg-slate-100 border-slate-200"
                 )}>
-                  <Trophy className={cn("h-8 w-8 mb-2", completedCount === 5 ? "text-yellow-800" : "text-slate-400")} />
-                  <h4 className={cn("text-2xl font-black", completedCount === 5 ? "text-yellow-900" : "text-slate-500")}>
-                    Your Certificate
-                  </h4>
+                  <img 
+                    src="/images/kids/module5.png" 
+                    alt="" 
+                    className={cn(
+                      "absolute inset-0 w-full h-full object-cover mix-blend-multiply opacity-30 transition-all duration-500",
+                      completedCount < 5 && "grayscale"
+                    )} 
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-white via-transparent to-transparent"></div>
+                  
+                  <div className="relative z-10">
+                    <Trophy className={cn("h-8 w-8 mb-2", completedCount === 5 ? "text-yellow-800" : "text-slate-400")} />
+                    <h4 className={cn("text-2xl font-black", completedCount === 5 ? "text-yellow-900" : "text-slate-500")}>
+                      Your Certificate
+                    </h4>
+                  </div>
                 </div>
 
                 <div className="p-6 flex flex-col flex-1">
@@ -424,7 +419,7 @@ const CourseHubPage = () => {
               </div>
 
             </div>
-          )}
+          </Deferred>
 
           {/* ── Motivational Footer ── */}
           <div className="mt-20 border-[4px] border-blue-200 bg-white rounded-[2rem] p-8 sm:p-12 text-center shadow-sm relative overflow-hidden">

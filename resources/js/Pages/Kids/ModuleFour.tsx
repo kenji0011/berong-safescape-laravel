@@ -7,6 +7,7 @@ import { cn } from "@/lib/utils"
 const ModuleFourPage = ({ moduleNum }: { moduleNum: number }) => {
   const currentModule = moduleNum || 4
   const [iframeLoading, setIframeLoading] = useState(true)
+  const [moduleCompleted, setModuleCompleted] = useState(false)
 
   useEffect(() => {
     const handleMessage = async (e: MessageEvent) => {
@@ -27,6 +28,10 @@ const ModuleFourPage = ({ moduleNum }: { moduleNum: number }) => {
               completed: data.completed
             }),
           })
+          
+          if (data.completed) {
+            setModuleCompleted(true)
+          }
         } catch (error) {
           console.error("Failed to sync progress:", error)
         }
@@ -176,6 +181,7 @@ const ModuleFourPage = ({ moduleNum }: { moduleNum: number }) => {
           allow="fullscreen; autoplay; encrypted-media"
           title={`SafeScape Module ${currentModule}`}
         />
+
       </div>
     </div>
   )

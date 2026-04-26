@@ -48,7 +48,7 @@ export function Navigation() {
   }, [])
 
   return (
-    <nav className="bg-gradient-to-r from-[#ff3b3b] to-[#ff7b00] sticky top-0 z-[80] shadow-md relative">
+    <nav className="bg-gradient-to-r from-[#ff3b3b] to-[#ff7b00] sticky top-0 z-[80] shadow-md">
       {/* Background Image Layer - 10% opacity */}
       <div
         className="absolute inset-0 opacity-5 bg-cover bg-center"
