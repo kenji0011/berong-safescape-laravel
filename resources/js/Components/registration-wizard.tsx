@@ -29,7 +29,9 @@ import {
   KeyRound,
   ClipboardList,
   Loader2,
-  Star
+  Star,
+  Eye,
+  EyeOff
 } from "lucide-react"
 import {
   BARANGAYS_SANTA_CRUZ,
@@ -123,6 +125,7 @@ export function RegistrationWizard() {
   const [feedbackHover, setFeedbackHover] = useState(0)
   const [feedbackSubmitting, setFeedbackSubmitting] = useState(false)
   const [feedbackSuccess, setFeedbackSuccess] = useState(false)
+  const [showPassword, setShowPassword] = useState(false)
 
   // Fetch pre-test questions when reaching step 4
   useEffect(() => {
@@ -563,12 +566,14 @@ export function RegistrationWizard() {
             <div>
               <Label className="text-sm font-bold text-slate-700">Gender *</Label>
               <Select value={data.gender} onValueChange={(value) => updateField("gender", value)}>
-                <SelectTrigger className={`rounded-xl border-2 h-11 text-base focus:border-orange-400 ${validationErrors.gender ? "border-red-400 bg-red-50" : "border-gray-200"}`}>
+                <SelectTrigger className={`rounded-xl border-2 h-11 text-base font-bold text-slate-700 focus:ring-orange-400 focus:border-orange-400 transition-all hover:border-slate-300 ${validationErrors.gender ? "border-red-400 bg-red-50" : "border-gray-200"}`}>
                   <SelectValue placeholder="Select your gender" />
                 </SelectTrigger>
-                <SelectContent className="rounded-xl">
+                <SelectContent className="rounded-xl border-2 border-slate-200 shadow-xl p-1">
                   {GENDER_OPTIONS.map((option) => (
-                    <SelectItem key={option} value={option}>{option}</SelectItem>
+                    <SelectItem key={option} value={option} className="rounded-lg font-bold text-slate-700 focus:bg-orange-50 focus:text-orange-600 transition-colors cursor-pointer py-2.5">
+                      {option}
+                    </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
@@ -585,12 +590,14 @@ export function RegistrationWizard() {
             <div>
               <Label>Barangay *</Label>
               <Select value={data.barangay} onValueChange={(value) => updateField("barangay", value)}>
-                <SelectTrigger className={validationErrors.barangay ? "border-red-500" : ""}>
+                <SelectTrigger className={`rounded-xl border-2 h-11 text-base font-bold text-slate-700 focus:ring-orange-400 focus:border-orange-400 transition-all hover:border-slate-300 ${validationErrors.barangay ? "border-red-500 bg-red-50" : "border-gray-200"}`}>
                   <SelectValue placeholder="Select your barangay" />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className="rounded-xl border-2 border-slate-200 shadow-xl p-1">
                   {BARANGAYS_SANTA_CRUZ.map((brgy) => (
-                    <SelectItem key={brgy} value={brgy}>{brgy}</SelectItem>
+                    <SelectItem key={brgy} value={brgy} className="rounded-lg font-bold text-slate-700 focus:bg-orange-50 focus:text-orange-600 transition-colors cursor-pointer py-2.5">
+                      {brgy}
+                    </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
@@ -604,12 +611,14 @@ export function RegistrationWizard() {
                 <div>
                   <Label>School *</Label>
                   <Select value={data.school} onValueChange={(value) => updateField("school", value)}>
-                    <SelectTrigger className={validationErrors.school ? "border-red-500" : ""}>
+                    <SelectTrigger className={`rounded-xl border-2 h-11 text-base font-bold text-slate-700 focus:ring-orange-400 focus:border-orange-400 transition-all hover:border-slate-300 ${validationErrors.school ? "border-red-500 bg-red-50" : "border-gray-200"}`}>
                       <SelectValue placeholder="Select your school" />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent className="rounded-xl border-2 border-slate-200 shadow-xl p-1">
                       {ALL_SCHOOLS.map((school) => (
-                        <SelectItem key={school} value={school}>{school}</SelectItem>
+                        <SelectItem key={school} value={school} className="rounded-lg font-bold text-slate-700 focus:bg-orange-50 focus:text-orange-600 transition-colors cursor-pointer py-2.5">
+                          {school}
+                        </SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
@@ -637,12 +646,14 @@ export function RegistrationWizard() {
                 <div>
                   <Label>Grade Level *</Label>
                   <Select value={data.gradeLevel} onValueChange={(value) => updateField("gradeLevel", value)}>
-                    <SelectTrigger className={validationErrors.gradeLevel ? "border-red-500" : ""}>
+                    <SelectTrigger className={`rounded-xl border-2 h-11 text-base font-bold text-slate-700 focus:ring-orange-400 focus:border-orange-400 transition-all hover:border-slate-300 ${validationErrors.gradeLevel ? "border-red-500 bg-red-50" : "border-gray-200"}`}>
                       <SelectValue placeholder="Select your grade level" />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent className="rounded-xl border-2 border-slate-200 shadow-xl p-1">
                       {GRADE_LEVELS.map((level) => (
-                        <SelectItem key={level} value={level}>{level}</SelectItem>
+                        <SelectItem key={level} value={level} className="rounded-lg font-bold text-slate-700 focus:bg-orange-50 focus:text-orange-600 transition-colors cursor-pointer py-2.5">
+                          {level}
+                        </SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
@@ -656,12 +667,14 @@ export function RegistrationWizard() {
                 <div>
                   <Label>Occupation *</Label>
                   <Select value={data.occupation} onValueChange={(value) => updateField("occupation", value)}>
-                    <SelectTrigger className={validationErrors.occupation ? "border-red-500" : ""}>
+                    <SelectTrigger className={`rounded-xl border-2 h-11 text-base font-bold text-slate-700 focus:ring-orange-400 focus:border-orange-400 transition-all hover:border-slate-300 ${validationErrors.occupation ? "border-red-500 bg-red-50" : "border-gray-200"}`}>
                       <SelectValue placeholder="Select your occupation" />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent className="rounded-xl border-2 border-slate-200 shadow-xl p-1">
                       {OCCUPATION_CATEGORIES.map((occ) => (
-                        <SelectItem key={occ} value={occ}>{occ}</SelectItem>
+                        <SelectItem key={occ} value={occ} className="rounded-lg font-bold text-slate-700 focus:bg-orange-50 focus:text-orange-600 transition-colors cursor-pointer py-2.5">
+                          {occ}
+                        </SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
@@ -690,12 +703,14 @@ export function RegistrationWizard() {
                   <div>
                     <Label>School (Optional)</Label>
                     <Select value={data.school} onValueChange={(value) => updateField("school", value)}>
-                      <SelectTrigger>
+                      <SelectTrigger className="rounded-xl border-2 h-11 text-base font-bold text-slate-700 focus:ring-orange-400 focus:border-orange-400 transition-all hover:border-slate-300 border-gray-200">
                         <SelectValue placeholder="Select your school" />
                       </SelectTrigger>
-                      <SelectContent>
+                      <SelectContent className="rounded-xl border-2 border-slate-200 shadow-xl p-1">
                         {ALL_SCHOOLS.map((school) => (
-                          <SelectItem key={school} value={school}>{school}</SelectItem>
+                          <SelectItem key={school} value={school} className="rounded-lg font-bold text-slate-700 focus:bg-orange-50 focus:text-orange-600 transition-colors cursor-pointer py-2.5">
+                            {school}
+                          </SelectItem>
                         ))}
                       </SelectContent>
                     </Select>
@@ -708,91 +723,121 @@ export function RegistrationWizard() {
 
         {/* Step 3: Account */}
         {currentStep === 3 && (
-          <div className="space-y-4">
-            <div>
-              <Label htmlFor="username">Username *</Label>
-              <Input
-                id="username"
-                placeholder="Choose a username"
-                value={data.username}
-                onChange={(e) => updateField("username", e.target.value)}
-                className={validationErrors.username ? "border-red-500" : ""}
-              />
-              {validationErrors.username && (
-                <p className="text-sm text-red-500 mt-1">{validationErrors.username}</p>
-              )}
-              <p className="text-xs text-muted-foreground mt-1">
-                3-20 characters, letters, numbers, and underscores only
-              </p>
+          <div className="space-y-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="username" className="text-sm font-bold text-slate-700 ml-1">Username *</Label>
+                <Input
+                  id="username"
+                  placeholder="Choose a username"
+                  value={data.username}
+                  onChange={(e) => updateField("username", e.target.value)}
+                  className={`rounded-xl border-2 h-11 text-base focus:border-orange-400 focus:ring-orange-400 ${validationErrors.username ? "border-red-400 bg-red-50" : "border-gray-200"}`}
+                />
+                {validationErrors.username && (
+                  <p className="text-sm text-red-500 mt-1 font-medium">⚠️ {validationErrors.username}</p>
+                )}
+                <p className="text-[10px] text-slate-500 font-medium ml-1">
+                  3-20 characters, letters, numbers, and underscores only
+                </p>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="email" className="text-sm font-bold text-slate-700 ml-1">Email *</Label>
+                <Input
+                  id="email"
+                  type="email"
+                  placeholder="example@gmail.com"
+                  value={data.email}
+                  onChange={(e) => updateField("email", e.target.value)}
+                  className={`rounded-xl border-2 h-11 text-base focus:border-orange-400 focus:ring-orange-400 ${validationErrors.email ? "border-red-400 bg-red-50" : "border-gray-200"}`}
+                />
+                {validationErrors.email && (
+                  <p className="text-sm text-red-500 mt-1 font-medium">⚠️ {validationErrors.email}</p>
+                )}
+              </div>
             </div>
 
-            <div>
-              <Label htmlFor="email">Email *</Label>
-              <Input
-                id="email"
-                type="email"
-                placeholder="example@gmail.com"
-                value={data.email}
-                onChange={(e) => updateField("email", e.target.value)}
-                className={validationErrors.email ? "border-red-500" : ""}
-              />
-              {validationErrors.email && (
-                <p className="text-sm text-red-500 mt-1">{validationErrors.email}</p>
-              )}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="password" className="text-sm font-bold text-slate-700 ml-1">Password *</Label>
+                <div className="relative">
+                  <Input
+                    id="password"
+                    type={showPassword ? "text" : "password"}
+                    placeholder="Create a password"
+                    value={data.password}
+                    onChange={(e) => updateField("password", e.target.value)}
+                    className={`rounded-xl border-2 h-11 text-base focus:border-orange-400 focus:ring-orange-400 pr-10 ${validationErrors.password ? "border-red-400 bg-red-50" : "border-gray-200"}`}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors"
+                  >
+                    {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                  </button>
+                </div>
+                {validationErrors.password && (
+                  <p className="text-sm text-red-500 mt-1 font-medium">⚠️ {validationErrors.password}</p>
+                )}
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="confirmPassword" className="text-sm font-bold text-slate-700 ml-1">Confirm Password *</Label>
+                <Input
+                  id="confirmPassword"
+                  type={showPassword ? "text" : "password"}
+                  placeholder="Confirm your password"
+                  value={data.confirmPassword}
+                  onChange={(e) => updateField("confirmPassword", e.target.value)}
+                  className={`rounded-xl border-2 h-11 text-base focus:border-orange-400 focus:ring-orange-400 ${validationErrors.confirmPassword ? "border-red-400 bg-red-50" : "border-gray-200"}`}
+                />
+                {validationErrors.confirmPassword && (
+                  <p className="text-sm text-red-500 mt-1 font-medium">⚠️ {validationErrors.confirmPassword}</p>
+                )}
+              </div>
             </div>
 
-            <div>
-              <Label htmlFor="password">Password *</Label>
-              <Input
-                id="password"
-                type="password"
-                placeholder="Create a password"
-                value={data.password}
-                onChange={(e) => updateField("password", e.target.value)}
-                className={validationErrors.password ? "border-red-500" : ""}
-              />
-              {validationErrors.password && (
-                <p className="text-sm text-red-500 mt-1">{validationErrors.password}</p>
-              )}
+            {/* Password Requirements Checklist */}
+            <div className="bg-slate-50 border-2 border-slate-100 rounded-2xl p-4">
+              <p className="text-xs font-black text-slate-700 mb-3 uppercase tracking-wider">Password Requirements:</p>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-2">
+                {[
+                  { label: "At least 8 characters", met: data.password.length >= 8 },
+                  { label: "One uppercase letter", met: /[A-Z]/.test(data.password) },
+                  { label: "One lowercase letter", met: /[a-z]/.test(data.password) },
+                  { label: "One number (0-9)", met: /[0-9]/.test(data.password) },
+                  { label: "One special character (!@#...)", met: /[^A-Za-z0-9]/.test(data.password) },
+                ].map((req, i) => (
+                  <div key={i} className="flex items-center gap-2">
+                    <div className={`h-4 w-4 rounded-full flex items-center justify-center transition-colors ${req.met ? "bg-green-500" : "bg-slate-200"}`}>
+                      <Check className={`h-2.5 w-2.5 text-white transition-opacity ${req.met ? "opacity-100" : "opacity-0"}`} strokeWidth={4} />
+                    </div>
+                    <span className={`text-xs font-bold transition-colors ${req.met ? "text-green-700" : "text-slate-500"}`}>
+                      {req.label}
+                    </span>
+                  </div>
+                ))}
+              </div>
             </div>
 
-            <div>
-              <Label htmlFor="confirmPassword">Confirm Password *</Label>
-              <Input
-                id="confirmPassword"
-                type="password"
-                placeholder="Confirm your password"
-                value={data.confirmPassword}
-                onChange={(e) => updateField("confirmPassword", e.target.value)}
-                className={validationErrors.confirmPassword ? "border-red-500" : ""}
-              />
-              {validationErrors.confirmPassword && (
-                <p className="text-sm text-red-500 mt-1">{validationErrors.confirmPassword}</p>
-              )}
-            </div>
-
-            <div className="flex items-start space-x-2 pt-4">
-              <Checkbox
-                id="consent"
-                checked={data.dataPrivacyConsent}
-                onCheckedChange={(checked) => updateField("dataPrivacyConsent", checked)}
-              />
+            <div className="flex items-start space-x-3 pt-2 group cursor-pointer" onClick={() => updateField("dataPrivacyConsent", !data.dataPrivacyConsent)}>
+              <div className={`mt-0.5 shrink-0 h-5 w-5 rounded-md border-2 flex items-center justify-center transition-all ${data.dataPrivacyConsent ? "bg-orange-500 border-orange-500 shadow-[0_2px_0_#ca8a04]" : "bg-white border-slate-200"}`}>
+                {data.dataPrivacyConsent && <Check className="h-3.5 w-3.5 text-white" strokeWidth={4} />}
+              </div>
               <div className="grid gap-1.5 leading-none">
-                <label
-                  htmlFor="consent"
-                  className={`text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 ${validationErrors.dataPrivacyConsent ? "text-red-500" : ""
-                    }`}
-                >
+                <label className={`text-[13px] font-black leading-tight cursor-pointer transition-colors ${data.dataPrivacyConsent ? "text-slate-800" : "text-slate-600"} ${validationErrors.dataPrivacyConsent ? "text-red-500" : ""}`}>
                   I agree to the Data Privacy Policy *
                 </label>
-                <p className="text-xs text-muted-foreground">
+                <p className="text-[11px] font-bold text-slate-400 leading-relaxed">
                   Your data (barangay, school) will be used for community fire safety analytics.
                   Individual information is kept confidential and only aggregated data is shared.
                 </p>
               </div>
             </div>
             {validationErrors.dataPrivacyConsent && (
-              <p className="text-sm text-red-500">{validationErrors.dataPrivacyConsent}</p>
+              <p className="text-sm text-red-500 font-bold ml-8">⚠️ {validationErrors.dataPrivacyConsent}</p>
             )}
           </div>
         )}

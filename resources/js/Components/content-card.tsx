@@ -62,7 +62,7 @@ export const ContentCard = React.memo(({ content, onClick }: ContentCardProps) =
         typeGradients[content.type] || "from-slate-400 to-slate-600"
       )}>
         {/* Subtle Glassmorphism Patterns / Lighting */}
-        <div className="absolute inset-0 bg-white/10 opacity-30 mix-blend-overlay bg-[url('/noise.png')] pointer-events-none"></div>
+        <div className="absolute inset-0 bg-white/10 opacity-30 mix-blend-overlay pointer-events-none"></div>
         <div className="absolute -top-16 -right-16 w-48 h-48 bg-white/20 blur-[40px] rounded-full pointer-events-none transition-transform duration-700 group-hover:scale-150"></div>
         <div className="absolute -bottom-16 -left-16 w-48 h-48 bg-black/10 blur-[40px] rounded-full pointer-events-none"></div>
 
@@ -137,7 +137,7 @@ export const ContentCard = React.memo(({ content, onClick }: ContentCardProps) =
         </div>
 
         {/* Badge Reward Preview (Bottom Right) */}
-        {content.type === "module" && !content.isCompleted && (
+        {(content.type === "module" || content.type === "video" || content.type === "activity") && !content.isCompleted && (
           <div className="absolute bottom-3 right-3 z-20 group-hover:translate-y-[-2px] transition-transform">
             <div className="bg-white/90 backdrop-blur-sm p-1.5 rounded-xl border-2 border-yellow-400 shadow-lg flex items-center gap-1.5">
                <div className="bg-yellow-100 h-6 w-6 rounded-full flex items-center justify-center text-sm">🎖️</div>

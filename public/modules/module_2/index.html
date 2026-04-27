@@ -516,7 +516,7 @@
     <script>
         // --- MODULE STATE ---
         const moduleNum = 2;
-        let localState = {
+        window.localState = {
             videoWatched: false,
             soundDetectivePassed: false,
             networkMapViewed: false,
@@ -552,10 +552,11 @@
             const progress = SafeScapeProgress.getProgress();
             const moduleData = progress[`module${moduleNum}`];
             if (moduleData && moduleData.sections) {
-                localState = { ...localState, ...moduleData.sections };
+                window.localState = { ...window.localState, ...moduleData.sections };
             }
             updateModuleProgress();
             updateSectionStates();
+            renderQuiz();
         }
 
         // REMOVED: saveLocalProgress loop
@@ -853,7 +854,7 @@
         function toggleReview() {
             reviewMode = !reviewMode;
             const container = document.getElementById('quiz-container');
-            const header = document.getElementById('final-quiz').querySelector('.text-center.mb-10');
+            const header = document.getElementById('final-quiz').querySelector('.text-center');
             if (reviewMode) {
                 container.classList.remove('hidden');
                 if (header) header.classList.remove('hidden');
@@ -906,7 +907,7 @@
                     container.appendChild(qDiv);
                 });
                 container.classList.add('hidden');
-                document.getElementById('final-quiz').querySelector('.text-center.mb-10').classList.add('hidden');
+                document.getElementById('final-quiz').querySelector('.text-center').classList.add('hidden');
                 return;
             }
 
@@ -983,7 +984,7 @@
                 document.getElementById('btn-review').classList.remove('hidden');
                 // Hide questions, show result card
                 document.getElementById('quiz-container').classList.add('hidden');
-                document.getElementById('final-quiz').querySelector('.text-center.mb-10').classList.add('hidden');
+                document.getElementById('final-quiz').querySelector('.text-center').classList.add('hidden');
 
                 if (!localState.quizPassed) {
                     SafeScapeProgress.completeSection(moduleNum, 'quizPassed', true);

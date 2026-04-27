@@ -463,7 +463,7 @@
     <script>
         // --- MODULE STATE ---
         const moduleNum = 4;
-        let localState = {
+        window.localState = {
             cardsCompleted: [false, false, false, false, false],
             allCardsCompleted: false,
             tfAnswers: [null, null, null, null, null],
@@ -498,9 +498,11 @@
             const progress = SafeScapeProgress.getProgress();
             const moduleData = progress[`module${moduleNum}`];
             if (moduleData && moduleData.sections) {
-                localState = { ...localState, ...moduleData.sections };
+                window.localState = { ...window.localState, ...moduleData.sections };
             }
             updateModuleProgress();
+            updateSectionStates();
+            updateCardsUI();
         }
 
         function saveLocalProgress() {

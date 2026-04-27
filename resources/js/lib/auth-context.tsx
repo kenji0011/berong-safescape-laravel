@@ -30,6 +30,11 @@ export interface User {
   preTestScore?: number
   postTestScore?: number
   engagementPoints?: number
+  avatar?: string
+  firstName?: string
+  lastName?: string
+  school_id?: number
+  competency_scores?: any
 }
 
 interface AuthContextType {

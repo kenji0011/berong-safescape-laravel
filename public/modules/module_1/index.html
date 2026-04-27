@@ -382,7 +382,7 @@
     <script>
         // --- MODULE STATE ---
         const moduleNum = 1;
-        let localState = {
+        window.localState = {
             videoWatched: false,
             section1Read: false,
             section2Read: false,
@@ -404,7 +404,7 @@
             const progress = SafeScapeProgress.getProgress();
             const moduleData = progress[`module${moduleNum}`];
             if (moduleData && moduleData.sections) {
-                localState = { ...localState, ...moduleData.sections };
+                window.localState = { ...window.localState, ...moduleData.sections };
             }
             updateModuleProgress();
             updateSectionStates();

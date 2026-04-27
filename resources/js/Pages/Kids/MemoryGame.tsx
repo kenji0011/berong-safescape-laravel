@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react"
 import { Link } from '@inertiajs/react'
 import { ArrowLeft, RotateCcw, Trophy, Sparkles } from "lucide-react"
 import DashboardLayout from "@/Layouts/DashboardLayout"
+import axios from "axios"
 import { cn } from "@/lib/utils"
 
 const EMOJIS = ["🚒", "🔥", "🧯", "🧑‍🚒", "🚰", "🚨"]
@@ -83,7 +84,16 @@ const MemoryGamePage = () => {
           setCards(newCards)
           setMatches((prev) => {
             const next = prev + 1
-            if (next === 6) playSound('win')
+            if (next === 6) {
+              playSound('win')
+              
+              // Award Memory Master Badge
+              axios.post('/api/badges/award', {
+                badge_id: 'memory_master',
+                badge_name: 'Memory Master',
+                badge_icon: '🧠'
+              }).catch(err => console.error("Failed to award badge:", err.response?.data || err.message))
+            }
             else playSound('match')
             return next
           })

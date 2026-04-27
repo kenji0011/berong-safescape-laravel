@@ -13,7 +13,6 @@ export function ProfessionalWelcomeBanner() {
             <div className="absolute inset-0 z-0 overflow-hidden">
                 <div className="absolute top-0 right-0 w-[30rem] sm:w-[40rem] h-[30rem] sm:h-[40rem] bg-gradient-to-bl from-red-500/20 via-rose-500/10 to-transparent rounded-full blur-3xl -mr-20 sm:-mr-32 -mt-20 sm:-mt-32"></div>
                 <div className="absolute bottom-0 left-0 w-[20rem] sm:w-[30rem] h-[20rem] sm:h-[30rem] bg-gradient-to-tr from-cyan-500/10 to-transparent rounded-full blur-3xl -ml-16 sm:-ml-20 -mb-16 sm:-mb-20"></div>
-                <div className="absolute inset-0 bg-[url('/noise.png')] opacity-20 mix-blend-overlay"></div>
                 {/* Subtle grid pattern for a modern technical look */}
                 <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:32px_32px]"></div>
             </div>

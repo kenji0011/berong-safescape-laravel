@@ -685,7 +685,7 @@
     <script>
         // --- MODULE STATE ---
         const moduleNum = 5;
-        let localState = {
+        window.localState = {
             videoWatched: false,
             sdrCompleted: false,
             sdrTrapCompleted: false,
@@ -783,9 +783,11 @@
             const progress = SafeScapeProgress.getProgress();
             const moduleData = progress[`module${moduleNum}`];
             if (moduleData && moduleData.sections) {
-                localState = { ...localState, ...moduleData.sections };
+                window.localState = { ...window.localState, ...moduleData.sections };
             }
             updateModuleProgress();
+            updateSectionStates();
+            loadExam();
         }
 
         function saveLocalProgress() {

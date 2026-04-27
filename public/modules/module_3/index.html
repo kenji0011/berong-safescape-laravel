@@ -293,7 +293,11 @@
                         <canvas id="gameCanvas" width="600" height="400" class="w-full h-auto block"></canvas>
                         <div class="absolute top-2 left-2 sm:top-4 sm:left-4 text-left pointer-events-none">
                             <div class="text-green-400 font-black tracking-widest text-[10px] sm:text-xs mb-0.5 sm:mb-1 uppercase">VISIBILITY: LOW</div>
-                            <div class="text-slate-400 font-bold tracking-wider text-[10px] sm:text-xs uppercase">OBJECTIVE: ESCAPE</div>
+                            <div class="text-slate-400 font-bold tracking-wider text-[10px] sm:text-xs mb-2 uppercase">OBJECTIVE: ESCAPE</div>
+                            <div class="inline-flex items-center gap-1.5 bg-blue-500/20 text-blue-300 px-2 py-1 rounded-md border border-blue-500/30 text-[9px] sm:text-[10px] font-black uppercase animate-pulse">
+                                <i class="fa-solid fa-person-running fa-flip-horizontal" style="font-size: 8px;"></i>
+                                Crawling under smoke...
+                            </div>
                         </div>
                         <!-- Mobile Arrow Keys D-Pad -->
                         <div id="dpad" class="dpad-container md:hidden">
@@ -307,38 +311,43 @@
                             <button class="dpad-btn" data-dir="down" aria-label="Move Down"><i class="fa-solid fa-caret-down"></i></button>
                             <div class="dpad-spacer"></div>
                         </div>
+                        <!-- Integrity Modal (Moved here to be an overlay) -->
+                        <div id="integrity-modal"
+                            class="hidden absolute inset-0 z-40 bg-slate-900/90 backdrop-blur-md flex flex-col items-center justify-center p-6 text-center animate-in fade-in zoom-in duration-300">
+                            <div class="max-w-xs space-y-4">
+                                <div class="w-16 h-16 bg-orange-500 rounded-full flex items-center justify-center mx-auto mb-2 shadow-[0_0_20px_rgba(249,115,22,0.4)] animate-pulse">
+                                    <i class="fa-solid fa-triangle-exclamation text-white text-2xl"></i>
+                                </div>
+                                <h3 class="text-orange-400 font-black text-xl uppercase tracking-wider">⚠️ TEMPTATION ALERT!</h3>
+                                <p class="text-sm font-bold text-slate-300">You are safe outside. But you left your tablet inside!</p>
+                                <div class="grid gap-3 w-full">
+                                    <button onclick="handleIntegrity(false)"
+                                        class="bg-slate-700 hover:bg-slate-600 border-[3px] border-slate-500 text-white shadow-sm hover:-translate-y-0.5 active:translate-y-1 py-3 rounded-xl font-bold uppercase tracking-wide text-xs transition-all">Go Back For It</button>
+                                    <button onclick="handleIntegrity(true)"
+                                        class="bg-green-500 hover:bg-green-400 text-white border-[3px] border-green-600 shadow-[0_4px_0_#15803d] hover:-translate-y-0.5 active:translate-y-1 active:shadow-none py-3 rounded-xl font-black uppercase tracking-wide text-xs transition-all">Stay Out (Integrity)</button>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
                 <div
-                    class="w-full xl:w-72 bg-slate-900 p-4 sm:p-6 rounded-2xl sm:rounded-3xl border-[3px] sm:border-[4px] border-slate-700 shadow-sm text-left h-auto min-h-[220px] sm:min-h-[300px] flex flex-col">
-                    <h3 class="text-[10px] sm:text-xs font-black text-slate-500 uppercase tracking-widest mb-2 sm:mb-3">System Log</h3>
+                    class="w-full xl:w-72 bg-slate-900/50 backdrop-blur-sm p-4 sm:p-6 rounded-2xl sm:rounded-3xl border-[3px] sm:border-[4px] border-slate-700 shadow-sm text-left flex flex-col h-full self-stretch">
+                    <h3 class="text-[10px] sm:text-xs font-black text-slate-500 uppercase tracking-widest mb-2 sm:mb-3 flex items-center gap-2">
+                        <span class="w-1.5 h-1.5 bg-green-500 rounded-full animate-ping"></span>
+                        Mission Status Log
+                    </h3>
                     <div id="game-log"
-                        class="text-xs sm:text-sm font-mono font-bold space-y-2 sm:space-y-3 h-36 sm:h-48 overflow-y-auto mb-3 sm:mb-4 border-b border-slate-800 pb-2">
+                        class="text-xs font-mono font-bold space-y-2 sm:space-y-3 h-48 sm:h-64 overflow-y-auto mb-4 border-b border-slate-800 pb-2 scroll-smooth">
                         <p class="text-green-400">> Environment Loaded.</p>
                         <p class="text-slate-400">> Smoke Density: 90%</p>
                     </div>
 
                     <div class="mt-auto">
                         <button onclick="initGame()"
-                            class="w-full bg-slate-800 hover:bg-slate-700 text-white font-bold py-2.5 sm:py-3 rounded-xl border-2 border-slate-600 shadow-sm transition-all hover:-translate-y-0.5 active:translate-y-1 text-xs sm:text-sm uppercase tracking-wider">
-                            <i class="fa-solid fa-rotate mr-2"></i>Reset Simulation
+                            class="w-full bg-slate-800/80 hover:bg-slate-700 text-white font-bold py-2.5 sm:py-3 rounded-xl border-2 border-slate-600 shadow-sm transition-all hover:-translate-y-0.5 active:translate-y-1 text-xs sm:text-sm uppercase tracking-wider flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-rotate"></i>Reset Simulation
                         </button>
-                    </div>
-
-                    <div id="integrity-modal"
-                        class="hidden mt-3 sm:mt-4 pt-3 sm:pt-4 border-t border-slate-800 animate-pulse bg-slate-800 p-3 sm:p-4 rounded-xl sm:rounded-2xl shadow-lg border-[3px] border-orange-500">
-                        <p class="text-orange-400 font-black text-xs sm:text-sm mb-1.5 sm:mb-2 text-center uppercase tracking-wider">⚠️ TEMPTATION ALERT!</p>
-                        <p class="text-xs sm:text-sm font-bold text-slate-300 mb-3 sm:mb-4 text-center">You are safe outside. But you left your
-                            tablet inside!</p>
-                        <div class="flex flex-col gap-2">
-                            <button onclick="handleIntegrity(false)"
-                                class="bg-slate-700 hover:bg-slate-600 border-[3px] border-slate-500 text-white shadow-sm hover:-translate-y-0.5 active:translate-y-1 py-3 rounded-xl font-bold uppercase tracking-wide text-xs">Go Back
-                                For It</button>
-                            <button onclick="handleIntegrity(true)"
-                                class="bg-green-500 hover:bg-green-400 text-white border-[3px] border-green-600 shadow-[0_4px_0_#15803d] hover:-translate-y-0.5 active:translate-y-1 active:shadow-none py-3 rounded-xl font-black uppercase tracking-wide text-xs">Stay
-                                Out (Integrity)</button>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -363,7 +372,7 @@
                 <h3 class="text-green-600 text-xl sm:text-2xl md:text-3xl font-black mb-2 sm:mb-3 drop-shadow-sm">ESCAPE SUCCESSFUL</h3>
                 <p class="text-slate-600 font-bold text-sm sm:text-base md:text-lg mb-4 sm:mb-6">You navigated the smoke and showed perfect integrity.</p>
                 <button onclick="scrollToQuiz()"
-                    class="bg-blue-500 text-white font-black px-5 py-2 sm:px-10 sm:py-4 rounded-full border-[3px] border-blue-600 shadow-[0_4px_0_#1d4ed8] hover:-translate-y-0.5 active:translate-y-1 active:shadow-none transition-all uppercase tracking-wide text-xs sm:text-lg">
+                    class="bg-blue-500 text-white font-black px-6 py-3 sm:px-8 sm:py-3 rounded-full border-[3px] border-blue-600 shadow-[0_4px_0_#1d4ed8] hover:-translate-y-0.5 active:translate-y-1 active:shadow-none transition-all uppercase tracking-wide text-xs sm:text-sm">
                     Take Final Certification <i class="fa-solid fa-arrow-down ml-2"></i>
                 </button>
             </div>
@@ -412,7 +421,7 @@
     <script>
         // --- MODULE STATE ---
         const moduleNum = 3;
-        let localState = {
+        window.localState = {
             videoWatched: false,
             scannerInteracted: false,
             labyrinthEscaped: false,
@@ -447,10 +456,11 @@
             const progress = SafeScapeProgress.getProgress();
             const moduleData = progress[`module${moduleNum}`];
             if (moduleData && moduleData.sections) {
-                localState = { ...localState, ...moduleData.sections };
+                window.localState = { ...window.localState, ...moduleData.sections };
             }
             updateModuleProgress();
             updateSectionStates();
+            renderQuiz();
         }
 
         // REMOVED: saveLocalProgress loop
@@ -536,7 +546,7 @@
         fogCanvas.width = canvas.width;
         fogCanvas.height = canvas.height;
 
-        let player = { x: 30, y: 30, radius: 5, speed: 1.8, dx: 0, dy: 0 };
+        let player = { x: 30, y: 30, radius: 5, speed: 0.5, dx: 0, dy: 0 };
         let keys = { ArrowUp: false, ArrowDown: false, ArrowLeft: false, ArrowRight: false };
         let gameState = 'playing';
         let walls = [];
@@ -865,7 +875,7 @@
         function toggleReview() {
             reviewMode = !reviewMode;
             const container = document.getElementById('quiz-container');
-            const header = document.getElementById('final-quiz').querySelector('.text-center.mb-10');
+            const header = document.getElementById('final-quiz').querySelector('.text-center');
             if (reviewMode) {
                 container.classList.remove('hidden');
                 if (header) header.classList.remove('hidden');
@@ -918,7 +928,7 @@
                     container.appendChild(qDiv);
                 });
                 container.classList.add('hidden');
-                document.getElementById('final-quiz').querySelector('.text-center.mb-10').classList.add('hidden');
+                document.getElementById('final-quiz').querySelector('.text-center').classList.add('hidden');
                 return;
             }
 
@@ -987,7 +997,7 @@
                 document.getElementById('btn-review').classList.remove('hidden');
                 // Hide questions, show result card
                 document.getElementById('quiz-container').classList.add('hidden');
-                document.getElementById('final-quiz').querySelector('.text-center.mb-10').classList.add('hidden');
+                document.getElementById('final-quiz').querySelector('.text-center').classList.add('hidden');
 
                 if (!localState.quizPassed) {
                     SafeScapeProgress.completeSection(moduleNum, 'quizPassed', true);

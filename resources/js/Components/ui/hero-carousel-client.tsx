@@ -44,11 +44,24 @@ export function HeroCarouselClient({ images }: HeroCarouselClientProps) {
                 <CarouselContent>
                     {images.map((image, index) => (
                         <CarouselItem key={image.id}>
-                            <div className="relative isolate w-full h-[40vh] sm:h-[50vh] min-h-[300px] overflow-hidden rounded-[2.5rem] shadow-2xl border border-gray-200 group/slide [mask-image:radial-gradient(white,black)] [-webkit-mask-image:-webkit-radial-gradient(white,black)]">
+                            <div className="relative isolate w-full h-[40vh] sm:h-[50vh] min-h-[300px] overflow-hidden rounded-[2.5rem] shadow-2xl border border-gray-200 group-slide [mask-image:radial-gradient(white,black)] [-webkit-mask-image:-webkit-radial-gradient(white,black)] bg-slate-200">
+                                <style dangerouslySetInnerHTML={{ __html: `
+                                    .carousel-zoom-image {
+                                        transition: opacity 0.7s ease-out, transform 0.7s cubic-bezier(0.33, 1, 0.68, 1) !important;
+                                    }
+                                    .group-slide:hover .carousel-zoom-image {
+                                        transform: scale(1.1) !important;
+                                    }
+                                `}} />
                                 <img
                                     src={image.imageUrl}
                                     alt={image.altText ?? image.title}
-                                    className="absolute inset-0 w-full h-full object-cover transition-transform duration-[15000ms] ease-out scale-100 group-hover/slide:scale-105"
+                                    decoding="async"
+                                    loading={index === 0 ? "eager" : "lazy"}
+                                    {...(index === 0 ? { fetchpriority: "high" } : {})}
+                                    onLoad={(e) => (e.currentTarget.style.opacity = "1")}
+                                    style={{ opacity: 0 }}
+                                    className="absolute inset-0 w-full h-full object-cover carousel-zoom-image"
                                 />
 
                                 {/* Gradient Overlay - Bottom Left aligned */}

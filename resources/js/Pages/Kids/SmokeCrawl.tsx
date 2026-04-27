@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useRef } from "react"
 import { Head, Link } from '@inertiajs/react'
-import { ArrowLeft, Wind, ShieldAlert, CheckCircle, Info, RotateCcw, Flame } from "lucide-react"
+import { ArrowLeft, Wind, ShieldAlert, CheckCircle, Info, RotateCcw, Flame, ChevronUp, ChevronDown, ChevronLeft, ChevronRight, User } from "lucide-react"
 import DashboardLayout from "@/Layouts/DashboardLayout"
+import axios from "axios"
 import { cn } from "@/lib/utils"
 
 const TILE_SIZE = 40
@@ -225,6 +226,13 @@ const SmokeCrawl = () => {
 
     if (tile === 4) {
       setGameState('won')
+      
+      // Award Smoke Scout Badge
+      axios.post('/api/badges/award', {
+        badge_id: 'smoke_scout',
+        badge_name: 'Smoke Scout',
+        badge_icon: '🔦'
+      }).catch(err => console.error("Failed to award badge:", err.response?.data || err.message))
       return
     }
 
@@ -233,8 +241,15 @@ const SmokeCrawl = () => {
 
   const checkDoor = (x: number, y: number, isHot: boolean) => {
     if (isHot) {
-      setMessage("⚠️ Ouch! This door is HOT! Find another way out.")
-      setTimeout(() => setMessage(null), 3000)
+      doorSoundRef.current?.play()
+      setMessage("⚠️ OUCH! That door is HOT! Opening it hurt your oxygen...")
+      setOxygen(prev => Math.max(0, prev - 25)) // 25% penalty for hot doors
+      
+      setTimeout(() => {
+        setDoorStates(prev => ({ ...prev, [`${x}-${y}`]: 'open' }))
+        setPlayer({ x, y })
+        setMessage(null)
+      }, 1500) // Slightly longer delay for hot doors
     } else {
       doorSoundRef.current?.play()
       setMessage("This door is cool. Opening...")
@@ -316,7 +331,7 @@ const SmokeCrawl = () => {
   }
 
   return (
-    <div className="min-h-screen relative bg-blue-50 selection:bg-orange-500 selection:text-white pb-32">
+    <div className="min-h-screen relative bg-blue-50 selection:bg-orange-500 selection:text-white pb-32 overflow-x-hidden">
       <Head title="The Smoke Crawl | SafeScape" />
       
       {/* Background decoration - Absolute instead of fixed to prevent scroll issues */}
@@ -326,13 +341,13 @@ const SmokeCrawl = () => {
         <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-blue-500/5 rounded-full blur-[120px]"></div>
       </div>
 
-      <div className="relative z-10 p-4 sm:p-6 max-w-5xl mx-auto">
+      <div className="relative z-10 p-2 sm:p-6 max-w-5xl mx-auto w-full">
         <div className="flex items-center justify-between mb-8">
           <Link 
             href="/kids/challenges" 
-            className="flex items-center gap-2 text-slate-500 hover:text-slate-800 transition-colors font-bold"
+            className="inline-flex items-center gap-2 text-slate-500 font-bold hover:text-orange-600 transition-all text-sm bg-white/60 backdrop-blur-sm px-4 py-2 rounded-full border border-white/60 shadow-sm"
           >
-            <ArrowLeft className="h-5 w-5" />
+            <ArrowLeft className="h-4 w-4" />
             Back to Missions
           </Link>
         </div>
@@ -356,7 +371,7 @@ const SmokeCrawl = () => {
                </div>
             </div>
 
-            <div className="relative bg-white rounded-[2rem] p-4 shadow-xl border-4 border-slate-100 overflow-hidden aspect-square flex items-center justify-center">
+            <div className="relative bg-white rounded-[2rem] p-2 sm:p-4 shadow-xl border-4 border-slate-100 overflow-hidden aspect-square flex items-center justify-center w-full">
               <canvas 
                 ref={canvasRef} 
                 width={15 * TILE_SIZE} 
@@ -371,7 +386,29 @@ const SmokeCrawl = () => {
                     <Wind className="h-12 w-12 text-white" />
                   </div>
                   <h2 className="text-4xl font-black text-slate-800 mb-4 uppercase tracking-tighter">Mission Ready?</h2>
-                  <p className="text-slate-500 text-lg mb-8 max-w-md font-bold">
+                  
+                  {/* Controls Preview for Mobile */}
+                  <div className="lg:hidden w-full bg-blue-50 rounded-2xl p-4 mb-6 border border-blue-100 grid grid-cols-2 gap-4">
+                    <div className="flex flex-col items-center gap-1">
+                      <div className="flex gap-1">
+                        <div className="w-6 h-6 bg-white border rounded flex items-center justify-center"><ChevronUp className="h-3 w-3" /></div>
+                      </div>
+                      <div className="flex gap-1">
+                        <div className="w-6 h-6 bg-white border rounded flex items-center justify-center"><ChevronLeft className="h-3 w-3" /></div>
+                        <div className="w-6 h-6 bg-white border rounded flex items-center justify-center"><ChevronDown className="h-3 w-3" /></div>
+                        <div className="w-6 h-6 bg-white border rounded flex items-center justify-center"><ChevronRight className="h-3 w-3" /></div>
+                      </div>
+                      <span className="text-[10px] font-black text-blue-600 mt-1">MOVE HERO</span>
+                    </div>
+                    <div className="flex flex-col items-center justify-center gap-1 border-l border-blue-200">
+                      <div className="w-12 h-8 bg-orange-500 rounded flex items-center justify-center shadow-sm">
+                        <User className="h-4 w-4 text-white" />
+                      </div>
+                      <span className="text-[10px] font-black text-orange-600 mt-1 uppercase">Stay Low</span>
+                    </div>
+                  </div>
+
+                  <p className="hidden lg:block text-slate-500 text-lg mb-8 max-w-md font-bold">
                     Learn the "Stay Low and Go" principle in this smoke-filled escape maze!
                   </p>
                   <div className="flex flex-col gap-4 w-full max-w-xs">
@@ -455,6 +492,64 @@ const SmokeCrawl = () => {
                 </div>
               )}
             </div>
+            
+            {/* Mobile Controls */}
+            {gameState === 'playing' && (
+              <div className="lg:hidden mt-8 grid grid-cols-2 gap-4 h-48">
+                {/* Crouch Toggle (Now on the Left) */}
+                <div className="flex flex-col gap-2 h-full">
+                  <button 
+                    onClick={() => setIsCrouched(!isCrouched)}
+                    className={cn(
+                      "flex-1 rounded-3xl font-black text-lg shadow-lg flex flex-col items-center justify-center gap-2 transition-all",
+                      isCrouched 
+                        ? "bg-orange-500 text-white shadow-[0_4px_0_#c2410c] translate-y-1" 
+                        : "bg-white text-slate-600 border-2 border-slate-200 shadow-[0_6px_0_#e2e8f0] active:translate-y-1 active:shadow-none"
+                    )}
+                  >
+                    <User className={cn("h-10 w-10", isCrouched ? "animate-pulse" : "")} />
+                    {isCrouched ? "STAYING LOW" : "TAP TO CROUCH"}
+                  </button>
+                </div>
+
+                {/* D-Pad (Now on the Right) */}
+                <div className="grid grid-cols-3 gap-2 h-full">
+                  <div />
+                  <button 
+                    onClick={() => movePlayer(player.x, player.y - 1)}
+                    className="aspect-square bg-white border-2 border-slate-200 rounded-2xl flex items-center justify-center active:bg-orange-100 active:border-orange-500 shadow-[0_4px_0_#e2e8f0] active:shadow-none active:translate-y-1 transition-all"
+                  >
+                    <ChevronUp className="h-10 w-10 text-slate-600" />
+                  </button>
+                  <div />
+                  
+                  <button 
+                    onClick={() => movePlayer(player.x - 1, player.y)}
+                    className="aspect-square bg-white border-2 border-slate-200 rounded-2xl flex items-center justify-center active:bg-orange-100 active:border-orange-500 shadow-[0_4px_0_#e2e8f0] active:shadow-none active:translate-y-1 transition-all"
+                  >
+                    <ChevronLeft className="h-10 w-10 text-slate-600" />
+                  </button>
+                  <div className="aspect-square bg-slate-50 border border-slate-100 rounded-2xl flex items-center justify-center">
+                    <div className="w-2 h-2 bg-slate-300 rounded-full" />
+                  </div>
+                  <button 
+                    onClick={() => movePlayer(player.x + 1, player.y)}
+                    className="aspect-square bg-white border-2 border-slate-200 rounded-2xl flex items-center justify-center active:bg-orange-100 active:border-orange-500 shadow-[0_4px_0_#e2e8f0] active:shadow-none active:translate-y-1 transition-all"
+                  >
+                    <ChevronRight className="h-10 w-10 text-slate-600" />
+                  </button>
+                  
+                  <div />
+                  <button 
+                    onClick={() => movePlayer(player.x, player.y + 1)}
+                    className="aspect-square bg-white border-2 border-slate-200 rounded-2xl flex items-center justify-center active:bg-orange-100 active:border-orange-500 shadow-[0_4px_0_#e2e8f0] active:shadow-none active:translate-y-1 transition-all"
+                  >
+                    <ChevronDown className="h-10 w-10 text-slate-600" />
+                  </button>
+                  <div />
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Instructions Sidebar */}
@@ -467,19 +562,15 @@ const SmokeCrawl = () => {
                <div className="space-y-4">
                   <div className="flex gap-4">
                      <div className="w-10 h-10 bg-slate-50 rounded-xl flex items-center justify-center text-slate-700 font-bold shrink-0 border border-slate-100">1</div>
-                     <p className="text-slate-600 text-sm leading-relaxed font-bold">Use <span className="text-blue-600">Arrow Keys</span> to move your hero through the building.</p>
+                     <p className="text-slate-600 text-sm leading-relaxed font-bold">Use the <span className="text-blue-600">Arrows</span> to move through the building.</p>
                   </div>
                   <div className="flex gap-4">
                      <div className="w-10 h-10 bg-slate-50 rounded-xl flex items-center justify-center text-slate-700 font-bold shrink-0 border border-slate-100">2</div>
-                     <p className="text-slate-600 text-sm leading-relaxed font-bold">Hold <span className="text-orange-600">Space Bar</span> to crouch. Staying low preserves your oxygen!</p>
+                     <p className="text-slate-600 text-sm leading-relaxed font-bold">Tap <span className="text-orange-600">Crouch</span> to stay low and save oxygen!</p>
                   </div>
                   <div className="flex gap-4">
                      <div className="w-10 h-10 bg-slate-50 rounded-xl flex items-center justify-center text-slate-700 font-bold shrink-0 border border-slate-100">3</div>
-                     <p className="text-slate-600 text-sm leading-relaxed font-bold">Watch the <span className="text-blue-600">Oxygen Bar</span>. If you stand up, it drains much faster.</p>
-                  </div>
-                  <div className="flex gap-4">
-                     <div className="w-10 h-10 bg-slate-50 rounded-xl flex items-center justify-center text-slate-700 font-bold shrink-0 border border-slate-100">4</div>
-                     <p className="text-slate-600 text-sm leading-relaxed font-bold">Reach the <span className="text-green-600">Green Exit</span> to win!</p>
+                     <p className="text-slate-600 text-sm leading-relaxed font-bold">Reach the <span className="text-green-600">Green Exit</span> to win the mission.</p>
                   </div>
                </div>
             </div>
@@ -495,8 +586,8 @@ const SmokeCrawl = () => {
             </div>
 
             {/* Mobile Controls Hint */}
-            <div className="lg:hidden bg-white rounded-2xl p-4 border border-slate-100 text-center">
-              <p className="text-slate-400 text-xs font-bold uppercase tracking-widest">Mobile users can use on-screen joystick (coming soon)</p>
+            <div className="lg:hidden bg-blue-50 rounded-2xl p-4 border border-blue-100 text-center">
+              <p className="text-blue-600 text-xs font-black uppercase tracking-widest">Touch controls active! Use the buttons below the maze.</p>
             </div>
           </div>
         </div>

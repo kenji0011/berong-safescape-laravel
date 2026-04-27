@@ -2,6 +2,7 @@ import React, { useState, useRef } from "react"
 import { Link } from '@inertiajs/react'
 import { ArrowLeft, Play, Tv, Star, GraduationCap } from "lucide-react"
 import DashboardLayout from "@/Layouts/DashboardLayout"
+import axios from "axios"
 import { cn } from "@/lib/utils"
 import Particles from "@/Components/ui/particles"
 import { useSettings } from "@/lib/settings-context"
@@ -28,10 +29,68 @@ const VideosPage = () => {
   })
 
   const playerRef = useRef<HTMLDivElement>(null)
+  const ytPlayerRef = useRef<any>(null)
+  const [isApiLoaded, setIsApiLoaded] = useState(false)
+
+  // Load YouTube IFrame API
+  useEffect(() => {
+    if (!(window as any).YT) {
+      const tag = document.createElement('script')
+      tag.src = "https://www.youtube.com/iframe_api"
+      const firstScriptTag = document.getElementsByTagName('script')[0]
+      firstScriptTag.parentNode?.insertBefore(tag, firstScriptTag)
+
+      ;(window as any).onYouTubeIframeAPIReady = () => {
+        setIsApiLoaded(true)
+      }
+    } else {
+      setIsApiLoaded(true)
+    }
+  }, [])
+
+  // Initialize or update player
+  useEffect(() => {
+    if (isApiLoaded && !ytPlayerRef.current) {
+      initPlayer(activeVideo.src.split('/').pop() || '')
+    } else if (ytPlayerRef.current && isApiLoaded) {
+      ytPlayerRef.current.loadVideoById(activeVideo.src.split('/').pop() || '')
+    }
+  }, [isApiLoaded, activeVideo])
+
+  const initPlayer = (videoId: string) => {
+    ytPlayerRef.current = new (window as any).YT.Player('youtube-player', {
+      height: '100%',
+      width: '100%',
+      videoId: videoId,
+      playerVars: {
+        'autoplay': 0,
+        'controls': 1,
+        'rel': 0,
+        'modestbranding': 1
+      },
+      events: {
+        'onStateChange': onPlayerStateChange
+      }
+    })
+  }
+
+  const onPlayerStateChange = (event: any) => {
+    // YT.PlayerState.ENDED is 0
+    if (event.data === 0) {
+      awardBadge()
+    }
+  }
+
+  const awardBadge = () => {
+    axios.post('/api/badges/award', {
+      badge_id: 'intel_analyst',
+      badge_name: 'Intel Analyst',
+      badge_icon: '🎬'
+    }).catch(err => console.error("Failed to award badge:", err.response?.data || err.message))
+  }
 
   const handleVideoSelect = (video: any) => {
     setActiveVideo(video)
-    // Scroll to the top of the video player with a slight offset to account for any fixed headers if needed.
     playerRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' })
   }
 
@@ -125,7 +184,7 @@ const VideosPage = () => {
                         Mission <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-600 to-rose-600">Intel</span>
                      </h1>
                      <p className="text-slate-500 font-bold text-sm sm:text-base max-w-lg leading-relaxed">
-                        Watch the latest intelligence briefings from HQ. Every video you watch brings you closer to becoming a Fire Hero! 🚒
+                        Watch any intelligence briefing to the end to earn your <span className="text-red-600 font-black">Intel Analyst Badge</span>! 🎬
                      </p>
                   </div>
                </div>
@@ -151,14 +210,7 @@ const VideosPage = () => {
 
                {/* Video Viewport */}
                <div className="w-full aspect-video relative group/iframe">
-                  <iframe 
-                    src={activeVideo.src} 
-                    className="w-full h-full absolute inset-0"
-                    title={activeVideo.title}
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                    allowFullScreen
-                    frameBorder="0"
-                  ></iframe>
+                  <div id="youtube-player" className="w-full h-full absolute inset-0"></div>
                   {/* Subtle scanline effect overlay */}
                   <div className="absolute inset-0 pointer-events-none opacity-[0.03] bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%),linear-gradient(90deg,rgba(255,0,0,0.06),rgba(0,255,0,0.02),rgba(0,0,255,0.06))] bg-[length:100%_2px,3px_100%]"></div>
                </div>
@@ -173,6 +225,10 @@ const VideosPage = () => {
                   <div className="flex gap-2">
                     <div className="px-4 py-2 bg-slate-700 rounded-xl text-slate-300 font-black text-xs uppercase tracking-tighter">Day 0{activeVideo.id}</div>
                     <div className="px-4 py-2 bg-red-600 rounded-xl text-white font-black text-xs uppercase tracking-tighter shadow-lg shadow-red-900/20">Active Intel</div>
+                    <div className="px-4 py-2 bg-amber-500 rounded-xl text-white font-black text-xs uppercase tracking-tighter shadow-lg shadow-amber-900/20 flex items-center gap-2">
+                      <span>🎬</span>
+                      <span>REWARD AVAILABLE</span>
+                    </div>
                   </div>
                </div>
             </div>
@@ -231,6 +287,9 @@ const VideosPage = () => {
                       <div className="flex items-center gap-2 mb-3">
                          <span className="text-xl">{video.icon}</span>
                          <span className="text-[10px] font-black text-red-500 uppercase tracking-widest bg-red-50 px-2 py-0.5 rounded">NEW INTEL</span>
+                         <span className="ml-auto text-[10px] font-black text-amber-600 uppercase tracking-widest bg-amber-50 px-2 py-0.5 rounded border border-amber-200 flex items-center gap-1">
+                           🎬 BADGE
+                         </span>
                       </div>
                       <h4 className="font-black text-slate-800 text-xl mb-3 tracking-tight leading-tight group-hover:text-red-600 transition-colors">{video.title}</h4>
                       <p className="text-slate-500 font-bold text-sm leading-relaxed flex-1">

@@ -1,165 +1,264 @@
 "use client"
 
+import { useState } from "react"
 import { useAuth } from "@/lib/auth-context"
-import { Flame, Sparkles, Gamepad2, BookOpen, Trophy, Lock } from "lucide-react"
+import { Flame, Sparkles, Gamepad2, BookOpen, Trophy, Lock, Shield, Star, Zap, ChevronRight, Calendar, BadgeCheck, X } from "lucide-react"
 import { cn } from "@/lib/utils"
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+  DialogDescription,
+  DialogClose,
+} from "@/Components/ui/dialog"
 
 interface KidsWelcomeBannerProps {
   completedModules: number[]
+  earnedBadges?: any[]
 }
 
-export function KidsWelcomeBanner({ completedModules = [] }: KidsWelcomeBannerProps) {
+export function KidsWelcomeBanner({ completedModules = [], earnedBadges = [] }: KidsWelcomeBannerProps) {
   const { user } = useAuth()
+  const [isOpen, setIsOpen] = useState(false)
   const firstName = user?.name?.split(' ')[0] || 'Fire Hero'
-  const totalBadges = 5
-  const badgesFound = completedModules.length
+  
+  // All possible badges with source info
+  const allBadges = [
+    { id: 'module_1', moduleNum: 1, name: "Fire Triangle", source: "Module 1", icon: "🔥" },
+    { id: 'module_2', moduleNum: 2, name: "Safety Leader", source: "Module 2", icon: "🛡️" },
+    { id: 'module_3', moduleNum: 3, name: "Plan Master", source: "Module 3", icon: "📢" },
+    { id: 'module_4', moduleNum: 4, name: "Low & Go!", source: "Module 4", icon: "🏃" },
+    { id: 'module_5', moduleNum: 5, name: "Home Guard", source: "Module 5", icon: "🏘️" },
+    { id: 'quiz_hero', name: "Quiz Hero", source: "Fire Quiz", icon: "🏆" },
+    { id: 'memory_master', name: "Memory Master", source: "Memory Game", icon: "🧠" },
+    {id: 'smoke_scout', name: "Smoke Scout", source: "Smoke Crawl", icon: "🔦" },
+    { id: 'safety_scout', name: "Safety Scout", source: "Hot or Not", icon: "🤖" },
+    { id: 'intel_analyst', name: "Intel Analyst", source: "Mission Intel", icon: "🎬" }
+  ]
+
+  const totalBadges = allBadges.length
+  
+  const getBadgeData = (badgeId: string, moduleNum?: number) => {
+    const earned = earnedBadges.find(b => b.badge_id === badgeId)
+    const isEarned = (moduleNum && completedModules.includes(moduleNum)) || !!earned
+    return { isEarned, date: earned?.earnedAt || (isEarned ? "Recent" : null) }
+  }
+
+  const badgesFound = allBadges.filter(b => getBadgeData(b.id, b.moduleNum).isEarned).length
+  const progressPercent = (badgesFound / totalBadges) * 100
 
   // Avatars Mapping
   const AVATAR_MAP: Record<string, string> = {
-    cow: '🐮',
-    ff1: '👨‍🚒',
-    ff2: '👩‍🚒',
-    kid1: '🧒',
-    kid2: '👧',
-    adult1: '👨',
-    adult2: '👩',
+    cow: '🐮', ff1: '👨‍🚒', ff2: '👩‍🚒', kid1: '🧒', kid2: '👧', adult1: '👨', adult2: '👩',
   }
-
   const userAvatar = AVATAR_MAP[user?.avatar || 'cow'] || '🐮'
 
-  // Determine Hero Rank
+  // Ranking Logic
   const getHeroRank = (count: number) => {
-    if (count >= 5) return "Master Hero"
-    if (count >= 3) return "Safety Elite"
-    if (count >= 1) return "Fire Scout"
-    return "Recruit"
+    if (count >= 8) return { name: "Legendary Hero", color: "text-yellow-300", bg: "bg-yellow-400/30", icon: Star }
+    if (count >= 5) return { name: "Master Hero", color: "text-orange-300", bg: "bg-orange-400/30", icon: Trophy }
+    if (count >= 3) return { name: "Safety Elite", color: "text-blue-300", bg: "bg-blue-400/30", icon: Shield }
+    if (count >= 1) return { name: "Fire Scout", color: "text-green-300", bg: "bg-green-400/30", icon: Flame }
+    return { name: "Recruit", color: "text-slate-300", bg: "bg-slate-400/30", icon: Zap }
   }
 
-  // Calculate progress to next rank
-  const getNextRankInfo = (count: number) => {
-    if (count >= 5) return { next: "GODLIKE HERO", needed: 0, progress: 100 }
-    if (count >= 3) return { next: "MASTER HERO", needed: 5 - count, progress: (count / 5) * 100 }
-    if (count >= 1) return { next: "SAFETY ELITE", needed: 3 - count, progress: (count / 3) * 100 }
-    return { next: "FIRE SCOUT", needed: 1 - count, progress: 0 }
+  const currentRank = getHeroRank(badgesFound)
+  const RankIcon = currentRank.icon
+
+  const formatDate = (dateStr?: string) => {
+    if (!dateStr || dateStr === "Recent") return "Today"
+    try {
+      const date = new Date(dateStr)
+      if (isNaN(date.getTime())) return "Today"
+      return new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric', year: 'numeric' }).format(date)
+    } catch { return "Today" }
   }
-
-  const rankInfo = getNextRankInfo(badgesFound)
-
-  const badgeDetails = [
-    { name: "Fire Triangle", desc: "Learned the 3 elements of fire", icon: "🔥" },
-    { name: "Safety Leader", desc: "Mastered the school fire drill", icon: "🛡️" },
-    { name: "Plan Master", desc: "Created a home escape plan", icon: "📢" },
-    { name: "Low & Go!", desc: "Mastered the smoke crawl", icon: "🏃" },
-    { name: "Home Guard", desc: "Passed the final fire safety exam", icon: "🏘️" }
-  ]
 
   return (
-    <div className="relative group bg-gradient-to-br from-rose-600 via-red-500 to-orange-500 rounded-[2rem] sm:rounded-[2.5rem] shadow-[0_20px_50px_rgba(244,63,94,0.3)] mb-8 sm:mb-10 border-[6px] border-white/90 overflow-visible transition-all duration-500 hover:shadow-[0_30px_60px_rgba(244,63,94,0.4)]">
+    <div className="relative bg-gradient-to-br from-rose-600 via-red-500 to-orange-500 rounded-[2rem] sm:rounded-[2.5rem] shadow-[0_15px_40px_rgba(244,63,94,0.3)] mb-6 sm:mb-8 border-4 sm:border-[6px] border-white/90 overflow-hidden transform translate-z-0">
       
-      {/* ── Advanced Mesh Gradient Background Layer ── */}
-      <div className="absolute inset-0 overflow-hidden rounded-[1.6rem] sm:rounded-[2.1rem] pointer-events-none">
-        <div className="absolute top-[-10%] right-[-10%] w-[50%] h-[60%] bg-yellow-400/30 rounded-full blur-[80px] animate-pulse"></div>
-        <div className="absolute bottom-[-20%] left-[-10%] w-[60%] h-[70%] bg-pink-500/30 rounded-full blur-[100px] animate-pulse" style={{ animationDelay: '2s' }}></div>
-        <div className="absolute top-[20%] left-[30%] w-[30%] h-[40%] bg-orange-300/20 rounded-full blur-[60px] animate-bounce-slow"></div>
-        <div className="absolute inset-0 bg-[url('/noise.png')] opacity-10 mix-blend-overlay"></div>
-        
-        {/* Animated Sparkles */}
-        <div className="absolute inset-0 overflow-hidden">
-          {Array.from({ length: 12 }).map((_, i) => (
-            <div 
-              key={i}
-              className="absolute w-1 h-1 bg-white rounded-full animate-ping opacity-20"
-              style={{ 
-                top: `${Math.random() * 100}%`, 
-                left: `${Math.random() * 100}%`,
-                animationDelay: `${Math.random() * 5}s`,
-                animationDuration: `${2 + Math.random() * 3}s`
-              }}
-            />
-          ))}
-        </div>
+      {/* Decorative Gradients */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden">
+        <div className="absolute top-0 right-0 w-96 h-96 bg-yellow-400/20 rounded-full blur-[100px] animate-pulse"></div>
+        <div className="absolute bottom-0 left-0 w-80 h-80 bg-pink-500/20 rounded-full blur-[100px] animate-pulse" style={{ animationDelay: '2s' }}></div>
       </div>
 
-      {/* ── Main Content Container (Mobile Optimized) ── */}
-      <div className="relative z-10 px-4 sm:px-10 py-6 sm:py-10 flex flex-col items-center">
+      <div className="relative z-10 px-4 sm:px-10 py-5 sm:py-6 lg:py-7 flex flex-col items-center">
         
-        {/* ── Welcome Typography (Responsive Scale) ── */}
-        <div className="text-center mb-8 sm:mb-10 relative px-2">
-          <div className="absolute -top-6 sm:top-[-8] left-1/2 -translate-x-1/2 opacity-40">
-            <Sparkles className="h-8 w-8 sm:h-12 sm:w-12 text-yellow-300 animate-pulse" />
-          </div>
-          <h1 className="text-3xl sm:text-6xl font-black text-white mb-2 drop-shadow-[0_4px_8px_rgba(0,0,0,0.3)] tracking-tighter leading-tight">
-            Welcome, <span className="text-yellow-300 italic">{firstName}!</span>
+        {/* ── Header ── */}
+        <div className="text-center mb-5 lg:mb-6">
+          <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black text-white drop-shadow-md tracking-tighter mb-0.5">
+            Welcome, <span className="text-yellow-300">{firstName}!</span>
           </h1>
-          <p className="text-base sm:text-2xl font-bold text-yellow-100/90 drop-shadow-md tracking-tight leading-snug">
-            {badgesFound >= 5 
-              ? "You are a Master Fire Safety Hero! 🏅" 
-              : "Ready for your next mission, Hero?"}
+          <p className="text-sm sm:text-lg lg:text-xl font-bold text-yellow-50/90 tracking-tight flex items-center justify-center gap-2">
+            You are a <span className="text-yellow-300 underline decoration-yellow-400/50 underline-offset-4">{currentRank.name}!</span> 🎖️
           </p>
         </div>
 
-        {/* ── Integrated Stats Strip (Responsive Layout) ── */}
-        <div className="flex flex-col lg:flex-row items-center justify-center w-full gap-4 sm:gap-8 mb-8 sm:mb-10 max-w-4xl">
-          
-          {/* Avatar Section (Mobile Friendly) */}
-          <div className="w-full sm:w-auto flex items-center gap-4 sm:gap-5 bg-white/10 backdrop-blur-md rounded-2xl p-4 sm:p-5 sm:pl-5 sm:pr-8 border border-white/20 shadow-xl group/avatar-box hover:bg-white/15 transition-all">
-            <div className="relative group/avatar shrink-0">
-              <div className="absolute inset-[-4px] sm:inset-[-6] rounded-full border-2 border-white/30 animate-[spin_10s_linear_infinite] pointer-events-none"></div>
-              <div className="relative h-14 w-14 sm:h-20 sm:w-20 rounded-full ring-2 sm:ring-4 ring-yellow-400 bg-white flex items-center justify-center overflow-hidden shadow-2xl transition-all duration-500 group-hover/avatar:scale-110">
-                <span className="text-3xl sm:text-5xl animate-bounce-slow">{userAvatar}</span>
-                <div className="absolute inset-0 bg-gradient-to-t from-rose-100/50 to-transparent"></div>
+        {/* ── Stats Row ── */}
+        <div className="hidden lg:flex items-stretch justify-center w-full gap-5 mb-6 max-w-4xl">
+           
+           {/* Card 1: Hero Rank */}
+           <div className="flex-1 bg-white/10 backdrop-blur-md rounded-[1.5rem] p-5 border border-white/20 flex items-center gap-5 shadow-xl group hover:bg-white/15 transition-all">
+              <div className="h-16 w-16 rounded-full bg-white shadow-2xl flex items-center justify-center text-4xl transform group-hover:scale-110 transition-transform duration-300">
+                {userAvatar}
               </div>
-            </div>
-            <div className="flex flex-col">
-              <p className="text-[9px] sm:text-[10px] font-black text-white/60 uppercase tracking-[0.2em] mb-0.5 sm:mb-1">Hero Rank</p>
-              <h3 className={cn(
-                "text-base sm:text-xl font-black uppercase tracking-tight leading-none",
-                badgesFound >= 5 ? "text-yellow-300" : "text-white"
-              )}>
-                {getHeroRank(badgesFound)}
-              </h3>
-            </div>
-          </div>
+              <div className="flex flex-col items-start">
+                 <span className="text-[9px] font-black text-yellow-300/80 uppercase tracking-[0.2em] mb-0.5">Hero Rank</span>
+                 <h3 className="text-2xl font-black text-white uppercase tracking-tight leading-none mb-1.5">
+                    {currentRank.name}
+                 </h3>
+                 <div className="flex items-center gap-1.5 px-2.5 py-0.5 bg-yellow-400 rounded-full text-red-700 font-black text-[10px] uppercase">
+                    <RankIcon className="h-2.5 w-2.5" />
+                    Level {Math.floor(badgesFound / 2) + 1}
+                 </div>
+              </div>
+           </div>
 
-          {/* Badge Strip (Wrap for Mobile) */}
-          <div className="w-full sm:w-auto flex flex-col sm:flex-row items-center gap-4 sm:gap-6 bg-white/10 backdrop-blur-md rounded-2xl p-4 sm:p-4 sm:px-8 border border-white/20 shadow-xl">
-            <div className="flex items-center gap-2 sm:gap-3 self-start sm:self-center">
-               <Trophy className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-yellow-400 fill-yellow-400" />
-               <span className="text-white font-black text-[9px] sm:text-[10px] uppercase tracking-widest opacity-60">Achieved</span>
-            </div>
-            
-            <div className="flex flex-wrap justify-center gap-2 sm:gap-3">
-              {badgeDetails.map((badge, i) => {
-                const isUnlocked = completedModules.includes(i + 1)
-                return (
-                  <div key={i} className="group/item relative">
-                    <div className={cn(
-                      "h-9 w-9 sm:h-11 sm:w-11 rounded-xl flex items-center justify-center text-lg sm:text-2xl transition-all duration-500 shadow-lg border-2",
-                      isUnlocked 
-                        ? "bg-gradient-to-br from-yellow-300 to-yellow-500 border-white hover:scale-115" 
-                        : "bg-black/20 border-white/10 opacity-30"
-                    )}>
-                      {isUnlocked ? badge.icon : <Lock className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-white/40" />}
-                    </div>
-                    {/* Tooltips only on larger screens where hover exists */}
-                    <div className="hidden sm:block absolute bottom-full left-1/2 -translate-x-1/2 mb-3 w-40 p-3 bg-white rounded-xl shadow-2xl opacity-0 invisible group-hover/item:opacity-100 group-hover/item:visible transition-all duration-300 text-center pointer-events-none scale-90 group-hover/item:scale-100 z-50">
-                       <div className="absolute -bottom-1.5 left-1/2 -translate-x-1/2 w-3 h-3 bg-white rotate-45"></div>
-                       <span className="text-[11px] font-black text-slate-800 uppercase block mb-1">{isUnlocked ? badge.name : "Locked"}</span>
-                       <p className="text-[9px] font-bold text-slate-500 leading-tight">{isUnlocked ? badge.desc : "Complete training to earn!"}</p>
-                    </div>
+           {/* Card 2: Achieved Badges & XP Bar */}
+           <Dialog open={isOpen} onOpenChange={setIsOpen}>
+            <div className="flex-[1.2] bg-white/10 backdrop-blur-md rounded-[1.5rem] p-5 border border-white/20 flex flex-col shadow-xl">
+                <div className="flex items-center justify-between mb-3">
+                  <div className="flex items-center gap-2">
+                      <Trophy className="h-3.5 w-3.5 text-yellow-300" />
+                      <span className="text-[9px] font-black text-yellow-300/80 uppercase tracking-[0.2em]">Achieved Badges</span>
                   </div>
-                )
-              })}
+                  
+                  <DialogTrigger asChild>
+                    <button 
+                      className="px-3 py-1 bg-yellow-400 hover:bg-yellow-300 rounded-lg text-red-700 font-black text-[10px] uppercase tracking-wider transition-all active:scale-90 shadow-sm border border-yellow-500/20"
+                      onClick={() => setIsOpen(true)}
+                    >
+                      More
+                    </button>
+                  </DialogTrigger>
+                </div>
+
+                <div className="flex items-center gap-2 mb-4">
+                  {allBadges
+                    .map(b => ({ ...b, earned: getBadgeData(b.id, b.moduleNum).isEarned }))
+                    .sort((a, b) => (b.earned ? 1 : 0) - (a.earned ? 1 : 0))
+                    .slice(0, 5)
+                    .map((badge, i) => (
+                      <div key={i} className={cn(
+                        "h-10 w-10 rounded-xl flex items-center justify-center text-xl transition-all shadow-lg border",
+                        badge.earned 
+                          ? "bg-gradient-to-br from-yellow-300 to-orange-400 border-white/30" 
+                          : "bg-black/20 border-white/5 opacity-30"
+                      )}>
+                        {badge.earned ? badge.icon : <Lock className="h-3 w-3 text-white/20" />}
+                      </div>
+                    ))
+                  }
+                  {badgesFound > 5 && (
+                    <div className="h-10 w-10 rounded-xl flex items-center justify-center bg-white/10 backdrop-blur-md border border-white/20 text-yellow-300 font-black text-xs shadow-lg">
+                      +{badgesFound - 5}
+                    </div>
+                  )}
+                </div>
+
+                <div className="space-y-1">
+                  <div className="flex justify-between items-center px-1">
+                      <span className="text-[8px] font-black text-white/50 uppercase tracking-widest">Next Rank Progress</span>
+                      <span className="text-[10px] font-black text-yellow-300">{progressPercent.toFixed(0)}%</span>
+                  </div>
+                  <div className="h-2.5 w-full bg-black/30 rounded-full border border-white/5 overflow-hidden p-0.5">
+                      <div 
+                        className="h-full bg-gradient-to-r from-yellow-300 to-white rounded-full transition-all duration-700 shadow-[0_0_10px_rgba(255,255,255,0.4)]" 
+                        style={{ width: `${progressPercent}%` }}
+                      ></div>
+                  </div>
+                </div>
             </div>
-            
-            <div className="hidden sm:block bg-white/20 px-3 py-1.5 rounded-lg border border-white/30 ml-2">
-                <span className="text-yellow-200 font-black text-xs tabular-nums">{badgesFound}/5</span>
-            </div>
-          </div>
+
+            {/* Badge Modal - ENHANCED WITH DATES & SOURCE */}
+            <DialogContent showCloseButton={false} className="w-[92vw] sm:max-w-2xl bg-[#ff4b3e] border-none text-white rounded-[2rem] p-0 overflow-hidden shadow-2xl transform-gpu">
+              <div className="p-5 sm:p-8 lg:p-10 relative bg-gradient-to-b from-rose-500 to-orange-500 h-full">
+                <DialogClose className="absolute top-4 right-4 z-50 p-2 bg-black/20 hover:bg-black/40 rounded-full transition-colors" onClick={() => setIsOpen(false)}>
+                  <X className="h-4 w-4 text-white" />
+                </DialogClose>
+                
+                <DialogHeader className="mb-8 relative z-10 text-left">
+                  <div className="flex items-center gap-3 mb-2">
+                    <div className="p-2 bg-yellow-400 rounded-2xl shadow-lg">
+                      <Trophy className="h-6 w-6 text-red-600" />
+                    </div>
+                    <DialogTitle className="text-3xl sm:text-4xl font-black uppercase tracking-tighter text-white drop-shadow-md">Hero Badge Hall</DialogTitle>
+                  </div>
+                  <DialogDescription className="sr-only">Detailed list of your earned badges including dates and source.</DialogDescription>
+                  <p className="text-white/80 font-bold text-sm sm:text-lg">Every badge tells the story of your hero training!</p>
+                </DialogHeader>
+
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4 overflow-y-auto max-h-[55vh] pr-2 custom-scrollbar overscroll-contain">
+                  {allBadges.map((badge, i) => {
+                    const badgeState = getBadgeData(badge.id, (badge as any).moduleNum)
+                    return (
+                      <div key={i} className={cn(
+                        "relative p-3 sm:p-5 rounded-2xl border transition-all flex flex-col items-center text-center group",
+                        badgeState.isEarned 
+                          ? "bg-white/10 border-white/20 shadow-xl" 
+                          : "bg-black/10 border-white/5 opacity-40"
+                      )}>
+                        {/* Icon */}
+                        <div className={cn(
+                          "h-12 w-12 sm:h-16 sm:w-16 rounded-2xl flex items-center justify-center text-3xl sm:text-4xl mb-3 shadow-lg relative transform group-hover:scale-110 transition-transform",
+                          badgeState.isEarned ? "bg-gradient-to-br from-yellow-300 to-orange-400 border-2 border-white/30" : "bg-white/5 border border-white/10"
+                        )}>
+                          {badgeState.isEarned ? badge.icon : <Lock className="h-5 w-5 text-white/20" />}
+                          {badgeState.isEarned && (
+                            <div className="absolute -top-1 -right-1 bg-green-500 rounded-full p-1 border-2 border-white shadow-md">
+                               <BadgeCheck className="h-2 w-2 text-white" />
+                            </div>
+                          )}
+                        </div>
+
+                        {/* Text Info */}
+                        <div className="flex flex-col gap-0.5 w-full">
+                          <h5 className="font-black text-[10px] sm:text-sm uppercase tracking-tight text-white">{badgeState.isEarned ? badge.name : "Locked"}</h5>
+                          {badgeState.isEarned ? (
+                            <>
+                              <span className="text-[8px] sm:text-[10px] font-bold text-yellow-300/80 uppercase tracking-widest">{badge.source}</span>
+                              <div className="mt-2 py-1 px-2 bg-black/20 rounded-lg flex items-center justify-center gap-1 border border-white/5">
+                                 <Calendar className="h-2.5 w-2.5 text-white/50" />
+                                 <span className="text-[8px] sm:text-[9px] font-black text-white/90">{formatDate(badgeState.date)}</span>
+                              </div>
+                            </>
+                          ) : (
+                            <span className="text-[8px] sm:text-[10px] font-bold text-white/20 uppercase">Keep Training!</span>
+                          )}
+                        </div>
+                      </div>
+                    )
+                  })}
+                </div>
+              </div>
+            </DialogContent>
+           </Dialog>
         </div>
 
-        {/* ── 3D Action Buttons (Compact 'Play, Learn, Win' Row) ── */}
-        <div className="flex flex-wrap justify-center items-center w-full gap-3 sm:gap-6">
+        {/* ── Mobile/Fallback Stats Button ── */}
+        <div className="lg:hidden w-full max-w-sm mb-5">
+          <button 
+            className="w-full bg-white/15 hover:bg-white/20 rounded-2xl p-3 border border-white/20 flex items-center gap-4 transition-all active:scale-95 shadow-xl"
+            onClick={() => setIsOpen(true)}
+          >
+            <div className="h-10 w-10 rounded-full bg-white shadow-xl flex items-center justify-center text-2xl overflow-hidden shrink-0">
+              {userAvatar}
+            </div>
+            <div className="flex flex-col items-start flex-1">
+              <div className={cn("px-2 py-0.5 rounded-full text-[7px] font-black uppercase tracking-[0.15em] mb-0.5 shadow-sm", currentRank.bg, currentRank.color)}>
+                {currentRank.name}
+              </div>
+              <div className="text-white font-black text-[11px] uppercase tracking-tight">View Hero Stats</div>
+            </div>
+            <ChevronRight className="h-3.5 w-3.5 text-yellow-300" />
+          </button>
+        </div>
+
+        {/* ── Action Buttons ── */}
+        <div className="flex flex-row justify-center items-center w-full gap-2 sm:gap-4 px-1 max-w-2xl">
           {[
             { label: "Play", icon: Gamepad2, color: "bg-[#22c55e]", shadow: "#15803d", href: "/kids/safescape" },
             { label: "Learn", icon: BookOpen, color: "bg-[#3b82f6]", shadow: "#1d4ed8", href: "/kids/intel" },
@@ -168,41 +267,27 @@ export function KidsWelcomeBanner({ completedModules = [] }: KidsWelcomeBannerPr
             <button 
               key={i}
               className={cn(
-                "group/btn relative flex items-center justify-center gap-2 sm:gap-3 px-5 sm:px-8 py-2.5 sm:py-4 rounded-xl sm:rounded-2xl border-none transition-all duration-200 active:duration-75 cursor-pointer overflow-hidden min-w-[90px] sm:min-w-[140px]",
+                "group/btn relative flex items-center justify-center gap-1.5 sm:gap-3 px-2 sm:px-6 lg:px-8 py-2 sm:py-3 rounded-xl sm:rounded-2xl border-none transition-all duration-200 cursor-pointer overflow-hidden flex-1 sm:flex-initial lg:flex-1 max-w-[100px] sm:max-w-[160px] lg:max-w-[180px]",
                 btn.color,
                 btn.textColor || "text-white",
-                "shadow-[0_5px_0_0_var(--btn-shadow)] sm:shadow-[0_8px_0_0_var(--btn-shadow)]",
-                "hover:shadow-[0_3px_0_0_var(--btn-shadow)] sm:hover:shadow-[0_4px_0_0_var(--btn-shadow)]",
-                "hover:translate-y-[2px] sm:hover:translate-y-[4px]",
-                "active:translate-y-[5px] sm:active:translate-y-[8px] active:shadow-none"
+                "shadow-[0_4px_0_0_var(--btn-shadow)] sm:shadow-[0_5px_0_0_var(--btn-shadow)]",
+                "hover:translate-y-[1.5px] active:translate-y-[3px] active:shadow-none"
               )}
               style={{ "--btn-shadow": btn.shadow } as React.CSSProperties}
             >
-              <div className="absolute top-0 -left-full w-full h-full bg-gradient-to-r from-transparent via-white/30 to-transparent skew-x-[-20deg] group-hover/btn:animate-[shimmer_1.5s_infinite] pointer-events-none"></div>
-              
-              <btn.icon className={cn("h-5 w-5 sm:h-6 sm:w-6 transition-transform group-hover/btn:scale-120 group-hover/btn:rotate-6 shrink-0", btn.textColor ? "fill-amber-900" : "fill-white")} />
-              <span className="font-black text-sm sm:text-xl tracking-wide uppercase whitespace-nowrap">{btn.label}</span>
+              <div className="absolute top-0 -left-full w-full h-full bg-gradient-to-r from-transparent via-white/30 to-transparent skew-x-[-20deg] group-hover/btn:animate-[shimmer_1.5s_infinite]"></div>
+              <btn.icon className={cn("h-4 w-4 sm:h-5 lg:h-5 transition-transform group-hover/btn:scale-110", btn.textColor ? "fill-amber-900" : "fill-white")} />
+              <span className="font-black text-[9px] sm:text-base lg:text-lg tracking-wide uppercase whitespace-nowrap">{btn.label}</span>
             </button>
           ))}
         </div>
       </div>
 
       <style dangerouslySetInnerHTML={{ __html: `
-        @keyframes shimmer {
-          0% { transform: translateX(-100%) skewX(-20deg); }
-          100% { transform: translateX(200%) skewX(-20deg); }
-        }
-        @keyframes bg-shimmer {
-          0% { background-position: 0% 50%; }
-          100% { background-position: 200% 50%; }
-        }
-        .animate-bounce-slow {
-          animation: bounce-slow 4s ease-in-out infinite;
-        }
-        @keyframes bounce-slow {
-          0%, 100% { transform: translateY(0); }
-          50% { transform: translateY(-10px); }
-        }
+        @keyframes shimmer { 0% { transform: translateX(-100%) skewX(-20deg); } 100% { transform: translateX(200%) skewX(-20deg); } }
+        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: rgba(0,0,0,0.1); border-radius: 10px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 10px; }
       ` }} />
     </div>
   )

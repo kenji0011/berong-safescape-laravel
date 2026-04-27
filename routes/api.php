@@ -91,6 +91,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::post('/progress', [KidsController::class, 'updateProgress']);
         Route::get('/safescape', [KidsController::class, 'safeScapeProgress']);
         Route::post('/safescape', [KidsController::class, 'updateSafeScape']);
+        Route::post('/quiz', [KidsController::class, 'submitQuiz']);
     });
 
     // ==========================================

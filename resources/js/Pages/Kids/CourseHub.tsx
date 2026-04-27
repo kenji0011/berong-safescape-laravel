@@ -25,13 +25,13 @@ interface CourseHubProps {
   initialModules?: ModuleData[]
 }
 
-// Static metadata per module (game names, icons) since these are hardcoded per module
-const MODULE_META: Record<number, { gameIcon: string; gameLabel: string; bgImage: string }> = {
-  1: { gameIcon: "🎮", gameLabel: "Element Mixer Lab", bgImage: "/images/kids/module1.png" },
-  2: { gameIcon: "🎵", gameLabel: "Rhythm Marshal Game", bgImage: "/images/kids/module2.png" },
-  3: { gameIcon: "🌫️", gameLabel: "Smoke Labyrinth Game", bgImage: "/images/kids/module3.png" },
-  4: { gameIcon: "☁️", gameLabel: "Smoke Physics", bgImage: "/images/kids/module4.png" },
-  5: { gameIcon: "🌟", gameLabel: "Hero Certificate", bgImage: "/images/kids/module5.png" },
+// Static metadata per module (game names, icons, badges) since these are hardcoded per module
+const MODULE_META: Record<number, { gameIcon: string; gameLabel: string; bgImage: string; badge: { name: string; icon: string } }> = {
+  1: { gameIcon: "🎮", gameLabel: "Element Mixer Lab", bgImage: "/images/kids/module1.png", badge: { name: "Fire Triangle", icon: "🔥" } },
+  2: { gameIcon: "🎵", gameLabel: "Rhythm Marshal Game", bgImage: "/images/kids/module2.png", badge: { name: "Safety Leader", icon: "🛡️" } },
+  3: { gameIcon: "🌫️", gameLabel: "Smoke Labyrinth Game", bgImage: "/images/kids/module3.png", badge: { name: "Plan Master", icon: "📢" } },
+  4: { gameIcon: "☁️", gameLabel: "Smoke Physics", bgImage: "/images/kids/module4.png", badge: { name: "Low & Go!", icon: "🏃" } },
+  5: { gameIcon: "🌟", gameLabel: "Hero Certificate", bgImage: "/images/kids/module5.png", badge: { name: "Home Guard", icon: "🏘️" } },
 }
 
 // Static fallback if API hasn't seeded yet
@@ -93,7 +93,6 @@ const CourseHubPage = ({ initialModules }: CourseHubProps) => {
       {/* ── Course Completion Banner ── */}
       {completedCount === 5 && (user?.postTestScore === null || user?.postTestScore === undefined) && (
         <div className="bg-gradient-to-r from-emerald-500 via-green-500 to-teal-500 px-4 sm:px-6 py-6 sm:py-8 relative overflow-hidden animate-in slide-in-from-top fade-in duration-500">
-          <div className="absolute inset-0 bg-[url('/noise.png')] opacity-5" />
           <div className="max-w-6xl mx-auto relative z-10 flex flex-col sm:flex-row items-center gap-4 sm:gap-8">
             <div className="flex items-center gap-4 flex-1">
               <div className="h-14 w-14 sm:h-16 sm:w-16 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center shrink-0 border-2 border-white/30">
@@ -119,7 +118,6 @@ const CourseHubPage = ({ initialModules }: CourseHubProps) => {
       {/* ── Post-Test Completed Banner ── */}
       {completedCount === 5 && user?.postTestScore !== null && user?.postTestScore !== undefined && (
         <div className="bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500 px-4 sm:px-6 py-6 sm:py-8 relative overflow-hidden animate-in slide-in-from-top fade-in duration-500">
-          <div className="absolute inset-0 bg-[url('/noise.png')] opacity-5" />
           <div className="max-w-6xl mx-auto relative z-10 flex flex-col sm:flex-row items-center gap-4 sm:gap-8">
             <div className="flex items-center gap-4 flex-1">
               <div className="h-14 w-14 sm:h-16 sm:w-16 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center shrink-0 border-2 border-white/30">
@@ -295,12 +293,26 @@ const CourseHubPage = ({ initialModules }: CourseHubProps) => {
 
                       {/* Game label */}
                       {meta && (
-                        <div className={cn(
-                          "flex items-center gap-2 text-xs font-bold mb-6 w-fit px-3 py-1.5 rounded-xl border-2",
-                          module.isCompleted ? "bg-green-50 text-green-600 border-green-100" : module.isLocked ? "bg-slate-50 text-slate-400 border-slate-200" : "bg-blue-50 text-blue-600 border-blue-100"
-                        )}>
-                          <span className="text-base">{meta.gameIcon}</span>
-                          {meta.gameLabel}
+                        <div className="flex flex-col gap-2 mb-6">
+                          <div className={cn(
+                            "flex items-center gap-2 text-xs font-bold w-fit px-3 py-1.5 rounded-xl border-2",
+                            module.isCompleted ? "bg-green-50 text-green-600 border-green-100" : module.isLocked ? "bg-slate-50 text-slate-400 border-slate-200" : "bg-blue-50 text-blue-600 border-blue-100"
+                          )}>
+                            <span className="text-base">{meta.gameIcon}</span>
+                            {meta.gameLabel}
+                          </div>
+                          <div className={cn(
+                            "flex items-center gap-2 text-xs font-black w-fit px-3 py-1.5 rounded-xl border-2 uppercase tracking-tight relative overflow-hidden",
+                            module.isCompleted 
+                              ? "bg-yellow-50 text-yellow-700 border-yellow-200 shadow-sm" 
+                              : "bg-slate-50 text-slate-400 border-slate-200"
+                          )}>
+                            <span className="text-base">{meta.badge.icon}</span>
+                            <span>Badge: {meta.badge.name}</span>
+                            {module.isCompleted && (
+                              <span className="ml-1 px-1.5 py-0.5 bg-yellow-400 text-yellow-900 rounded-md text-[8px] animate-pulse">EARNED!</span>
+                            )}
+                          </div>
                         </div>
                       )}
 

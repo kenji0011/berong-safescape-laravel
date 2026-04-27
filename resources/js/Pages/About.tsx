@@ -239,7 +239,7 @@ function PartnershipCard({ children, delay = 0 }: { children: React.ReactNode; d
                 scale: 1.02,
                 transition: { duration: 0.3 }
             }}
-            className="bg-white/5 backdrop-blur-sm rounded-2xl p-8 border border-white/10 hover:border-white/20 transition-all duration-300"
+            className="bg-white/5 backdrop-blur-sm rounded-2xl p-5 sm:p-8 border border-white/10 hover:border-white/20 transition-all duration-300"
         >
             {children}
         </motion.div>
@@ -508,19 +508,19 @@ export default function AboutPage() {
 
                     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
                         <motion.div
-                            className="text-center mb-12"
+                            className="text-center mb-8 sm:mb-12"
                             initial={{ opacity: 0, y: 40 }}
                             whileInView={{ opacity: 1, y: 0 }}
                             viewport={{ once: true }}
                             transition={{ duration: 0.7 }}
                         >
-                            <span className="text-yellow-400 font-semibold text-lg uppercase tracking-wider mb-4 block">
+                            <span className="text-yellow-400 font-semibold text-sm sm:text-lg uppercase tracking-wider mb-2 sm:mb-4 block">
                                 Collaborative Initiative
                             </span>
-                            <h2 className="text-3xl sm:text-4xl font-bold mb-4">
+                            <h2 className="text-2xl sm:text-4xl font-bold mb-3 sm:mb-4">
                                 LSPU & BFP Sta. Cruz Partnership
                             </h2>
-                            <p className="text-gray-300 max-w-4xl mx-auto text-lg leading-relaxed">
+                            <p className="text-gray-300 max-w-4xl mx-auto text-sm sm:text-lg leading-relaxed px-2 sm:px-0">
                                 SafeScape is a collaborative research initiative between the <strong className="text-white">College of Computer Studies (CCS)</strong> at
                                 <strong className="text-white"> Laguna State Polytechnic University (LSPU) - Santa Cruz Campus</strong> and the
                                 <strong className="text-white"> Bureau of Fire Protection (BFP) Santa Cruz</strong>. This partnership was formalized through a
@@ -529,10 +529,9 @@ export default function AboutPage() {
                         </motion.div>
 
                         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8" style={{ perspective: 1500 }}>
-                            {/* LSPU Card */}
-                            <PartnershipCard delay={0}>
-                                <div className="flex items-center gap-4 mb-6">
-                                    <div className="relative w-20 h-20 flex-shrink-0">
+                            {/* LSPU Card */}                             <PartnershipCard delay={0}>
+                                <div className="flex items-center gap-3 sm:gap-4 mb-4 sm:mb-6">
+                                    <div className="relative w-14 h-14 sm:w-20 sm:h-20 flex-shrink-0">
                                         <Image
                                             src="/lspu logo.png"
                                             alt="LSPU Logo"
@@ -541,30 +540,30 @@ export default function AboutPage() {
                                         />
                                     </div>
                                     <div>
-                                        <h3 className="text-xl font-bold">LSPU - Santa Cruz Campus</h3>
-                                        <p className="text-gray-400">College of Computer Studies</p>
+                                        <h3 className="text-lg sm:text-xl font-bold">LSPU - Santa Cruz Campus</h3>
+                                        <p className="text-xs sm:text-gray-400">College of Computer Studies</p>
                                     </div>
                                 </div>
-                                <p className="text-gray-300 leading-relaxed mb-4">
+                                <p className="text-gray-300 text-xs sm:text-base leading-relaxed mb-4">
+
                                     The university provided technological expertise in AI, machine learning, and software development.
                                     Computer Science researchers majoring in Intelligent Systems designed and developed the platform under academic supervision.
                                 </p>
-                                <div className="bg-white/5 rounded-lg p-4 border border-white/10">
-                                    <div className="flex items-center gap-3">
-                                        <GraduationCap className="w-6 h-6 text-yellow-400" />
+                                <div className="bg-white/5 rounded-lg p-3 sm:p-4 border border-white/10">
+                                    <div className="flex items-center gap-2 sm:gap-3">
+                                        <GraduationCap className="w-5 h-5 sm:w-6 sm:h-6 text-yellow-400" />
                                         <div>
-                                            <p className="text-yellow-400 font-semibold text-sm">Project Initiation & Thesis Adviser</p>
-                                            <p className="text-white font-medium">Dr. Mia V. Villarica, DIT</p>
-                                            <p className="text-gray-400 text-sm">CCS Dean, LSPU Santa Cruz</p>
+                                            <p className="text-yellow-400 font-semibold text-[10px] sm:text-sm">Project Initiation & Thesis Adviser</p>
+                                            <p className="text-white font-medium text-xs sm:text-base">Dr. Mia V. Villarica, DIT</p>
+                                            <p className="text-gray-400 text-[10px] sm:text-sm">CCS Dean, LSPU Santa Cruz</p>
                                         </div>
                                     </div>
                                 </div>
                             </PartnershipCard>
 
-                            {/* BFP Card */}
-                            <PartnershipCard delay={1}>
-                                <div className="flex items-center gap-4 mb-6">
-                                    <div className="relative w-20 h-20 flex-shrink-0">
+                            {/* BFP Card */}                             <PartnershipCard delay={1}>
+                                <div className="flex items-center gap-3 sm:gap-4 mb-4 sm:mb-6">
+                                    <div className="relative w-12 h-12 sm:w-20 sm:h-20 flex-shrink-0">
                                         <Image
                                             src="/bfp logo.png"
                                             alt="BFP Logo"
@@ -573,21 +572,22 @@ export default function AboutPage() {
                                         />
                                     </div>
                                     <div>
-                                        <h3 className="text-xl font-bold">BFP Santa Cruz Fire Station</h3>
-                                        <p className="text-gray-400">Bureau of Fire Protection</p>
+                                        <h3 className="text-base sm:text-xl font-bold">BFP Santa Cruz Fire Station</h3>
+                                        <p className="text-[10px] sm:text-sm text-gray-400">Bureau of Fire Protection</p>
                                     </div>
                                 </div>
-                                <p className="text-gray-300 leading-relaxed mb-4">
+                                <p className="text-gray-300 text-xs sm:text-base leading-relaxed mb-4">
+
                                     BFP Santa Cruz reached out to LSPU-CCS to find innovative ways to enhance community fire preparedness.
                                     They provided the official knowledge base, including manuals and protocols, used to train the Berong AI chatbot and develop educational modules.
                                 </p>
-                                <div className="bg-white/5 rounded-lg p-4 border border-white/10">
-                                    <div className="flex items-center gap-3">
-                                        <Shield className="w-6 h-6 text-yellow-400" />
+                                <div className="bg-white/5 rounded-lg p-3 sm:p-4 border border-white/10">
+                                    <div className="flex items-center gap-2 sm:gap-3">
+                                        <Shield className="w-5 h-5 sm:w-6 sm:h-6 text-yellow-400" />
                                         <div>
-                                            <p className="text-yellow-400 font-semibold text-sm">Project Initiator & Guide</p>
-                                            <p className="text-white font-medium">FSINSP Cesar A. Morfe Jr.</p>
-                                            <p className="text-gray-400 text-sm">Initiated the partnership and provided constant guidance</p>
+                                            <p className="text-yellow-400 font-semibold text-[10px] sm:text-sm">Project Initiator & Guide</p>
+                                            <p className="text-white font-medium text-xs sm:text-base">FSINSP Cesar A. Morfe Jr.</p>
+                                            <p className="text-gray-400 text-[10px] sm:text-sm leading-tight">Initiated the partnership and provided constant guidance</p>
                                         </div>
                                     </div>
                                 </div>

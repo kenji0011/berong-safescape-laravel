@@ -60,7 +60,7 @@ import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Alert, AlertDescription } from "@/components/ui/alert"
-import { Shield, ImageIcon, FileText, Video, Users, Plus, Trash2, AlertCircle, CheckCircle, HelpCircle, BookOpen, Search, BarChart3 } from "lucide-react"
+import { Shield, ImageIcon, FileText, Video, Users, Plus, Trash2, AlertCircle, CheckCircle, HelpCircle, BookOpen, Search, BarChart3, Check } from "lucide-react"
 import type { CarouselImage, BlogPost } from "@/lib/mock-data"
 import { ImageUpload } from "@/components/ui/image-upload"
 import { ConfirmationDialog } from "@/components/ui/confirmation-dialog"
@@ -955,21 +955,21 @@ export default function AdminPage({
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header */}
-        <div className="mb-6 sm:mb-8 bg-white p-6 rounded-[2rem] border-[3px] border-slate-200 shadow-[0_8px_0_#cbd5e1] flex items-center justify-between">
-          <div>
-            <div className="flex items-center gap-3 mb-1">
-              <div className="bg-red-100 p-2 rounded-xl">
+        <div className="mb-4 sm:mb-8 bg-white p-4 sm:p-6 rounded-2xl sm:rounded-[2rem] border-[3px] border-slate-200 shadow-[0_6px_0_#cbd5e1] sm:shadow-[0_8px_0_#cbd5e1] flex items-center justify-between gap-3">
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-2 sm:gap-3 mb-0.5 sm:mb-1">
+              <div className="bg-red-100 p-2 sm:p-2 rounded-lg sm:rounded-xl">
                 <Shield className="h-6 w-6 sm:h-8 sm:w-8 text-[#d60000]" strokeWidth={2.5} />
               </div>
-              <h1 className="text-2xl sm:text-3xl font-black text-slate-800 tracking-tight">Admin Panel</h1>
+              <h1 className="text-xl sm:text-3xl font-black text-slate-800 tracking-tight truncate">Admin Panel</h1>
             </div>
-            <p className="text-sm sm:text-base text-slate-500 font-medium">Manage content, users, and platform settings</p>
+            <p className="text-xs sm:text-base text-slate-500 font-bold leading-tight line-clamp-1">Manage content, users, and platform settings</p>
           </div>
           <button
             onClick={() => router.visit("/admin/analytics")}
-            className="flex items-center gap-2 bg-[#ff6b00] text-white font-extrabold px-5 sm:px-6 pb-2.5 pt-3 rounded-2xl text-sm sm:text-base shadow-[0_6px_0_#c2410c] hover:-translate-y-1 hover:shadow-[0_8px_0_#c2410c] active:translate-y-1 active:shadow-[0_0px_0_#c2410c] transition-all"
+            className="flex items-center gap-1.5 sm:gap-2 bg-[#ff6b00] text-white font-black px-4 sm:px-6 pb-2 pt-2.5 rounded-xl sm:rounded-2xl text-xs sm:text-base shadow-[0_4px_0_#c2410c] sm:shadow-[0_6px_0_#c2410c] hover:-translate-y-0.5 hover:shadow-[0_6px_0_#c2410c] active:translate-y-1 active:shadow-none transition-all shrink-0"
           >
-            <BarChart3 className="h-5 w-5" strokeWidth={2.5} />
+            <BarChart3 className="h-4 w-4 sm:h-5 sm:w-5" strokeWidth={2.5} />
             <span className="hidden sm:inline">Community Analytics</span>
             <span className="sm:hidden">Analytics</span>
           </button>
@@ -1172,17 +1172,25 @@ export default function AdminPage({
                         />
                       </div>
                     </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="blog-category" className="font-bold text-slate-700">Category</Label>
-                      <select
-                        id="blog-category"
-                        className="w-full h-10 px-3 rounded-xl border-2 border-slate-200 focus-visible:ring-red-500 bg-background"
-                        value={newBlog.category}
-                        onChange={(e) => setNewBlog({ ...newBlog, category: e.target.value as "adult" | "professional" })}
-                      >
-                        <option value="adult">Adult</option>
-                      </select>
-                    </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="blog-category" className="font-bold text-slate-700">Category</Label>
+                        <Select
+                          value={newBlog.category}
+                          onValueChange={(val) => setNewBlog({ ...newBlog, category: val as "adult" | "professional" })}
+                        >
+                          <SelectTrigger id="blog-category" className="w-full h-10 border-2 border-slate-200 rounded-xl bg-white font-bold text-slate-700 focus:ring-red-500 shadow-sm transition-all hover:border-slate-300">
+                            <SelectValue placeholder="Select category" />
+                          </SelectTrigger>
+                          <SelectContent className="rounded-xl border-2 border-slate-200 shadow-xl p-1">
+                            <SelectItem value="adult" className="rounded-lg font-bold text-slate-700 focus:bg-slate-50 focus:text-red-600 transition-colors cursor-pointer py-2.5">
+                              Adult
+                            </SelectItem>
+                            <SelectItem value="professional" className="rounded-lg font-bold text-slate-700 focus:bg-slate-50 focus:text-red-600 transition-colors cursor-pointer py-2.5">
+                              Professional
+                            </SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
                     {/* Image URL is now set automatically from the upload component - hidden from user */}
                     <div className="space-y-2">
                       <Label htmlFor="blog-excerpt" className="font-bold text-slate-700">Excerpt</Label>
@@ -1300,24 +1308,50 @@ export default function AdminPage({
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <Label htmlFor="video-category" className="font-bold text-slate-700">Category</Label>
-                    <select
-                      id="video-category"
-                      className="w-full h-10 px-3 rounded-xl border-2 border-slate-200 focus-visible:ring-red-500 bg-background"
+                    <Select
                       value={newVideo.category}
-                      onChange={(e) => setNewVideo({ ...newVideo, category: e.target.value as "professional" | "adult" | "kids" })}
+                      onValueChange={(val) => setNewVideo({ ...newVideo, category: val as "professional" | "adult" | "kids" })}
                     >
-                      <option value="professional">Professional</option>
-                    </select>
+                      <SelectTrigger id="video-category" className="w-full h-10 border-2 border-slate-200 rounded-xl bg-white font-bold text-slate-700 focus:ring-red-500 shadow-sm transition-all hover:border-slate-300">
+                        <SelectValue placeholder="Select category" />
+                      </SelectTrigger>
+                      <SelectContent className="rounded-xl border-2 border-slate-200 shadow-xl p-1">
+                        <SelectItem value="professional" className="rounded-lg font-bold text-slate-700 focus:bg-slate-50 focus:text-red-600 transition-colors cursor-pointer py-2.5">
+                          Professional
+                        </SelectItem>
+                        <SelectItem value="adult" className="rounded-lg font-bold text-slate-700 focus:bg-slate-50 focus:text-red-600 transition-colors cursor-pointer py-2.5">
+                          Adult
+                        </SelectItem>
+                        <SelectItem value="kids" className="rounded-lg font-bold text-slate-700 focus:bg-slate-50 focus:text-red-600 transition-colors cursor-pointer py-2.5">
+                          Kids
+                        </SelectItem>
+                      </SelectContent>
+                    </Select>
                   </div>
-                  <div className="space-y-2 flex items-center pt-6">
-                    <input
-                      type="checkbox"
-                      id="video-active"
-                      checked={newVideo.isActive}
-                      onChange={(e) => setNewVideo({ ...newVideo, isActive: e.target.checked })}
-                      className="mr-2 h-5 w-5 rounded border-2 border-slate-300 text-red-600 focus:ring-red-500 transition-all"
-                    />
-                    <Label htmlFor="video-active" className="font-bold text-slate-700">Active</Label>
+                  <div className="space-y-2 flex flex-col justify-end">
+                    <Label htmlFor="video-active" className="font-bold text-slate-700">Status</Label>
+                    <Select
+                      value={newVideo.isActive ? "active" : "inactive"}
+                      onValueChange={(val) => setNewVideo({ ...newVideo, isActive: val === "active" })}
+                    >
+                      <SelectTrigger id="video-active" className="w-full h-10 border-2 border-slate-200 rounded-xl bg-white font-bold text-slate-700 focus:ring-red-500 shadow-sm transition-all hover:border-slate-300">
+                        <SelectValue placeholder="Select status" />
+                      </SelectTrigger>
+                      <SelectContent className="rounded-xl border-2 border-slate-200 shadow-xl p-1">
+                        <SelectItem value="active" className="rounded-lg font-bold text-slate-700 focus:bg-slate-50 focus:text-red-600 transition-colors cursor-pointer py-2.5">
+                          <div className="flex items-center gap-2">
+                            <div className="h-2 w-2 rounded-full bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.4)]" />
+                            Active
+                          </div>
+                        </SelectItem>
+                        <SelectItem value="inactive" className="rounded-lg font-bold text-slate-700 focus:bg-slate-50 focus:text-red-600 transition-colors cursor-pointer py-2.5">
+                          <div className="flex items-center gap-2">
+                            <div className="h-2 w-2 rounded-full bg-slate-400" />
+                            Inactive
+                          </div>
+                        </SelectItem>
+                      </SelectContent>
+                    </Select>
                   </div>
                 </div>
                 <div className="flex flex-wrap items-center gap-4 mt-2">
@@ -1472,14 +1506,22 @@ export default function AdminPage({
                       value={newQuickQuestion.category}
                       onValueChange={(value) => setNewQuickQuestion({ ...newQuickQuestion, category: value })}
                     >
-                      <SelectTrigger id="qq-category" className="border-2 border-slate-200 focus:ring-red-500 rounded-xl h-10">
+                      <SelectTrigger id="qq-category" className="w-full h-10 border-2 border-slate-200 rounded-xl bg-white font-bold text-slate-700 focus:ring-red-500 shadow-sm transition-all hover:border-slate-300">
                         <SelectValue placeholder="Select category" />
                       </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="emergency">Emergency Procedures</SelectItem>
-                        <SelectItem value="prevention">Fire Prevention</SelectItem>
-                        <SelectItem value="equipment">Safety Equipment</SelectItem>
-                        <SelectItem value="general">General Information</SelectItem>
+                      <SelectContent className="rounded-xl border-2 border-slate-200 shadow-xl p-1">
+                        <SelectItem value="emergency" className="rounded-lg font-bold text-slate-700 focus:bg-slate-50 focus:text-red-600 transition-colors cursor-pointer py-2.5">
+                          Emergency Procedures
+                        </SelectItem>
+                        <SelectItem value="prevention" className="rounded-lg font-bold text-slate-700 focus:bg-slate-50 focus:text-red-600 transition-colors cursor-pointer py-2.5">
+                          Fire Prevention
+                        </SelectItem>
+                        <SelectItem value="equipment" className="rounded-lg font-bold text-slate-700 focus:bg-slate-50 focus:text-red-600 transition-colors cursor-pointer py-2.5">
+                          Safety Equipment
+                        </SelectItem>
+                        <SelectItem value="general" className="rounded-lg font-bold text-slate-700 focus:bg-slate-50 focus:text-red-600 transition-colors cursor-pointer py-2.5">
+                          General Information
+                        </SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
@@ -1489,12 +1531,22 @@ export default function AdminPage({
                       value={newQuickQuestion.isActive ? "active" : "inactive"}
                       onValueChange={(value) => setNewQuickQuestion({ ...newQuickQuestion, isActive: value === "active" })}
                     >
-                      <SelectTrigger id="qq-active" className="border-2 border-slate-200 focus:ring-red-500 rounded-xl h-10">
+                      <SelectTrigger id="qq-active" className="w-full h-10 border-2 border-slate-200 rounded-xl bg-white font-bold text-slate-700 focus:ring-red-500 shadow-sm transition-all hover:border-slate-300">
                         <SelectValue placeholder="Select status" />
                       </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="active">Active</SelectItem>
-                        <SelectItem value="inactive">Inactive</SelectItem>
+                      <SelectContent className="rounded-xl border-2 border-slate-200 shadow-xl p-1">
+                        <SelectItem value="active" className="rounded-lg font-bold text-slate-700 focus:bg-slate-50 focus:text-red-600 transition-colors cursor-pointer py-2.5">
+                          <div className="flex items-center gap-2">
+                            <div className="h-2 w-2 rounded-full bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.4)]" />
+                            Active
+                          </div>
+                        </SelectItem>
+                        <SelectItem value="inactive" className="rounded-lg font-bold text-slate-700 focus:bg-slate-50 focus:text-red-600 transition-colors cursor-pointer py-2.5">
+                          <div className="flex items-center gap-2">
+                            <div className="h-2 w-2 rounded-full bg-slate-400" />
+                            Inactive
+                          </div>
+                        </SelectItem>
                       </SelectContent>
                     </Select>
                   </div>

@@ -74,4 +74,5 @@ class User extends Authenticatable
     public function simulationJobs() { return $this->hasMany(SimulationJob::class, 'userId'); }
     public function school() { return $this->belongsTo(School::class, 'school_id'); }
     public function feedbacks() { return $this->hasMany(UserFeedback::class, 'userId'); }
+    public function badges() { return $this->hasMany(UserBadge::class, 'userId'); }
 }

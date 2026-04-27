@@ -137,7 +137,7 @@ class AssessmentController extends Controller
         $isAdult = $user->age >= 18 && $user->role !== 'kid';
         
         // Count how many modules the kid completed
-        $modulesCompleted = \App\Models\UserProgress::where('userId', $user->id)->where('isCompleted', true)->count();
+        $modulesCompleted = \App\Models\UserProgress::where('userId', $user->id)->where('completed', true)->count();
         $engagementPoints = $user->engagementPoints ?? 0;
         
         $minModules = 3;

@@ -1,4 +1,5 @@
 import { ENGAGEMENT_POINTS } from "@/lib/constants"
+import axios from "axios"
 
 export type EngagementActivityType = 
   | "MODULE_COMPLETION"
@@ -21,21 +22,14 @@ interface LogEngagementParams {
  */
 export async function logEngagement({ activityType, metadata }: LogEngagementParams): Promise<boolean> {
   try {
-    const response = await fetch("/api/engagement/log", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ activityType, metadata }),
+    const response = await axios.post("/api/engagement/log", { 
+      activityType, 
+      metadata 
     })
 
-    if (!response.ok) {
-      console.error("Failed to log engagement:", await response.text())
-      return false
-    }
-
-    const data = await response.json()
-    return data.success
-  } catch (error) {
-    console.error("Error logging engagement:", error)
+    return response.data.success
+  } catch (error: any) {
+    console.error("Error logging engagement:", error.response?.data || error.message)
     return false
   }
 }
@@ -144,15 +138,10 @@ export async function trackReadingMaterial(materialId: string, materialTitle: st
  */
 export async function logTimeSpent(minutes: number): Promise<boolean> {
   try {
-    const response = await fetch("/api/engagement/time", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ minutes }),
-    })
-
-    return response.ok
-  } catch (error) {
-    console.error("Error logging time spent:", error)
+    const response = await axios.post("/api/engagement/time", { minutes })
+    return response.status === 200
+  } catch (error: any) {
+    console.error("Error logging time spent:", error.response?.data || error.message)
     return false
   }
 }
@@ -162,7 +151,7 @@ export async function logTimeSpent(minutes: number): Promise<boolean> {
  */
 export function createTimeTracker(intervalMinutes: number = 5) {
   let startTime = Date.now()
-  let intervalId: NodeJS.Timeout | null = null
+  let intervalId: any = null
 
   const start = () => {
     startTime = Date.now()

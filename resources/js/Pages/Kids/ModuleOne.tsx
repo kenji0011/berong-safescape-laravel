@@ -5,6 +5,7 @@ import { Link, router } from '@inertiajs/react'
 import { ArrowLeft, CheckCircle, Shield, BookOpen, Trophy, Flame, FlaskConical, RotateCcw } from "lucide-react"
 import { useAuth } from "@/lib/auth-context"
 import DashboardLayout from "@/Layouts/DashboardLayout"
+import axios from "axios"
 import { cn } from "@/lib/utils"
 
 // ─────────────────────────────────────────────
@@ -55,16 +56,17 @@ const ModuleOnePage = () => {
   useEffect(() => {
     const load = async () => {
       try {
-        const res = await fetch("/api/kids/safescape", { credentials: "include" })
-        if (!res.ok) return
-        const data = await res.json()
+        const response = await axios.get("/api/kids/safescape")
+        const data = response.data
         const m1 = data.sectionData?.module1 ?? {}
         if (m1.videoWatched)           setVideoStarted(true)
         if (m1.section1Read)           setSection1Done(true)
         if (m1.section2Read)           setSection2Done(true)
         if (m1.elementMixerCompleted)  { setLabCompleted(true); setMixerEverCompleted(true); setPitItems(CORRECT_IDS) }
         if (data.completedModules?.includes(1)) setModuleCompleted(true)
-      } catch (_) {}
+      } catch (error) {
+        console.error("Failed to load progress:", error)
+      }
     }
     load()
   }, [])
@@ -82,13 +84,14 @@ const ModuleOnePage = () => {
   // ── Helper: save to backend ──
   const saveSection = async (sectionData: Record<string, boolean>, completed: boolean) => {
     try {
-      await fetch("/api/kids/safescape", {
-        method: "POST",
-        credentials: "include",
-        headers: { "Content-Type": "application/json", "X-XSRF-TOKEN": getCookie("XSRF-TOKEN") },
-        body: JSON.stringify({ moduleNum: 1, sectionData, completed }),
-      })
-    } catch (_) {}
+      await axios.post("/api/kids/safescape", { 
+        moduleNum: 1, 
+        sectionData, 
+        completed 
+      });
+    } catch (error: any) {
+      console.error("Failed to save section:", error.response?.data || error.message)
+    }
   }
 
   function getCookie(name: string): string {
@@ -197,15 +200,23 @@ const ModuleOnePage = () => {
   const completeModule = async () => {
     setSaving(true)
     try {
-      await fetch("/api/kids/safescape", {
-        method: "POST",
-        credentials: "include",
-        headers: { "Content-Type": "application/json", "X-XSRF-TOKEN": getCookie("XSRF-TOKEN") },
-        body: JSON.stringify({ moduleNum: 1, sectionData: { videoWatched: true, section1Read: true, section2Read: true, elementMixerCompleted: true }, completed: true }),
-      })
+      // Award badge
+      await axios.post('/api/badges/award', {
+        badge_id: 'module_1',
+        badge_name: 'Fire Scout',
+        badge_icon: '🔥'
+      });
+
+      await axios.post("/api/kids/safescape", { 
+        moduleNum: 1, 
+        sectionData: { videoWatched: true, section1Read: true, section2Read: true, elementMixerCompleted: true }, 
+        completed: true 
+      });
+
       setModuleCompleted(true)
       router.visit('/kids/safescape/2')
-    } catch (_) {
+    } catch (error: any) {
+      console.error("Failed to complete module:", error.response?.data || error.message)
       showToast("Error saving progress. Try again.", "info")
     } finally {
       setSaving(false)

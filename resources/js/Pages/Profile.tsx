@@ -838,49 +838,49 @@ export default function ProfilePage() {
       {/* Hero Selection Modal */}
       <Dialog open={showAvatarModal} onOpenChange={setShowAvatarModal}>
         <DialogContent className="sm:max-w-2xl rounded-[2.5rem] border-[4px] border-slate-100 p-0 overflow-hidden shadow-2xl">
-          <div className="bg-gradient-to-br from-yellow-400 to-orange-500 p-8 text-white">
+          <div className="bg-gradient-to-br from-yellow-400 to-orange-500 p-5 sm:p-8 text-white">
             <DialogHeader>
-              <DialogTitle className="text-3xl font-black flex items-center gap-3">
-                <div className="bg-white/20 p-2 rounded-2xl backdrop-blur-md">
-                  <Trophy className="h-8 w-8 text-white" strokeWidth={3} />
+              <DialogTitle className="text-xl sm:text-3xl font-black flex items-center gap-2 sm:gap-3">
+                <div className="bg-white/20 p-1.5 sm:p-2 rounded-xl sm:rounded-2xl backdrop-blur-md">
+                  <Trophy className="h-5 w-5 sm:h-8 sm:w-8 text-white" strokeWidth={3} />
                 </div>
                 CHOOSE YOUR HERO
               </DialogTitle>
-              <DialogDescription className="text-yellow-50 font-bold text-lg mt-2 opacity-90">
+              <DialogDescription className="text-yellow-50 font-bold text-sm sm:text-lg mt-1 sm:mt-2 opacity-90">
                 Select an identity to lead your fire safety mission.
               </DialogDescription>
             </DialogHeader>
           </div>
 
-          <div className="p-8 bg-slate-50/50">
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
+          <div className="p-4 sm:p-8 bg-slate-50/50 max-h-[70vh] overflow-y-auto">
+            <div className="grid grid-cols-3 sm:grid-cols-4 gap-2 sm:gap-4 mb-8">
               {AVATAR_OPTIONS.map((opt) => (
                 <button
                   key={opt.id}
                   onClick={() => setSelectedAvatar(opt.id)}
                   className={cn(
-                    "group relative flex flex-col items-center gap-3 p-5 rounded-[2rem] border-[3px] transition-all duration-300",
+                    "group relative flex flex-col items-center gap-1.5 sm:gap-3 p-2 sm:p-5 rounded-2xl sm:rounded-[2rem] border-[3px] transition-all duration-300",
                     selectedAvatar === opt.id 
                       ? "bg-white border-yellow-400 shadow-xl scale-105 z-10" 
                       : "bg-white/50 border-slate-100 hover:border-slate-200 hover:bg-white"
                   )}
                 >
                   <div className={cn(
-                    "h-20 w-20 rounded-full flex items-center justify-center text-5xl transition-transform group-hover:scale-110",
+                    "h-14 w-14 sm:h-20 sm:w-20 rounded-full flex items-center justify-center text-3xl sm:text-5xl transition-transform group-hover:scale-110",
                     selectedAvatar === opt.id ? "bg-yellow-50" : "bg-slate-50"
                   )}>
                     {opt.icon}
                   </div>
                   
-                  <div className="text-center">
+                  <div className="text-center px-1">
                     <p className={cn(
-                      "text-[10px] font-black uppercase tracking-widest leading-none mb-1",
+                      "text-[8px] sm:text-[10px] font-black uppercase tracking-widest leading-none mb-0.5 sm:mb-1",
                       selectedAvatar === opt.id ? "text-yellow-600" : "text-slate-400"
                     )}>
                       {opt.category}
                     </p>
                     <p className={cn(
-                      "text-xs font-black tracking-tight",
+                      "text-[10px] sm:text-xs font-black tracking-tight leading-tight",
                       selectedAvatar === opt.id ? "text-slate-800" : "text-slate-600"
                     )}>
                       {opt.label}
@@ -896,21 +896,21 @@ export default function ProfilePage() {
               ))}
             </div>
 
-            <div className="flex gap-4">
+            <div className="flex gap-2 sm:gap-4 sticky bottom-0 bg-white/80 backdrop-blur-sm p-2 rounded-2xl border-t border-slate-100 mt-2 sm:mt-0">
               <Button
                 variant="outline"
                 onClick={() => setShowAvatarModal(false)}
-                className="flex-1 rounded-2xl border-2 py-6 font-bold text-slate-500 hover:bg-slate-100 transition-all"
+                className="flex-1 rounded-xl sm:rounded-2xl border-2 py-4 sm:py-6 font-bold text-slate-500 hover:bg-slate-100 transition-all text-xs sm:text-base"
               >
                 Cancel
               </Button>
               <Button
                 onClick={handleSaveAvatar}
                 disabled={avatarLoading}
-                className="flex-[2] bg-yellow-400 hover:bg-yellow-500 text-amber-950 rounded-2xl py-6 font-black uppercase tracking-widest shadow-[0_4px_0_#ca8a04] active:translate-y-1 active:shadow-none transition-all"
+                className="flex-[2] bg-yellow-400 hover:bg-yellow-500 text-amber-950 rounded-xl sm:rounded-2xl py-4 sm:py-6 font-black uppercase tracking-widest shadow-[0_4px_0_#ca8a04] active:translate-y-1 active:shadow-none transition-all text-xs sm:text-base"
               >
                 {avatarLoading ? (
-                  <Loader2 className="h-5 w-5 animate-spin" />
+                  <Loader2 className="h-4 w-4 sm:h-5 sm:w-5 animate-spin" />
                 ) : (
                   "Save My Hero"
                 )}

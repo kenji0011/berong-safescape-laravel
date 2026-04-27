@@ -1,5 +1,4 @@
 'use client';
-
 import { motion, AnimatePresence } from 'motion/react';
 import { useAuth } from '@/lib/auth-context';
 
@@ -13,70 +12,88 @@ export function LoginLoader() {
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
-                    transition={{ duration: 0.2 }}
-                    className="fixed inset-0 z-[999999] flex items-center justify-center"
+                    transition={{ duration: 0.4 }}
+                    className="fixed inset-0 z-[999999] flex items-center justify-center overflow-hidden"
                 >
-                    {/* Background Image and Red Overlay */}
-                    <div
-                        className="absolute inset-0 bg-cover bg-center"
-                        style={{ backgroundImage: "url('/bfp-sta-cruz-fire-station.jpg')" }}
-                    >
-                        <div className="absolute inset-0 bg-[#d60000]/90 backdrop-blur-sm" />
+                    {/* Cinematic Fire Background */}
+                    <div className="absolute inset-0 bg-[#450a0a]">
+                        <motion.div 
+                            animate={{ 
+                                scale: [1, 1.2, 1],
+                                opacity: [0.3, 0.6, 0.3]
+                            }}
+                            transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+                            className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,#ef4444_0%,transparent:70%)]"
+                        />
+                        <div 
+                            className="absolute inset-0 opacity-20 bg-cover bg-center"
+                            style={{ backgroundImage: "url('/bfp-sta-cruz-fire-station.jpg')" }}
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-black opacity-60" />
                     </div>
 
                     {/* Loader content */}
                     <motion.div
-                        initial={{ scale: 0.8, opacity: 0 }}
-                        animate={{ scale: 1, opacity: 1 }}
-                        exit={{ scale: 0.8, opacity: 0 }}
-                        transition={{ duration: 0.3 }}
+                        initial={{ scale: 0.9, opacity: 0, y: 20 }}
+                        animate={{ scale: 1, opacity: 1, y: 0 }}
+                        exit={{ scale: 1.1, opacity: 0 }}
+                        transition={{ type: "spring", damping: 20, stiffness: 100 }}
                         className="relative z-10 flex flex-col items-center"
                     >
-                        {/* Animated Berong logo */}
-                        <motion.div
-                            animate={{
-                                scale: [1, 1.05, 1],
-                            }}
-                            transition={{
-                                duration: 1.5,
-                                repeat: Infinity,
-                                ease: "easeInOut"
-                            }}
-                            className="mb-8"
-                        >
-                            <div className="relative">
-                                {/* Outer spinning ring */}
-                                <div className="absolute -inset-4 border-4 border-yellow-400/30 rounded-full"></div>
-                                <div className="absolute -inset-4 border-4 border-transparent border-t-yellow-400 border-r-orange-500 rounded-full animate-spin"></div>
-
-                                {/* Glow effect behind logo */}
-                                <div className="absolute inset-0 bg-yellow-500/30 rounded-full blur-xl animate-pulse"></div>
-
-                                {/* Berong Logo */}
-                                <div className="relative w-24 h-24 rounded-full overflow-hidden shadow-2xl border-4 border-yellow-400/50">
-                                    <img
-                                        src="/berong-official-logo.jpg"
-                                        alt="Berong - Loading"
-                                        className="w-full h-full object-cover"
-                                    />
-                                </div>
-                            </div>
-                        </motion.div>
-
-                        {/* Text and bouncing dots */}
-                        <div className="text-center flex flex-col items-center">
-                            <motion.p
-                                className="text-white font-bold text-lg mb-1 tracking-wider"
-                                animate={{ opacity: [0.7, 1, 0.7] }}
-                                transition={{ duration: 1.5, repeat: Infinity }}
+                        {/* Hero Logo with Spinning Ring */}
+                        <div className="relative mb-10">
+                            {/* Outer Spinning Ring */}
+                            <motion.div 
+                                animate={{ rotate: 360 }}
+                                transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
+                                className="absolute -inset-4 border-2 border-dashed border-orange-500/40 rounded-full"
+                            />
+                            {/* Inner Pulsing Glow */}
+                            <motion.div 
+                                animate={{ scale: [1, 1.2, 1], opacity: [0.5, 0.8, 0.5] }}
+                                transition={{ duration: 2, repeat: Infinity }}
+                                className="absolute -inset-2 bg-orange-500/20 blur-xl rounded-full"
+                            />
+                            
+                            <motion.div
+                                animate={{ y: [0, -10, 0] }}
+                                transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+                                className="relative w-24 h-24 sm:w-32 sm:h-32 rounded-3xl overflow-hidden border-4 border-white/20 shadow-[0_0_40px_rgba(249,115,22,0.4)]"
                             >
-                                Loading
+                                <img
+                                    src="/berong-official-logo.jpg"
+                                    alt="Berong - Loading"
+                                    className="w-full h-full object-cover"
+                                />
+                            </motion.div>
+                        </div>
+
+                        {/* Text Content */}
+                        <div className="text-center">
+                            <motion.h2
+                                className="text-3xl sm:text-4xl font-black text-white mb-2 tracking-tighter uppercase"
+                                animate={{ opacity: [0.8, 1, 0.8] }}
+                                transition={{ duration: 2, repeat: Infinity }}
+                            >
+                                Logging <span className="text-orange-500">In</span>
+                            </motion.h2>
+                            <motion.p 
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                transition={{ delay: 0.3 }}
+                                className="text-white/60 font-bold tracking-widest text-xs sm:text-sm uppercase"
+                            >
+                                Welcome back, Hero! Preparing your dashboard...
                             </motion.p>
-                            <div className="flex gap-1.5 justify-center mt-1">
-                                <span className="w-2.5 h-2.5 bg-yellow-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></span>
-                                <span className="w-2.5 h-2.5 bg-yellow-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></span>
-                                <span className="w-2.5 h-2.5 bg-yellow-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></span>
-                            </div>
+                        </div>
+
+                        {/* Modern Progress Line */}
+                        <div className="mt-8 w-48 h-1 bg-white/10 rounded-full overflow-hidden border border-white/5">
+                            <motion.div 
+                                animate={{ x: [-200, 200] }}
+                                transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
+                                className="w-1/2 h-full bg-gradient-to-r from-transparent via-orange-500 to-transparent"
+                            />
                         </div>
                     </motion.div>
                 </motion.div>

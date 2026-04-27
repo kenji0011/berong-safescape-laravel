@@ -8,8 +8,15 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
+use App\Models\CarouselImage;
+use App\Http\Controllers\BadgeController;
+
 Route::get('/', function () {
-    return Inertia::render('Welcome');
+    return Inertia::render('Welcome', [
+        'carouselImages' => Inertia::defer(fn () => CarouselImage::where('isActive', true)
+            ->orderBy('order', 'asc')
+            ->get())
+    ]);
 });
 
 Route::get('/about', function () {
@@ -46,10 +53,14 @@ Route::get('/about', function () {
                 'completedModules' => \App\Models\SafeScapeProgress::where('userId', Auth::id())
                     ->where('completed', true)
                     ->pluck('moduleNum')
-                    ->values()
+                    ->values(),
+                'badges' => \App\Models\UserBadge::where('userId', Auth::id())->get()
             ]),
         ]);
     })->name('kids');
+
+    Route::post('/api/badges/award', [BadgeController::class, 'award'])->name('badges.award');
+    Route::get('/api/badges', [BadgeController::class, 'index'])->name('badges.index');
 
     Route::get('/kids/safescape', function () {
         return Inertia::render('Kids/CourseHub', [
@@ -86,6 +97,10 @@ Route::get('/about', function () {
         return Inertia::render('Kids/SmokeCrawl');
     })->name('kids.smoke_crawl');
 
+    Route::get('/kids/hot-or-not', function () {
+        return Inertia::render('Kids/HotOrNot');
+    })->name('kids.hot_or_not');
+
     Route::get('/kids/challenges', function () {
         return Inertia::render('Kids/Challenges');
     })->name('kids.challenges');
@@ -95,9 +110,11 @@ Route::get('/about', function () {
     })->name('kids.certificate');
 
     Route::get('/adult', function () {
-        $blogs = BlogPost::with('author:id,name')->where('isPublished', true)->orderBy('created_at', 'desc')->get();
         return Inertia::render('AdultDashboard', [
-            'initialBlogs' => $blogs,
+            'initialBlogs' => Inertia::defer(fn () => BlogPost::with('author:id,name')
+                ->where('isPublished', true)
+                ->orderBy('created_at', 'desc')
+                ->get()),
         ]);
     })->name('adult');
 

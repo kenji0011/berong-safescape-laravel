@@ -47,7 +47,10 @@ class KidsController extends Controller
             $sectionProgress = 0;
             if ($progress && $progress->sectionData) {
                 $sections = json_decode($progress->sectionData, true) ?? [];
-                $completedSections = count(array_filter($sections, fn($v) => $v === true));
+                // Count any truthy value (true, number > 0, non-empty string)
+                $completedSections = count(array_filter($sections, function($v) {
+                    return $v === true || (is_numeric($v) && $v > 0) || (is_string($v) && strlen($v) > 0);
+                }));
                 $totalSections = max(count($sections), 1);
                 $sectionProgress = $isCompleted ? 100 : (int) round(($completedSections / $totalSections) * 100);
             }
@@ -180,6 +183,13 @@ class KidsController extends Controller
             ->where('moduleNum', $validated['moduleNum'])
             ->first();
 
+        // Merge section data instead of overwriting to prevent progress loss
+        $sectionData = [];
+        if ($existing && $existing->sectionData) {
+            $sectionData = json_decode($existing->sectionData, true) ?? [];
+        }
+        $newSectionData = array_merge($sectionData, $validated['sectionData'] ?? []);
+
         $isCompleted = $validated['completed'];
         if ($existing && $existing->completed) {
             $isCompleted = true; // Never un-complete a module
@@ -188,12 +198,63 @@ class KidsController extends Controller
         SafeScapeProgress::updateOrCreate(
             ['userId' => $user->id, 'moduleNum' => $validated['moduleNum']],
             [
-                'sectionData' => json_encode($validated['sectionData'] ?? []),
+                'sectionData' => json_encode($newSectionData),
                 'completed'   => $isCompleted,
-                'completedAt' => $isCompleted ? ($existing->completedAt ?? now()) : null,
+                'completedAt' => $isCompleted ? (($existing && $existing->completedAt) ? $existing->completedAt : now()) : null,
             ]
         );
 
         return response()->json(['success' => true]);
+    }
+
+    /**
+     * POST /api/kids/quiz
+     * Submit a quiz result and sync with module progress.
+     */
+    public function submitQuiz(Request $request)
+    {
+        $user = $request->user();
+        $validated = $request->validate([
+            'quizType' => 'required|string', // e.g. "module_2_quiz"
+            'score'    => 'required|integer',
+            'maxScore' => 'required|integer',
+        ]);
+
+        // Extract module number from quizType (module_X_quiz)
+        preg_match('/module_(\d+)_quiz/', $validated['quizType'], $matches);
+        $moduleNum = isset($matches[1]) ? (int)$matches[1] : null;
+
+        if ($moduleNum) {
+            $passed = ($validated['score'] / $validated['maxScore']) >= 0.8; // 80% passing grade
+
+            // Update SafeScape progress automatically
+            $existing = SafeScapeProgress::where('userId', $user->id)
+                ->where('moduleNum', $moduleNum)
+                ->first();
+
+            $sectionData = [];
+            if ($existing && $existing->sectionData) {
+                $sectionData = json_decode($existing->sectionData, true) ?? [];
+            }
+            
+            $sectionData['quizScore'] = $validated['score'];
+            $sectionData['quizPassed'] = $passed;
+
+            $isCompleted = $passed;
+            if ($existing && $existing->completed) {
+                $isCompleted = true;
+            }
+
+            SafeScapeProgress::updateOrCreate(
+                ['userId' => $user->id, 'moduleNum' => $moduleNum],
+                [
+                    'sectionData' => json_encode($sectionData),
+                    'completed'   => $isCompleted,
+                    'completedAt' => $isCompleted ? (($existing && $existing->completedAt) ? $existing->completedAt : now()) : null,
+                ]
+            );
+        }
+
+        return response()->json(['success' => true, 'passed' => $passed ?? false]);
     }
 }

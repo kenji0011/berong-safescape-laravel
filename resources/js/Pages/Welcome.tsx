@@ -5,6 +5,8 @@ import { Navigation } from '@/components/navigation';
 import { HeroCarousel } from '@/components/ui/hero-carousel';
 import { FeaturedCards } from '@/components/ui/featured-cards';
 import { Footer } from '@/components/footer';
+import { HeroCarouselSkeleton } from '@/Components/dashboard-skeletons';
+import { Deferred } from '@inertiajs/react';
 
 const LandingAboutSection = lazy(() =>
   import('@/components/landing-about-section').then((module) => ({
@@ -18,7 +20,7 @@ const LandingAssessmentSection = lazy(() =>
   }))
 );
 
-export default function Welcome() {
+export default function Welcome({ carouselImages }: { carouselImages?: any[] }) {
   const { auth } = usePage().props as any;
   const serverUser = auth?.user;
   
@@ -36,7 +38,14 @@ export default function Welcome() {
         <Navigation />
         <main className="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 w-full">
           <section className="mb-8 sm:mb-12">
-            <HeroCarousel />
+            <Deferred data="carouselImages" fallback={<HeroCarouselSkeleton />}>
+              {carouselImages && carouselImages.length > 0 && (
+                <Head>
+                  <link rel="preload" as="image" href={carouselImages[0].imageUrl} fetchpriority="high" />
+                </Head>
+              )}
+              <HeroCarousel initialImages={carouselImages} />
+            </Deferred>
           </section>
 
           <section className="mb-10 sm:mb-12">

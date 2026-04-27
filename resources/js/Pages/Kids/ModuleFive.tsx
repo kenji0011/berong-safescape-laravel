@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react"
 import { Head, Link, router } from '@inertiajs/react'
 import DashboardLayout from "@/Layouts/DashboardLayout"
 import { ArrowLeft, BookOpen, ChevronRight, Flame, Trophy, ClipboardCheck, PartyPopper, CheckCircle } from "lucide-react"
+import axios from "axios"
 import { cn } from "@/lib/utils"
 import { useAuth } from "@/lib/auth-context"
 
@@ -10,40 +11,178 @@ const ModuleFivePage = ({ moduleNum }: { moduleNum: number }) => {
   const currentModule = moduleNum || 5
   const [moduleCompleted, setModuleCompleted] = useState(false)
   const [iframeLoading, setIframeLoading] = useState(true)
+  const [saving, setSaving] = useState(false)
+  const [fullProgress, setFullProgress] = useState<any>(null)
+  const completedRef = React.useRef(moduleCompleted)
+  const iframeRef = React.useRef<HTMLIFrameElement>(null)
+
+  useEffect(() => {
+    completedRef.current = moduleCompleted
+  }, [moduleCompleted])
+
+  // Award badge automatically when module is completed
+  useEffect(() => {
+    if (moduleCompleted) {
+      const awardBadge = async () => {
+        try {
+          console.log("Awarding badge for module:", currentModule);
+          await axios.post('/api/badges/award', {
+            badge_id: `module_${currentModule}`,
+            badge_name: 'Home Guard',
+            badge_icon: '🏘️'
+          });
+          console.log("Badge awarded successfully!");
+        } catch (err: any) {
+          console.error("Failed to award badge automatically:", err.response?.data || err.message)
+        }
+      }
+      awardBadge()
+    }
+  }, [moduleCompleted, currentModule])
+
+  const loadState = async () => {
+    try {
+      const response = await axios.get("/api/kids/safescape")
+      const data = response.data
+      setFullProgress(data)
+      if (data.completedModules?.includes(currentModule)) {
+        setModuleCompleted(true)
+      }
+    } catch (err) {
+      console.error("Failed to load state:", err)
+    }
+  }
+
+  useEffect(() => {
+    loadState()
+  }, [currentModule]);
+
+  // Send progress to iframe when both are ready
+  useEffect(() => {
+    if (fullProgress && !iframeLoading && iframeRef.current?.contentWindow) {
+      iframeRef.current.contentWindow.postMessage({
+        type: 'SAFESCAPE_INITIALIZE_PROGRESS',
+        progress: fullProgress
+      }, '*');
+    }
+  }, [fullProgress, iframeLoading]);
 
   useEffect(() => {
     const handleMessage = async (e: MessageEvent) => {
       if (e.origin !== window.location.origin) return;
 
       const data = e.data;
-      if (data && data.type === 'SAFESCAPE_SECTION_COMPLETE') {
+      if (!data) return;
+
+      // 1. Iframe is ready - send initial progress
+      if (data.type === 'SAFESCAPE_IFRAME_READY') {
+        if (iframeRef.current?.contentWindow && fullProgress) {
+          iframeRef.current.contentWindow.postMessage({
+            type: 'SAFESCAPE_INITIALIZE_PROGRESS',
+            progress: fullProgress
+          }, '*');
+        }
+      }
+
+      // 2. Section completed - sync to backend
+      if (data.type === 'SAFESCAPE_SECTION_COMPLETE') {
         try {
-          await fetch("/api/kids/safescape", {
-            method: "POST",
-            headers: { 
-              "Content-Type": "application/json",
-              "X-XSRF-TOKEN": document.cookie.match(new RegExp("(^| )XSRF-TOKEN=([^;]+)"))?.[2] ? decodeURIComponent(document.cookie.match(new RegExp("(^| )XSRF-TOKEN=([^;]+)"))![2]) : ""
-            },
-            body: JSON.stringify({
-              moduleNum: data.moduleNum,
-              sectionData: data.sectionData,
-              completed: data.completed
-            }),
-          })
+          console.log("Syncing section complete:", data);
+          const response = await axios.post("/api/kids/safescape", {
+            moduleNum: data.moduleNum,
+            sectionData: data.sectionData,
+            completed: data.completed
+          });
+
+          console.log("Progress synced successfully for module", data.moduleNum, response.data);
 
           // Show completion banner when Module 5 is done
           if (data.completed && data.moduleNum === 5) {
+            console.log("Module 5 marked as completed!");
             setModuleCompleted(true)
+            loadState() // Sync full state
           }
-        } catch (error) {
-          console.error("Failed to sync progress:", error)
+        } catch (error: any) {
+          console.error("Failed to sync progress:", error.response?.data || error.message)
+        }
+      }
+
+      // 3. Quiz submission
+      if (data.type === 'SAFESCAPE_QUIZ_SUBMIT') {
+        try {
+          console.log("Submitting quiz result:", data);
+          const res = await axios.post("/api/kids/quiz", {
+            quizType: `module_${data.moduleNum}_quiz`,
+            score: data.score,
+            maxScore: data.maxScore
+          });
+
+          console.log("Quiz result submitted. Result:", res.data);
+          if (res.data.passed) {
+             setModuleCompleted(true);
+             loadState(); // Re-fetch to confirm 100% and sync any other changes
+          }
+        } catch (error: any) {
+          console.error("Failed to submit quiz:", error.response?.data || error.message)
         }
       }
     };
 
     window.addEventListener('message', handleMessage);
     return () => window.removeEventListener('message', handleMessage);
-  }, []);
+  }, [fullProgress, currentModule]);
+
+  // Force iframe to show as completed when moduleCompleted state becomes true
+  useEffect(() => {
+    if (moduleCompleted && !iframeLoading && iframeRef.current?.contentWindow) {
+      const forceComplete = () => {
+        const iframeWindow = iframeRef.current?.contentWindow;
+        if (!iframeWindow) return;
+        const iframeDoc = iframeWindow.document;
+        const examResult = iframeDoc.getElementById('exam-result');
+        // Only force completion if the user hasn't naturally finished the quiz
+        if (examResult && examResult.classList.contains('hidden')) {
+          forceIframeQuizCompleted(iframeWindow);
+        }
+      };
+
+      forceComplete();
+      setTimeout(forceComplete, 500);
+      setTimeout(forceComplete, 1500);
+    }
+  }, [moduleCompleted, iframeLoading]);
+
+  const forceIframeQuizCompleted = (iframeWindow: Window) => {
+    try {
+      const iframeDoc = iframeWindow.document;
+      const iframeAny = iframeWindow as any;
+      
+      if (typeof iframeAny.localState !== 'undefined') {
+        iframeAny.localState.quizPassed = true;
+        iframeAny.localState.videoWatched = true;
+        iframeAny.localState.isExamPassed = true;
+      }
+      
+      const examResult = iframeDoc.getElementById('exam-result');
+      if (examResult && typeof iframeAny.renderQuiz === 'function') {
+        iframeAny.renderQuiz();
+      }
+      
+      if (typeof iframeAny.updateSectionStates === 'function') {
+        iframeAny.updateSectionStates();
+      }
+      
+      const styleId = 'safescape-completion-style';
+      if (!iframeDoc.getElementById(styleId)) {
+        const style = iframeDoc.createElement('style');
+        style.id = styleId;
+        style.innerHTML = `
+          footer, .ss-footer { display: none !important; }
+        `;
+        iframeDoc.head.appendChild(style);
+      }
+    } catch (e) {}
+  };
 
   const handleIframeLoad = (e: React.SyntheticEvent<HTMLIFrameElement, Event>) => {
     setIframeLoading(false);
@@ -86,15 +225,20 @@ const ModuleFivePage = ({ moduleNum }: { moduleNum: number }) => {
 
       // Check if the congratulations/completion screen appeared inside the iframe
       const checkForCompletion = () => {
+        const text = iframeDoc.body.innerText;
+        const isPassedText = text.includes('MARSHAL CERTIFIED') || text.includes('CONGRATULATIONS') || text.includes('PASSED');
+        
         const examResult = iframeDoc.getElementById('exam-result');
-        const isExamPassed = examResult && !examResult.classList.contains('hidden') && 
-                             iframeDoc.getElementById('result-title')?.innerText?.includes('CONGRATULATIONS');
+        const isExamPassed = isPassedText || (examResult && !examResult.classList.contains('hidden') && 
+                             iframeDoc.getElementById('result-title')?.innerText?.includes('CONGRATULATIONS'));
                              
         const alreadyInjected = iframeDoc.getElementById('post-test-cta');
         
-        if (isExamPassed && !alreadyInjected) {
+        if (isExamPassed && !completedRef.current) {
           setModuleCompleted(true);
-          
+        }
+
+        if (isExamPassed && !alreadyInjected) {
           const certificateBtn = iframeDoc.getElementById('btn-view-cert');
           const btnContainer = certificateBtn?.parentElement;
           
@@ -118,17 +262,28 @@ const ModuleFivePage = ({ moduleNum }: { moduleNum: number }) => {
       });
       observer.observe(iframeDoc.body, { childList: true, subtree: true, attributes: true });
 
-      // Also check immediately in case completion is already shown
       checkForCompletion();
+
+      const resizeInterval = setInterval(() => {
+        resizeIframe();
+        checkForCompletion();
+      }, 1000);
+
+      iframe.addEventListener('beforeunload', () => clearInterval(resizeInterval), { once: true });
 
       const links = iframeDoc.querySelectorAll('a');
       links.forEach(link => {
         link.addEventListener('click', (ev) => {
-          ev.preventDefault();
           const href = link.getAttribute('href');
           if (!href) return;
           
-          if (href.includes('index.html') && href.includes('../')) {
+          if ((href === 'index.html' || href === './index.html') && completedRef.current) {
+            ev.preventDefault();
+            return;
+          }
+
+          if (href.includes('index.html')) {
+            ev.preventDefault();
             const match = href.match(/module_(\d+)/);
             if (match) {
               window.parent.location.href = `/kids/safescape/${match[1]}`;
@@ -186,7 +341,6 @@ const ModuleFivePage = ({ moduleNum }: { moduleNum: number }) => {
       {/* ── Module 5 Completion Banner ── */}
       {moduleCompleted && (user?.postTestScore === null || user?.postTestScore === undefined) && (
         <div className="bg-gradient-to-r from-emerald-500 via-green-500 to-teal-500 px-4 sm:px-6 py-6 sm:py-8 relative overflow-hidden animate-in slide-in-from-top fade-in duration-500">
-          <div className="absolute inset-0 bg-[url('/noise.png')] opacity-5" />
           <div className="max-w-4xl mx-auto relative z-10 flex flex-col sm:flex-row items-center gap-4 sm:gap-8">
             <div className="flex items-center gap-4 flex-1">
               <div className="h-14 w-14 sm:h-16 sm:w-16 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center shrink-0 border-2 border-white/30">
@@ -210,7 +364,6 @@ const ModuleFivePage = ({ moduleNum }: { moduleNum: number }) => {
       )}
       {moduleCompleted && user?.postTestScore !== null && user?.postTestScore !== undefined && (
         <div className="bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500 px-4 sm:px-6 py-6 sm:py-8 relative overflow-hidden animate-in slide-in-from-top fade-in duration-500">
-          <div className="absolute inset-0 bg-[url('/noise.png')] opacity-5" />
           <div className="max-w-4xl mx-auto relative z-10 flex flex-col sm:flex-row items-center gap-4 sm:gap-8">
             <div className="flex items-center gap-4 flex-1">
               <div className="h-14 w-14 sm:h-16 sm:w-16 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center shrink-0 border-2 border-white/30">
@@ -256,6 +409,7 @@ const ModuleFivePage = ({ moduleNum }: { moduleNum: number }) => {
         )}
 
         <iframe 
+          ref={iframeRef}
           src={`/modules/module_${currentModule}/index.html`}
           className={cn(
             "w-full border-none m-0 p-0 transition-opacity duration-700",

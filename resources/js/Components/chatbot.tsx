@@ -446,12 +446,12 @@ export function Chatbot() {
   return (
     <>
       {/* Chatbot Toggle - Berong Character or Mini Button */}
-      <div ref={constraintsRef} className="fixed inset-0 z-[60] pointer-events-none">
+      <div ref={constraintsRef} className="fixed inset-x-0 top-24 bottom-0 z-[60] pointer-events-none">
         {/* Full Mascot Mode */}
         <AnimatePresence>
           {!isOpen && !useMiniButton && (
             <motion.div
-              className="pointer-events-auto absolute right-0 bottom-0"
+              className="pointer-events-auto fixed right-0 bottom-0"
               onMouseEnter={handleMouseEnter}
               onMouseLeave={handleMouseLeave}
               drag
@@ -528,7 +528,7 @@ export function Chatbot() {
           {!isOpen && useMiniButton && (
             <motion.div
               ref={miniRef}
-              className="pointer-events-auto absolute right-4 bottom-6"
+              className="pointer-events-auto fixed right-4 bottom-6"
               drag
               dragConstraints={constraintsRef}
               dragElastic={0.1}
@@ -798,20 +798,18 @@ export function Chatbot() {
                   {isTyping ? (
                     <button
                       onClick={handleStopGeneration}
-                      className="h-10 w-10 flex items-center justify-center bg-red-500 hover:bg-red-600 text-white rounded-full shadow-md transition-all active:scale-95"
-                      title="Stop generating"
+                      className="h-10 w-10 flex items-center justify-center text-orange-500 hover:bg-orange-50 rounded-xl transition-colors"
+                      title="Stop generation"
                     >
-                      <Square className="h-4 w-4 fill-current" />
+                      <Square className="h-5 w-5 fill-current" />
                     </button>
                   ) : (
                     <button
                       onClick={handleSend}
                       disabled={!inputValue.trim()}
-                      className={`h-10 w-10 flex items-center justify-center text-white rounded-full shadow-md transition-all active:scale-95 ${
-                        inputValue.trim() ? 'bg-[#1e293b] hover:bg-[#334155]' : 'bg-gray-300 cursor-not-allowed'
-                      }`}
+                      className="h-10 w-10 flex items-center justify-center text-white bg-[#ff6b00] hover:bg-[#ff8c00] disabled:bg-gray-200 disabled:text-gray-400 rounded-xl transition-all shadow-md active:scale-95"
                     >
-                      <Send className="h-4 w-4 ml-0.5" />
+                      <Send className="h-5 w-5" strokeWidth={2.5} />
                     </button>
                   )}
                 </div>
@@ -822,4 +820,4 @@ export function Chatbot() {
       </AnimatePresence>
     </>
   )
-};
+}

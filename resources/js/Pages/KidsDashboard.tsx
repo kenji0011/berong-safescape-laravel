@@ -18,6 +18,7 @@ interface KidsPageProps {
   modules?: any[]
   progress?: {
     completedModules: number[]
+    badges: any[]
   }
 }
 
@@ -135,7 +136,10 @@ const KidsDashboardPage = ({ modules, progress }: KidsPageProps) => {
         <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           {/* Deferred Welcome Banner */}
           <Deferred data="progress" fallback={<KidsWelcomeBannerSkeleton />}>
-            <KidsWelcomeBanner completedModules={progress?.completedModules || []} />
+            <KidsWelcomeBanner 
+              completedModules={progress?.completedModules || []} 
+              earnedBadges={progress?.badges || []} 
+            />
           </Deferred>
 
           {/* Deferred Content Grid */}

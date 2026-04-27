@@ -35,7 +35,7 @@ export function ContentGrid({
   return (
     <div className={cn(
       "relative mb-24 max-w-7xl mx-auto",
-      isMap ? "p-4 sm:p-12 sm:pb-32 rounded-3xl sm:rounded-[3.5rem] bg-[#fdf8f1] border-4 border-[#e7d5b8] shadow-inner overflow-visible" : "p-0"
+      isMap ? "p-0 md:p-12 md:pb-32 md:rounded-[3.5rem] md:bg-[#fdf8f1] md:border-4 md:border-[#e7d5b8] md:shadow-inner overflow-visible" : "p-0"
     )}>
       {/* Adventure Path SVG Background (Desktop Only) */}
       {isMap && (

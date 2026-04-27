@@ -9,6 +9,7 @@ import TiltedCard from '@/components/ui/tilted-card';
 import { Card, CardContent } from '@/components/ui/card';
 import { ArrowRight, Briefcase, Users, Baby } from 'lucide-react';
 import { useAuth } from '@/lib/auth-context';
+import { FeaturedCardsSkeleton } from '@/components/dashboard-skeletons';
 
 // Define the type for a featured card item
 type FeaturedCardItem = {
@@ -68,7 +69,11 @@ interface ServerUser {
 }
 
 export function FeaturedCards({ serverUser }: { serverUser?: ServerUser | null } = {}) {
-  const { user: clientUser } = useAuth();
+  const { user: clientUser, isLoading } = useAuth();
+
+  if (isLoading) {
+    return <FeaturedCardsSkeleton />;
+  }
 
   // Use client user if available, otherwise reconstruct from serverUser
   const user = clientUser || (serverUser ? {
@@ -162,6 +167,8 @@ export function FeaturedCards({ serverUser }: { serverUser?: ServerUser | null }
                     <img 
                       src={card.imageUrl} 
                       alt={card.title} 
+                      decoding="async"
+                      loading="lazy"
                       className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" 
                     />
                     <div className="absolute inset-0 bg-slate-900/10 group-hover:bg-transparent transition-colors duration-500" />

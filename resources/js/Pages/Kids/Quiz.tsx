@@ -2,6 +2,7 @@ import React, { useState } from "react"
 import { Link, router } from '@inertiajs/react'
 import { ArrowLeft, CheckCircle, XCircle, Lightbulb } from "lucide-react"
 import DashboardLayout from "@/Layouts/DashboardLayout"
+import axios from "axios"
 import { cn } from "@/lib/utils"
 
 const QuizPage = () => {
@@ -81,6 +82,13 @@ const QuizPage = () => {
     } else {
       setIsFinished(true)
       playSound('win')
+      
+      // Award Quiz Hero Badge
+      axios.post('/api/badges/award', {
+        badge_id: 'quiz_hero',
+        badge_name: 'Quiz Hero',
+        badge_icon: '🏆'
+      }).catch(err => console.error("Failed to award badge:", err.response?.data || err.message))
     }
   }
 

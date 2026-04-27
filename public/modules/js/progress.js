@@ -155,7 +155,7 @@ const SafeScapeProgress = (function () {
     // --- API Sync Functions ---
 
     async function syncToAPI(moduleNum, sectionData, completed) {
-        // Notify parent window regardless of local fetch result or auth status.
+        // Notify parent window.
         // This ensures the parent (SafeScape app) can handle the sync securely natively.
         if (window.parent !== window) {
             window.parent.postMessage({
@@ -166,57 +166,22 @@ const SafeScapeProgress = (function () {
             }, '*');
         }
 
-        if (!isAuthenticated()) {
-            return false;
-        }
-
-        try {
-            const response = await fetch(API_ENDPOINT, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                credentials: 'include', // Include cookies for auth
-                body: JSON.stringify({ moduleNum, sectionData, completed })
-            });
-
-            if (response.ok) {
-                return true;
-            } else {
-                console.error('SafeScape: API sync failed', response.status);
-                return false;
-            }
-        } catch (e) {
-            console.error('SafeScape: API sync error', e);
-            return false;
-        }
+        // Direct API calls from iframe are disabled to avoid CSRF issues.
+        // The parent window handles the fetch.
+        return true;
     }
 
     async function submitQuizResult(moduleNum, score, maxScore = 100) {
-        if (!isAuthenticated()) return false;
-
-        try {
-            const quizType = `module_${moduleNum}_quiz`;
-            const url = window.location.origin + '/api/kids/quiz';
-            // console.log(`[SafeScape] Submitting quiz to ${url}`, { moduleNum, score, maxScore });
-
-            const response = await fetch(url, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                credentials: 'include',
-                body: JSON.stringify({ quizType, score, maxScore })
-            });
-
-            if (!response.ok) {
-                console.error(`[SafeScape] Quiz submit failed: ${response.status} ${response.statusText}`);
-                const text = await response.text();
-                console.error(`[SafeScape] Error details:`, text);
-                return false;
-            }
-
-            return true;
-        } catch (e) {
-            console.error('SafeScape: Quiz submit network error', e);
-            return false;
+        // Notify parent window to handle the quiz submission
+        if (window.parent !== window) {
+            window.parent.postMessage({
+                type: 'SAFESCAPE_QUIZ_SUBMIT',
+                moduleNum,
+                score,
+                maxScore
+            }, '*');
         }
+        return true;
     }
 
     async function fetchProgressFromAPI() {
@@ -241,53 +206,57 @@ const SafeScapeProgress = (function () {
 
     // Initialize: merge API progress with local (in-memory) on page load
     async function initializeFromAPI() {
-        // console.log('SafeScape: Initializing from API...');
-        const apiData = await fetchProgressFromAPI();
+        // Direct API calls from iframe are disabled to avoid CSRF issues.
+        // We now wait for a SAFESCAPE_INITIALIZE_PROGRESS message from the parent.
+        // console.log('SafeScape: Waiting for parent to provide initial progress...');
+    }
 
-        if (apiData) {
-            // console.log('SafeScape: API data received', apiData);
-            const localProgress = getProgress(); // Gets current in-memory defaults
+    // New: Initialize from data provided by parent
+    function initializeFromData(apiData) {
+        if (!apiData) return;
+        
+        const localProgress = getProgress();
 
-            // Merge API progress into local progress 
-            // AND recalibrate unlocked status for ALL modules
-            for (let i = 1; i <= 5; i++) {
-                const moduleKey = `module${i}`;
+        for (let i = 1; i <= 5; i++) {
+            const moduleKey = `module${i}`;
 
-                // 1. Merge Completed/Section data if exists in API (Laravel Format)
-                if (apiData.completedModules && apiData.completedModules.includes(i)) {
-                    localProgress[moduleKey].completed = true;
-                }
+            if (apiData.completedModules && apiData.completedModules.includes(i)) {
+                localProgress[moduleKey].completed = true;
+            }
 
-                // Merge section data
-                if (apiData.sectionData && apiData.sectionData[moduleKey]) {
-                    localProgress[moduleKey].sections = {
-                        ...localProgress[moduleKey].sections,
-                        ...apiData.sectionData[moduleKey]
-                    };
-                }
+            if (apiData.sectionData && apiData.sectionData[moduleKey]) {
+                localProgress[moduleKey].sections = {
+                    ...localProgress[moduleKey].sections,
+                    ...apiData.sectionData[moduleKey]
+                };
+            }
 
-                // 2. Strict Unlock Logic (Independent of API existence)
-                if (i === 1) {
+            if (i === 1) {
+                localProgress[moduleKey].unlocked = true;
+            } else {
+                const prevModuleKey = `module${i - 1}`;
+                if (localProgress[prevModuleKey].completed) {
                     localProgress[moduleKey].unlocked = true;
-                } else {
-                    const prevModuleKey = `module${i - 1}`;
-                    // Unlocked if previous is completed
-                    if (localProgress[prevModuleKey].completed) {
-                        localProgress[moduleKey].unlocked = true;
-                    }
                 }
             }
+        }
 
-            // Update student name from URL/Session
-            const userName = getUserName();
-            if (userName && userName !== 'Future Hero') {
-                localProgress.studentName = userName;
-            }
+        const userName = getUserName();
+        if (userName && userName !== 'Future Hero') {
+            localProgress.studentName = userName;
+        }
 
-            saveProgress(localProgress); // Updates in-memory and notifies listeners
-            // console.log('SafeScape: Progress initialized', localProgress);
-        } else {
-            // console.log('SafeScape: No API data or fetch failed.');
+        saveProgress(localProgress);
+        
+        // Trigger UI updates in the module if functions are defined
+        if (typeof window.updateSectionStates === 'function') {
+            window.updateSectionStates();
+        }
+        if (typeof window.renderQuiz === 'function') {
+            window.renderQuiz();
+        }
+        if (typeof window.loadProgress === 'function') {
+            window.loadProgress();
         }
     }
 
@@ -490,6 +459,7 @@ const SafeScapeProgress = (function () {
         // Ready gate
         whenReady,
         _resolveReady: () => _readyResolve(),
+        initializeFromData,
 
         // Auth helpers
         isAuthenticated,
@@ -501,11 +471,19 @@ const SafeScapeProgress = (function () {
 // Make available globally
 window.SafeScapeProgress = SafeScapeProgress;
 
-// Auto-initialize from API when loaded in iframe with userId
-document.addEventListener('DOMContentLoaded', async function () {
-    if (SafeScapeProgress.isAuthenticated()) {
-        await SafeScapeProgress.initializeFromAPI();
+// Auto-initialize: Listen for data from parent
+window.addEventListener('message', function(event) {
+    if (event.data && event.data.type === 'SAFESCAPE_INITIALIZE_PROGRESS') {
+        SafeScapeProgress.initializeFromData(event.data.progress);
     }
-    // Signal that initialization is complete (even if not authenticated)
+});
+
+document.addEventListener('DOMContentLoaded', async function () {
+    // Signal that initialization is ready to receive data
     SafeScapeProgress._resolveReady();
+    
+    // Notify parent that we are ready for initialization data
+    if (window.parent !== window) {
+        window.parent.postMessage({ type: 'SAFESCAPE_IFRAME_READY' }, '*');
+    }
 });

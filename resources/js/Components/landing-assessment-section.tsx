@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from "react"
 import { router } from '@inertiajs/react';
+import axios from 'axios';
 import { Button } from "@/components/ui/button"
 import { Progress } from "@/components/ui/progress"
 import {
@@ -100,13 +101,8 @@ export function LandingAssessmentSection({ serverUser }: LandingAssessmentProps 
     const checkEligibility = async () => {
         try {
             setLoading(true)
-            const response = await fetch("/api/assessments/post-test-eligibility", {
-                headers: {
-                    'Accept': 'application/json',
-                }
-            })
-            const data = await response.json()
-            setEligibility(data)
+            const response = await axios.get("/api/assessments/post-test-eligibility")
+            setEligibility(response.data)
         } catch (err) {
             console.error("Failed to check eligibility", err)
         } finally {

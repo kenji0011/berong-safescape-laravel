@@ -77,6 +77,16 @@ const KidsChallengesPage = () => {
               href: "/kids/smoke-crawl",
               difficulty: "hard",
               category: "activities"
+            },
+            {
+              id: "activity-7",
+              title: "Hot or Not?",
+              description: "Can you spot the difference between safe toys and dangerous tools?",
+              type: "activity",
+              imageUrl: "/hotornot.jpg",
+              href: "/kids/hot-or-not",
+              difficulty: "easy",
+              category: "activities"
             }
           ]
 
@@ -185,7 +195,7 @@ const KidsChallengesPage = () => {
               contents={challenges}
               variant="grid"
               isLoading={isLoadingContent}
-              skeletonCount={3}
+              skeletonCount={4}
               emptyMessage="More challenges coming soon! 🎉"
             />
           </div>
