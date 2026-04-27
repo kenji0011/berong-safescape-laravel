@@ -13,9 +13,9 @@ use App\Http\Controllers\BadgeController;
 
 Route::get('/', function () {
     return Inertia::render('Welcome', [
-        'carouselImages' => Inertia::defer(fn () => CarouselImage::where('isActive', true)
+        'carouselImages' => CarouselImage::where('isActive', true)
             ->orderBy('order', 'asc')
-            ->get())
+            ->get()
     ]);
 });
 
@@ -48,14 +48,14 @@ Route::get('/about', function () {
 
     Route::get('/kids', function () {
         return Inertia::render('KidsDashboard', [
-            'modules' => Inertia::defer(fn () => KidsModule::where('isActive', true)->orderBy('dayNumber')->get()),
-            'progress' => Inertia::defer(fn () => [
+            'modules' => KidsModule::where('isActive', true)->orderBy('dayNumber')->get(),
+            'progress' => [
                 'completedModules' => \App\Models\SafeScapeProgress::where('userId', Auth::id())
                     ->where('completed', true)
                     ->pluck('moduleNum')
                     ->values(),
                 'badges' => \App\Models\UserBadge::where('userId', Auth::id())->get()
-            ]),
+            ],
         ]);
     })->name('kids');
 

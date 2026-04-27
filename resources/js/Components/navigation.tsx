@@ -14,6 +14,14 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from "@/Components/ui/dialog"
 
 export function Navigation() {
   const { user, logout, isAuthenticated } = useAuth()
@@ -22,6 +30,7 @@ export function Navigation() {
   const isDashboard = url === '/';
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [currentTime, setCurrentTime] = useState<string>("")
+  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false)
 
   // Update time every minute
   useEffect(() => {
@@ -107,7 +116,17 @@ export function Navigation() {
                 DASHBOARD
               </Link>
               
-              {isAuthenticated && (
+              {isAuthenticated && user?.role === 'kid' ? (
+                <Link
+                  href="/kids"
+                  className={(!isDashboard && url.startsWith('/kids'))
+                    ? "font-extrabold text-sm tracking-wide uppercase px-4 xl:px-5 py-1.5 rounded-full border-[3px] border-white bg-yellow-400 text-black shadow-[0_4px_0_#b45309] hover:-translate-y-0.5 hover:shadow-[0_6px_0_#b45309] active:translate-y-1 active:shadow-none transition-all duration-200 active:duration-75 flex items-center gap-1.5 whitespace-nowrap outline-none" 
+                    : "font-extrabold text-sm tracking-wide uppercase text-white hover:text-yellow-200 transition-colors drop-shadow-sm py-1.5 px-2 xl:px-3 flex items-center gap-1.5 whitespace-nowrap outline-none cursor-pointer"
+                  }
+                >
+                  KIDS
+                </Link>
+              ) : isAuthenticated && (
                 <DropdownMenu modal={false}>
                   <DropdownMenuTrigger 
                     className={(!isDashboard && url !== '/login' && url !== '/register' && url !== '/about' && url !== '/profile')
@@ -240,7 +259,7 @@ export function Navigation() {
                       <div className="h-[1px] bg-slate-100 my-1" />
 
                       <DropdownMenuItem 
-                        onClick={logout} 
+                        onClick={(e) => { e.preventDefault(); setShowLogoutConfirm(true); }} 
                         className="focus:bg-red-50 focus:text-red-700 rounded-lg cursor-pointer py-2 px-2.5 transition-colors group flex items-center justify-between text-sm font-bold tracking-wide text-red-600 mt-1"
                       >
                         <span className="flex items-center gap-2">
@@ -502,7 +521,7 @@ export function Navigation() {
                     variant="outline"
                     onClick={() => {
                       setMobileMenuOpen(false)
-                      logout()
+                      setShowLogoutConfirm(true)
                     }}
                     className="rounded-full bg-[#e11d48] border-[2px] border-white text-white hover:bg-rose-700 hover:text-white h-9 sm:h-10 px-3 sm:px-4 font-bold text-xs sm:text-sm shadow-[0_3px_0_#9f1239] hover:-translate-y-0.5 hover:shadow-[0_4px_0_#9f1239] active:translate-y-1 active:shadow-[0_0px_0_#9f1239] transition-all shrink-0 outline-none"
                   >
@@ -515,6 +534,39 @@ export function Navigation() {
           </div>
         </div>
       </div>
+      {/* Logout Confirmation Dialog */}
+      <Dialog open={showLogoutConfirm} onOpenChange={setShowLogoutConfirm}>
+        <DialogContent className="max-w-[90vw] sm:max-w-md bg-white border-none rounded-[2rem] p-0 overflow-hidden shadow-2xl">
+          <div className="bg-gradient-to-r from-[#ff3b3b] to-[#ff7b00] p-6 text-center border-b-[6px] border-white/20">
+            <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center mx-auto mb-4 text-4xl shadow-xl transform rotate-3">
+              🤖
+            </div>
+            <DialogTitle className="text-2xl font-black text-white uppercase tracking-tight italic drop-shadow-md">Logging out?</DialogTitle>
+          </div>
+          <div className="p-8 text-center">
+            <DialogDescription className="text-slate-500 font-bold text-lg leading-relaxed mb-8">
+              Are you sure you want to take a break, Hero? We'll miss you!
+            </DialogDescription>
+            <div className="flex flex-col sm:flex-row gap-3">
+              <button 
+                onClick={() => setShowLogoutConfirm(false)}
+                className="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-600 font-black py-4 rounded-2xl transition-all uppercase tracking-widest text-sm"
+              >
+                Stay
+              </button>
+              <button 
+                onClick={() => {
+                  setShowLogoutConfirm(false)
+                  logout()
+                }}
+                className="flex-1 bg-[#ff4b3e] hover:bg-red-600 text-white font-black py-4 rounded-2xl shadow-[0_4px_0_#b91c1c] hover:-translate-y-0.5 active:translate-y-1 active:shadow-none transition-all uppercase tracking-widest text-sm"
+              >
+                Sign Out
+              </button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </nav>
   )
 }

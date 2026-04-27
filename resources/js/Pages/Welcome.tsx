@@ -1,24 +1,12 @@
-import React, { Suspense, lazy } from 'react';
+import React from 'react';
 import { Head, usePage } from '@inertiajs/react';
 import RootLayout from '@/Layouts/RootLayout';
 import { Navigation } from '@/components/navigation';
 import { HeroCarousel } from '@/components/ui/hero-carousel';
 import { FeaturedCards } from '@/components/ui/featured-cards';
 import { Footer } from '@/components/footer';
-import { HeroCarouselSkeleton } from '@/Components/dashboard-skeletons';
-import { Deferred } from '@inertiajs/react';
-
-const LandingAboutSection = lazy(() =>
-  import('@/components/landing-about-section').then((module) => ({
-    default: module.LandingAboutSection,
-  }))
-);
-
-const LandingAssessmentSection = lazy(() =>
-  import('@/components/landing-assessment-section').then((module) => ({
-    default: module.LandingAssessmentSection,
-  }))
-);
+import { LandingAboutSection } from '@/components/landing-about-section';
+import { LandingAssessmentSection } from '@/components/landing-assessment-section';
 
 export default function Welcome({ carouselImages }: { carouselImages?: any[] }) {
   const { auth } = usePage().props as any;
@@ -33,19 +21,16 @@ export default function Welcome({ carouselImages }: { carouselImages?: any[] }) 
 
   return (
     <>
-      <Head title="Berong E-Learning for BFP Sta Cruz" />
+      <Head title="Berong E-Learning for BFP Sta Cruz">
+        {carouselImages && carouselImages.length > 0 && (
+          <link rel="preload" as="image" href={carouselImages[0].imageUrl} fetchpriority="high" />
+        )}
+      </Head>
       <div className="min-h-screen flex flex-col">
         <Navigation />
         <main className="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 w-full">
           <section className="mb-8 sm:mb-12">
-            <Deferred data="carouselImages" fallback={<HeroCarouselSkeleton />}>
-              {carouselImages && carouselImages.length > 0 && (
-                <Head>
-                  <link rel="preload" as="image" href={carouselImages[0].imageUrl} fetchpriority="high" />
-                </Head>
-              )}
-              <HeroCarousel initialImages={carouselImages} />
-            </Deferred>
+            <HeroCarousel initialImages={carouselImages} />
           </section>
 
           <section className="mb-10 sm:mb-12">
@@ -53,15 +38,11 @@ export default function Welcome({ carouselImages }: { carouselImages?: any[] }) 
           </section>
 
           <section className="mb-16 sm:mb-24 mt-8 sm:mt-12">
-            <Suspense fallback={<div className="h-72 animate-pulse rounded-3xl bg-slate-100" />}>
-              <LandingAboutSection />
-            </Suspense>
+            <LandingAboutSection />
           </section>
 
           <section className="mb-12 sm:mb-16">
-            <Suspense fallback={<div className="h-56 animate-pulse rounded-3xl bg-slate-100" />}>
-              <LandingAssessmentSection serverUser={mappedUser} />
-            </Suspense>
+            <LandingAssessmentSection serverUser={mappedUser} />
           </section>
         </main>
 
