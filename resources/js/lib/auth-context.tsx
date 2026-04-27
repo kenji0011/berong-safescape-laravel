@@ -78,7 +78,7 @@ function determinePermissions(role: UserRole) {
   switch (role) {
     case "professional":
       return {
-        accessKids: true,
+        accessKids: false,
         accessAdult: true,
         accessProfessional: true,
         isAdmin: false,
