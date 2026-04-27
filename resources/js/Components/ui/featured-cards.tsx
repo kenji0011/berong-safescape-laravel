@@ -95,23 +95,21 @@ export function FeaturedCards({ serverUser }: { serverUser?: ServerUser | null }
       return false;
     }
 
-    // 2. Professionals and Admins see ALL cards
-    if (user.role === 'admin' || user.permissions?.accessProfessional) {
+    // 2. Admins see ALL cards
+    if (user.role === 'admin') {
       return true;
     }
 
-    // 3. Age-based filtering for standard users
-    if (user.age !== undefined && user.age !== null) {
-      if (user.age < 13) {
-        // Kid (< 13): Show ONLY Kids card
-        return card.requiredPermission === 'accessKids';
-      } else {
-        // Adult (>= 13): Show ONLY Adult card
-        return card.requiredPermission === 'accessAdult';
-      }
+    // 3. Hide Kids card for non-kid roles (Professional and Adult)
+    if (card.requiredPermission === 'accessKids' && user.role !== 'kid') {
+      return false;
     }
 
-    // 4. Logged in but no age info: Show all
+    // 4. Permission-based check for the rest
+    if (card.requiredPermission === 'accessProfessional') return !!user.permissions?.accessProfessional;
+    if (card.requiredPermission === 'accessAdult') return !!user.permissions?.accessAdult;
+    if (card.requiredPermission === 'accessKids') return !!user.permissions?.accessKids;
+
     return true;
   });
 

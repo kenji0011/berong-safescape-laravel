@@ -138,7 +138,7 @@ export function NotificationPopover() {
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <button className="relative flex items-center justify-center h-10 w-10 sm:h-12 sm:w-12 rounded-full bg-[#0ea5e9] border-[3px] border-white text-white shadow-[0_4px_0_#0284c7] hover:-translate-y-0.5 hover:shadow-[0_6px_0_#0284c7] active:translate-y-1 active:shadow-none transition-all outline-none">
+        <button className="relative flex items-center justify-center h-10 w-10 sm:h-12 sm:w-12 rounded-full bg-[#0ea5e9] border-[3px] border-white text-white shadow-[0_4px_0_#0284c7] hover:-translate-y-0.5 hover:shadow-[0_6px_0_#0284c7] active:translate-y-1 active:shadow-none data-[state=open]:translate-y-1 data-[state=open]:shadow-none transition-all duration-200 active:duration-75 outline-none cursor-pointer">
           <Bell className="h-5 w-5 sm:h-6 sm:w-6" strokeWidth={2.5} />
           {unreadCount > 0 && (
             <Badge className="absolute -top-1 -right-1 h-4 w-4 sm:h-5 sm:w-5 border-2 border-white rounded-full p-0 flex items-center justify-center text-[9px] sm:text-[10px] bg-red-500 hover:bg-red-500">

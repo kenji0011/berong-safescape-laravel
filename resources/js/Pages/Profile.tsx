@@ -325,18 +325,24 @@ export default function ProfilePage() {
             </div>
           </div>
 
-          {/* Minimalist Avatar Trigger */}
-          <button 
-            onClick={() => setShowAvatarModal(true)}
-            className="group relative flex items-center justify-center h-16 w-16 sm:h-20 sm:w-20 rounded-full border-4 border-dashed border-slate-200 hover:border-yellow-400 hover:bg-yellow-50 transition-all duration-300 shrink-0 overflow-visible"
-          >
-            <div className="text-3xl sm:text-4xl group-hover:scale-110 transition-transform">
-              {AVATAR_OPTIONS.find(opt => opt.id === profile.avatar)?.icon || "🐮"}
+          {/* Minimalist Avatar Trigger - ONLY FOR KIDS */}
+          {profile.role === 'kid' ? (
+            <button 
+              onClick={() => setShowAvatarModal(true)}
+              className="group relative flex items-center justify-center h-16 w-16 sm:h-20 sm:w-20 rounded-full border-4 border-dashed border-slate-200 hover:border-yellow-400 hover:bg-yellow-50 transition-all duration-300 shrink-0 overflow-visible"
+            >
+              <div className="text-3xl sm:text-4xl group-hover:scale-110 transition-transform">
+                {AVATAR_OPTIONS.find(opt => opt.id === profile.avatar)?.icon || "🐮"}
+              </div>
+              <div className="absolute -bottom-1 -right-1 h-6 w-6 sm:h-7 sm:w-7 bg-yellow-400 rounded-full border-4 border-white flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
+                <span className="text-white font-black text-xs sm:text-sm">+</span>
+              </div>
+            </button>
+          ) : (
+            <div className="flex items-center justify-center h-16 w-16 sm:h-20 sm:w-20 rounded-full bg-slate-100 border-4 border-white shadow-inner shrink-0">
+               <User className="h-8 w-8 sm:h-10 sm:w-10 text-slate-400" />
             </div>
-            <div className="absolute -bottom-1 -right-1 h-6 w-6 sm:h-7 sm:w-7 bg-yellow-400 rounded-full border-4 border-white flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
-              <span className="text-white font-black text-xs sm:text-sm">+</span>
-            </div>
-          </button>
+          )}
         </div>
 
         {/* Alerts */}
