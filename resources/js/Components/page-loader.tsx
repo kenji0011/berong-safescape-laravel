@@ -41,7 +41,7 @@ export function PageLoader() {
                     {/* Background Image and Red Overlay */}
                     <div
                         className="absolute inset-0 bg-cover bg-center"
-                        style={{ backgroundImage: "url('/bfp-sta-cruz-fire-station.jpg')" }}
+                        style={{ backgroundImage: "url('/web-background-image.jpg')" }}
                     >
                         <div className="absolute inset-0 bg-[#d60000]/90 backdrop-blur-sm" />
                     </div>

@@ -27,7 +27,7 @@ export function LoginLoader() {
                         />
                         <div 
                             className="absolute inset-0 opacity-20 bg-cover bg-center"
-                            style={{ backgroundImage: "url('/bfp-sta-cruz-fire-station.jpg')" }}
+                            style={{ backgroundImage: "url('/web-background-image.jpg')" }}
                         />
                         <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-black opacity-60" />
                     </div>

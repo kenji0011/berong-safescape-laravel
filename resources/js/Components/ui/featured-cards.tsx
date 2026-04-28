@@ -121,7 +121,7 @@ export function FeaturedCards({ serverUser }: { serverUser?: ServerUser | null }
           <React.Fragment key={card.id}>
           <PermissionGuard requiredPermission={card.requiredPermission} targetPath={card.link}>
             <Link href={card.link} prefetch={false} className="outline-none block w-full group">
-              <div className="w-full bg-white rounded-3xl p-4 transition-all duration-300 overflow-hidden relative shadow-[0_6px_0_#cbd5e1] group-hover:-translate-y-1 group-hover:shadow-[0_10px_0_#cbd5e1] group-active:translate-y-[6px] group-active:shadow-[0_0px_0_#cbd5e1]">
+              <div className="w-full bg-white dark:bg-slate-800 rounded-3xl p-4 transition-all duration-300 overflow-hidden relative shadow-[0_6px_0_#cbd5e1] dark:shadow-[0_6px_0_#0f172a] group-hover:-translate-y-1 group-hover:shadow-[0_10px_0_#cbd5e1] dark:group-hover:shadow-[0_10px_0_#0f172a] group-active:translate-y-[6px] group-active:shadow-[0_0px_0_#cbd5e1] dark:group-active:shadow-none">
                 <div className="flex items-center gap-4">
                   {/* Icon Section */}
                   <div className={`bg-gradient-to-br ${card.color} h-16 w-16 rounded-2xl flex items-center justify-center text-white shadow-[0_4px_0_rgba(0,0,0,0.15)] shrink-0 group-hover:scale-105 transition-transform`}>
@@ -129,8 +129,8 @@ export function FeaturedCards({ serverUser }: { serverUser?: ServerUser | null }
                   </div>
                   {/* Content */}
                   <div className="min-w-0 flex-1">
-                    <h3 className="font-black text-lg text-slate-800 leading-tight">{card.title}</h3>
-                    <p className="text-[13px] font-bold text-slate-500 line-clamp-2 leading-snug mt-1">{card.description}</p>
+                    <h3 className="font-black text-lg text-slate-800 dark:text-white leading-tight transition-colors">{card.title}</h3>
+                    <p className="text-[13px] font-bold text-slate-500 dark:text-slate-400 line-clamp-2 leading-snug mt-1 transition-colors">{card.description}</p>
                   </div>
                 </div>
                 {/* Full Width Mobile Button */}
@@ -158,7 +158,7 @@ export function FeaturedCards({ serverUser }: { serverUser?: ServerUser | null }
           <div key={card.id} className="h-full">
             <PermissionGuard requiredPermission={card.requiredPermission} targetPath={card.link}>
               <Link href={card.link} prefetch={false} className="outline-none flex w-full h-full group">
-                <div className="w-full flex flex-col bg-white rounded-3xl overflow-hidden relative transition-all duration-300 shadow-[0_8px_0_#cbd5e1] group-hover:-translate-y-2 group-hover:shadow-[0_14px_0_#cbd5e1] group-active:translate-y-[8px] group-active:shadow-[0_0px_0_#cbd5e1]">
+                <div className="w-full flex flex-col bg-white dark:bg-slate-800 rounded-3xl overflow-hidden relative transition-all duration-300 shadow-[0_8px_0_#cbd5e1] dark:shadow-[0_8px_0_#0f172a] group-hover:-translate-y-2 group-hover:shadow-[0_14px_0_#cbd5e1] dark:group-hover:shadow-[0_14px_0_#0f172a] group-active:translate-y-[8px] group-active:shadow-[0_0px_0_#cbd5e1] dark:group-active:shadow-none">
                   
                   {/* Image Area */}
                   <div className="h-[200px] shrink-0 w-full overflow-hidden relative">
@@ -173,7 +173,7 @@ export function FeaturedCards({ serverUser }: { serverUser?: ServerUser | null }
                   </div>
                   
                   {/* Content Area */}
-                  <div className="p-6 flex-1 flex flex-col relative bg-yellow-50 bg-opacity-50">
+                  <div className="p-6 flex-1 flex flex-col relative bg-yellow-50 dark:bg-slate-800/50 bg-opacity-50 transition-colors duration-500">
                     
                     {/* Floating Icon overlapping image and content */}
                     <div className={`absolute -top-10 right-6 h-16 w-16 bg-gradient-to-br ${card.color} rounded-2xl flex items-center justify-center text-white shadow-[0_4px_0_rgba(0,0,0,0.15)] group-hover:-translate-y-1 transition-transform z-10`}>
@@ -181,17 +181,17 @@ export function FeaturedCards({ serverUser }: { serverUser?: ServerUser | null }
                     </div>
 
                     <div className="pr-16"> {/* padding to avoid icon */}
-                      <h3 className="text-xl lg:text-2xl font-black text-slate-800 leading-tight mb-2">
+                      <h3 className="text-xl lg:text-2xl font-black text-slate-800 dark:text-white leading-tight mb-2 transition-colors">
                         {card.title}
                       </h3>
-                      <p className="text-sm font-bold text-slate-600 line-clamp-2">
+                      <p className="text-sm font-bold text-slate-600 dark:text-slate-400 line-clamp-2 transition-colors">
                         {card.description}
                       </p>
                     </div>
 
                     {/* Action Button */}
                     <div className="mt-auto">
-                      <div className="w-full bg-[#e11d48] text-white font-extrabold text-sm py-2 rounded-full shadow-[0_4px_0_#9f1239] transition-all group-hover:-translate-y-0.5 group-hover:shadow-[0_6px_0_#9f1239] group-active:translate-y-[4px] group-active:shadow-[0_0px_0_#9f1239] flex items-center justify-center gap-2 tracking-wide uppercase">
+                      <div className="w-full bg-[#e11d48] text-white font-extrabold text-sm py-2 rounded-full shadow-[0_4px_0_#9f1239] transition-all group-hover:-translate-y-0.5 group-hover:shadow-[0_6px_0_#9f1239] group-active:translate-y-[4px] group-active:shadow-[0_0px_0_#9f1239] flex items-center justify-center gap-2 tracking-wide uppercase mt-6">
                         {card.btn}
                         <ArrowRight className="h-4 w-4" strokeWidth={3} />
                       </div>

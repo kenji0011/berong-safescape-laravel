@@ -35,13 +35,18 @@ class EngagementController extends Controller
                 return response()->json(['success' => false, 'message' => 'Unauthenticated'], 401);
             }
 
+            $points = \App\Http\Controllers\EngagementController::getPointsForActivity($request->activityType);
+
             \App\Models\EngagementLog::create([
                 'userId' => $user->id,
                 'eventType' => $request->activityType, // Map activityType from frontend to eventType in DB
                 'eventData' => $request->metadata ?? [],
-                'points' => \App\Http\Controllers\EngagementController::getPointsForActivity($request->activityType),
+                'points' => $points,
                 'loggedAt' => now(),
             ]);
+
+            // Increment the user's total engagement points
+            $user->increment('engagementPoints', $points);
 
             return response()->json(['success' => true]);
         } catch (\Exception $e) {

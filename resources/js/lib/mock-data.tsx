@@ -40,7 +40,7 @@ export const carouselImages: CarouselImage[] = [
   },
   {
     id: "3",
-    url: "/bfp-sta-cruz-fire-station.jpg",
+    url: "/web-background-image.jpg",
     altText: "BFP Sta Cruz",
     title: "BFP Sta Cruz - Always Ready",
   },

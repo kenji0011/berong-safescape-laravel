@@ -149,8 +149,8 @@ class AssessmentController extends Controller
         if ($alreadyCompleted) {
             $postTestCompletedAt = UserAnswer::where('userId', $user->id)
                                 ->where('testType', 'postTest')
-                                ->latest('created_at')
-                                ->value('created_at');
+                                ->latest('answeredAt')
+                                ->value('answeredAt');
         }
         
         $eligible = true;

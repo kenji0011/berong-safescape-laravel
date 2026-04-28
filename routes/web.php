@@ -105,6 +105,16 @@ Route::get('/about', function () {
         return Inertia::render('Kids/Challenges');
     })->name('kids.challenges');
 
+    Route::get('/kids/badges', function () {
+        return Inertia::render('Kids/BadgeHall', [
+            'completedModules' => \App\Models\SafeScapeProgress::where('userId', Auth::id())
+                ->where('completed', true)
+                ->pluck('moduleNum')
+                ->values(),
+            'earnedBadges' => \App\Models\UserBadge::where('userId', Auth::id())->get()
+        ]);
+    })->name('kids.badges');
+
     Route::get('/kids/certificate', function () {
         return Inertia::render('Kids/Certificate');
     })->name('kids.certificate');

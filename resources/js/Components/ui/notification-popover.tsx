@@ -46,7 +46,10 @@ export function NotificationPopover() {
   }, [user]);
 
   useEffect(() => {
-    const handleClickOutside = () => setOpenDropdownId(null);
+    const handleClickOutside = () => {
+      // Only trigger a state update if something is actually open
+      setOpenDropdownId(currentId => currentId === null ? null : null);
+    };
     document.addEventListener("click", handleClickOutside);
     return () => document.removeEventListener("click", handleClickOutside);
   }, []);
@@ -147,11 +150,11 @@ export function NotificationPopover() {
           )}
         </button>
       </PopoverTrigger>
-      <PopoverContent className="z-[90] w-[calc(100vw-2rem)] sm:w-96 p-0 rounded-[1.25rem] border-2 border-slate-200/60 shadow-2xl overflow-hidden" align="end" sideOffset={12} collisionPadding={16}>
-        <div className="flex items-center justify-between p-4 lg:px-5 border-b border-slate-100 bg-slate-50/80 backdrop-blur-sm">
-          <h3 className="font-extrabold text-slate-800 text-lg tracking-tight">Notifications</h3>
+      <PopoverContent className="z-[90] w-[calc(100vw-2rem)] sm:w-96 p-0 rounded-[1.25rem] border-2 border-slate-200/60 dark:border-slate-800 shadow-2xl overflow-hidden bg-white dark:bg-slate-900 transition-colors" align="end" sideOffset={12} collisionPadding={16}>
+        <div className="flex items-center justify-between p-4 lg:px-5 border-b border-slate-100 dark:border-slate-800 bg-slate-50/80 dark:bg-slate-950/80 backdrop-blur-sm transition-colors">
+          <h3 className="font-extrabold text-slate-800 dark:text-white text-lg tracking-tight transition-colors">Notifications</h3>
           {unreadCount > 0 && (
-            <Button variant="outline" size="sm" onClick={markAllAsRead} className="h-auto py-1.5 px-3 text-xs rounded-full font-bold shadow-[0_3px_0_#e2e8f0] hover:-translate-y-0.5 hover:shadow-[0_4px_0_#e2e8f0] active:translate-y-0.5 active:shadow-[0_1px_0_#e2e8f0] border-2 transition-all outline-none">
+            <Button variant="outline" size="sm" onClick={markAllAsRead} className="h-auto py-1.5 px-3 text-xs rounded-full font-bold shadow-[0_3px_0_#e2e8f0] dark:shadow-[0_3px_0_#1e293b] hover:-translate-y-0.5 hover:shadow-[0_4px_0_#e2e8f0] dark:hover:shadow-[0_4px_0_#1e293b] active:translate-y-0.5 active:shadow-[0_1px_0_#e2e8f0] dark:active:shadow-none border-2 dark:border-slate-700 dark:bg-slate-800 dark:text-white dark:hover:bg-slate-700 transition-all outline-none">
               <Check className="h-3.5 w-3.5 mr-1" strokeWidth={3} />
               Mark all as read
             </Button>
@@ -160,11 +163,11 @@ export function NotificationPopover() {
         <ScrollArea className="h-[450px]">
           <div className="p-3">
             {loading ? (
-              <div className="p-6 text-center text-sm text-slate-500 font-medium">Loading notifications...</div>
+              <div className="p-6 text-center text-sm text-slate-500 dark:text-slate-400 font-medium">Loading notifications...</div>
             ) : error ? (
               <div className="p-6 text-center text-sm text-red-500 font-medium">{error}</div>
             ) : notifications.length === 0 ? (
-              <div className="p-6 text-center text-sm text-slate-500 font-medium">No notifications yet</div>
+              <div className="p-6 text-center text-sm text-slate-500 dark:text-slate-400 font-medium">No notifications yet</div>
             ) : (
               <div className="space-y-2 pb-32">
                 <AnimatePresence initial={false} mode="popLayout">
@@ -177,8 +180,8 @@ export function NotificationPopover() {
                       exit={{ opacity: 0, x: -50, scale: 0.95 }}
                       transition={{ type: "spring", damping: 25, stiffness: 300 }}
                       className={`p-3.5 rounded-xl transition-all group relative border-2 ${openDropdownId === notification.id ? "z-[50]" : "z-10"} ${!notification.isRead
-                        ? "bg-blue-50/50 border-blue-200/50 hover:bg-blue-50/80 hover:-translate-y-0.5 hover:shadow-sm"
-                        : "bg-white border-transparent hover:border-slate-100 hover:bg-slate-50/80 hover:-translate-y-0.5 hover:shadow-sm"
+                        ? "bg-blue-50/50 dark:bg-blue-900/20 border-blue-200/50 dark:border-blue-800/30 hover:bg-blue-50/80 dark:hover:bg-blue-900/30 hover:-translate-y-0.5 hover:shadow-sm"
+                        : "bg-white dark:bg-slate-800/40 border-transparent dark:border-slate-700/50 hover:border-slate-100 dark:hover:border-slate-600 hover:bg-slate-50/80 dark:hover:bg-slate-800/80 hover:-translate-y-0.5 hover:shadow-sm"
                         }`}
                     >
                       <div className="flex items-start gap-3">
@@ -187,24 +190,24 @@ export function NotificationPopover() {
                         </div>
                         <div className="flex-1 min-w-0 pr-8">
                           <div className="flex items-center gap-2">
-                            <h4 className="text-sm font-bold text-slate-800 line-clamp-2">{notification.title}</h4>
+                            <h4 className="text-sm font-bold text-slate-800 dark:text-white line-clamp-2 transition-colors">{notification.title}</h4>
                             {!notification.isRead && (
-                              <Badge variant="secondary" className="h-5 px-1.5 text-[10px] bg-blue-100 text-blue-700 font-black">NEW</Badge>
+                              <Badge variant="secondary" className="h-5 px-1.5 text-[10px] bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-300 font-black border-none">NEW</Badge>
                             )}
                           </div>
-                          <p className="text-sm text-slate-500 mt-1 line-clamp-2 font-medium">{notification.message}</p>
-                          <p className="text-xs text-slate-400 mt-2 font-bold uppercase tracking-wider">{formatDate(notification.createdAt)}</p>
+                          <p className="text-sm text-slate-500 dark:text-slate-400 mt-1 line-clamp-2 font-medium transition-colors">{notification.message}</p>
+                          <p className="text-xs text-slate-400 dark:text-slate-500 mt-2 font-bold uppercase tracking-wider transition-colors">{formatDate(notification.createdAt)}</p>
                         </div>
                       </div>
                       <div className="absolute top-2.5 right-2.5 z-[100]">
-                        <Button
+                         <Button
                           variant="ghost"
                           size="icon"
                           onClick={(e) => {
                             e.stopPropagation();
                             setOpenDropdownId(openDropdownId === notification.id ? null : notification.id);
                           }}
-                          className="h-7 w-7 rounded-full text-slate-400 bg-transparent hover:bg-white border-2 border-transparent hover:border-slate-200 hover:text-slate-600 shadow-none hover:shadow-[0_2px_0_#e2e8f0] hover:-translate-y-0.5 active:translate-y-0 active:shadow-none transition-all outline-none"
+                          className="h-7 w-7 rounded-full text-slate-400 dark:text-slate-500 bg-transparent hover:bg-white dark:hover:bg-slate-700 border-2 border-transparent hover:border-slate-200 dark:hover:border-slate-600 hover:text-slate-600 dark:hover:text-white shadow-none hover:shadow-[0_2px_0_#e2e8f0] dark:hover:shadow-[0_2px_0_#0f172a] hover:-translate-y-0.5 active:translate-y-0 active:shadow-none transition-all outline-none"
                         >
                           <MoreHorizontal className="h-4 w-4" />
                         </Button>
@@ -216,16 +219,16 @@ export function NotificationPopover() {
                               animate={{ opacity: 1, scale: 1, y: 0 }}
                               exit={{ opacity: 0, scale: 0.9, y: -10 }}
                               onClick={(e) => e.stopPropagation()}
-                              className="absolute top-full right-0 mt-1 w-48 bg-white border-2 border-slate-200 shadow-xl rounded-[14px] p-1.5 z-[200] origin-top-right overflow-hidden"
+                              className="absolute top-full right-0 mt-1 w-48 bg-white dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-800 shadow-xl rounded-[14px] p-1.5 z-[200] origin-top-right overflow-hidden transition-colors"
                             >
-                              <button onClick={() => { handleGo(notification); setOpenDropdownId(null); }} className="w-full text-left px-3 py-2 bg-transparent outline-none text-sm font-bold text-slate-700 hover:bg-slate-100 rounded-lg flex items-center transition-colors">
+                               <button onClick={() => { handleGo(notification); setOpenDropdownId(null); }} className="w-full text-left px-3 py-2 bg-transparent outline-none text-sm font-bold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg flex items-center transition-colors">
                                 <ArrowRight className="mr-2 h-4 w-4" /> Go
                               </button>
-                              <button onClick={() => { toggleReadStatus(notification.id, !notification.isRead); setOpenDropdownId(null); }} className="w-full text-left px-3 py-2 bg-transparent outline-none text-sm font-bold text-slate-700 hover:bg-slate-100 rounded-lg flex items-center transition-colors mt-1">
+                              <button onClick={() => { toggleReadStatus(notification.id, !notification.isRead); setOpenDropdownId(null); }} className="w-full text-left px-3 py-2 bg-transparent outline-none text-sm font-bold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg flex items-center transition-colors mt-1">
                                 {!notification.isRead ? <Check className="mr-2 h-4 w-4" /> : <Bell className="mr-2 h-4 w-4" />}
                                 {!notification.isRead ? "Mark as Read" : "Mark as Unread"}
                               </button>
-                              <div className="h-[1px] bg-slate-100 my-1" />
+                              <div className="h-[1px] bg-slate-100 dark:bg-slate-800 my-1 transition-colors" />
                               <button onClick={() => { deleteNotification(notification.id); setOpenDropdownId(null); }} className="w-full text-left px-3 py-2 bg-transparent outline-none text-sm font-bold text-red-600 hover:bg-red-600 hover:text-white rounded-lg flex items-center transition-all group">
                                 <Trash2 className="mr-2 h-4 w-4 group-hover:text-white" /> Delete
                               </button>

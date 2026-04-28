@@ -52,6 +52,7 @@ import { useEffect, useState } from "react"
 import { router, usePage } from '@inertiajs/react';
 import { useAuth } from "@/lib/auth-context"
 import { Navigation } from "@/components/navigation"
+import DashboardLayout from "@/Layouts/DashboardLayout";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Button } from "@/components/ui/button"
@@ -137,7 +138,7 @@ const normalizeFireCodeSection = (section: any) => ({
   updatedAt: section?.updatedAt ?? section?.updated_at ?? null,
 })
 
-export default function AdminPage({
+function AdminDashboard({
   initialCarouselImages,
   initialBlogPosts,
   initialVideos,
@@ -937,33 +938,31 @@ export default function AdminPage({
 
   if (loading) {
     return (
-      <div className="min-h-screen">
-        <Navigation />
-        <div className="flex items-center justify-center h-96">
-          <p className="text-muted-foreground">Loading...</p>
-        </div>
+      <div className="flex items-center justify-center h-96">
+        <p className="text-muted-foreground font-bold">Initializing Admin Interface...</p>
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen">
-      <Navigation />
+    <div className="min-h-screen relative transition-colors duration-500">
+      {/* Background Overlay - Dynamic based on theme */}
+      <div className="fixed inset-0 bg-slate-50/70 dark:bg-slate-950/80 z-0 transition-colors duration-500" />
 
       {/* Loading Overlay for content submissions */}
       <LoadingOverlay isLoading={isSubmitting} message={submittingMessage} />
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 relative z-10">
         {/* Header */}
-        <div className="mb-4 sm:mb-8 bg-white p-4 sm:p-6 rounded-2xl sm:rounded-[2rem] border-[3px] border-slate-200 shadow-[0_6px_0_#cbd5e1] sm:shadow-[0_8px_0_#cbd5e1] flex items-center justify-between gap-3">
+        <div className="mb-4 sm:mb-8 bg-white dark:bg-slate-800/90 backdrop-blur-md p-4 sm:p-6 rounded-2xl sm:rounded-[2rem] border-[3px] border-slate-200 dark:border-slate-700 shadow-[0_6px_0_#cbd5e1] dark:shadow-[0_6px_0_#0f172a] sm:shadow-[0_8px_0_#cbd5e1] sm:dark:shadow-[0_8px_0_#0f172a] flex items-center justify-between gap-3 transition-colors">
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 sm:gap-3 mb-0.5 sm:mb-1">
-              <div className="bg-red-100 p-2 sm:p-2 rounded-lg sm:rounded-xl">
-                <Shield className="h-6 w-6 sm:h-8 sm:w-8 text-[#d60000]" strokeWidth={2.5} />
+              <div className="bg-red-100 dark:bg-red-900/30 p-2 sm:p-2 rounded-lg sm:rounded-xl">
+                <Shield className="h-6 w-6 sm:h-8 sm:w-8 text-[#d60000] dark:text-red-500" strokeWidth={2.5} />
               </div>
-              <h1 className="text-xl sm:text-3xl font-black text-slate-800 tracking-tight truncate">Admin Panel</h1>
+              <h1 className="text-xl sm:text-3xl font-black text-slate-800 dark:text-white tracking-tight truncate">Admin Panel</h1>
             </div>
-            <p className="text-xs sm:text-base text-slate-500 font-bold leading-tight line-clamp-1">Manage content, users, and platform settings</p>
+            <p className="text-xs sm:text-base text-slate-500 dark:text-slate-400 font-bold leading-tight line-clamp-1 transition-colors">Manage content, users, and platform settings</p>
           </div>
           <button
             onClick={() => router.visit("/admin/analytics")}
@@ -980,45 +979,45 @@ export default function AdminPage({
         {/* Admin Tabs */}
         <Tabs defaultValue="carousel" className="space-y-6">
           {/* Mobile: Icons only, evenly spaced */}
-          <TabsList className="flex w-full sm:grid sm:grid-cols-6 bg-slate-200/70 p-2 rounded-[1.5rem] gap-2 shadow-inner h-auto border-2 border-slate-200">
+          <TabsList className="flex w-full sm:grid sm:grid-cols-6 bg-slate-200/70 dark:bg-slate-800/50 backdrop-blur-md p-2 rounded-[1.5rem] gap-2 shadow-inner h-auto border-2 border-slate-200 dark:border-slate-700 transition-colors">
             <TabsTrigger
               value="carousel"
-              className="flex-1 font-bold text-slate-500 data-[state=active]:bg-[#d60000] data-[state=active]:text-white transition-all rounded-xl py-3 px-2 sm:px-4 data-[state=active]:shadow-[0_4px_0_#991b1b] hover:bg-white hover:text-slate-700 data-[state=active]:hover:text-white"
+              className="flex-1 font-bold text-slate-500 dark:text-slate-400 data-[state=active]:!bg-[#d60000] data-[state=active]:!text-white transition-all rounded-xl py-3 px-2 sm:px-4 data-[state=active]:shadow-[0_4px_0_#991b1b] hover:bg-white/50 dark:hover:bg-slate-700/50 hover:text-slate-700 dark:hover:text-slate-200"
             >
               <ImageIcon className="h-5 w-5 sm:h-4 sm:w-4 sm:mr-2" strokeWidth={2.5} />
               <span className="hidden sm:inline text-sm">Carousel</span>
             </TabsTrigger>
             <TabsTrigger
               value="blogs"
-              className="flex-1 font-bold text-slate-500 data-[state=active]:bg-[#d60000] data-[state=active]:text-white transition-all rounded-xl py-3 px-2 sm:px-4 data-[state=active]:shadow-[0_4px_0_#991b1b] hover:bg-white hover:text-slate-700 data-[state=active]:hover:text-white"
+              className="flex-1 font-bold text-slate-500 dark:text-slate-400 data-[state=active]:!bg-[#d60000] data-[state=active]:!text-white transition-all rounded-xl py-3 px-2 sm:px-4 data-[state=active]:shadow-[0_4px_0_#991b1b] hover:bg-white/50 dark:hover:bg-slate-700/50 hover:text-slate-700 dark:hover:text-slate-200"
             >
               <FileText className="h-5 w-5 sm:h-4 sm:w-4 sm:mr-2" strokeWidth={2.5} />
               <span className="hidden sm:inline text-sm">Blogs</span>
             </TabsTrigger>
             <TabsTrigger
               value="videos"
-              className="flex-1 font-bold text-slate-500 data-[state=active]:bg-[#d60000] data-[state=active]:text-white transition-all rounded-xl py-3 px-2 sm:px-4 data-[state=active]:shadow-[0_4px_0_#991b1b] hover:bg-white hover:text-slate-700 data-[state=active]:hover:text-white"
+              className="flex-1 font-bold text-slate-500 dark:text-slate-400 data-[state=active]:!bg-[#d60000] data-[state=active]:!text-white transition-all rounded-xl py-3 px-2 sm:px-4 data-[state=active]:shadow-[0_4px_0_#991b1b] hover:bg-white/50 dark:hover:bg-slate-700/50 hover:text-slate-700 dark:hover:text-slate-200"
             >
               <Video className="h-5 w-5 sm:h-4 sm:w-4 sm:mr-2" strokeWidth={2.5} />
               <span className="hidden sm:inline text-sm">Videos</span>
             </TabsTrigger>
             <TabsTrigger
               value="users"
-              className="flex-1 font-bold text-slate-500 data-[state=active]:bg-[#d60000] data-[state=active]:text-white transition-all rounded-xl py-3 px-2 sm:px-4 data-[state=active]:shadow-[0_4px_0_#991b1b] hover:bg-white hover:text-slate-700 data-[state=active]:hover:text-white"
+              className="flex-1 font-bold text-slate-500 dark:text-slate-400 data-[state=active]:!bg-[#d60000] data-[state=active]:!text-white transition-all rounded-xl py-3 px-2 sm:px-4 data-[state=active]:shadow-[0_4px_0_#991b1b] hover:bg-white/50 dark:hover:bg-slate-700/50 hover:text-slate-700 dark:hover:text-slate-200"
             >
               <Users className="h-5 w-5 sm:h-4 sm:w-4 sm:mr-2" strokeWidth={2.5} />
               <span className="hidden sm:inline text-sm">Users</span>
             </TabsTrigger>
             <TabsTrigger
               value="quick-questions"
-              className="flex-1 font-bold text-slate-500 data-[state=active]:bg-[#d60000] data-[state=active]:text-white transition-all rounded-xl py-3 px-2 sm:px-4 data-[state=active]:shadow-[0_4px_0_#991b1b] hover:bg-white hover:text-slate-700 data-[state=active]:hover:text-white"
+              className="flex-1 font-bold text-slate-500 dark:text-slate-400 data-[state=active]:!bg-[#d60000] data-[state=active]:!text-white transition-all rounded-xl py-3 px-2 sm:px-4 data-[state=active]:shadow-[0_4px_0_#991b1b] hover:bg-white/50 dark:hover:bg-slate-700/50 hover:text-slate-700 dark:hover:text-slate-200"
             >
               <HelpCircle className="h-5 w-5 sm:h-4 sm:w-4 sm:mr-2" strokeWidth={2.5} />
               <span className="hidden sm:inline text-sm">Q&A</span>
             </TabsTrigger>
             <TabsTrigger
               value="fire-codes"
-              className="flex-1 font-bold text-slate-500 data-[state=active]:bg-[#d60000] data-[state=active]:text-white transition-all rounded-xl py-3 px-2 sm:px-4 data-[state=active]:shadow-[0_4px_0_#991b1b] hover:bg-white hover:text-slate-700 data-[state=active]:hover:text-white"
+              className="flex-1 font-bold text-slate-500 dark:text-slate-400 data-[state=active]:!bg-[#d60000] data-[state=active]:!text-white transition-all rounded-xl py-3 px-2 sm:px-4 data-[state=active]:shadow-[0_4px_0_#991b1b] hover:bg-white/50 dark:hover:bg-slate-700/50 hover:text-slate-700 dark:hover:text-slate-200"
             >
               <BookOpen className="h-5 w-5 sm:h-4 sm:w-4 sm:mr-2" strokeWidth={2.5} />
               <span className="hidden sm:inline text-sm">Fire Codes</span>
@@ -1089,32 +1088,32 @@ export default function AdminPage({
                 onUploadComplete={(url) => setNewCarousel({ ...newCarousel, url })}
               />
 
-              <Card className="rounded-[1.5rem] border-[3px] border-slate-200 shadow-sm hover:shadow-[0_4px_0_#e2e8f0] overflow-hidden bg-white transition-all h-full flex flex-col">
+              <Card className="rounded-[1.5rem] border-[3px] border-slate-200 dark:border-slate-700 shadow-sm hover:shadow-[0_4px_0_#e2e8f0] dark:hover:shadow-[0_4px_0_#0f172a] overflow-hidden bg-white dark:bg-slate-800 transition-all h-full flex flex-col">
                 <CardHeader>
-                  <CardTitle className="text-xl font-bold text-slate-800">Add New Carousel Image</CardTitle>
-                  <CardDescription className="text-slate-500 font-medium">Add images to the dashboard carousel</CardDescription>
+                  <CardTitle className="text-xl font-bold text-slate-800 dark:text-white">Add New Carousel Image</CardTitle>
+                  <CardDescription className="text-slate-500 dark:text-slate-400 font-medium">Add images to the dashboard carousel</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4 flex-1 flex flex-col justify-between">
                   <div>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div className="space-y-2">
-                        <Label htmlFor="carousel-title" className="font-bold text-slate-700">Title</Label>
+                        <Label htmlFor="carousel-title" className="font-bold text-slate-700 dark:text-slate-300">Title</Label>
                         <Input
                           id="carousel-title"
                           placeholder="Image title"
                           value={newCarousel.title}
                           onChange={(e) => setNewCarousel({ ...newCarousel, title: e.target.value })}
-                          className="border-2 border-slate-200 focus-visible:ring-red-500 rounded-xl"
+                          className="border-2 border-slate-200 dark:border-slate-700 dark:bg-slate-900 dark:text-white focus-visible:ring-red-500 rounded-xl"
                         />
                       </div>
                       <div className="space-y-2">
-                        <Label htmlFor="carousel-alt" className="font-bold text-slate-700">Alt Text</Label>
+                        <Label htmlFor="carousel-alt" className="font-bold text-slate-700 dark:text-slate-300">Alt Text</Label>
                         <Input
                           id="carousel-alt"
                           placeholder="Image description"
                           value={newCarousel.alt}
                           onChange={(e) => setNewCarousel({ ...newCarousel, alt: e.target.value })}
-                          className="border-2 border-slate-200 focus-visible:ring-red-500 rounded-xl"
+                          className="border-2 border-slate-200 dark:border-slate-700 dark:bg-slate-900 dark:text-white focus-visible:ring-red-500 rounded-xl"
                         />
                       </div>
                     </div>
@@ -1129,8 +1128,8 @@ export default function AdminPage({
                       <Plus className="h-5 w-5 mr-2" strokeWidth={2.5} />
                       Add Image
                     </button>
-                    {success && <div className="text-sm font-bold text-green-700 flex items-center gap-2 bg-green-50 border-2 border-green-200 px-4 py-2 rounded-xl animate-in fade-in zoom-in-95 duration-300"><CheckCircle className="h-4 w-4"/> {success}</div>}
-                    {error && <div className="text-sm font-bold text-red-700 flex items-center gap-2 bg-red-50 border-2 border-red-200 px-4 py-2 rounded-xl animate-in fade-in zoom-in-95 duration-300"><AlertCircle className="h-4 w-4"/> {error}</div>}
+                    {success && <div className="text-sm font-bold text-green-700 dark:text-green-400 flex items-center gap-2 bg-green-50 dark:bg-green-900/30 border-2 border-green-200 dark:border-green-900/50 px-4 py-2 rounded-xl animate-in fade-in zoom-in-95 duration-300"><CheckCircle className="h-4 w-4"/> {success}</div>}
+                    {error && <div className="text-sm font-bold text-red-700 dark:text-red-400 flex items-center gap-2 bg-red-50 dark:bg-red-900/30 border-2 border-red-200 dark:border-red-900/50 px-4 py-2 rounded-xl animate-in fade-in zoom-in-95 duration-300"><AlertCircle className="h-4 w-4"/> {error}</div>}
                   </div>
                 </CardContent>
               </Card>
@@ -1153,39 +1152,39 @@ export default function AdminPage({
                 onUploadComplete={(url) => setNewBlog({ ...newBlog, imageUrl: url })}
               />
 
-              <Card className="rounded-[1.5rem] border-[3px] border-slate-200 shadow-sm hover:shadow-[0_4px_0_#e2e8f0] overflow-hidden bg-white transition-all h-full flex flex-col">
+              <Card className="rounded-[1.5rem] border-[3px] border-slate-200 dark:border-slate-700 shadow-sm hover:shadow-[0_4px_0_#e2e8f0] dark:hover:shadow-[0_4px_0_#0f172a] overflow-hidden bg-white dark:bg-slate-800 transition-all h-full flex flex-col">
                 <CardHeader>
-                  <CardTitle className="text-xl font-bold text-slate-800">Add New Blog Post</CardTitle>
-                  <CardDescription className="text-slate-500 font-medium">Create educational content for adult and professional sections</CardDescription>
+                  <CardTitle className="text-xl font-bold text-slate-800 dark:text-white">Add New Blog Post</CardTitle>
+                  <CardDescription className="text-slate-500 dark:text-slate-400 font-medium">Create educational content for adult and professional sections</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4 flex-1 flex flex-col justify-between">
                   <div className="space-y-4">
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div className="space-y-2">
-                        <Label htmlFor="blog-title" className="font-bold text-slate-700">Title</Label>
+                        <Label htmlFor="blog-title" className="font-bold text-slate-700 dark:text-slate-300">Title</Label>
                         <Input
                           id="blog-title"
                           placeholder="Blog post title"
                           value={newBlog.title}
                           onChange={(e) => setNewBlog({ ...newBlog, title: e.target.value })}
-                          className="border-2 border-slate-200 focus-visible:ring-red-500 rounded-xl"
+                          className="border-2 border-slate-200 dark:border-slate-700 dark:bg-slate-900 dark:text-white focus-visible:ring-red-500 rounded-xl"
                         />
                       </div>
                     </div>
                       <div className="space-y-2">
-                        <Label htmlFor="blog-category" className="font-bold text-slate-700">Category</Label>
+                        <Label htmlFor="blog-category" className="font-bold text-slate-700 dark:text-slate-300">Category</Label>
                         <Select
                           value={newBlog.category}
                           onValueChange={(val) => setNewBlog({ ...newBlog, category: val as "adult" | "professional" })}
                         >
-                          <SelectTrigger id="blog-category" className="w-full h-10 border-2 border-slate-200 rounded-xl bg-white font-bold text-slate-700 focus:ring-red-500 shadow-sm transition-all hover:border-slate-300">
+                          <SelectTrigger id="blog-category" className="w-full h-10 border-2 border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-900 font-bold text-slate-700 dark:text-white focus:ring-red-500 shadow-sm transition-all hover:border-slate-300">
                             <SelectValue placeholder="Select category" />
                           </SelectTrigger>
-                          <SelectContent className="rounded-xl border-2 border-slate-200 shadow-xl p-1">
-                            <SelectItem value="adult" className="rounded-lg font-bold text-slate-700 focus:bg-slate-50 focus:text-red-600 transition-colors cursor-pointer py-2.5">
+                          <SelectContent className="rounded-xl border-2 border-slate-200 dark:border-slate-700 dark:bg-slate-800 shadow-xl p-1">
+                            <SelectItem value="adult" className="rounded-lg font-bold text-slate-700 dark:text-slate-300 focus:bg-slate-50 dark:focus:bg-slate-700 focus:text-red-600 dark:focus:text-red-400 transition-colors cursor-pointer py-2.5">
                               Adult
                             </SelectItem>
-                            <SelectItem value="professional" className="rounded-lg font-bold text-slate-700 focus:bg-slate-50 focus:text-red-600 transition-colors cursor-pointer py-2.5">
+                            <SelectItem value="professional" className="rounded-lg font-bold text-slate-700 dark:text-slate-300 focus:bg-slate-50 dark:focus:bg-slate-700 focus:text-red-600 dark:focus:text-red-400 transition-colors cursor-pointer py-2.5">
                               Professional
                             </SelectItem>
                           </SelectContent>
@@ -1193,25 +1192,25 @@ export default function AdminPage({
                       </div>
                     {/* Image URL is now set automatically from the upload component - hidden from user */}
                     <div className="space-y-2">
-                      <Label htmlFor="blog-excerpt" className="font-bold text-slate-700">Excerpt</Label>
+                      <Label htmlFor="blog-excerpt" className="font-bold text-slate-700 dark:text-slate-300">Excerpt</Label>
                       <Textarea
                         id="blog-excerpt"
                         placeholder="Brief description"
                         value={newBlog.excerpt}
                         onChange={(e) => setNewBlog({ ...newBlog, excerpt: e.target.value })}
                         rows={2}
-                        className="border-2 border-slate-200 focus-visible:ring-red-500 rounded-xl"
+                        className="border-2 border-slate-200 dark:border-slate-700 dark:bg-slate-900 dark:text-white focus-visible:ring-red-500 rounded-xl"
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="blog-content" className="font-bold text-slate-700">Content</Label>
+                      <Label htmlFor="blog-content" className="font-bold text-slate-700 dark:text-slate-300">Content</Label>
                       <Textarea
                         id="blog-content"
                         placeholder="Full blog content"
                         value={newBlog.content}
                         onChange={(e) => setNewBlog({ ...newBlog, content: e.target.value })}
                         rows={6}
-                        className="border-2 border-slate-200 focus-visible:ring-red-500 rounded-xl"
+                        className="border-2 border-slate-200 dark:border-slate-700 dark:bg-slate-900 dark:text-white focus-visible:ring-red-500 rounded-xl"
                       />
                     </div>
                   </div>
@@ -1224,8 +1223,8 @@ export default function AdminPage({
                       <Plus className="h-5 w-5 mr-2" strokeWidth={2.5} />
                       Add Blog Post
                     </button>
-                    {success && <div className="text-sm font-bold text-green-700 flex items-center gap-2 bg-green-50 border-2 border-green-200 px-4 py-2 rounded-xl animate-in fade-in zoom-in-95 duration-300"><CheckCircle className="h-4 w-4"/> {success}</div>}
-                    {error && <div className="text-sm font-bold text-red-700 flex items-center gap-2 bg-red-50 border-2 border-red-200 px-4 py-2 rounded-xl animate-in fade-in zoom-in-95 duration-300"><AlertCircle className="h-4 w-4"/> {error}</div>}
+                    {success && <div className="text-sm font-bold text-green-700 dark:text-green-400 flex items-center gap-2 bg-green-50 dark:bg-green-900/30 border-2 border-green-200 dark:border-green-900/50 px-4 py-2 rounded-xl animate-in fade-in zoom-in-95 duration-300"><CheckCircle className="h-4 w-4"/> {success}</div>}
+                    {error && <div className="text-sm font-bold text-red-700 dark:text-red-400 flex items-center gap-2 bg-red-50 dark:bg-red-900/30 border-2 border-red-200 dark:border-red-900/50 px-4 py-2 rounded-xl animate-in fade-in zoom-in-95 duration-300"><AlertCircle className="h-4 w-4"/> {error}</div>}
                   </div>
                 </CardContent>
               </Card>
@@ -1240,13 +1239,13 @@ export default function AdminPage({
               renderContent={(post) => (
                 <>
                   <div className="flex flex-wrap items-start sm:items-center gap-2 mb-2">
-                    <h4 className="font-bold text-slate-800 w-full sm:w-auto">{post.title}</h4>
-                    <span className="text-xs font-bold px-2 py-1 rounded-md bg-slate-100 text-slate-600 capitalize shrink-0">
+                    <h4 className="font-bold text-slate-800 dark:text-white w-full sm:w-auto">{post.title}</h4>
+                    <span className="text-xs font-bold px-2 py-1 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 capitalize shrink-0">
                       {post.category}
                     </span>
                   </div>
-                  <p className="text-sm text-muted-foreground">{post.excerpt}</p>
-                  <p className="text-xs text-muted-foreground mt-2">
+                  <p className="text-sm text-muted-foreground dark:text-slate-400">{post.excerpt}</p>
+                  <p className="text-xs text-muted-foreground dark:text-slate-500 mt-2">
                     By {typeof post.author === 'string' ? post.author : post.author?.name} • {new Date(post.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}
                   </p>
                 </>
@@ -1256,95 +1255,95 @@ export default function AdminPage({
 
           {/* Video Management */}
           <TabsContent value="videos" className="space-y-6">
-            <Card className="rounded-[1.5rem] border-[3px] border-slate-200 shadow-sm hover:shadow-[0_4px_0_#e2e8f0] overflow-hidden bg-white transition-all mb-6">
+            <Card className="rounded-[1.5rem] border-[3px] border-slate-200 dark:border-slate-700 shadow-sm hover:shadow-[0_4px_0_#e2e8f0] dark:hover:shadow-[0_4px_0_#0f172a] overflow-hidden bg-white dark:bg-slate-800 transition-all mb-6">
               <CardHeader>
-                <CardTitle className="text-xl font-bold text-slate-800">Add New Video</CardTitle>
-                <CardDescription className="text-slate-500 font-medium">Add educational videos for different sections</CardDescription>
+                <CardTitle className="text-xl font-bold text-slate-800 dark:text-white">Add New Video</CardTitle>
+                <CardDescription className="text-slate-500 dark:text-slate-400 font-medium">Add educational videos for different sections</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="video-title" className="font-bold text-slate-700">Title</Label>
+                  <Label htmlFor="video-title" className="font-bold text-slate-700 dark:text-slate-300">Title</Label>
                   <Input
                     id="video-title"
                     placeholder="Video title"
                     value={newVideo.title}
                     onChange={(e) => setNewVideo({ ...newVideo, title: e.target.value })}
-                    className="border-2 border-slate-200 focus-visible:ring-red-500 rounded-xl"
+                    className="border-2 border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 dark:text-white focus-visible:ring-red-500 rounded-xl"
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="video-description" className="font-bold text-slate-700">Description</Label>
+                  <Label htmlFor="video-description" className="font-bold text-slate-700 dark:text-slate-300">Description</Label>
                   <Textarea
                     id="video-description"
                     placeholder="Video description"
                     value={newVideo.description}
                     onChange={(e) => setNewVideo({ ...newVideo, description: e.target.value })}
                     rows={2}
-                    className="border-2 border-slate-200 focus-visible:ring-red-500 rounded-xl"
+                    className="border-2 border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 dark:text-white focus-visible:ring-red-500 rounded-xl"
                   />
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="video-youtube-id" className="font-bold text-slate-700">YouTube URL or ID</Label>
+                    <Label htmlFor="video-youtube-id" className="font-bold text-slate-700 dark:text-slate-300">YouTube URL or ID</Label>
                     <Input
                       id="video-youtube-id"
                       placeholder="Paste full URL or video ID"
                       value={newVideo.youtubeId}
                       onChange={(e) => setNewVideo({ ...newVideo, youtubeId: e.target.value })}
-                      className="border-2 border-slate-200 focus-visible:ring-red-500 rounded-xl"
+                      className="border-2 border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 dark:text-white focus-visible:ring-red-500 rounded-xl"
                     />
                   </div>
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="video-duration" className="font-bold text-slate-700">Duration</Label>
+                  <Label htmlFor="video-duration" className="font-bold text-slate-700 dark:text-slate-300">Duration</Label>
                   <Input
                     id="video-duration"
                     placeholder="Duration (e.g., 15:30)"
                     value={newVideo.duration}
                     onChange={(e) => setNewVideo({ ...newVideo, duration: e.target.value })}
-                    className="border-2 border-slate-200 focus-visible:ring-red-500 rounded-xl"
+                    className="border-2 border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 dark:text-white focus-visible:ring-red-500 rounded-xl"
                   />
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="video-category" className="font-bold text-slate-700">Category</Label>
+                    <Label htmlFor="video-category" className="font-bold text-slate-700 dark:text-slate-300">Category</Label>
                     <Select
                       value={newVideo.category}
                       onValueChange={(val) => setNewVideo({ ...newVideo, category: val as "professional" | "adult" | "kids" })}
                     >
-                      <SelectTrigger id="video-category" className="w-full h-10 border-2 border-slate-200 rounded-xl bg-white font-bold text-slate-700 focus:ring-red-500 shadow-sm transition-all hover:border-slate-300">
+                      <SelectTrigger id="video-category" className="w-full h-10 border-2 border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-900 font-bold text-slate-700 dark:text-white focus:ring-red-500 shadow-sm transition-all hover:border-slate-300">
                         <SelectValue placeholder="Select category" />
                       </SelectTrigger>
-                      <SelectContent className="rounded-xl border-2 border-slate-200 shadow-xl p-1">
-                        <SelectItem value="professional" className="rounded-lg font-bold text-slate-700 focus:bg-slate-50 focus:text-red-600 transition-colors cursor-pointer py-2.5">
+                      <SelectContent className="rounded-xl border-2 border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 shadow-xl p-1">
+                        <SelectItem value="professional" className="rounded-lg font-bold text-slate-700 dark:text-slate-200 focus:bg-slate-50 dark:focus:bg-slate-700 focus:text-red-600 transition-colors cursor-pointer py-2.5">
                           Professional
                         </SelectItem>
-                        <SelectItem value="adult" className="rounded-lg font-bold text-slate-700 focus:bg-slate-50 focus:text-red-600 transition-colors cursor-pointer py-2.5">
+                        <SelectItem value="adult" className="rounded-lg font-bold text-slate-700 dark:text-slate-200 focus:bg-slate-50 dark:focus:bg-slate-700 focus:text-red-600 transition-colors cursor-pointer py-2.5">
                           Adult
                         </SelectItem>
-                        <SelectItem value="kids" className="rounded-lg font-bold text-slate-700 focus:bg-slate-50 focus:text-red-600 transition-colors cursor-pointer py-2.5">
+                        <SelectItem value="kids" className="rounded-lg font-bold text-slate-700 dark:text-slate-200 focus:bg-slate-50 dark:focus:bg-slate-700 focus:text-red-600 transition-colors cursor-pointer py-2.5">
                           Kids
                         </SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
                   <div className="space-y-2 flex flex-col justify-end">
-                    <Label htmlFor="video-active" className="font-bold text-slate-700">Status</Label>
+                    <Label htmlFor="video-active" className="font-bold text-slate-700 dark:text-slate-300">Status</Label>
                     <Select
                       value={newVideo.isActive ? "active" : "inactive"}
                       onValueChange={(val) => setNewVideo({ ...newVideo, isActive: val === "active" })}
                     >
-                      <SelectTrigger id="video-active" className="w-full h-10 border-2 border-slate-200 rounded-xl bg-white font-bold text-slate-700 focus:ring-red-500 shadow-sm transition-all hover:border-slate-300">
+                      <SelectTrigger id="video-active" className="w-full h-10 border-2 border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-900 font-bold text-slate-700 dark:text-white focus:ring-red-500 shadow-sm transition-all hover:border-slate-300">
                         <SelectValue placeholder="Select status" />
                       </SelectTrigger>
-                      <SelectContent className="rounded-xl border-2 border-slate-200 shadow-xl p-1">
-                        <SelectItem value="active" className="rounded-lg font-bold text-slate-700 focus:bg-slate-50 focus:text-red-600 transition-colors cursor-pointer py-2.5">
+                      <SelectContent className="rounded-xl border-2 border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 shadow-xl p-1">
+                        <SelectItem value="active" className="rounded-lg font-bold text-slate-700 dark:text-slate-200 focus:bg-slate-50 dark:focus:bg-slate-700 focus:text-red-600 transition-colors cursor-pointer py-2.5">
                           <div className="flex items-center gap-2">
                             <div className="h-2 w-2 rounded-full bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.4)]" />
                             Active
                           </div>
                         </SelectItem>
-                        <SelectItem value="inactive" className="rounded-lg font-bold text-slate-700 focus:bg-slate-50 focus:text-red-600 transition-colors cursor-pointer py-2.5">
+                        <SelectItem value="inactive" className="rounded-lg font-bold text-slate-700 dark:text-slate-200 focus:bg-slate-50 dark:focus:bg-slate-700 focus:text-red-600 transition-colors cursor-pointer py-2.5">
                           <div className="flex items-center gap-2">
                             <div className="h-2 w-2 rounded-full bg-slate-400" />
                             Inactive
@@ -1363,8 +1362,8 @@ export default function AdminPage({
                     <Plus className="h-4 w-4 mr-2" />
                     Add Video
                   </button>
-                  {success && <div className="text-sm font-bold text-green-700 flex items-center gap-2 bg-green-50 border-2 border-green-200 px-4 py-2 rounded-xl animate-in fade-in zoom-in-95 duration-300"><CheckCircle className="h-4 w-4"/> {success}</div>}
-                  {error && <div className="text-sm font-bold text-red-700 flex items-center gap-2 bg-red-50 border-2 border-red-200 px-4 py-2 rounded-xl animate-in fade-in zoom-in-95 duration-300"><AlertCircle className="h-4 w-4"/> {error}</div>}
+                  {success && <div className="text-sm font-bold text-green-700 dark:text-green-400 flex items-center gap-2 bg-green-50 dark:bg-green-900/30 border-2 border-green-200 dark:border-green-900/50 px-4 py-2 rounded-xl animate-in fade-in zoom-in-95 duration-300"><CheckCircle className="h-4 w-4"/> {success}</div>}
+                  {error && <div className="text-sm font-bold text-red-700 dark:text-red-400 flex items-center gap-2 bg-red-50 dark:bg-red-900/30 border-2 border-red-200 dark:border-red-900/50 px-4 py-2 rounded-xl animate-in fade-in zoom-in-95 duration-300"><AlertCircle className="h-4 w-4"/> {error}</div>}
                 </div>
               </CardContent>
             </Card>
@@ -1378,16 +1377,16 @@ export default function AdminPage({
               renderContent={(video) => (
                 <>
                   <div className="flex flex-wrap items-start sm:items-center gap-2 mb-2">
-                    <h4 className="font-bold text-slate-800 w-full sm:w-auto">{video.title}</h4>
-                    <span className={`text-xs font-bold px-2 py-1 rounded-md shrink-0 ${video.isActive ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
+                    <h4 className="font-bold text-slate-800 dark:text-white w-full sm:w-auto">{video.title}</h4>
+                    <span className={`text-xs font-bold px-2 py-1 rounded-md shrink-0 ${video.isActive ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400' : 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400'}`}>
                       {video.isActive ? 'Active' : 'Inactive'}
                     </span>
-                    <span className="text-xs font-bold px-2 py-1 rounded-md bg-slate-100 text-slate-600 capitalize shrink-0">
+                    <span className="text-xs font-bold px-2 py-1 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 capitalize shrink-0">
                       {video.category}
                     </span>
                   </div>
-                  <p className="text-sm text-muted-foreground">{video.description}</p>
-                  <p className="text-xs text-muted-foreground mt-2">
+                  <p className="text-sm text-muted-foreground dark:text-slate-400">{video.description}</p>
+                  <p className="text-xs text-muted-foreground dark:text-slate-500 mt-2">
                     YouTube ID: {video.youtubeId} • Duration: {video.duration}
                   </p>
                 </>
@@ -1397,15 +1396,15 @@ export default function AdminPage({
 
           {/* User Management */}
           <TabsContent value="users" className="space-y-6">
-            <Card className="rounded-[2rem] border-[3px] border-slate-200 shadow-[0_8px_0_#cbd5e1] overflow-hidden bg-slate-50 transition-all mb-6">
+            <Card className="rounded-[2rem] border-[3px] border-slate-200 dark:border-slate-700 shadow-[0_8px_0_#cbd5e1] dark:shadow-[0_8px_0_#0f172a] overflow-hidden bg-slate-50 dark:bg-slate-800/50 backdrop-blur-md transition-all mb-6">
               <CardHeader className="px-6 pt-6 pb-2">
                 <div className="flex items-center gap-3">
-                  <div className="bg-white border-2 border-slate-200 p-2 rounded-xl shadow-sm">
+                  <div className="bg-white dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-700 p-2 rounded-xl shadow-sm">
                     <Users className="h-6 w-6 text-[#d60000]" strokeWidth={2.5} />
                   </div>
                   <div>
-                    <CardTitle className="text-2xl font-black text-slate-800 tracking-tight">User Management</CardTitle>
-                    <CardDescription className="text-slate-500 font-medium mt-1">Manage user permissions and access levels</CardDescription>
+                    <CardTitle className="text-2xl font-black text-slate-800 dark:text-white tracking-tight">User Management</CardTitle>
+                    <CardDescription className="text-slate-500 dark:text-slate-400 font-medium mt-1">Manage user permissions and access levels</CardDescription>
                   </div>
                 </div>
               </CardHeader>
@@ -1416,7 +1415,7 @@ export default function AdminPage({
                     placeholder="Search users by name, email, or role..."
                     value={userSearchQuery}
                     onChange={(e) => setUserSearchQuery(e.target.value)}
-                    className="pl-12 border-[3px] border-slate-200 focus-visible:ring-red-500 rounded-2xl h-14 text-base shadow-inner bg-white font-medium"
+                    className="pl-12 border-[3px] border-slate-200 dark:border-slate-700 focus-visible:ring-red-500 rounded-2xl h-14 text-base shadow-inner bg-white dark:bg-slate-900 dark:text-white font-medium transition-colors"
                     autoComplete="off"
                   />
                   <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 h-6 w-6 text-slate-400" strokeWidth={2.5} />
@@ -1426,14 +1425,14 @@ export default function AdminPage({
                     <p className="text-slate-500 font-medium text-center py-8">No users found</p>
                   ) : (
                     filteredUsers.map((u) => (
-                      <div key={u.id} className="p-5 border-2 border-slate-200 bg-white rounded-2xl shadow-sm hover:shadow-[0_4px_0_#e2e8f0] hover:-translate-y-0.5 transition-all">
-                        <div className="flex items-center justify-between mb-4 pb-4 border-b-2 border-slate-100">
+                      <div key={u.id} className="p-5 border-2 border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 rounded-2xl shadow-sm hover:shadow-[0_4px_0_#e2e8f0] dark:hover:shadow-[0_4px_0_#0f172a] hover:-translate-y-0.5 transition-all">
+                        <div className="flex items-center justify-between mb-4 pb-4 border-b-2 border-slate-100 dark:border-slate-800">
                           <div>
-                            <h4 className="font-bold text-lg text-slate-800">{u.name}</h4>
-                            <p className="text-sm text-slate-500 font-medium">{u.email}</p>
+                            <h4 className="font-bold text-lg text-slate-800 dark:text-white">{u.name}</h4>
+                            <p className="text-sm text-slate-500 dark:text-slate-400 font-medium">{u.email}</p>
                             <div className="flex items-center gap-2 mt-2">
-                              <span className="text-xs font-bold text-slate-600 bg-slate-100 px-2 py-1 rounded-lg">Age: {u.age}</span>
-                              <span className="text-xs font-bold text-slate-600 bg-slate-100 px-2 py-1 rounded-lg capitalize">Role: {u.role}</span>
+                              <span className="text-xs font-bold text-slate-600 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-2 py-1 rounded-lg">Age: {u.age}</span>
+                              <span className="text-xs font-bold text-slate-600 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-2 py-1 rounded-lg capitalize">Role: {u.role}</span>
                             </div>
                           </div>
                         </div>
@@ -1443,8 +1442,8 @@ export default function AdminPage({
                             onClick={() => promptRoleChange(u.id, "accessKids", u.name, u.permissions.accessKids ? "remove" : "add")}
                             className={`inline-flex items-center justify-center font-extrabold px-4 pb-2 pt-2.5 rounded-xl text-xs sm:text-sm transition-all ${
                               u.permissions.accessKids
-                                ? "bg-slate-600 text-white shadow-[0_4px_0_#334155] hover:-translate-y-0.5 hover:shadow-[0_6px_0_#334155] hover:bg-red-600 hover:shadow-[0_4px_0_#991b1b] active:translate-y-1 active:shadow-[0_0px_0_#991b1b]"
-                                : "bg-white border-2 border-slate-200 text-slate-500 shadow-[0_4px_0_#e2e8f0] hover:-translate-y-0.5 hover:shadow-[0_6px_0_#e2e8f0] hover:bg-slate-50 hover:text-slate-700 active:translate-y-1 active:shadow-[0_0px_0_#e2e8f0]"
+                                ? "bg-slate-600 dark:bg-slate-700 text-white shadow-[0_4px_0_#334155] dark:shadow-[0_4px_0_#0f172a] hover:-translate-y-0.5 hover:shadow-[0_6px_0_#334155] hover:bg-red-600 dark:hover:bg-red-700 hover:shadow-[0_4px_0_#991b1b] active:translate-y-1 active:shadow-[0_0px_0_#991b1b]"
+                                : "bg-white dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 shadow-[0_4px_0_#e2e8f0] dark:shadow-[0_4px_0_#0f172a] hover:-translate-y-0.5 hover:shadow-[0_6px_0_#e2e8f0] dark:hover:shadow-[0_6px_0_#0f172a] hover:bg-slate-50 dark:hover:bg-slate-700 hover:text-slate-700 dark:hover:text-slate-200 active:translate-y-1 active:shadow-[0_0px_0_#e2e8f0]"
                             }`}
                           >
                             Kids Access {u.permissions.accessKids && <Trash2 className="h-4 w-4 ml-2 inline opacity-0 group-hover:opacity-100 transition-opacity" strokeWidth={2.5} style={{ opacity: 0.7 }} />}
@@ -1454,8 +1453,8 @@ export default function AdminPage({
                             onClick={() => promptRoleChange(u.id, "accessAdult", u.name, u.permissions.accessAdult ? "remove" : "add")}
                             className={`inline-flex items-center justify-center font-extrabold px-4 pb-2 pt-2.5 rounded-xl text-xs sm:text-sm transition-all ${
                               u.permissions.accessAdult
-                                ? "bg-teal-700 text-white shadow-[0_4px_0_#0f766e] hover:-translate-y-0.5 hover:shadow-[0_6px_0_#0f766e] hover:bg-red-600 hover:shadow-[0_4px_0_#991b1b] active:translate-y-1 active:shadow-[0_0px_0_#991b1b]"
-                                : "bg-white border-2 border-slate-200 text-slate-500 shadow-[0_4px_0_#e2e8f0] hover:-translate-y-0.5 hover:shadow-[0_6px_0_#e2e8f0] hover:bg-slate-50 hover:text-slate-700 active:translate-y-1 active:shadow-[0_0px_0_#e2e8f0]"
+                                ? "bg-teal-700 dark:bg-teal-800 text-white shadow-[0_4px_0_#0f766e] dark:shadow-[0_4px_0_#0f172a] hover:-translate-y-0.5 hover:shadow-[0_6px_0_#0f766e] hover:bg-red-600 dark:hover:bg-red-700 hover:shadow-[0_4px_0_#991b1b] active:translate-y-1 active:shadow-[0_0px_0_#991b1b]"
+                                : "bg-white dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 shadow-[0_4px_0_#e2e8f0] dark:shadow-[0_4px_0_#0f172a] hover:-translate-y-0.5 hover:shadow-[0_6px_0_#e2e8f0] dark:hover:shadow-[0_6px_0_#0f172a] hover:bg-slate-50 dark:hover:bg-slate-700 hover:text-slate-700 dark:hover:text-slate-200 active:translate-y-1 active:shadow-[0_0px_0_#e2e8f0]"
                             }`}
                           >
                             Adult Access {u.permissions.accessAdult && <Trash2 className="h-4 w-4 ml-2 inline opacity-0 group-hover:opacity-100 transition-opacity" strokeWidth={2.5} style={{ opacity: 0.7 }} />}
@@ -1465,8 +1464,8 @@ export default function AdminPage({
                             onClick={() => promptRoleChange(u.id, "accessProfessional", u.name, u.permissions.accessProfessional ? "remove" : "add")}
                             className={`inline-flex items-center justify-center font-extrabold px-4 pb-2 pt-2.5 rounded-xl text-xs sm:text-sm transition-all ${
                               u.permissions.accessProfessional
-                                ? "bg-[#d60000] text-white shadow-[0_4px_0_#991b1b] hover:-translate-y-0.5 hover:shadow-[0_6px_0_#991b1b] hover:bg-red-600 hover:shadow-[0_4px_0_#991b1b] active:translate-y-1 active:shadow-[0_0px_0_#991b1b]"
-                                : "bg-white border-2 border-slate-200 text-slate-500 shadow-[0_4px_0_#e2e8f0] hover:-translate-y-0.5 hover:shadow-[0_6px_0_#e2e8f0] hover:bg-slate-50 hover:text-slate-700 active:translate-y-1 active:shadow-[0_0px_0_#e2e8f0]"
+                                ? "bg-[#d60000] text-white shadow-[0_4px_0_#991b1b] hover:-translate-y-0.5 hover:shadow-[0_6px_0_#991b1b] hover:bg-red-600 dark:hover:bg-red-700 active:translate-y-1 active:shadow-[0_0px_0_#991b1b]"
+                                : "bg-white dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 shadow-[0_4px_0_#e2e8f0] dark:shadow-[0_4px_0_#0f172a] hover:-translate-y-0.5 hover:shadow-[0_6px_0_#e2e8f0] dark:hover:shadow-[0_6px_0_#0f172a] hover:bg-slate-50 dark:hover:bg-slate-700 hover:text-slate-700 dark:hover:text-slate-200 active:translate-y-1 active:shadow-[0_0px_0_#e2e8f0]"
                             }`}
                           >
                             Professional Access {u.permissions.accessProfessional && <Trash2 className="h-4 w-4 ml-2 inline opacity-0 group-hover:opacity-100 transition-opacity" strokeWidth={2.5} style={{ opacity: 0.7 }} />}
@@ -1476,8 +1475,8 @@ export default function AdminPage({
                             onClick={() => promptRoleChange(u.id, "isAdmin", u.name, u.permissions.isAdmin ? "remove" : "add")}
                             className={`inline-flex items-center justify-center font-extrabold px-4 pb-2 pt-2.5 rounded-xl text-xs sm:text-sm transition-all ${
                               u.permissions.isAdmin
-                                ? "bg-slate-900 text-white shadow-[0_4px_0_#0f172a] hover:-translate-y-0.5 hover:shadow-[0_6px_0_#0f172a] hover:bg-red-600 hover:shadow-[0_4px_0_#991b1b] active:translate-y-1 active:shadow-[0_0px_0_#991b1b]"
-                                : "bg-white border-2 border-slate-200 text-slate-500 shadow-[0_4px_0_#e2e8f0] hover:-translate-y-0.5 hover:shadow-[0_6px_0_#e2e8f0] hover:bg-slate-50 hover:text-slate-700 active:translate-y-1 active:shadow-[0_0px_0_#e2e8f0]"
+                                ? "bg-slate-900 dark:bg-black text-white shadow-[0_4px_0_#0f172a] hover:-translate-y-0.5 hover:shadow-[0_6px_0_#0f172a] hover:bg-red-600 dark:hover:bg-red-700 hover:shadow-[0_4px_0_#991b1b] active:translate-y-1 active:shadow-[0_0px_0_#991b1b]"
+                                : "bg-white dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 shadow-[0_4px_0_#e2e8f0] dark:shadow-[0_4px_0_#0f172a] hover:-translate-y-0.5 hover:shadow-[0_6px_0_#e2e8f0] hover:bg-slate-50 dark:hover:bg-slate-700 hover:text-slate-700 dark:hover:text-slate-200 active:translate-y-1 active:shadow-[0_0px_0_#e2e8f0]"
                             }`}
                           >
                             Admin {u.permissions.isAdmin && <Trash2 className="h-4 w-4 ml-2 inline opacity-0 group-hover:opacity-100 transition-opacity" strokeWidth={2.5} style={{ opacity: 0.7 }} />}
@@ -1493,55 +1492,55 @@ export default function AdminPage({
 
           {/* Quick Questions Management */}
           <TabsContent value="quick-questions" className="space-y-6">
-            <Card className="rounded-[1.5rem] border-[3px] border-slate-200 shadow-sm hover:shadow-[0_4px_0_#e2e8f0] overflow-hidden bg-white transition-all mb-6">
+            <Card className="rounded-[1.5rem] border-[3px] border-slate-200 dark:border-slate-700 shadow-sm hover:shadow-[0_4px_0_#e2e8f0] dark:hover:shadow-[0_4px_0_#0f172a] overflow-hidden bg-white dark:bg-slate-800 transition-all mb-6">
               <CardHeader>
-                <CardTitle className="text-xl font-bold text-slate-800">Add New Quick Question</CardTitle>
-                <CardDescription className="text-slate-500 font-medium">Create frequently asked questions for the chatbot</CardDescription>
+                <CardTitle className="text-xl font-bold text-slate-800 dark:text-white">Add New Quick Question</CardTitle>
+                <CardDescription className="text-slate-500 dark:text-slate-400 font-medium">Create frequently asked questions for the chatbot</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="grid md:grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="qq-category" className="font-bold text-slate-700">Category</Label>
+                    <Label htmlFor="qq-category" className="font-bold text-slate-700 dark:text-slate-300">Category</Label>
                     <Select
                       value={newQuickQuestion.category}
                       onValueChange={(value) => setNewQuickQuestion({ ...newQuickQuestion, category: value })}
                     >
-                      <SelectTrigger id="qq-category" className="w-full h-10 border-2 border-slate-200 rounded-xl bg-white font-bold text-slate-700 focus:ring-red-500 shadow-sm transition-all hover:border-slate-300">
+                      <SelectTrigger id="qq-category" className="w-full h-10 border-2 border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-900 font-bold text-slate-700 dark:text-white focus:ring-red-500 shadow-sm transition-all hover:border-slate-300">
                         <SelectValue placeholder="Select category" />
                       </SelectTrigger>
-                      <SelectContent className="rounded-xl border-2 border-slate-200 shadow-xl p-1">
-                        <SelectItem value="emergency" className="rounded-lg font-bold text-slate-700 focus:bg-slate-50 focus:text-red-600 transition-colors cursor-pointer py-2.5">
+                      <SelectContent className="rounded-xl border-2 border-slate-200 dark:border-slate-700 dark:bg-slate-800 shadow-xl p-1">
+                        <SelectItem value="emergency" className="rounded-lg font-bold text-slate-700 dark:text-slate-300 focus:bg-slate-50 dark:focus:bg-slate-700 focus:text-red-600 dark:focus:text-red-400 transition-colors cursor-pointer py-2.5">
                           Emergency Procedures
                         </SelectItem>
-                        <SelectItem value="prevention" className="rounded-lg font-bold text-slate-700 focus:bg-slate-50 focus:text-red-600 transition-colors cursor-pointer py-2.5">
+                        <SelectItem value="prevention" className="rounded-lg font-bold text-slate-700 dark:text-slate-300 focus:bg-slate-50 dark:focus:bg-slate-700 focus:text-red-600 dark:focus:text-red-400 transition-colors cursor-pointer py-2.5">
                           Fire Prevention
                         </SelectItem>
-                        <SelectItem value="equipment" className="rounded-lg font-bold text-slate-700 focus:bg-slate-50 focus:text-red-600 transition-colors cursor-pointer py-2.5">
+                        <SelectItem value="equipment" className="rounded-lg font-bold text-slate-700 dark:text-slate-300 focus:bg-slate-50 dark:focus:bg-slate-700 focus:text-red-600 dark:focus:text-red-400 transition-colors cursor-pointer py-2.5">
                           Safety Equipment
                         </SelectItem>
-                        <SelectItem value="general" className="rounded-lg font-bold text-slate-700 focus:bg-slate-50 focus:text-red-600 transition-colors cursor-pointer py-2.5">
+                        <SelectItem value="general" className="rounded-lg font-bold text-slate-700 dark:text-slate-300 focus:bg-slate-50 dark:focus:bg-slate-700 focus:text-red-600 dark:focus:text-red-400 transition-colors cursor-pointer py-2.5">
                           General Information
                         </SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="qq-active" className="font-bold text-slate-700">Status</Label>
+                    <Label htmlFor="qq-active" className="font-bold text-slate-700 dark:text-slate-300">Status</Label>
                     <Select
                       value={newQuickQuestion.isActive ? "active" : "inactive"}
                       onValueChange={(value) => setNewQuickQuestion({ ...newQuickQuestion, isActive: value === "active" })}
                     >
-                      <SelectTrigger id="qq-active" className="w-full h-10 border-2 border-slate-200 rounded-xl bg-white font-bold text-slate-700 focus:ring-red-500 shadow-sm transition-all hover:border-slate-300">
+                      <SelectTrigger id="qq-active" className="w-full h-10 border-2 border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-900 font-bold text-slate-700 dark:text-white focus:ring-red-500 shadow-sm transition-all hover:border-slate-300">
                         <SelectValue placeholder="Select status" />
                       </SelectTrigger>
-                      <SelectContent className="rounded-xl border-2 border-slate-200 shadow-xl p-1">
-                        <SelectItem value="active" className="rounded-lg font-bold text-slate-700 focus:bg-slate-50 focus:text-red-600 transition-colors cursor-pointer py-2.5">
+                      <SelectContent className="rounded-xl border-2 border-slate-200 dark:border-slate-700 dark:bg-slate-800 shadow-xl p-1">
+                        <SelectItem value="active" className="rounded-lg font-bold text-slate-700 dark:text-slate-300 focus:bg-slate-50 dark:focus:bg-slate-700 focus:text-red-600 dark:focus:text-red-400 transition-colors cursor-pointer py-2.5">
                           <div className="flex items-center gap-2">
                             <div className="h-2 w-2 rounded-full bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.4)]" />
                             Active
                           </div>
                         </SelectItem>
-                        <SelectItem value="inactive" className="rounded-lg font-bold text-slate-700 focus:bg-slate-50 focus:text-red-600 transition-colors cursor-pointer py-2.5">
+                        <SelectItem value="inactive" className="rounded-lg font-bold text-slate-700 dark:text-slate-300 focus:bg-slate-50 dark:focus:bg-slate-700 focus:text-red-600 dark:focus:text-red-400 transition-colors cursor-pointer py-2.5">
                           <div className="flex items-center gap-2">
                             <div className="h-2 w-2 rounded-full bg-slate-400" />
                             Inactive
@@ -1552,24 +1551,24 @@ export default function AdminPage({
                   </div>
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="qq-question" className="font-bold text-slate-700">Question</Label>
+                  <Label htmlFor="qq-question" className="font-bold text-slate-700 dark:text-slate-300">Question</Label>
                   <Input
                     id="qq-question"
                     placeholder="Enter the question"
                     value={newQuickQuestion.questionText}
                     onChange={(e) => setNewQuickQuestion({ ...newQuickQuestion, questionText: e.target.value })}
-                    className="border-2 border-slate-200 focus-visible:ring-red-500 rounded-xl"
+                    className="border-2 border-slate-200 dark:border-slate-700 dark:bg-slate-900 dark:text-white focus-visible:ring-red-500 rounded-xl"
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="qq-response" className="font-bold text-slate-700">Response</Label>
+                  <Label htmlFor="qq-response" className="font-bold text-slate-700 dark:text-slate-300">Response</Label>
                   <Textarea
                     id="qq-response"
                     placeholder="Enter the response"
                     value={newQuickQuestion.responseText}
                     onChange={(e) => setNewQuickQuestion({ ...newQuickQuestion, responseText: e.target.value })}
                     rows={4}
-                    className="border-2 border-slate-200 focus-visible:ring-red-500 rounded-xl"
+                    className="border-2 border-slate-200 dark:border-slate-700 dark:bg-slate-900 dark:text-white focus-visible:ring-red-500 rounded-xl"
                   />
                 </div>
                 <div className="flex flex-wrap items-center gap-4 mt-2">
@@ -1581,21 +1580,21 @@ export default function AdminPage({
                     <Plus className="h-4 w-4 mr-2" />
                     Add Quick Question
                   </button>
-                  {success && <div className="text-sm font-bold text-green-700 flex items-center gap-2 bg-green-50 border-2 border-green-200 px-4 py-2 rounded-xl animate-in fade-in zoom-in-95 duration-300"><CheckCircle className="h-4 w-4"/> {success}</div>}
-                  {error && <div className="text-sm font-bold text-red-700 flex items-center gap-2 bg-red-50 border-2 border-red-200 px-4 py-2 rounded-xl animate-in fade-in zoom-in-95 duration-300"><AlertCircle className="h-4 w-4"/> {error}</div>}
+                  {success && <div className="text-sm font-bold text-green-700 dark:text-green-400 flex items-center gap-2 bg-green-50 dark:bg-green-900/30 border-2 border-green-200 dark:border-green-900/50 px-4 py-2 rounded-xl animate-in fade-in zoom-in-95 duration-300"><CheckCircle className="h-4 w-4"/> {success}</div>}
+                  {error && <div className="text-sm font-bold text-red-700 dark:text-red-400 flex items-center gap-2 bg-red-50 dark:bg-red-900/30 border-2 border-red-200 dark:border-red-900/50 px-4 py-2 rounded-xl animate-in fade-in zoom-in-95 duration-300"><AlertCircle className="h-4 w-4"/> {error}</div>}
                 </div>
               </CardContent>
             </Card>
 
-            <Card className="rounded-[2rem] border-[3px] border-slate-200 shadow-[0_8px_0_#cbd5e1] overflow-hidden bg-slate-50 transition-all mb-6">
+            <Card className="rounded-[2rem] border-[3px] border-slate-200 dark:border-slate-700 shadow-[0_8px_0_#cbd5e1] dark:shadow-[0_8px_0_#0f172a] overflow-hidden bg-slate-50 dark:bg-slate-800/50 backdrop-blur-md transition-all mb-6">
               <CardHeader className="px-6 pt-6 pb-2">
                 <div className="flex items-center gap-3">
-                  <div className="bg-white border-2 border-slate-200 p-2 rounded-xl shadow-sm">
+                  <div className="bg-white dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-700 p-2 rounded-xl shadow-sm">
                     <HelpCircle className="h-6 w-6 text-[#d60000]" strokeWidth={2.5} />
                   </div>
                   <div>
-                    <CardTitle className="text-2xl font-black text-slate-800 tracking-tight">Current Quick Questions</CardTitle>
-                    <CardDescription className="text-slate-500 font-medium mt-1">{quickQuestions.length} questions in database</CardDescription>
+                    <CardTitle className="text-2xl font-black text-slate-800 dark:text-white tracking-tight">Current Quick Questions</CardTitle>
+                    <CardDescription className="text-slate-500 dark:text-slate-400 font-medium mt-1">{quickQuestions.length} questions in database</CardDescription>
                   </div>
                 </div>
               </CardHeader>
@@ -1605,18 +1604,18 @@ export default function AdminPage({
                     <p className="text-slate-500 font-medium text-center py-8">No quick questions yet</p>
                   ) : (
                     quickQuestions.map((question) => (
-                      <div key={question.id} className="flex items-start justify-between gap-2 sm:gap-3 p-3 sm:p-4 border-2 border-slate-200 rounded-2xl bg-white shadow-sm hover:shadow-[0_4px_0_#e2e8f0] hover:-translate-y-0.5 transition-all">
+                      <div key={question.id} className="flex items-start justify-between gap-2 sm:gap-3 p-3 sm:p-4 border-2 border-slate-200 dark:border-slate-700 rounded-2xl bg-white dark:bg-slate-900 shadow-sm hover:shadow-[0_4px_0_#e2e8f0] dark:hover:shadow-[0_4px_0_#0f172a] hover:-translate-y-0.5 transition-all">
                         <div className="flex-1 min-w-0">
                           <div className="flex flex-wrap items-start sm:items-center gap-2 mb-2">
-                            <h4 className="font-bold text-slate-800 w-full sm:w-auto">{question.questionText}</h4>
-                            <span className={`text-xs px-2 py-1 rounded-md font-bold shrink-0 ${question.isActive ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
+                            <h4 className="font-bold text-slate-800 dark:text-white w-full sm:w-auto">{question.questionText}</h4>
+                            <span className={`text-xs px-2 py-1 rounded-md font-bold shrink-0 ${question.isActive ? 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-400' : 'bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-400'}`}>
                               {question.isActive ? 'Active' : 'Inactive'}
                             </span>
-                            <span className="text-xs px-2 py-1 rounded-md font-bold bg-slate-100 text-slate-600 capitalize shrink-0">
+                            <span className="text-xs px-2 py-1 rounded-md font-bold bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 capitalize shrink-0">
                               {question.category}
                             </span>
                           </div>
-                          <p className="text-sm text-slate-500 mt-2">{question.responseText}</p>
+                          <p className="text-sm text-slate-500 dark:text-slate-400 mt-2">{question.responseText}</p>
                         </div>
                         <button
                           type="button"
@@ -1636,53 +1635,53 @@ export default function AdminPage({
 
           {/* Fire Codes Management */}
           <TabsContent value="fire-codes" className="space-y-6">
-            <Card className="rounded-[1.5rem] border-[3px] border-slate-200 shadow-sm hover:shadow-[0_4px_0_#e2e8f0] overflow-hidden bg-white transition-all mb-6">
+            <Card className="rounded-[1.5rem] border-[3px] border-slate-200 dark:border-slate-700 shadow-sm hover:shadow-[0_4px_0_#e2e8f0] dark:hover:shadow-[0_4px_0_#0f172a] overflow-hidden bg-white dark:bg-slate-800 transition-all mb-6">
               <CardHeader>
-                <CardTitle className="text-xl font-bold text-slate-800">Add New Fire Code Section</CardTitle>
-                <CardDescription className="text-slate-500 font-medium">Add sections to the Fire Code & Regulations</CardDescription>
+                <CardTitle className="text-xl font-bold text-slate-800 dark:text-white">Add New Fire Code Section</CardTitle>
+                <CardDescription className="text-slate-500 dark:text-slate-400 font-medium">Add sections to the Fire Code & Regulations</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="fc-title" className="font-bold text-slate-700">Title</Label>
+                  <Label htmlFor="fc-title" className="font-bold text-slate-700 dark:text-slate-300">Title</Label>
                   <Input
                     id="fc-title"
                     placeholder="Section title"
                     value={newFireCode.title}
                     onChange={(e) => setNewFireCode({ ...newFireCode, title: e.target.value })}
-                    className="border-2 border-slate-200 focus-visible:ring-red-500 rounded-xl"
+                    className="border-2 border-slate-200 dark:border-slate-700 dark:bg-slate-900 dark:text-white focus-visible:ring-red-500 rounded-xl"
                   />
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="fc-section-num" className="font-bold text-slate-700">Section Number</Label>
+                    <Label htmlFor="fc-section-num" className="font-bold text-slate-700 dark:text-slate-300">Section Number</Label>
                     <Input
                       id="fc-section-num"
                       placeholder="e.g., 1.1, 2.3.1, etc."
                       value={newFireCode.sectionNum}
                       onChange={(e) => setNewFireCode({ ...newFireCode, sectionNum: e.target.value })}
-                      className="border-2 border-slate-200 focus-visible:ring-red-500 rounded-xl"
+                      className="border-2 border-slate-200 dark:border-slate-700 dark:bg-slate-900 dark:text-white focus-visible:ring-red-500 rounded-xl"
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="fc-parent-section" className="font-bold text-slate-700">Parent Section (Optional)</Label>
+                    <Label htmlFor="fc-parent-section" className="font-bold text-slate-700 dark:text-slate-300">Parent Section (Optional)</Label>
                     <Input
                       id="fc-parent-section"
                       placeholder="Parent section ID"
                       value={newFireCode.parentSectionId}
                       onChange={(e) => setNewFireCode({ ...newFireCode, parentSectionId: e.target.value })}
-                      className="border-2 border-slate-200 focus-visible:ring-red-500 rounded-xl"
+                      className="border-2 border-slate-200 dark:border-slate-700 dark:bg-slate-900 dark:text-white focus-visible:ring-red-500 rounded-xl"
                     />
                   </div>
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="fc-content" className="font-bold text-slate-700">Content</Label>
+                  <Label htmlFor="fc-content" className="font-bold text-slate-700 dark:text-slate-300">Content</Label>
                   <Textarea
                     id="fc-content"
                     placeholder="Section content"
                     rows={6}
                     value={newFireCode.content}
                     onChange={(e) => setNewFireCode({ ...newFireCode, content: e.target.value })}
-                    className="border-2 border-slate-200 focus-visible:ring-red-500 rounded-xl"
+                    className="border-2 border-slate-200 dark:border-slate-700 dark:bg-slate-900 dark:text-white focus-visible:ring-red-500 rounded-xl"
                   />
                 </div>
                 <div className="flex flex-wrap items-center gap-4 mt-2">
@@ -1694,21 +1693,21 @@ export default function AdminPage({
                     <Plus className="h-4 w-4 mr-2" />
                     Add Fire Code Section
                   </button>
-                  {success && <div className="text-sm font-bold text-green-700 flex items-center gap-2 bg-green-50 border-2 border-green-200 px-4 py-2 rounded-xl animate-in fade-in zoom-in-95 duration-300"><CheckCircle className="h-4 w-4"/> {success}</div>}
-                  {error && <div className="text-sm font-bold text-red-700 flex items-center gap-2 bg-red-50 border-2 border-red-200 px-4 py-2 rounded-xl animate-in fade-in zoom-in-95 duration-300"><AlertCircle className="h-4 w-4"/> {error}</div>}
+                  {success && <div className="text-sm font-bold text-green-700 dark:text-green-400 flex items-center gap-2 bg-green-50 dark:bg-green-900/30 border-2 border-green-200 dark:border-green-900/50 px-4 py-2 rounded-xl animate-in fade-in zoom-in-95 duration-300"><CheckCircle className="h-4 w-4"/> {success}</div>}
+                  {error && <div className="text-sm font-bold text-red-700 dark:text-red-400 flex items-center gap-2 bg-red-50 dark:bg-red-900/30 border-2 border-red-200 dark:border-red-900/50 px-4 py-2 rounded-xl animate-in fade-in zoom-in-95 duration-300"><AlertCircle className="h-4 w-4"/> {error}</div>}
                 </div>
               </CardContent>
             </Card>
 
-            <Card className="rounded-[2rem] border-[3px] border-slate-200 shadow-[0_8px_0_#cbd5e1] overflow-hidden bg-slate-50 transition-all mb-6">
+            <Card className="rounded-[2rem] border-[3px] border-slate-200 dark:border-slate-700 shadow-[0_8px_0_#cbd5e1] dark:shadow-[0_8px_0_#0f172a] overflow-hidden bg-slate-50 dark:bg-slate-800/50 backdrop-blur-md transition-all mb-6">
               <CardHeader className="px-6 pt-6 pb-2">
                 <div className="flex items-center gap-3">
-                  <div className="bg-white border-2 border-slate-200 p-2 rounded-xl shadow-sm">
+                  <div className="bg-white dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-700 p-2 rounded-xl shadow-sm">
                     <BookOpen className="h-6 w-6 text-[#d60000]" strokeWidth={2.5} />
                   </div>
                   <div>
-                    <CardTitle className="text-2xl font-black text-slate-800 tracking-tight">Current Fire Code Sections</CardTitle>
-                    <CardDescription className="text-slate-500 font-medium mt-1">Fire Code & Regulations sections in the database</CardDescription>
+                    <CardTitle className="text-2xl font-black text-slate-800 dark:text-white tracking-tight">Current Fire Code Sections</CardTitle>
+                    <CardDescription className="text-slate-500 dark:text-slate-400 font-medium mt-1">Fire Code & Regulations sections in the database</CardDescription>
                   </div>
                 </div>
               </CardHeader>
@@ -1718,16 +1717,16 @@ export default function AdminPage({
                     <p className="text-slate-500 font-medium text-center py-8">No fire code sections yet</p>
                   ) : (
                     fireCodeSections.map((section) => (
-                      <div key={section.id} className="flex items-start justify-between gap-2 sm:gap-3 p-3 sm:p-4 border-2 border-slate-200 rounded-2xl bg-white shadow-sm hover:shadow-[0_4px_0_#e2e8f0] hover:-translate-y-0.5 transition-all">
+                      <div key={section.id} className="flex items-start justify-between gap-2 sm:gap-3 p-3 sm:p-4 border-2 border-slate-200 dark:border-slate-700 rounded-2xl bg-white dark:bg-slate-900 shadow-sm hover:shadow-[0_4px_0_#e2e8f0] dark:hover:shadow-[0_4px_0_#0f172a] hover:-translate-y-0.5 transition-all">
                         <div className="flex-1 min-w-0">
                           <div className="flex flex-wrap items-start sm:items-center gap-2 mb-2">
-                            <h4 className="font-bold text-slate-800 w-full sm:w-auto">{section.title}</h4>
-                            <span className="text-xs font-bold px-2 py-1 rounded-md bg-slate-100 text-slate-600 shrink-0">
+                            <h4 className="font-bold text-slate-800 dark:text-white w-full sm:w-auto">{section.title}</h4>
+                            <span className="text-xs font-bold px-2 py-1 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 shrink-0">
                               {section.sectionNum}
                             </span>
                           </div>
-                          <p className="text-sm text-slate-500 line-clamp-2">{section.content}</p>
-                          <p className="text-xs text-slate-400 mt-2 font-medium">
+                          <p className="text-sm text-slate-500 dark:text-slate-400 line-clamp-2">{section.content}</p>
+                          <p className="text-xs text-slate-400 dark:text-slate-500 mt-2 font-medium">
                             Last updated: {new Date(section.updatedAt).toLocaleDateString()}
                           </p>
                         </div>
@@ -1751,3 +1750,7 @@ export default function AdminPage({
     </div>
   )
 }
+
+AdminDashboard.layout = (page: React.ReactNode) => <DashboardLayout>{page}</DashboardLayout>
+
+export default AdminDashboard

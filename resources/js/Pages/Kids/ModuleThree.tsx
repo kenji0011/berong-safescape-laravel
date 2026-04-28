@@ -12,6 +12,9 @@ const ModuleThreePage = ({ moduleNum }: { moduleNum: number }) => {
   const [saving, setSaving] = useState(false)
   const [fullProgress, setFullProgress] = useState<any>(null)
   const completedRef = React.useRef(moduleCompleted)
+  const badgeAwardedRef = React.useRef(false)
+  const quizSubmittedRef = React.useRef(false)
+  const syncingRef = React.useRef(false)
   const iframeRef = React.useRef<HTMLIFrameElement>(null)
 
   useEffect(() => {
@@ -20,16 +23,15 @@ const ModuleThreePage = ({ moduleNum }: { moduleNum: number }) => {
 
   // Award badge automatically when module is completed
   useEffect(() => {
-    if (moduleCompleted) {
+    if (moduleCompleted && !badgeAwardedRef.current) {
+      badgeAwardedRef.current = true
       const awardBadge = async () => {
         try {
-          console.log("Awarding badge for module:", currentModule);
           await axios.post('/api/badges/award', {
             badge_id: `module_${currentModule}`,
             badge_name: 'Escape Strategist',
             badge_icon: '🗺️'
           });
-          console.log("Badge awarded successfully!");
         } catch (err: any) {
           console.error("Failed to award badge automatically:", err.response?.data || err.message)
         }
@@ -83,8 +85,13 @@ const ModuleThreePage = ({ moduleNum }: { moduleNum: number }) => {
       }
 
       // 2. Section completed - sync to backend
-      if (data.type === 'SAFESCAPE_SECTION_COMPLETE') {
+      if (data.type === 'SAFESCAPE_SECTION_COMPLETE' && data.moduleNum === currentModule) {
+        if (syncingRef.current) return;
         try {
+          // Prevent redundant sync if already marked completed locally
+          if (data.completed && completedRef.current) return;
+
+          syncingRef.current = true;
           console.log("Syncing section complete:", data);
           const response = await axios.post("/api/kids/safescape", {
             moduleNum: data.moduleNum,
@@ -94,19 +101,24 @@ const ModuleThreePage = ({ moduleNum }: { moduleNum: number }) => {
           
           console.log("Progress synced successfully for module", data.moduleNum, response.data);
           
-          if (data.completed) {
-            console.log("Module marked as completed!");
+          if (data.completed && !completedRef.current) {
+            console.log(`Module ${currentModule} marked as completed!`);
             setModuleCompleted(true)
             loadState() // Sync full state
           }
         } catch (error: any) {
           console.error("Failed to sync progress:", error.response?.data || error.message)
+        } finally {
+          syncingRef.current = false;
         }
       }
 
       // 3. Quiz submission
-      if (data.type === 'SAFESCAPE_QUIZ_SUBMIT') {
+      if (data.type === 'SAFESCAPE_QUIZ_SUBMIT' && data.moduleNum === currentModule) {
+        if (quizSubmittedRef.current || (moduleCompleted && data.score === data.maxScore)) return;
+        
         try {
+          quizSubmittedRef.current = true;
           console.log("Submitting quiz result:", data);
           const res = await axios.post("/api/kids/quiz", {
             quizType: `module_${data.moduleNum}_quiz`,
@@ -116,11 +128,17 @@ const ModuleThreePage = ({ moduleNum }: { moduleNum: number }) => {
 
           console.log("Quiz result submitted. Result:", res.data);
           if (res.data.passed) {
-             setModuleCompleted(true);
-             loadState(); // Re-fetch to confirm 100% and sync any other changes
+             if (!completedRef.current) {
+               setModuleCompleted(true);
+               loadState(); 
+             }
+          } else {
+             // If they failed, allow them to submit again later
+             quizSubmittedRef.current = false;
           }
         } catch (error: any) {
-          console.error("Failed to submit quiz:", error.response?.data || error.message)
+          console.error("Failed to submit quiz:", error.response?.data || error.message);
+          quizSubmittedRef.current = false;
         }
       }
     };
@@ -149,6 +167,41 @@ const ModuleThreePage = ({ moduleNum }: { moduleNum: number }) => {
     }
   }, [moduleCompleted, iframeLoading]);
 
+  // Sync theme reactively
+  useEffect(() => {
+    const syncTheme = () => {
+      const iframeWindow = iframeRef.current?.contentWindow;
+      if (!iframeWindow) return;
+      
+      try {
+        const iframeDoc = iframeWindow.document;
+        if (!iframeDoc || !iframeDoc.documentElement || !iframeDoc.body) return;
+
+        const isDark = document.documentElement.classList.contains('dark');
+        
+        if (isDark) {
+          iframeDoc.documentElement.classList.add('dark');
+          iframeDoc.body.classList.add('dark');
+        } else {
+          iframeDoc.documentElement.classList.remove('dark');
+          iframeDoc.body.classList.remove('dark');
+        }
+      } catch (e) {
+        // Ignore cross-origin errors or other iframe issues
+      }
+    };
+
+    syncTheme();
+    const observer = new MutationObserver(syncTheme);
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
+    const interval = setInterval(syncTheme, 1000);
+
+    return () => {
+      observer.disconnect();
+      clearInterval(interval);
+    };
+  }, [iframeLoading]);
+
   const forceIframeQuizCompleted = (iframeWindow: Window) => {
     try {
       const iframeDoc = iframeWindow.document;
@@ -174,7 +227,7 @@ const ModuleThreePage = ({ moduleNum }: { moduleNum: number }) => {
         const style = iframeDoc.createElement('style');
         style.id = styleId;
         style.innerHTML = `
-          footer, .ss-footer { display: none !important; }
+          .ss-completion-card { margin-top: 2rem !important; }
         `;
         iframeDoc.head.appendChild(style);
       }
@@ -273,17 +326,17 @@ const ModuleThreePage = ({ moduleNum }: { moduleNum: number }) => {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 font-sans flex flex-col">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 font-sans flex flex-col transition-colors duration-500">
       <Head title={`Module ${currentModule} | SafeScape`} />
 
       {/* ── Sub Header ── */}
-      <div className="bg-white border-b border-slate-200 py-3 px-4 sm:px-6 lg:px-8 shadow-sm z-20 relative">
+      <div className="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 py-3 px-4 sm:px-6 lg:px-8 shadow-sm z-20 relative transition-colors">
         <div className="max-w-7xl mx-auto flex flex-row items-center justify-between gap-2 sm:gap-4">
           <div className="flex items-center gap-2 sm:gap-4">
-            <Link href="/kids/safescape" className="inline-flex items-center justify-center gap-2 p-2 sm:px-4 sm:py-2 bg-white rounded-full text-slate-700 font-bold hover:text-slate-900 border-[3px] border-slate-200 shadow-[0_3px_0_#cbd5e1] hover:-translate-y-0.5 active:translate-y-1 active:shadow-[0_0px_0_#cbd5e1] transition-all text-sm whitespace-nowrap"><ArrowLeft className="h-4 w-4" /><span className="hidden sm:inline">Back to Dashboard</span></Link>
+            <Link href="/kids/safescape" className="inline-flex items-center justify-center gap-2 p-2 sm:px-4 sm:py-2 bg-white dark:bg-slate-800 rounded-full text-slate-700 dark:text-slate-300 font-bold hover:text-slate-900 dark:hover:text-white border-[3px] border-slate-200 dark:border-slate-700 shadow-[0_3px_0_#cbd5e1] dark:shadow-[0_3px_0_#0f172a] hover:-translate-y-0.5 active:translate-y-1 active:shadow-none transition-all text-sm whitespace-nowrap"><ArrowLeft className="h-4 w-4" /><span className="hidden sm:inline">Back to Dashboard</span></Link>
             <div className="hidden sm:flex items-center gap-2">
               <Flame className="h-5 w-5 text-[#ff4b3e]" />
-              <h1 className="text-xl font-black text-slate-800">SafeScape Fire Safety Course</h1>
+              <h1 className="text-xl font-black text-slate-800 dark:text-white transition-colors">SafeScape Fire Safety Course</h1>
             </div>
           </div>
           <div className="flex items-center gap-2 sm:gap-6">
@@ -296,16 +349,16 @@ const ModuleThreePage = ({ moduleNum }: { moduleNum: number }) => {
                     className={cn(
                       "h-8 w-8 sm:h-10 sm:w-10 rounded-full flex items-center justify-center text-xs sm:text-sm font-black transition-all shrink-0 border-[3px] focus:outline-none",
                       n === currentModule
-                        ? "bg-[#ff4b3e] text-white border-white shadow-[0_4px_0_#991b1b] -translate-y-0.5 pointer-events-none"
-                        : "bg-white text-slate-400 border-slate-200 shadow-[0_3px_0_#cbd5e1] hover:-translate-y-0.5 hover:shadow-[0_4px_0_#cbd5e1] hover:text-slate-600 active:translate-y-1 active:shadow-[0_0px_0_#cbd5e1]"
+                        ? "bg-[#ff4b3e] text-white border-white dark:border-slate-200 shadow-[0_4px_0_#991b1b] -translate-y-0.5 pointer-events-none"
+                        : "bg-white dark:bg-slate-800 text-slate-400 dark:text-slate-500 border-slate-200 dark:border-slate-700 shadow-[0_3px_0_#cbd5e1] dark:shadow-[0_3px_0_#0f172a] hover:-translate-y-0.5 hover:shadow-[0_4px_0_#cbd5e1] dark:hover:shadow-[0_4px_0_#0f172a] hover:text-slate-600 dark:hover:text-slate-300 active:translate-y-1 active:shadow-none transition-all"
                     )}
                   >{n}</Link>
-                  {n < 5 && <div className="h-0.5 w-2 sm:w-6 bg-slate-200 rounded shrink-0" />}
+                  {n < 5 && <div className="h-0.5 w-2 sm:w-6 bg-slate-200 dark:bg-slate-700 rounded shrink-0 transition-colors" />}
                 </React.Fragment>
               ))}
             </div>
             {/* Progress */}
-            <div className="text-sm font-bold text-slate-500 bg-slate-50 px-4 py-2 rounded-xl border border-slate-200 whitespace-nowrap hidden lg:block">
+            <div className="text-sm font-bold text-slate-500 dark:text-slate-400 bg-slate-50 dark:bg-slate-900/50 px-4 py-2 rounded-xl border border-slate-200 dark:border-slate-800 whitespace-nowrap hidden lg:block transition-colors">
               Status: <span className={cn("font-black ml-1", moduleCompleted ? "text-green-500" : "text-[#ff4b3e]")}>{moduleCompleted ? "Completed ✓" : "In Progress"}</span>
             </div>
           </div>
@@ -313,24 +366,24 @@ const ModuleThreePage = ({ moduleNum }: { moduleNum: number }) => {
       </div>
 
       {/* ── Dark Module Content Area ── */}
-      <div className="flex-1 bg-blue-50 bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] [background-size:16px_16px] flex flex-col w-full relative">
+      <div className="flex-1 bg-blue-50 dark:bg-slate-950 bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] dark:bg-[radial-gradient(#1e293b_1px,transparent_1px)] [background-size:16px_16px] flex flex-col w-full relative transition-colors">
         
         {/* Skeleton Loader */}
         {iframeLoading && (
-          <div className="absolute inset-0 z-10 flex flex-col items-center justify-center pt-10 pb-20 px-4 pointer-events-none">
-            <div className="w-16 h-16 sm:w-20 sm:h-20 bg-white rounded-2xl shadow-sm border-[3px] border-blue-200 flex items-center justify-center mb-6 animate-bounce">
+          <div className="absolute inset-0 z-10 flex flex-col items-center justify-center pt-10 pb-20 px-4 pointer-events-none transition-colors">
+            <div className="w-16 h-16 sm:w-20 sm:h-20 bg-white dark:bg-slate-900 rounded-2xl shadow-sm border-[3px] border-blue-200 dark:border-slate-800 flex items-center justify-center mb-6 animate-bounce">
               <Flame className="h-8 w-8 sm:h-10 sm:w-10 text-[#ff4b3e] animate-pulse" />
             </div>
             <div className="flex flex-col items-center gap-3 w-full max-w-2xl px-2 sm:px-6">
-              <div className="h-6 sm:h-10 w-48 sm:w-64 bg-blue-200/50 rounded-full animate-pulse"></div>
-              <div className="h-4 sm:h-5 w-64 sm:w-96 bg-blue-200/50 rounded-full animate-pulse delay-75 mb-6"></div>
+              <div className="h-6 sm:h-10 w-48 sm:w-64 bg-blue-200/50 dark:bg-slate-800/50 rounded-full animate-pulse"></div>
+              <div className="h-4 sm:h-5 w-64 sm:w-96 bg-blue-200/50 dark:bg-slate-800/50 rounded-full animate-pulse delay-75 mb-6"></div>
               
               <div className="w-full space-y-4">
-                <div className="h-48 sm:h-64 w-full bg-white/60 rounded-[2rem] border-[3px] border-blue-200/50 animate-pulse delay-150"></div>
-                <div className="h-32 sm:h-48 w-full bg-white/60 rounded-[2rem] border-[3px] border-blue-200/50 animate-pulse delay-200"></div>
+                <div className="h-48 sm:h-64 w-full bg-white/60 dark:bg-slate-900/60 rounded-[2rem] border-[3px] border-blue-200/50 dark:border-slate-800/50 animate-pulse delay-150"></div>
+                <div className="h-32 sm:h-48 w-full bg-white/60 dark:bg-slate-900/60 rounded-[2rem] border-[3px] border-blue-200/50 dark:border-slate-800/50 animate-pulse delay-200"></div>
               </div>
             </div>
-            <p className="mt-8 text-blue-400 font-bold tracking-widest uppercase text-sm animate-pulse delay-300">Loading Module Content...</p>
+            <p className="mt-8 text-blue-400 dark:text-slate-500 font-bold tracking-widest uppercase text-sm animate-pulse delay-300">Loading Module Content...</p>
           </div>
         )}
 

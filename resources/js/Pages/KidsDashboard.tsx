@@ -70,8 +70,8 @@ const KidsDashboardPage = ({ modules, progress }: KidsPageProps) => {
     },
     {
       id: "video-portal",
-      title: "🎬 Mission Intel",
-      description: "Watch exciting videos and learn how to be a Fire Safety Hero! New intel added every week.",
+      title: "🎬 Fire Safety Videos",
+      description: "Watch exciting videos and learn how to be a Fire Safety Hero! New videos added every week.",
       type: "video",
       emoji: "📺",
       href: "/kids/videos",
@@ -80,8 +80,8 @@ const KidsDashboardPage = ({ modules, progress }: KidsPageProps) => {
     },
     {
       id: "activity-portal",
-      title: "✨ Challenge Center",
-      description: "Test your skills with quizzes and memory games! Earn extra points and show off your knowledge.",
+      title: "✨ Mini Games",
+      description: "Play fun quizzes and memory games! Earn extra points and show off your knowledge.",
       type: "activity",
       emoji: "🏆",
       href: "/kids/challenges",
@@ -112,13 +112,17 @@ const KidsDashboardPage = ({ modules, progress }: KidsPageProps) => {
   }
 
   return (
-    <div className="min-h-screen relative bg-blue-50">
+    <div className="min-h-screen relative bg-blue-50 dark:bg-slate-950 transition-colors duration-500">
       {/* Optimized Background - Using fixed div instead of bg-fixed to prevent scroll repaints */}
       <div 
-        className="fixed inset-0 z-0 bg-cover bg-center"
-        style={{ backgroundImage: "url('/challenges-bg.png')" }}
+        className="fixed inset-0 z-0 bg-cover bg-center pointer-events-none transform-gpu"
+        style={{ 
+          backgroundImage: "url('/challenges-bg.png')",
+          backfaceVisibility: 'hidden',
+          WebkitBackfaceVisibility: 'hidden'
+        }}
       >
-        <div className="absolute inset-0 bg-white/10 backdrop-blur-[2px]"></div>
+        <div className="absolute inset-0 bg-white/10 dark:bg-black/60 backdrop-blur-[2px]"></div>
       </div>
 
       {!isMobile && !reduceMotion && (
@@ -133,7 +137,7 @@ const KidsDashboardPage = ({ modules, progress }: KidsPageProps) => {
       )}
 
       <div className="relative z-10 w-full h-full flex-1">
-        <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4 sm:pt-6 pb-8">
           {/* Deferred Welcome Banner */}
           <Deferred data="progress" fallback={<KidsWelcomeBannerSkeleton />}>
             <KidsWelcomeBanner 

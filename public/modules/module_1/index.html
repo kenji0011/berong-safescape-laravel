@@ -161,7 +161,7 @@
         <section id="section-video" class="fade-in ss-section" style="animation-delay: 0.2s;">
             <div class="ss-section-badge"><i class="fa-solid fa-check"></i></div>
             <div
-                class="w-full aspect-video bg-black rounded-xl overflow-hidden shadow-2xl border border-slate-700 relative group">
+                class="w-full aspect-video bg-black rounded-[2rem] sm:rounded-[3rem] overflow-hidden shadow-2xl border border-slate-700 relative group">
                 <video id="module-video" controls class="w-full h-full object-cover" onplay="onVideoPlay()">
                     <source src="../assets/videos/m1.mp4" type="video/mp4">
                 </video>
@@ -189,7 +189,7 @@
                         If you take any one of them away, the fire goes out.
                     </p>
 
-                    <ul class="space-y-2 sm:space-y-3 md:space-y-4 mt-3 sm:mt-4 bg-slate-800/50 p-3 sm:p-4 md:p-6 rounded-xl border border-slate-700">
+                    <ul class="space-y-2 sm:space-y-3 md:space-y-4 mt-3 sm:mt-4 bg-slate-800/50 p-3 sm:p-4 md:p-6 rounded-[1.5rem] sm:rounded-[2rem] border border-slate-700">
                         <li class="flex gap-3 sm:gap-4">
                             <i class="fa-solid fa-fire-burner text-red-400 mt-1 text-sm sm:text-base"></i>
                             <div>
@@ -225,7 +225,7 @@
             <!-- INFOGRAPHIC CONTAINER -->
             <div class="order-1 md:order-2">
                 <div
-                class="bg-white rounded-xl overflow-hidden shadow-lg border-[3px] sm:border-4 border-slate-700 h-48 sm:h-64 md:h-96 relative flex items-center justify-center transform rotate-1 hover:rotate-0 transition-transform duration-500">
+                class="bg-white rounded-[2rem] sm:rounded-[3rem] overflow-hidden shadow-lg border-[3px] sm:border-4 border-slate-700 h-48 sm:h-64 md:h-96 relative flex items-center justify-center transform rotate-1 hover:rotate-0 transition-transform duration-500">
                     <img src="../assets/images/m1.png" alt="Fire Triangle" class="w-full h-full object-contain p-2 sm:p-0">
                 </div>
             </div>
@@ -233,7 +233,7 @@
 
         <!-- PART 3: THE RULES (SECTION 1.2) -->
         <section id="section-1-2"
-            class="fade-in ss-section bg-gradient-to-br from-slate-800 to-slate-900 rounded-2xl p-6 sm:p-8 md:p-12 border border-slate-700 shadow-2xl relative overflow-hidden"
+            class="fade-in ss-section bg-gradient-to-br from-slate-800 to-slate-900 p-6 sm:p-8 md:p-12 border border-slate-700 shadow-2xl relative overflow-hidden"
             style="animation-delay: 0.4s;">
             <div class="ss-section-badge"><i class="fa-solid fa-check"></i></div>
 
@@ -272,7 +272,7 @@
 
                     <!-- The Golden Rule Card -->
                     <div
-                        class="bg-red-950/40 border border-red-500/30 rounded-lg sm:rounded-xl p-4 sm:p-6 flex flex-col items-center justify-center text-center shadow-lg transform hover:scale-105 transition-transform duration-300">
+                        class="bg-red-950/40 border border-red-500/30 rounded-[1.5rem] sm:rounded-[2rem] p-4 sm:p-6 flex flex-col items-center justify-center text-center shadow-lg transform hover:scale-105 transition-transform duration-300">
                         <div
                             class="bg-red-500 w-10 h-10 sm:w-12 sm:h-12 rounded-full flex items-center justify-center mb-3 sm:mb-4 text-white text-lg sm:text-xl">
                             <i class="fa-solid fa-hand"></i>
@@ -289,7 +289,7 @@
 
         <!-- PART 4: THE SIMULATION (GAME) -->
         <section id="section-game"
-            class="fade-in ss-section bg-slate-800 rounded-2xl p-4 sm:p-6 md:p-8 shadow-2xl border border-slate-700"
+            class="fade-in ss-section bg-slate-800 p-4 sm:p-6 md:p-8 shadow-2xl border border-slate-700"
             style="animation-delay: 0.5s;">
             <div class="ss-section-badge"><i class="fa-solid fa-check"></i></div>
 
@@ -354,22 +354,23 @@
         </section>
 
         <!-- MODULE COMPLETE / NEXT MODULE -->
-        <section id="section-complete" class="fade-in text-center py-12 hidden">
-            <div class="bg-green-900/30 border border-green-500 rounded-2xl p-8 max-w-xl mx-auto">
-                <i class="fa-solid fa-circle-check text-6xl text-green-500 mb-4"></i>
-                <h2 class="text-2xl sm:text-3xl font-bold text-white mb-2">Module 1 Complete!</h2>
-                <p class="text-slate-300 mb-6">Great job! You've learned about the Fire Triangle and why fire tools are
-                    for grown-ups only.</p>
-                <a href="../module_2/index.html" id="next-module-btn" class="ss-btn ss-btn-primary text-lg">
-                    Continue to Module 2 <i class="fa-solid fa-arrow-right ml-2"></i>
-                </a>
+        <section id="section-complete" class="fade-in hidden py-12">
+            <div class="ss-completion-card success mx-auto">
+                <div class="ss-completion-icon">🏆</div>
+                <h3 class="ss-completion-title">Module 1 Complete!</h3>
+                <p class="ss-completion-desc">Great job! You've learned about the Fire Triangle and why fire tools are for grown-ups only.</p>
+                <div class="ss-completion-actions">
+                    <a href="../module_2/index.html" id="next-module-btn" class="ss-btn-premium ss-btn-gold">
+                        Continue to Module 2 <i class="fa-solid fa-arrow-right"></i>
+                    </a>
+                </div>
             </div>
         </section>
 
     </main>
 
     <!-- FOOTER -->
-    <footer class="bg-slate-950 text-slate-500 py-8 text-center text-sm border-t border-slate-800 mt-12">
+    <footer class="bg-transparent text-slate-500 dark:text-slate-400 py-8 text-center text-sm border-t-2 border-slate-300 dark:border-slate-800 mt-12 font-bold uppercase tracking-widest transition-colors">
         <p>SafeScape Intelligent Systems Project</p>
         <p class="mt-2 text-xs opacity-50">Module 1: Fire is a Tool, Not a Toy</p>
     </footer>

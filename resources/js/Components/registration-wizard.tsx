@@ -406,7 +406,7 @@ export function RegistrationWizard() {
     const rating = getScoreRating(percentage)
 
     return (
-      <Card className="w-full max-w-lg mx-auto border-none shadow-[0_8px_30px_rgba(0,0,0,0.12)] rounded-3xl overflow-hidden">
+      <Card className="w-full max-w-lg mx-auto border-none shadow-[0_8px_30px_rgba(0,0,0,0.12)] rounded-3xl overflow-hidden bg-white dark:bg-slate-900 transition-colors duration-500">
         <div className="bg-gradient-to-r from-red-600 via-orange-500 to-orange-400 p-6 text-center rounded-t-3xl">
           <div className="mx-auto w-20 h-20 bg-white rounded-full flex items-center justify-center mb-4 shadow-lg">
             <Check className="w-10 h-10 text-green-500" />
@@ -415,7 +415,7 @@ export function RegistrationWizard() {
           <p className="text-white/80 text-sm mt-1">Welcome to SafeScape Fire Safety Learning</p>
         </div>
         <CardContent className="space-y-6 p-6">
-          <div className="text-center p-6 bg-orange-50 rounded-2xl border-2 border-orange-200">
+          <div className="text-center p-6 bg-orange-50 dark:bg-orange-500/10 rounded-2xl border-2 border-orange-200 dark:border-orange-500/20 transition-colors">
             <p className="text-sm text-orange-600 font-semibold mb-2">Your Pre-Test Score</p>
             <div className="text-5xl font-black" style={{ color: rating.color }}>
               {registrationResult.score} / {registrationResult.maxScore}
@@ -423,7 +423,7 @@ export function RegistrationWizard() {
             <p className="text-lg font-bold mt-2" style={{ color: rating.color }}>
               {rating.label}
             </p>
-            <p className="text-sm text-slate-500 mt-4">
+            <p className="text-sm text-slate-500 dark:text-slate-400 mt-4 transition-colors">
               This is your baseline score. Complete modules and activities to unlock the Post-Test
               and see how much you&apos;ve improved!
             </p>
@@ -442,7 +442,7 @@ export function RegistrationWizard() {
   }
 
   return (
-    <Card className="w-full max-w-3xl mx-auto border-none shadow-[0_8px_30px_rgba(0,0,0,0.12)] rounded-3xl overflow-hidden">
+    <Card className="w-full max-w-3xl mx-auto border-none shadow-[0_8px_30px_rgba(0,0,0,0.12)] rounded-3xl overflow-hidden bg-white dark:bg-slate-900 transition-colors duration-500">
       {/* Colorful Gradient Header */}
       <div className="bg-red-600 px-4 sm:px-6 pt-4 sm:pt-5 pb-5 sm:pb-6 rounded-t-3xl">
         <div className="flex items-center gap-2 mb-2 sm:mb-3">
@@ -498,9 +498,9 @@ export function RegistrationWizard() {
 
       <CardContent className="p-4 sm:p-6">
         {error && (
-          <div className="mb-4 p-3 bg-red-50 border-2 border-red-200 rounded-2xl flex items-start gap-2">
+          <div className="mb-4 p-3 bg-red-50 dark:bg-red-500/10 border-2 border-red-200 dark:border-red-500/20 rounded-2xl flex items-start gap-2 transition-colors">
             <AlertCircle className="h-5 w-5 text-red-500 flex-shrink-0 mt-0.5" />
-            <p className="text-red-600 text-sm font-medium">{error}</p>
+            <p className="text-red-600 dark:text-red-400 text-sm font-medium">{error}</p>
           </div>
         )}
 
@@ -508,13 +508,13 @@ export function RegistrationWizard() {
         {currentStep === 1 && (
           <div className="space-y-5">
             <div>
-              <Label htmlFor="lastName" className="text-sm font-bold text-slate-700">Last Name *</Label>
+              <Label htmlFor="lastName" className="text-sm font-bold text-slate-700 dark:text-slate-300 transition-colors">Last Name *</Label>
               <Input
                 id="lastName"
                 placeholder="Enter your last name"
                 value={data.lastName}
                 onChange={(e) => updateField("lastName", e.target.value)}
-                className={`rounded-xl border-2 h-11 text-base focus:border-orange-400 focus:ring-orange-400 ${validationErrors.lastName ? "border-red-400 bg-red-50" : "border-gray-200"}`}
+                className={`rounded-xl border-2 h-11 text-base focus:border-orange-400 focus:ring-orange-400 dark:bg-slate-950 dark:text-white dark:border-slate-800 ${validationErrors.lastName ? "border-red-400 bg-red-50 dark:bg-red-500/10" : "border-gray-200"}`}
               />
               {validationErrors.lastName && (
                 <p className="text-sm text-red-500 mt-1 font-medium">⚠️ {validationErrors.lastName}</p>
@@ -522,13 +522,13 @@ export function RegistrationWizard() {
             </div>
 
             <div>
-              <Label htmlFor="firstName" className="text-sm font-bold text-slate-700">First Name *</Label>
+              <Label htmlFor="firstName" className="text-sm font-bold text-slate-700 dark:text-slate-300 transition-colors">First Name *</Label>
               <Input
                 id="firstName"
                 placeholder="Enter your first name"
                 value={data.firstName}
                 onChange={(e) => updateField("firstName", e.target.value)}
-                className={`rounded-xl border-2 h-11 text-base focus:border-orange-400 focus:ring-orange-400 ${validationErrors.firstName ? "border-red-400 bg-red-50" : "border-gray-200"}`}
+                className={`rounded-xl border-2 h-11 text-base focus:border-orange-400 focus:ring-orange-400 dark:bg-slate-950 dark:text-white dark:border-slate-800 ${validationErrors.firstName ? "border-red-400 bg-red-50 dark:bg-red-500/10" : "border-gray-200"}`}
               />
               {validationErrors.firstName && (
                 <p className="text-sm text-red-500 mt-1 font-medium">⚠️ {validationErrors.firstName}</p>
@@ -536,18 +536,18 @@ export function RegistrationWizard() {
             </div>
 
             <div>
-              <Label htmlFor="middleName" className="text-sm font-bold text-slate-700">Middle Name (Optional)</Label>
+              <Label htmlFor="middleName" className="text-sm font-bold text-slate-700 dark:text-slate-300 transition-colors">Middle Name (Optional)</Label>
               <Input
                 id="middleName"
                 placeholder="Enter your middle name"
                 value={data.middleName}
                 onChange={(e) => updateField("middleName", e.target.value)}
-                className="rounded-xl border-2 border-gray-200 h-11 text-base focus:border-orange-400 focus:ring-orange-400"
+                className="rounded-xl border-2 border-gray-200 dark:border-slate-800 dark:bg-slate-950 dark:text-white h-11 text-base focus:border-orange-400 focus:ring-orange-400"
               />
             </div>
 
             <div>
-              <Label htmlFor="age" className="text-sm font-bold text-slate-700">Age *</Label>
+              <Label htmlFor="age" className="text-sm font-bold text-slate-700 dark:text-slate-300 transition-colors">Age *</Label>
               <Input
                 id="age"
                 type="number"
@@ -556,7 +556,7 @@ export function RegistrationWizard() {
                 max="120"
                 value={data.age}
                 onChange={(e) => updateField("age", e.target.value)}
-                className={`rounded-xl border-2 h-11 text-base focus:border-orange-400 focus:ring-orange-400 ${validationErrors.age ? "border-red-400 bg-red-50" : "border-gray-200"}`}
+                className={`rounded-xl border-2 h-11 text-base focus:border-orange-400 focus:ring-orange-400 dark:bg-slate-950 dark:text-white dark:border-slate-800 ${validationErrors.age ? "border-red-400 bg-red-50 dark:bg-red-500/10" : "border-gray-200"}`}
               />
               {validationErrors.age && (
                 <p className="text-sm text-red-500 mt-1 font-medium">⚠️ {validationErrors.age}</p>
@@ -564,14 +564,14 @@ export function RegistrationWizard() {
             </div>
 
             <div>
-              <Label className="text-sm font-bold text-slate-700">Gender *</Label>
+              <Label className="text-sm font-bold text-slate-700 dark:text-slate-300 transition-colors">Gender *</Label>
               <Select value={data.gender} onValueChange={(value) => updateField("gender", value)}>
-                <SelectTrigger className={`rounded-xl border-2 h-11 text-base font-bold text-slate-700 focus:ring-orange-400 focus:border-orange-400 transition-all hover:border-slate-300 ${validationErrors.gender ? "border-red-400 bg-red-50" : "border-gray-200"}`}>
+                <SelectTrigger className={`rounded-xl border-2 h-11 text-base font-bold text-slate-700 dark:text-slate-200 focus:ring-orange-400 focus:border-orange-400 transition-all hover:border-slate-300 dark:bg-slate-950 dark:border-slate-800 ${validationErrors.gender ? "border-red-400 bg-red-50 dark:bg-red-500/10" : "border-gray-200"}`}>
                   <SelectValue placeholder="Select your gender" />
                 </SelectTrigger>
-                <SelectContent className="rounded-xl border-2 border-slate-200 shadow-xl p-1">
+                <SelectContent className="rounded-xl border-2 border-slate-200 dark:border-slate-800 dark:bg-slate-900 shadow-xl p-1">
                   {GENDER_OPTIONS.map((option) => (
-                    <SelectItem key={option} value={option} className="rounded-lg font-bold text-slate-700 focus:bg-orange-50 focus:text-orange-600 transition-colors cursor-pointer py-2.5">
+                    <SelectItem key={option} value={option} className="rounded-lg font-bold text-slate-700 dark:text-slate-300 focus:bg-orange-50 dark:focus:bg-slate-800 focus:text-orange-600 dark:focus:text-orange-400 transition-colors cursor-pointer py-2.5">
                       {option}
                     </SelectItem>
                   ))}
@@ -588,14 +588,14 @@ export function RegistrationWizard() {
         {currentStep === 2 && (
           <div className="space-y-4">
             <div>
-              <Label>Barangay *</Label>
+              <Label className="text-sm font-bold text-slate-700 dark:text-slate-300">Barangay *</Label>
               <Select value={data.barangay} onValueChange={(value) => updateField("barangay", value)}>
-                <SelectTrigger className={`rounded-xl border-2 h-11 text-base font-bold text-slate-700 focus:ring-orange-400 focus:border-orange-400 transition-all hover:border-slate-300 ${validationErrors.barangay ? "border-red-500 bg-red-50" : "border-gray-200"}`}>
+                <SelectTrigger className={`rounded-xl border-2 h-11 text-base font-bold text-slate-700 dark:text-slate-200 focus:ring-orange-400 focus:border-orange-400 transition-all hover:border-slate-300 dark:bg-slate-950 dark:border-slate-800 ${validationErrors.barangay ? "border-red-500 bg-red-50 dark:bg-red-500/10" : "border-gray-200"}`}>
                   <SelectValue placeholder="Select your barangay" />
                 </SelectTrigger>
-                <SelectContent className="rounded-xl border-2 border-slate-200 shadow-xl p-1">
+                <SelectContent className="rounded-xl border-2 border-slate-200 dark:border-slate-800 dark:bg-slate-900 shadow-xl p-1">
                   {BARANGAYS_SANTA_CRUZ.map((brgy) => (
-                    <SelectItem key={brgy} value={brgy} className="rounded-lg font-bold text-slate-700 focus:bg-orange-50 focus:text-orange-600 transition-colors cursor-pointer py-2.5">
+                    <SelectItem key={brgy} value={brgy} className="rounded-lg font-bold text-slate-700 dark:text-slate-300 focus:bg-orange-50 dark:focus:bg-slate-800 focus:text-orange-600 dark:focus:text-orange-400 transition-colors cursor-pointer py-2.5">
                       {brgy}
                     </SelectItem>
                   ))}
@@ -609,14 +609,14 @@ export function RegistrationWizard() {
             {isKid ? (
               <>
                 <div>
-                  <Label>School *</Label>
+                  <Label className="text-sm font-bold text-slate-700 dark:text-slate-300">School *</Label>
                   <Select value={data.school} onValueChange={(value) => updateField("school", value)}>
-                    <SelectTrigger className={`rounded-xl border-2 h-11 text-base font-bold text-slate-700 focus:ring-orange-400 focus:border-orange-400 transition-all hover:border-slate-300 ${validationErrors.school ? "border-red-500 bg-red-50" : "border-gray-200"}`}>
+                    <SelectTrigger className={`rounded-xl border-2 h-11 text-base font-bold text-slate-700 dark:text-slate-200 focus:ring-orange-400 focus:border-orange-400 transition-all hover:border-slate-300 dark:bg-slate-950 dark:border-slate-800 ${validationErrors.school ? "border-red-500 bg-red-50 dark:bg-red-500/10" : "border-gray-200"}`}>
                       <SelectValue placeholder="Select your school" />
                     </SelectTrigger>
-                    <SelectContent className="rounded-xl border-2 border-slate-200 shadow-xl p-1">
+                    <SelectContent className="rounded-xl border-2 border-slate-200 dark:border-slate-800 dark:bg-slate-900 shadow-xl p-1">
                       {ALL_SCHOOLS.map((school) => (
-                        <SelectItem key={school} value={school} className="rounded-lg font-bold text-slate-700 focus:bg-orange-50 focus:text-orange-600 transition-colors cursor-pointer py-2.5">
+                        <SelectItem key={school} value={school} className="rounded-lg font-bold text-slate-700 dark:text-slate-300 focus:bg-orange-50 dark:focus:bg-slate-800 focus:text-orange-600 dark:focus:text-orange-400 transition-colors cursor-pointer py-2.5">
                           {school}
                         </SelectItem>
                       ))}
@@ -629,13 +629,13 @@ export function RegistrationWizard() {
 
                 {data.school === "Other (Please specify)" && (
                   <div>
-                    <Label htmlFor="schoolOther">Specify School *</Label>
+                    <Label htmlFor="schoolOther" className="text-sm font-bold text-slate-700 dark:text-slate-300">Specify School *</Label>
                     <Input
                       id="schoolOther"
                       placeholder="Enter your school name"
                       value={data.schoolOther}
                       onChange={(e) => updateField("schoolOther", e.target.value)}
-                      className={validationErrors.schoolOther ? "border-red-500" : ""}
+                      className={`rounded-xl border-2 h-11 text-base dark:bg-slate-950 dark:text-white dark:border-slate-800 ${validationErrors.schoolOther ? "border-red-500 bg-red-50 dark:bg-red-500/10" : "border-gray-200"}`}
                     />
                     {validationErrors.schoolOther && (
                       <p className="text-sm text-red-500 mt-1">{validationErrors.schoolOther}</p>
@@ -644,14 +644,14 @@ export function RegistrationWizard() {
                 )}
 
                 <div>
-                  <Label>Grade Level *</Label>
+                  <Label className="text-sm font-bold text-slate-700 dark:text-slate-300">Grade Level *</Label>
                   <Select value={data.gradeLevel} onValueChange={(value) => updateField("gradeLevel", value)}>
-                    <SelectTrigger className={`rounded-xl border-2 h-11 text-base font-bold text-slate-700 focus:ring-orange-400 focus:border-orange-400 transition-all hover:border-slate-300 ${validationErrors.gradeLevel ? "border-red-500 bg-red-50" : "border-gray-200"}`}>
+                    <SelectTrigger className={`rounded-xl border-2 h-11 text-base font-bold text-slate-700 dark:text-slate-200 focus:ring-orange-400 focus:border-orange-400 transition-all hover:border-slate-300 dark:bg-slate-950 dark:border-slate-800 ${validationErrors.gradeLevel ? "border-red-500 bg-red-50 dark:bg-red-500/10" : "border-gray-200"}`}>
                       <SelectValue placeholder="Select your grade level" />
                     </SelectTrigger>
-                    <SelectContent className="rounded-xl border-2 border-slate-200 shadow-xl p-1">
+                    <SelectContent className="rounded-xl border-2 border-slate-200 dark:border-slate-800 dark:bg-slate-900 shadow-xl p-1">
                       {GRADE_LEVELS.map((level) => (
-                        <SelectItem key={level} value={level} className="rounded-lg font-bold text-slate-700 focus:bg-orange-50 focus:text-orange-600 transition-colors cursor-pointer py-2.5">
+                        <SelectItem key={level} value={level} className="rounded-lg font-bold text-slate-700 dark:text-slate-300 focus:bg-orange-50 dark:focus:bg-slate-800 focus:text-orange-600 dark:focus:text-orange-400 transition-colors cursor-pointer py-2.5">
                           {level}
                         </SelectItem>
                       ))}
@@ -665,14 +665,14 @@ export function RegistrationWizard() {
             ) : (
               <>
                 <div>
-                  <Label>Occupation *</Label>
+                  <Label className="text-sm font-bold text-slate-700 dark:text-slate-300">Occupation *</Label>
                   <Select value={data.occupation} onValueChange={(value) => updateField("occupation", value)}>
-                    <SelectTrigger className={`rounded-xl border-2 h-11 text-base font-bold text-slate-700 focus:ring-orange-400 focus:border-orange-400 transition-all hover:border-slate-300 ${validationErrors.occupation ? "border-red-500 bg-red-50" : "border-gray-200"}`}>
+                    <SelectTrigger className={`rounded-xl border-2 h-11 text-base font-bold text-slate-700 dark:text-slate-200 focus:ring-orange-400 focus:border-orange-400 transition-all hover:border-slate-300 dark:bg-slate-950 dark:border-slate-800 ${validationErrors.occupation ? "border-red-500 bg-red-50 dark:bg-red-500/10" : "border-gray-200"}`}>
                       <SelectValue placeholder="Select your occupation" />
                     </SelectTrigger>
-                    <SelectContent className="rounded-xl border-2 border-slate-200 shadow-xl p-1">
+                    <SelectContent className="rounded-xl border-2 border-slate-200 dark:border-slate-800 dark:bg-slate-900 shadow-xl p-1">
                       {OCCUPATION_CATEGORIES.map((occ) => (
-                        <SelectItem key={occ} value={occ} className="rounded-lg font-bold text-slate-700 focus:bg-orange-50 focus:text-orange-600 transition-colors cursor-pointer py-2.5">
+                        <SelectItem key={occ} value={occ} className="rounded-lg font-bold text-slate-700 dark:text-slate-300 focus:bg-orange-50 dark:focus:bg-slate-800 focus:text-orange-600 dark:focus:text-orange-400 transition-colors cursor-pointer py-2.5">
                           {occ}
                         </SelectItem>
                       ))}
@@ -685,13 +685,13 @@ export function RegistrationWizard() {
 
                 {data.occupation === "Other (Please specify)" && (
                   <div>
-                    <Label htmlFor="occupationOther">Specify Occupation *</Label>
+                    <Label htmlFor="occupationOther" className="text-sm font-bold text-slate-700 dark:text-slate-300">Specify Occupation *</Label>
                     <Input
                       id="occupationOther"
                       placeholder="Enter your occupation"
                       value={data.occupationOther}
                       onChange={(e) => updateField("occupationOther", e.target.value)}
-                      className={validationErrors.occupationOther ? "border-red-500" : ""}
+                      className={`rounded-xl border-2 h-11 text-base dark:bg-slate-950 dark:text-white dark:border-slate-800 ${validationErrors.occupationOther ? "border-red-500 bg-red-50 dark:bg-red-500/10" : "border-gray-200"}`}
                     />
                     {validationErrors.occupationOther && (
                       <p className="text-sm text-red-500 mt-1">{validationErrors.occupationOther}</p>
@@ -701,14 +701,14 @@ export function RegistrationWizard() {
 
                 {data.occupation === "Student" && (
                   <div>
-                    <Label>School (Optional)</Label>
+                    <Label className="text-sm font-bold text-slate-700 dark:text-slate-300">School (Optional)</Label>
                     <Select value={data.school} onValueChange={(value) => updateField("school", value)}>
-                      <SelectTrigger className="rounded-xl border-2 h-11 text-base font-bold text-slate-700 focus:ring-orange-400 focus:border-orange-400 transition-all hover:border-slate-300 border-gray-200">
+                      <SelectTrigger className="rounded-xl border-2 h-11 text-base font-bold text-slate-700 dark:text-slate-200 focus:ring-orange-400 focus:border-orange-400 transition-all hover:border-slate-300 dark:bg-slate-950 dark:border-slate-800 border-gray-200 transition-colors">
                         <SelectValue placeholder="Select your school" />
                       </SelectTrigger>
-                      <SelectContent className="rounded-xl border-2 border-slate-200 shadow-xl p-1">
+                      <SelectContent className="rounded-xl border-2 border-slate-200 dark:border-slate-800 dark:bg-slate-900 shadow-xl p-1">
                         {ALL_SCHOOLS.map((school) => (
-                          <SelectItem key={school} value={school} className="rounded-lg font-bold text-slate-700 focus:bg-orange-50 focus:text-orange-600 transition-colors cursor-pointer py-2.5">
+                          <SelectItem key={school} value={school} className="rounded-lg font-bold text-slate-700 dark:text-slate-300 focus:bg-orange-50 dark:focus:bg-slate-800 focus:text-orange-600 dark:focus:text-orange-400 transition-colors cursor-pointer py-2.5">
                             {school}
                           </SelectItem>
                         ))}
@@ -726,31 +726,31 @@ export function RegistrationWizard() {
           <div className="space-y-6">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="username" className="text-sm font-bold text-slate-700 ml-1">Username *</Label>
+                <Label htmlFor="username" className="text-sm font-bold text-slate-700 dark:text-slate-300 ml-1 transition-colors">Username *</Label>
                 <Input
                   id="username"
                   placeholder="Choose a username"
                   value={data.username}
                   onChange={(e) => updateField("username", e.target.value)}
-                  className={`rounded-xl border-2 h-11 text-base focus:border-orange-400 focus:ring-orange-400 ${validationErrors.username ? "border-red-400 bg-red-50" : "border-gray-200"}`}
+                  className={`rounded-xl border-2 h-11 text-base focus:border-orange-400 focus:ring-orange-400 dark:bg-slate-950 dark:text-white dark:border-slate-800 ${validationErrors.username ? "border-red-400 bg-red-50 dark:bg-red-500/10" : "border-gray-200"}`}
                 />
                 {validationErrors.username && (
                   <p className="text-sm text-red-500 mt-1 font-medium">⚠️ {validationErrors.username}</p>
                 )}
-                <p className="text-[10px] text-slate-500 font-medium ml-1">
+                <p className="text-[10px] text-slate-500 dark:text-slate-400 font-medium ml-1 transition-colors">
                   3-20 characters, letters, numbers, and underscores only
                 </p>
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="email" className="text-sm font-bold text-slate-700 ml-1">Email *</Label>
+                <Label htmlFor="email" className="text-sm font-bold text-slate-700 dark:text-slate-300 ml-1 transition-colors">Email *</Label>
                 <Input
                   id="email"
                   type="email"
                   placeholder="example@gmail.com"
                   value={data.email}
                   onChange={(e) => updateField("email", e.target.value)}
-                  className={`rounded-xl border-2 h-11 text-base focus:border-orange-400 focus:ring-orange-400 ${validationErrors.email ? "border-red-400 bg-red-50" : "border-gray-200"}`}
+                  className={`rounded-xl border-2 h-11 text-base focus:border-orange-400 focus:ring-orange-400 dark:bg-slate-950 dark:text-white dark:border-slate-800 ${validationErrors.email ? "border-red-400 bg-red-50 dark:bg-red-500/10" : "border-gray-200"}`}
                 />
                 {validationErrors.email && (
                   <p className="text-sm text-red-500 mt-1 font-medium">⚠️ {validationErrors.email}</p>
@@ -760,7 +760,7 @@ export function RegistrationWizard() {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="password" className="text-sm font-bold text-slate-700 ml-1">Password *</Label>
+                <Label htmlFor="password" className="text-sm font-bold text-slate-700 dark:text-slate-300 ml-1 transition-colors">Password *</Label>
                 <div className="relative">
                   <Input
                     id="password"
@@ -768,12 +768,12 @@ export function RegistrationWizard() {
                     placeholder="Create a password"
                     value={data.password}
                     onChange={(e) => updateField("password", e.target.value)}
-                    className={`rounded-xl border-2 h-11 text-base focus:border-orange-400 focus:ring-orange-400 pr-10 ${validationErrors.password ? "border-red-400 bg-red-50" : "border-gray-200"}`}
+                    className={`rounded-xl border-2 h-11 text-base focus:border-orange-400 focus:ring-orange-400 dark:bg-slate-950 dark:text-white dark:border-slate-800 pr-10 ${validationErrors.password ? "border-red-400 bg-red-50 dark:bg-red-500/10" : "border-gray-200"}`}
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-600 hover:text-slate-600 dark:hover:text-slate-400 transition-colors"
                   >
                     {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
                   </button>
@@ -784,14 +784,14 @@ export function RegistrationWizard() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="confirmPassword" className="text-sm font-bold text-slate-700 ml-1">Confirm Password *</Label>
+                <Label htmlFor="confirmPassword" className="text-sm font-bold text-slate-700 dark:text-slate-300 ml-1 transition-colors">Confirm Password *</Label>
                 <Input
                   id="confirmPassword"
                   type={showPassword ? "text" : "password"}
                   placeholder="Confirm your password"
                   value={data.confirmPassword}
                   onChange={(e) => updateField("confirmPassword", e.target.value)}
-                  className={`rounded-xl border-2 h-11 text-base focus:border-orange-400 focus:ring-orange-400 ${validationErrors.confirmPassword ? "border-red-400 bg-red-50" : "border-gray-200"}`}
+                  className={`rounded-xl border-2 h-11 text-base focus:border-orange-400 focus:ring-orange-400 dark:bg-slate-950 dark:text-white dark:border-slate-800 ${validationErrors.confirmPassword ? "border-red-400 bg-red-50 dark:bg-red-500/10" : "border-gray-200"}`}
                 />
                 {validationErrors.confirmPassword && (
                   <p className="text-sm text-red-500 mt-1 font-medium">⚠️ {validationErrors.confirmPassword}</p>
@@ -800,8 +800,8 @@ export function RegistrationWizard() {
             </div>
 
             {/* Password Requirements Checklist */}
-            <div className="bg-slate-50 border-2 border-slate-100 rounded-2xl p-4">
-              <p className="text-xs font-black text-slate-700 mb-3 uppercase tracking-wider">Password Requirements:</p>
+            <div className="bg-slate-50 dark:bg-slate-950 border-2 border-slate-100 dark:border-slate-800 rounded-2xl p-4 transition-colors">
+              <p className="text-xs font-black text-slate-700 dark:text-slate-300 mb-3 uppercase tracking-wider transition-colors">Password Requirements:</p>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-2">
                 {[
                   { label: "At least 8 characters", met: data.password.length >= 8 },
@@ -811,10 +811,10 @@ export function RegistrationWizard() {
                   { label: "One special character (!@#...)", met: /[^A-Za-z0-9]/.test(data.password) },
                 ].map((req, i) => (
                   <div key={i} className="flex items-center gap-2">
-                    <div className={`h-4 w-4 rounded-full flex items-center justify-center transition-colors ${req.met ? "bg-green-500" : "bg-slate-200"}`}>
+                    <div className={`h-4 w-4 rounded-full flex items-center justify-center transition-colors ${req.met ? "bg-green-500" : "bg-slate-200 dark:bg-slate-800"}`}>
                       <Check className={`h-2.5 w-2.5 text-white transition-opacity ${req.met ? "opacity-100" : "opacity-0"}`} strokeWidth={4} />
                     </div>
-                    <span className={`text-xs font-bold transition-colors ${req.met ? "text-green-700" : "text-slate-500"}`}>
+                    <span className={`text-xs font-bold transition-colors ${req.met ? "text-green-700 dark:text-green-400" : "text-slate-500 dark:text-slate-400"}`}>
                       {req.label}
                     </span>
                   </div>
@@ -823,14 +823,14 @@ export function RegistrationWizard() {
             </div>
 
             <div className="flex items-start space-x-3 pt-2 group cursor-pointer" onClick={() => updateField("dataPrivacyConsent", !data.dataPrivacyConsent)}>
-              <div className={`mt-0.5 shrink-0 h-5 w-5 rounded-md border-2 flex items-center justify-center transition-all ${data.dataPrivacyConsent ? "bg-orange-500 border-orange-500 shadow-[0_2px_0_#ca8a04]" : "bg-white border-slate-200"}`}>
+              <div className={`mt-0.5 shrink-0 h-5 w-5 rounded-md border-2 flex items-center justify-center transition-all ${data.dataPrivacyConsent ? "bg-orange-500 border-orange-500 shadow-[0_2px_0_#ca8a04]" : "bg-white dark:bg-slate-950 border-slate-200 dark:border-slate-800"}`}>
                 {data.dataPrivacyConsent && <Check className="h-3.5 w-3.5 text-white" strokeWidth={4} />}
               </div>
               <div className="grid gap-1.5 leading-none">
-                <label className={`text-[13px] font-black leading-tight cursor-pointer transition-colors ${data.dataPrivacyConsent ? "text-slate-800" : "text-slate-600"} ${validationErrors.dataPrivacyConsent ? "text-red-500" : ""}`}>
+                <label className={`text-[13px] font-black leading-tight cursor-pointer transition-colors ${data.dataPrivacyConsent ? "text-slate-800 dark:text-white" : "text-slate-600 dark:text-slate-400"} ${validationErrors.dataPrivacyConsent ? "text-red-500" : ""}`}>
                   I agree to the Data Privacy Policy *
                 </label>
-                <p className="text-[11px] font-bold text-slate-400 leading-relaxed">
+                <p className="text-[11px] font-bold text-slate-400 dark:text-slate-500 leading-relaxed transition-colors">
                   Your data (barangay, school) will be used for community fire safety analytics.
                   Individual information is kept confidential and only aggregated data is shared.
                 </p>
@@ -859,11 +859,11 @@ export function RegistrationWizard() {
               </div>
             ) : (
               <>
-                <div className="p-4 bg-orange-50 rounded-2xl border-2 border-orange-200">
-                  <span className="inline-block text-xs font-bold text-orange-600 bg-orange-100 px-3 py-1 rounded-full mb-2">
+                <div className="p-4 bg-orange-50 dark:bg-orange-500/10 rounded-2xl border-2 border-orange-200 dark:border-orange-500/20 transition-colors">
+                  <span className="inline-block text-xs font-bold text-orange-600 dark:text-orange-400 bg-orange-100 dark:bg-orange-500/20 px-3 py-1 rounded-full mb-2 transition-colors">
                     {questions[currentQuestionIndex].category}
                   </span>
-                  <h3 className="text-base font-bold text-slate-800 mb-3">
+                  <h3 className="text-base font-bold text-slate-800 dark:text-white mb-3 transition-colors">
                     {questions[currentQuestionIndex].question}
                   </h3>
 
@@ -872,9 +872,9 @@ export function RegistrationWizard() {
                     onValueChange={(value) => handleAnswerQuestion(questions[currentQuestionIndex].id, parseInt(value))}
                   >
                     {questions[currentQuestionIndex].options.map((option, index) => (
-                      <div key={index} className="flex items-center space-x-2 p-2 rounded-xl hover:bg-orange-100/60 border-2 border-transparent hover:border-orange-300 transition-all cursor-pointer">
-                        <RadioGroupItem value={index.toString()} id={`option-${index}`} className="border-orange-400 text-orange-500" />
-                        <Label htmlFor={`option-${index}`} className="flex-1 cursor-pointer font-medium">
+                      <div key={index} className="flex items-center space-x-2 p-2 rounded-xl hover:bg-orange-100/60 dark:hover:bg-orange-500/10 border-2 border-transparent hover:border-orange-300 dark:hover:border-orange-500/30 transition-all cursor-pointer group">
+                        <RadioGroupItem value={index.toString()} id={`option-${index}`} className="border-orange-400 text-orange-500 dark:border-orange-500/50" />
+                        <Label htmlFor={`option-${index}`} className="flex-1 cursor-pointer font-medium text-slate-700 dark:text-slate-300 group-hover:text-slate-900 dark:group-hover:text-white transition-colors">
                           {option}
                         </Label>
                       </div>
@@ -921,7 +921,7 @@ export function RegistrationWizard() {
                           ? "bg-orange-500 text-white border-orange-300 shadow-[0_3px_0_#c2410c] scale-110"
                           : data.preTestAnswers[q.id] !== undefined
                             ? "bg-green-400 text-white border-green-300 shadow-[0_2px_0_#166534]"
-                            : "bg-gray-100 text-gray-400 border-gray-200 hover:bg-gray-200"
+                            : "bg-gray-100 dark:bg-slate-800 text-gray-400 dark:text-slate-500 border-gray-200 dark:border-slate-700 hover:bg-gray-200 dark:hover:bg-slate-700"
                       }`}
                     >
                       {idx + 1}
@@ -945,8 +945,8 @@ export function RegistrationWizard() {
               disabled={currentStep === 1}
               className={`flex items-center gap-1 font-bold px-5 py-2.5 rounded-full border-[3px] transition-all text-sm ${
                 currentStep === 1
-                  ? "border-gray-200 text-gray-300 cursor-not-allowed"
-                  : "border-gray-300 text-slate-600 shadow-[0_3px_0_#94a3b8] hover:-translate-y-0.5 hover:shadow-[0_5px_0_#94a3b8] active:translate-y-1 active:shadow-[0_0px_0_#94a3b8]"
+                  ? "border-gray-200 dark:border-slate-800 text-gray-300 dark:text-slate-700 cursor-not-allowed"
+                  : "border-gray-300 dark:border-slate-700 text-slate-600 dark:text-slate-400 shadow-[0_3px_0_#94a3b8] dark:shadow-[0_3px_0_#1e293b] hover:-translate-y-0.5 hover:shadow-[0_5px_0_#94a3b8] dark:hover:shadow-[0_5px_0_#1e293b] active:translate-y-1 active:shadow-[0_0px_0_#94a3b8]"
               }`}
             >
               <ChevronLeft className="h-4 w-4" />
@@ -966,7 +966,7 @@ export function RegistrationWizard() {
           <div className="flex justify-start mt-6 sm:mt-8">
             <button
               onClick={handleBack}
-              className="flex items-center gap-1 font-bold px-5 py-2.5 rounded-full border-[3px] border-gray-300 text-slate-600 shadow-[0_3px_0_#94a3b8] hover:-translate-y-0.5 hover:shadow-[0_5px_0_#94a3b8] active:translate-y-1 active:shadow-[0_0px_0_#94a3b8] transition-all text-sm"
+              className="flex items-center gap-1 font-bold px-5 py-2.5 rounded-full border-[3px] border-gray-300 dark:border-slate-700 text-slate-600 dark:text-slate-400 shadow-[0_3px_0_#94a3b8] dark:shadow-[0_3px_0_#1e293b] hover:-translate-y-0.5 hover:shadow-[0_5px_0_#94a3b8] dark:hover:shadow-[0_5px_0_#1e293b] active:translate-y-1 active:shadow-[0_0px_0_#94a3b8] transition-all text-sm"
             >
               <ChevronLeft className="h-4 w-4" />
               Back to Account

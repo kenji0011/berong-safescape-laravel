@@ -119,15 +119,15 @@ const QuizPage = () => {
   const progressPercentage = ((currentQuestionIndex) / questions.length) * 100;
 
   return (
-    <div className="min-h-screen relative flex flex-col font-sans bg-blue-50 selection:bg-orange-300 selection:text-orange-900">
+    <div className="min-h-screen relative flex flex-col font-sans bg-blue-50 dark:bg-slate-950 transition-colors duration-500 selection:bg-orange-300 selection:text-orange-900">
       {/* Heroic Background */}
       <div className="absolute inset-0 z-0">
         <img 
           src="/challenges-bg.png" 
           alt="" 
-          className="w-full h-full object-cover opacity-30 mix-blend-multiply" 
+          className="w-full h-full object-cover opacity-30 dark:opacity-10 mix-blend-multiply" 
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-blue-50/80 via-white/40 to-blue-50/90"></div>
+        <div className="absolute inset-0 bg-gradient-to-b from-blue-50/80 via-white/40 to-blue-50/90 dark:from-slate-950/80 dark:via-slate-900/40 dark:to-slate-950/90"></div>
       </div>
 
       <div className="relative z-10 w-full flex-1 flex flex-col py-4 pb-28 sm:pb-4">
@@ -135,7 +135,7 @@ const QuizPage = () => {
         <div className="absolute top-2 left-4 z-20">
           <Link 
             href="/kids/challenges" 
-            className="inline-flex items-center gap-2 text-slate-500 font-bold hover:text-orange-600 transition-all text-sm bg-white/60 backdrop-blur-sm px-4 py-2 rounded-full border border-white/60 shadow-sm"
+            className="inline-flex items-center gap-2 text-slate-500 dark:text-slate-400 font-bold hover:text-orange-600 dark:hover:text-orange-400 transition-all text-sm bg-white/60 dark:bg-slate-800/60 backdrop-blur-sm px-4 py-2 rounded-full border border-white/60 dark:border-slate-700/60 shadow-sm"
           >
             <ArrowLeft className="h-4 w-4" />
             Back to Activities
@@ -145,16 +145,16 @@ const QuizPage = () => {
         {/* Main Quiz Hub Container */}
         <div className="max-w-3xl mx-auto w-full px-4 sm:px-6 flex-1 flex flex-col lg:max-h-[85vh] pt-12 sm:pt-0">
           
-          <div className="flex flex-col flex-1 w-full bg-white/90 backdrop-blur-2xl border border-white/60 rounded-[2.5rem] p-6 sm:p-10 shadow-[0_25px_60px_rgba(234,88,12,0.15)] overflow-hidden">
+          <div className="flex flex-col flex-1 w-full bg-white/90 dark:bg-slate-900/90 backdrop-blur-2xl border border-white/60 dark:border-slate-800/60 rounded-[2.5rem] p-6 sm:p-10 shadow-[0_25px_60px_rgba(234,88,12,0.15)] overflow-hidden transition-colors duration-500">
             
             {/* Header: Progress & Score */}
-            <div className="flex items-center justify-between font-extrabold text-slate-400 mb-4 text-sm uppercase tracking-wider">
+            <div className="flex items-center justify-between font-extrabold text-slate-400 dark:text-slate-500 mb-4 text-sm uppercase tracking-wider">
               <span>Question <span className="text-orange-500 text-base">{currentQuestionIndex + 1}</span> of {questions.length}</span>
-              <span className="bg-orange-100 text-orange-600 px-3 py-1 rounded-full shadow-inner border border-orange-200/50">Score: {score}</span>
+              <span className="bg-orange-100 dark:bg-orange-950/30 text-orange-600 dark:text-orange-400 px-3 py-1 rounded-full shadow-inner border border-orange-200/50 dark:border-orange-900/30">Score: {score}</span>
             </div>
 
             {/* Custom Progress Bar */}
-            <div className="w-full h-2.5 bg-slate-100 rounded-full mb-6 overflow-hidden shadow-inner border border-slate-200/50">
+            <div className="w-full h-2.5 bg-slate-100 dark:bg-slate-800 rounded-full mb-6 overflow-hidden shadow-inner border border-slate-200/50 dark:border-slate-700/50">
               <div 
                 className="h-full bg-gradient-to-r from-orange-400 to-rose-500 rounded-full transition-all duration-700 ease-out" 
                 style={{ width: `${progressPercentage}%` }}
@@ -162,7 +162,7 @@ const QuizPage = () => {
             </div>
 
             {/* Question Statement */}
-            <h2 className="text-2xl sm:text-3xl font-black text-slate-800 mb-6 tracking-tight leading-tight">
+            <h2 className="text-2xl sm:text-3xl font-black text-slate-800 dark:text-white mb-6 tracking-tight leading-tight">
               {currentQuestion.text}
             </h2>
 
@@ -186,21 +186,21 @@ const QuizPage = () => {
                     className={cn(
                       "w-full rounded-2xl p-4 sm:p-5 text-left font-bold text-base sm:text-lg transition-all duration-300 relative overflow-hidden group border-2 flex items-center justify-between",
                       !isAnswerRevealed && isSelected 
-                        ? "border-orange-500 bg-gradient-to-r from-orange-50 to-orange-100/50 text-orange-900 shadow-[0_10px_25px_rgba(249,115,22,0.15)] ring-4 ring-orange-500/20 transform scale-[1.02] cursor-pointer"
-                        : !isAnswerRevealed && "border-slate-100 bg-slate-50 text-slate-700 hover:border-orange-300 hover:bg-orange-50/30 hover:shadow-md hover:-translate-y-0.5 cursor-pointer",
-                      isAnswerRevealed && showCorrect && "border-emerald-500 bg-emerald-50 text-emerald-900 shadow-sm",
-                      isAnswerRevealed && showIncorrect && "border-rose-500 bg-rose-50 text-rose-900 shadow-sm",
-                      isAnswerRevealed && !showCorrect && !showIncorrect && "border-slate-100 bg-slate-100 text-slate-400 opacity-60 grayscale cursor-not-allowed"
+                        ? "border-orange-500 bg-gradient-to-r from-orange-50 to-orange-100/50 dark:from-orange-900/20 dark:to-orange-800/20 text-orange-900 dark:text-orange-100 shadow-[0_10px_25px_rgba(249,115,22,0.15)] ring-4 ring-orange-500/20 transform scale-[1.02] cursor-pointer"
+                        : !isAnswerRevealed && "border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/50 text-slate-700 dark:text-slate-300 hover:border-orange-300 dark:hover:border-orange-700 hover:bg-orange-50/30 dark:hover:bg-orange-900/10 hover:shadow-md hover:-translate-y-0.5 cursor-pointer",
+                      isAnswerRevealed && showCorrect && "border-emerald-500 bg-emerald-50 dark:bg-emerald-900/20 text-emerald-900 dark:text-emerald-100 shadow-sm",
+                      isAnswerRevealed && showIncorrect && "border-rose-500 bg-rose-50 dark:bg-rose-900/20 text-rose-900 dark:text-rose-100 shadow-sm",
+                      isAnswerRevealed && !showCorrect && !showIncorrect && "border-slate-100 dark:border-slate-800 bg-slate-100 dark:bg-slate-800/30 text-slate-400 dark:text-slate-600 opacity-60 grayscale cursor-not-allowed"
                     )}
                   >
                     <div className="flex items-center gap-4">
                       <div className={cn(
                         "h-8 w-8 rounded-full flex items-center justify-center text-sm transition-colors",
                         !isAnswerRevealed && isSelected ? "bg-orange-500 text-white shadow-md font-black" : "",
-                        !isAnswerRevealed && !isSelected ? "bg-slate-200 text-slate-500 font-bold group-hover:bg-orange-200 group-hover:text-orange-700" : "",
+                        !isAnswerRevealed && !isSelected ? "bg-slate-200 dark:bg-slate-700 text-slate-500 dark:text-slate-400 font-bold group-hover:bg-orange-200 dark:group-hover:bg-orange-900/40 group-hover:text-orange-700 dark:group-hover:text-orange-300" : "",
                         isAnswerRevealed && showCorrect ? "bg-emerald-500 text-white font-black" : "",
                         isAnswerRevealed && showIncorrect ? "bg-rose-500 text-white font-black" : "",
-                        isAnswerRevealed && !showCorrect && !showIncorrect ? "bg-slate-300 text-slate-500 font-bold" : ""
+                        isAnswerRevealed && !showCorrect && !showIncorrect ? "bg-slate-300 dark:bg-slate-700 text-slate-500 dark:text-slate-500 font-bold" : ""
                       )}>
                         {String.fromCharCode(65 + index)}
                       </div>
@@ -217,13 +217,13 @@ const QuizPage = () => {
 
             {/* Explanation Box */}
             {isAnswerRevealed && (
-              <div className="mb-4 p-4 rounded-2xl bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 shadow-sm flex items-start gap-3 animate-in slide-in-from-bottom-4 fade-in duration-500 shrink-0">
+              <div className="mb-4 p-4 rounded-2xl bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 border border-blue-200 dark:border-blue-800 shadow-sm flex items-start gap-3 animate-in slide-in-from-bottom-4 fade-in duration-500 shrink-0">
                 <Lightbulb className="h-6 w-6 text-blue-500 mt-0.5 shrink-0" />
                 <div>
-                  <h4 className={cn("font-black text-lg mb-1", selectedOption === currentQuestion.correctAnswer ? "text-emerald-600" : "text-rose-600")}>
+                  <h4 className={cn("font-black text-lg mb-1", selectedOption === currentQuestion.correctAnswer ? "text-emerald-600 dark:text-emerald-400" : "text-rose-600 dark:text-rose-400")}>
                     {selectedOption === currentQuestion.correctAnswer ? "Correct!" : "Nice try!"}
                   </h4>
-                  <p className="text-slate-700 font-medium text-sm sm:text-base leading-relaxed">
+                  <p className="text-slate-700 dark:text-slate-300 font-medium text-sm sm:text-base leading-relaxed">
                     {currentQuestion.explanation}
                   </p>
                 </div>
@@ -234,14 +234,14 @@ const QuizPage = () => {
             {!isAnswerRevealed && <div className="flex-1 min-h-[4rem]" />}
 
             {/* Footer / Submission */}
-            <div className="flex justify-end pt-4 border-t font-sans border-slate-100 mt-auto">
+            <div className="flex justify-end pt-4 border-t font-sans border-slate-100 dark:border-slate-800 mt-auto">
               <button 
                 onClick={handleSubmit}
                 className={cn(
                   "px-8 sm:px-10 py-3 rounded-full font-black text-base transition-all duration-300 shadow-lg",
                   selectedOption !== null 
-                    ? "bg-slate-900 text-white hover:bg-slate-800 hover:shadow-xl active:translate-y-0 active:shadow-md"
-                    : "bg-slate-200 text-slate-400 cursor-not-allowed shadow-none"
+                    ? "bg-slate-900 dark:bg-slate-700 text-white hover:bg-slate-800 dark:hover:bg-slate-600 hover:shadow-xl active:translate-y-0 active:shadow-md"
+                    : "bg-slate-200 dark:bg-slate-800 text-slate-400 dark:text-slate-600 cursor-not-allowed shadow-none"
                 )}
                 disabled={selectedOption === null}
               >

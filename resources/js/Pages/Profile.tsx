@@ -307,20 +307,23 @@ export default function ProfilePage() {
   }
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen relative">
       <Navigation />
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 relative z-10">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-[80px] sm:pt-[96px] pb-8 relative z-10">
+        {/* Background Overlay - Dynamic based on theme */}
+        <div className="fixed inset-0 bg-slate-50/70 dark:bg-slate-950/80 z-0 transition-colors duration-500 pointer-events-none" />
+
         {/* Header */}
-        <div className="mb-6 sm:mb-8 bg-white p-6 rounded-[2rem] border-[3px] border-slate-200 shadow-[0_8px_0_#cbd5e1] flex items-center justify-between">
+        <div className="mb-6 sm:mb-8 bg-white dark:bg-slate-800 p-6 rounded-[2rem] border-[3px] border-slate-200 dark:border-slate-700 shadow-[0_8px_0_#cbd5e1] dark:shadow-[0_8px_0_#1e293b] flex items-center justify-between transition-colors relative z-10">
           <div className="flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-6 flex-1">
             <div className="flex items-center gap-3 mb-1">
-              <div className="bg-red-100 p-2 rounded-xl">
-                <User className="h-6 w-6 sm:h-8 sm:w-8 text-[#d60000]" strokeWidth={2.5} />
+              <div className="bg-red-100 dark:bg-red-900/30 p-2 rounded-xl transition-colors">
+                <User className="h-6 w-6 sm:h-8 sm:w-8 text-[#d60000] dark:text-red-400" strokeWidth={2.5} />
               </div>
               <div>
-                <h1 className="text-2xl sm:text-3xl font-black text-slate-800 tracking-tight">User Profile</h1>
-                <p className="text-xs sm:text-sm text-slate-500 font-medium">Manage your account and choose your hero.</p>
+                <h1 className="text-2xl sm:text-3xl font-black text-slate-800 dark:text-white tracking-tight transition-colors">User Profile</h1>
+                <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 font-medium transition-colors">Manage your account and choose your hero.</p>
               </div>
             </div>
           </div>
@@ -329,18 +332,18 @@ export default function ProfilePage() {
           {profile.role === 'kid' ? (
             <button 
               onClick={() => setShowAvatarModal(true)}
-              className="group relative flex items-center justify-center h-16 w-16 sm:h-20 sm:w-20 rounded-full border-4 border-dashed border-slate-200 hover:border-yellow-400 hover:bg-yellow-50 transition-all duration-300 shrink-0 overflow-visible"
+              className="group relative flex items-center justify-center h-16 w-16 sm:h-20 sm:w-20 rounded-full border-4 border-dashed border-slate-200 dark:border-slate-700 hover:border-yellow-400 dark:hover:border-yellow-500 hover:bg-yellow-50 dark:hover:bg-yellow-950/20 transition-all duration-300 shrink-0 overflow-visible"
             >
               <div className="text-3xl sm:text-4xl group-hover:scale-110 transition-transform">
                 {AVATAR_OPTIONS.find(opt => opt.id === profile.avatar)?.icon || "🐮"}
               </div>
-              <div className="absolute -bottom-1 -right-1 h-6 w-6 sm:h-7 sm:w-7 bg-yellow-400 rounded-full border-4 border-white flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
+              <div className="absolute -bottom-1 -right-1 h-6 w-6 sm:h-7 sm:w-7 bg-yellow-400 rounded-full border-4 border-white dark:border-slate-800 flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
                 <span className="text-white font-black text-xs sm:text-sm">+</span>
               </div>
             </button>
           ) : (
-            <div className="flex items-center justify-center h-16 w-16 sm:h-20 sm:w-20 rounded-full bg-slate-100 border-4 border-white shadow-inner shrink-0">
-               <User className="h-8 w-8 sm:h-10 sm:w-10 text-slate-400" />
+            <div className="flex items-center justify-center h-16 w-16 sm:h-20 sm:w-20 rounded-full bg-slate-100 dark:bg-slate-700 border-4 border-white dark:border-slate-800 shadow-inner shrink-0 transition-colors">
+               <User className="h-8 w-8 sm:h-10 sm:w-10 text-slate-400 dark:text-slate-500" />
             </div>
           )}
         </div>
@@ -360,17 +363,17 @@ export default function ProfilePage() {
           </Alert>
         )}
 
-        <div className="space-y-6 sm:space-y-0 sm:grid sm:grid-cols-2 sm:gap-8">
+        <div className="space-y-6 sm:space-y-0 sm:grid sm:grid-cols-2 sm:gap-8 relative z-10">
           {/* Profile Information */}
-          <Card className="rounded-[2rem] border-2 border-slate-200 shadow-[0_8px_0_#e2e8f0] bg-white overflow-hidden">
-            <CardHeader className="bg-slate-50/50 border-b-2 border-slate-100 pb-6">
-              <CardTitle className="text-xl font-bold text-slate-800">Profile Information</CardTitle>
-              <CardDescription className="text-slate-500 font-medium">Update your personal information</CardDescription>
+          <Card className="rounded-[2rem] border-2 border-slate-200 dark:border-slate-700 shadow-[0_8px_0_#e2e8f0] dark:shadow-[0_8px_0_#1e293b] bg-white dark:bg-slate-800 p-0 overflow-hidden transition-colors">
+            <CardHeader className="bg-slate-100/50 dark:bg-slate-900 border-b-2 border-slate-100 dark:border-slate-700 pt-8 pb-8 rounded-t-[1.85rem] transition-colors">
+              <CardTitle className="text-xl font-bold text-slate-800 dark:text-white transition-colors">Profile Information</CardTitle>
+              <CardDescription className="text-slate-500 dark:text-slate-400 font-medium transition-colors">Update your personal information</CardDescription>
             </CardHeader>
-            <CardContent className="space-y-6 pt-6">
+            <CardContent className="space-y-6 pt-6 pb-8 dark:bg-slate-800 transition-colors">
               <div className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="profile-name" className="font-bold text-slate-700 ml-1">Full Name</Label>
+                  <Label htmlFor="profile-name" className="font-bold text-slate-700 dark:text-slate-300 ml-1 transition-colors">Full Name</Label>
                   <Input
                     id="profile-name"
                     placeholder="Your full name"
@@ -379,11 +382,11 @@ export default function ProfilePage() {
                       setError("")
                       setProfile({ ...profile, name: e.target.value })
                     }}
-                    className="rounded-2xl border-2 border-slate-200 bg-white px-4 py-6 focus-visible:border-red-500 focus-visible:ring-offset-0 focus-visible:ring-0 transition-colors font-medium text-slate-700"
+                    className="rounded-2xl border-2 border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-4 py-6 focus-visible:border-red-500 dark:focus-visible:border-red-500 focus-visible:ring-offset-0 focus-visible:ring-0 transition-colors font-medium text-slate-700 dark:text-slate-200"
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="profile-email" className="font-bold text-slate-700 ml-1">Email Address</Label>
+                  <Label htmlFor="profile-email" className="font-bold text-slate-700 dark:text-slate-300 ml-1 transition-colors">Email Address</Label>
                   <Input
                     id="profile-email"
                     type="email"
@@ -393,29 +396,29 @@ export default function ProfilePage() {
                       setError("")
                       setProfile({ ...profile, email: e.target.value })
                     }}
-                    className="rounded-2xl border-2 border-slate-200 bg-white px-4 py-6 focus-visible:border-red-500 focus-visible:ring-offset-0 focus-visible:ring-0 transition-colors font-medium text-slate-700"
+                    className="rounded-2xl border-2 border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-4 py-6 focus-visible:border-red-500 dark:focus-visible:border-red-500 focus-visible:ring-offset-0 focus-visible:ring-0 transition-colors font-medium text-slate-700 dark:text-slate-200"
                   />
-                  <p className="text-xs text-slate-500 ml-1 font-medium">
+                  <p className="text-xs text-slate-500 dark:text-slate-400 ml-1 font-medium transition-colors">
                     Used for password reset. Must be unique per account.
                   </p>
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="profile-age" className="font-bold text-slate-700 ml-1">Age</Label>
+                  <Label htmlFor="profile-age" className="font-bold text-slate-700 dark:text-slate-300 ml-1 transition-colors">Age</Label>
                   <Input
                     id="profile-age"
                     type="number"
                     value={profile.age}
                     disabled
-                    className="rounded-2xl border-2 border-slate-200 bg-slate-50/50 px-4 py-6 font-medium text-slate-500 italic"
+                    className="rounded-2xl border-2 border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-900/50 px-4 py-6 font-medium text-slate-500 dark:text-slate-400 italic transition-colors"
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="profile-role" className="font-bold text-slate-700 ml-1">Role</Label>
+                  <Label htmlFor="profile-role" className="font-bold text-slate-700 dark:text-slate-300 ml-1 transition-colors">Role</Label>
                   <Input
                     id="profile-role"
                     value={profile.role.charAt(0).toUpperCase() + profile.role.slice(1)}
                     disabled
-                    className="rounded-2xl border-2 border-slate-200 bg-slate-50/50 px-4 py-6 font-medium text-slate-500 italic"
+                    className="rounded-2xl border-2 border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-900/50 px-4 py-6 font-medium text-slate-500 dark:text-slate-400 italic transition-colors"
                   />
                 </div>
               </div>
@@ -430,15 +433,15 @@ export default function ProfilePage() {
           </Card>
 
           {/* Password Management */}
-          <Card className="rounded-[2rem] border-2 border-slate-200 shadow-[0_8px_0_#e2e8f0] bg-white overflow-hidden">
-            <CardHeader className="bg-slate-50/50 border-b-2 border-slate-100 pb-6">
-              <CardTitle className="text-xl font-bold text-slate-800">Password Management</CardTitle>
-              <CardDescription className="text-slate-500 font-medium">Change your account password</CardDescription>
+          <Card className="rounded-[2rem] border-2 border-slate-200 dark:border-slate-700 shadow-[0_8px_0_#e2e8f0] dark:shadow-[0_8px_0_#1e293b] bg-white dark:bg-slate-800 p-0 overflow-hidden transition-colors">
+            <CardHeader className="bg-slate-100/50 dark:bg-slate-900 border-b-2 border-slate-100 dark:border-slate-700 pt-8 pb-8 rounded-t-[1.85rem] transition-colors">
+              <CardTitle className="text-xl font-bold text-slate-800 dark:text-white transition-colors">Password Management</CardTitle>
+              <CardDescription className="text-slate-500 dark:text-slate-400 font-medium transition-colors">Change your account password</CardDescription>
             </CardHeader>
-            <CardContent className="space-y-6 pt-6">
+            <CardContent className="space-y-6 pt-6 pb-8 dark:bg-slate-800 transition-colors">
               <div className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="current-password" className="font-bold text-slate-700 ml-1">Current Password</Label>
+                  <Label htmlFor="current-password" className="font-bold text-slate-700 dark:text-slate-300 ml-1 transition-colors">Current Password</Label>
                   <div className="relative">
                     <Input
                       id="current-password"
@@ -449,7 +452,7 @@ export default function ProfilePage() {
                         setError("")
                         setPassword({ ...password, current: e.target.value })
                       }}
-                      className="rounded-2xl border-2 border-slate-200 bg-white px-4 py-6 pr-12 focus-visible:border-red-500 focus-visible:ring-offset-0 focus-visible:ring-0 transition-colors font-medium text-slate-700"
+                      className="rounded-2xl border-2 border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-4 py-6 pr-12 focus-visible:border-red-500 dark:focus-visible:border-red-500 focus-visible:ring-offset-0 focus-visible:ring-0 transition-colors font-medium text-slate-700 dark:text-slate-200"
                     />
                     <button
                       type="button"
@@ -462,7 +465,7 @@ export default function ProfilePage() {
                   </div>
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="new-password" className="font-bold text-slate-700 ml-1">New Password</Label>
+                  <Label htmlFor="new-password" className="font-bold text-slate-700 dark:text-slate-300 ml-1 transition-colors">New Password</Label>
                   <div className="relative">
                     <Input
                       id="new-password"
@@ -473,7 +476,7 @@ export default function ProfilePage() {
                         setError("")
                         setPassword({ ...password, new: e.target.value })
                       }}
-                      className="rounded-2xl border-2 border-slate-200 bg-white px-4 py-6 pr-12 focus-visible:border-red-500 focus-visible:ring-offset-0 focus-visible:ring-0 transition-colors font-medium text-slate-700"
+                      className="rounded-2xl border-2 border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-4 py-6 pr-12 focus-visible:border-red-500 dark:focus-visible:border-red-500 focus-visible:ring-offset-0 focus-visible:ring-0 transition-colors font-medium text-slate-700 dark:text-slate-200"
                     />
                     <button
                       type="button"
@@ -484,10 +487,10 @@ export default function ProfilePage() {
                       {showNewPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
                     </button>
                   </div>
-                  <p className="text-xs text-slate-500 ml-1 font-medium">Must be at least 8 characters</p>
+                  <p className="text-xs text-slate-500 dark:text-slate-400 ml-1 font-medium transition-colors">Must be at least 8 characters</p>
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="confirm-password" className="font-bold text-slate-700 ml-1">Confirm New Password</Label>
+                  <Label htmlFor="confirm-password" className="font-bold text-slate-700 dark:text-slate-300 ml-1 transition-colors">Confirm New Password</Label>
                   <div className="relative">
                     <Input
                       id="confirm-password"
@@ -498,7 +501,7 @@ export default function ProfilePage() {
                         setError("")
                         setPassword({ ...password, confirm: e.target.value })
                       }}
-                      className="rounded-2xl border-2 border-slate-200 bg-white px-4 py-6 pr-12 focus-visible:border-red-500 focus-visible:ring-offset-0 focus-visible:ring-0 transition-colors font-medium text-slate-700"
+                      className="rounded-2xl border-2 border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-4 py-6 pr-12 focus-visible:border-red-500 dark:focus-visible:border-red-500 focus-visible:ring-offset-0 focus-visible:ring-0 transition-colors font-medium text-slate-700 dark:text-slate-200"
                     />
                     <button
                       type="button"
@@ -513,7 +516,7 @@ export default function ProfilePage() {
               </div>
               <Button
                 onClick={handleChangePassword}
-                className="w-full bg-slate-800 text-white shadow-[0_4px_0_#0f172a] hover:-translate-y-0.5 hover:shadow-[0_6px_0_#0f172a] hover:bg-slate-800 active:translate-y-1 active:shadow-[0_0px_0_#0f172a] rounded-full font-black uppercase tracking-wider py-6 transition-all"
+                className="w-full bg-slate-900 dark:bg-slate-700 text-white shadow-[0_4px_0_#0f172a] dark:shadow-[0_4px_0_#1e293b] hover:-translate-y-0.5 hover:shadow-[0_6px_0_#0f172a] dark:hover:shadow-[0_6px_0_#1e293b] hover:bg-slate-900 dark:hover:bg-slate-600 active:translate-y-1 active:shadow-[0_0px_0_#0f172a] rounded-full font-black uppercase tracking-wider py-6 transition-all"
                 disabled={passwordLoading}
               >
                 {passwordLoading ? (
@@ -533,22 +536,22 @@ export default function ProfilePage() {
         </div>
 
         {/* Assessment Scores */}
-        <Card className="mt-8 rounded-[2rem] border-2 border-slate-200 shadow-[0_12px_0_#f1f5f9] bg-white overflow-hidden transition-all duration-300">
-          <CardHeader className="bg-gradient-to-r from-slate-50 to-white border-b-2 border-slate-100 pb-6 pt-8 px-8">
+        <Card className="mt-8 rounded-[2rem] border-2 border-slate-200 dark:border-slate-700 shadow-[0_12px_0_#f1f5f9] dark:shadow-[0_12px_0_#1e293b] bg-white dark:bg-slate-800 p-0 overflow-hidden transition-all duration-300 relative z-10">
+          <CardHeader className="bg-slate-100/50 dark:bg-slate-900 border-b-2 border-slate-100 dark:border-slate-700 pt-8 pb-8 px-8 rounded-t-[1.85rem] transition-colors">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div>
-                <CardTitle className="flex items-center gap-3 text-2xl font-black text-slate-800">
-                  <div className="bg-orange-100 p-2 rounded-xl">
-                    <Trophy className="h-6 w-6 text-orange-500" strokeWidth={2.5} />
+                <CardTitle className="flex items-center gap-3 text-2xl font-black text-slate-800 dark:text-white transition-colors">
+                  <div className="bg-orange-100 dark:bg-orange-900/30 p-2 rounded-xl transition-colors">
+                    <Trophy className="h-6 w-6 text-orange-500 dark:text-orange-400" strokeWidth={2.5} />
                   </div>
                   Assessment Scores
                 </CardTitle>
-                <CardDescription className="text-slate-500 font-bold mt-1 ml-1">Track your fire safety knowledge growth</CardDescription>
+                <CardDescription className="text-slate-500 dark:text-slate-400 font-bold mt-1 ml-1 transition-colors">Track your fire safety knowledge growth</CardDescription>
               </div>
-              <div className="flex items-center gap-2 bg-white px-4 py-2 rounded-2xl border-2 border-slate-100 shadow-sm">
-                <span className="text-xs font-black text-slate-400 uppercase tracking-widest">Total Progress</span>
+              <div className="flex items-center gap-2 bg-white dark:bg-slate-900 px-4 py-2 rounded-2xl border-2 border-slate-100 dark:border-slate-700 shadow-sm transition-colors">
+                <span className="text-xs font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest transition-colors">Total Progress</span>
                 <div className="flex items-center gap-1.5">
-                  <div className="w-24 h-2 bg-slate-100 rounded-full overflow-hidden border border-slate-200">
+                  <div className="w-24 h-2 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden border border-slate-200 dark:border-slate-700 transition-colors">
                     <div 
                       className="h-full bg-orange-500 rounded-full transition-all duration-1000" 
                       style={{ width: `${scores ? (getScorePercentage(scores.preTestScore, 15) + getScorePercentage(scores.postTestScore, 15)) / 2 : 0}%` }}
@@ -570,11 +573,11 @@ export default function ProfilePage() {
                 <div className={cn(
                   "relative group overflow-hidden border-2 rounded-[2.5rem] p-8 transition-all duration-500",
                   scores.preTestScore !== null 
-                    ? "bg-white border-slate-200 shadow-sm hover:shadow-xl hover:border-blue-200" 
-                    : "bg-slate-50/50 border-dashed border-slate-300 opacity-80"
+                    ? "bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 shadow-sm hover:shadow-xl hover:border-blue-200 dark:hover:border-blue-500/50" 
+                    : "bg-slate-50/50 dark:bg-slate-900/30 border-dashed border-slate-300 dark:border-slate-700 opacity-80"
                 )}>
                   {/* Decorative background circle */}
-                  <div className="absolute -top-12 -right-12 w-32 h-32 bg-blue-50 rounded-full opacity-50 group-hover:scale-150 transition-transform duration-700" />
+                  <div className="absolute -top-12 -right-12 w-32 h-32 bg-blue-50 dark:bg-blue-900/20 rounded-full opacity-50 group-hover:scale-150 transition-transform duration-700" />
                   
                   <div className="relative z-10 flex flex-col sm:flex-row items-center gap-8">
                     <div className="shrink-0">
@@ -586,41 +589,41 @@ export default function ProfilePage() {
                           strokeWidth={12}
                         />
                       ) : (
-                        <div className="w-[130px] h-[130px] rounded-full border-4 border-dashed border-slate-200 flex items-center justify-center bg-white shadow-inner">
-                          <BookOpen className="h-10 w-10 text-slate-200" />
+                        <div className="w-[130px] h-[130px] rounded-full border-4 border-dashed border-slate-200 dark:border-slate-700 flex items-center justify-center bg-white dark:bg-slate-800 shadow-inner transition-colors">
+                          <BookOpen className="h-10 w-10 text-slate-200 dark:text-slate-700 transition-colors" />
                         </div>
                       )}
                     </div>
                     
                     <div className="flex-1 text-center sm:text-left">
                       <div className="flex flex-col sm:flex-row sm:items-center gap-2 mb-2">
-                        <span className="inline-block px-3 py-1 bg-blue-100 text-blue-600 font-black text-[10px] uppercase tracking-widest rounded-full border border-blue-200">
+                        <span className="inline-block px-3 py-1 bg-blue-100 dark:bg-blue-900/40 text-blue-600 dark:text-blue-400 font-black text-[10px] uppercase tracking-widest rounded-full border border-blue-200 dark:border-blue-800 transition-colors">
                           Baseline Test
                         </span>
-                        <h3 className="text-2xl font-black text-slate-800">Pre-Test</h3>
+                        <h3 className="text-2xl font-black text-slate-800 dark:text-white transition-colors">Pre-Test</h3>
                       </div>
                       
                       {scores.preTestScore !== null ? (
                         <div className="space-y-4">
-                          <p className="text-slate-500 font-bold leading-relaxed">
+                          <p className="text-slate-500 dark:text-slate-400 font-bold leading-relaxed transition-colors">
                             Initial assessment taken before starting the course modules.
                           </p>
                           <div className="flex flex-wrap items-center justify-center sm:justify-start gap-4">
                             <div className="flex flex-col">
-                              <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Raw Score</span>
-                              <span className="text-xl font-black text-slate-800">{scores.preTestScore} / 15</span>
+                              <span className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest transition-colors">Raw Score</span>
+                              <span className="text-xl font-black text-slate-800 dark:text-white transition-colors">{scores.preTestScore} / 15</span>
                             </div>
-                            <div className="w-px h-8 bg-slate-200 hidden sm:block" />
+                            <div className="w-px h-8 bg-slate-200 dark:bg-slate-700 hidden sm:block transition-colors" />
                             <div className="flex flex-col">
-                              <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Status</span>
+                              <span className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest transition-colors">Status</span>
                               <span className={cn("text-lg font-black", getScoreColor(getScorePercentage(scores.preTestScore, 15)))}>
                                 {getScoreLabel(getScorePercentage(scores.preTestScore, 15))}
                               </span>
                             </div>
                           </div>
                           {scores.preTestCompletedAt && (
-                            <div className="pt-4 border-t border-slate-100 flex items-center justify-center sm:justify-start gap-2 text-slate-400 text-xs font-bold">
-                              <CheckCircle className="h-3.5 w-3.5 text-blue-400" />
+                            <div className="pt-4 border-t border-slate-100 dark:border-slate-700 flex items-center justify-center sm:justify-start gap-2 text-slate-400 dark:text-slate-500 text-xs font-bold transition-colors">
+                              <CheckCircle className="h-3.5 w-3.5 text-blue-400 dark:text-blue-500" />
                               Completed {formatDate(scores.preTestCompletedAt)}
                             </div>
                           )}
@@ -647,11 +650,11 @@ export default function ProfilePage() {
                 <div className={cn(
                   "relative group overflow-hidden border-2 rounded-[2.5rem] p-8 transition-all duration-500",
                   scores.postTestScore !== null 
-                    ? "bg-white border-slate-200 shadow-sm hover:shadow-xl hover:border-orange-200" 
-                    : "bg-slate-50/50 border-dashed border-slate-300 opacity-80"
+                    ? "bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 shadow-sm hover:shadow-xl hover:border-orange-200 dark:hover:border-orange-500/50" 
+                    : "bg-slate-50/50 dark:bg-slate-900/30 border-dashed border-slate-300 dark:border-slate-700 opacity-80"
                 )}>
                   {/* Decorative background circle */}
-                  <div className="absolute -top-12 -right-12 w-32 h-32 bg-orange-50 rounded-full opacity-50 group-hover:scale-150 transition-transform duration-700" />
+                  <div className="absolute -top-12 -right-12 w-32 h-32 bg-orange-50 dark:bg-orange-900/20 rounded-full opacity-50 group-hover:scale-150 transition-transform duration-700" />
                   
                   <div className="relative z-10 flex flex-col sm:flex-row items-center gap-8">
                     <div className="shrink-0">
@@ -663,33 +666,33 @@ export default function ProfilePage() {
                           strokeWidth={12}
                         />
                       ) : (
-                        <div className="w-[130px] h-[130px] rounded-full border-4 border-dashed border-slate-200 flex items-center justify-center bg-white shadow-inner">
-                          <Trophy className="h-10 w-10 text-slate-200" />
+                        <div className="w-[130px] h-[130px] rounded-full border-4 border-dashed border-slate-200 dark:border-slate-700 flex items-center justify-center bg-white dark:bg-slate-800 shadow-inner transition-colors">
+                          <Trophy className="h-10 w-10 text-slate-200 dark:text-slate-700 transition-colors" />
                         </div>
                       )}
                     </div>
                     
                     <div className="flex-1 text-center sm:text-left">
                       <div className="flex flex-col sm:flex-row sm:items-center gap-2 mb-2">
-                        <span className="inline-block px-3 py-1 bg-orange-100 text-orange-600 font-black text-[10px] uppercase tracking-widest rounded-full border border-orange-200">
+                        <span className="inline-block px-3 py-1 bg-orange-100 dark:bg-orange-900/40 text-orange-600 dark:text-orange-400 font-black text-[10px] uppercase tracking-widest rounded-full border border-orange-200 dark:border-orange-800 transition-colors">
                           Final Exam
                         </span>
-                        <h3 className="text-2xl font-black text-slate-800">Post-Test</h3>
+                        <h3 className="text-2xl font-black text-slate-800 dark:text-white transition-colors">Post-Test</h3>
                       </div>
                       
                       {scores.postTestScore !== null ? (
                         <div className="space-y-4">
-                          <p className="text-slate-500 font-bold leading-relaxed">
+                          <p className="text-slate-500 dark:text-slate-400 font-bold leading-relaxed transition-colors">
                             Final assessment taken after completing all fire safety modules.
                           </p>
                           <div className="flex flex-wrap items-center justify-center sm:justify-start gap-4">
                             <div className="flex flex-col">
-                              <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Final Score</span>
-                              <span className="text-xl font-black text-slate-800">{scores.postTestScore} / 15</span>
+                              <span className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest transition-colors">Final Score</span>
+                              <span className="text-xl font-black text-slate-800 dark:text-white transition-colors">{scores.postTestScore} / 15</span>
                             </div>
-                            <div className="w-px h-8 bg-slate-200 hidden sm:block" />
+                            <div className="w-px h-8 bg-slate-200 dark:bg-slate-700 hidden sm:block transition-colors" />
                             <div className="flex flex-col">
-                              <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Status</span>
+                              <span className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest transition-colors">Status</span>
                               <span className={cn("text-lg font-black", getScoreColor(getScorePercentage(scores.postTestScore, 15)))}>
                                 {getScoreLabel(getScorePercentage(scores.postTestScore, 15))}
                               </span>
@@ -735,9 +738,9 @@ export default function ProfilePage() {
                               ? "Complete all modules to unlock your final Post-Test exam." 
                               : "Unlock after completing modules and Pre-Test."}
                           </p>
-                          <div className="flex items-center justify-center sm:justify-start gap-2 bg-slate-100/50 p-4 rounded-2xl border-2 border-slate-200/50">
-                            <Lock className="h-4 w-4 text-slate-300" />
-                            <span className="text-xs font-black text-slate-400 uppercase tracking-widest">Currently Locked</span>
+                          <div className="flex items-center justify-center sm:justify-start gap-2 bg-slate-100/50 dark:bg-slate-900/50 p-4 rounded-2xl border-2 border-slate-200/50 dark:border-slate-700/50 transition-colors">
+                            <Lock className="h-4 w-4 text-slate-300 dark:text-slate-600" />
+                            <span className="text-xs font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest transition-colors">Currently Locked</span>
                           </div>
                         </div>
                       )}
@@ -843,7 +846,7 @@ export default function ProfilePage() {
       </Dialog>
       {/* Hero Selection Modal */}
       <Dialog open={showAvatarModal} onOpenChange={setShowAvatarModal}>
-        <DialogContent className="sm:max-w-2xl rounded-[2.5rem] border-[4px] border-slate-100 p-0 overflow-hidden shadow-2xl">
+        <DialogContent className="sm:max-w-2xl rounded-[2.5rem] border-[4px] border-slate-100 dark:border-slate-800 p-0 overflow-hidden shadow-2xl transition-colors">
           <div className="bg-gradient-to-br from-yellow-400 to-orange-500 p-5 sm:p-8 text-white">
             <DialogHeader>
               <DialogTitle className="text-xl sm:text-3xl font-black flex items-center gap-2 sm:gap-3">
@@ -858,7 +861,7 @@ export default function ProfilePage() {
             </DialogHeader>
           </div>
 
-          <div className="p-4 sm:p-8 bg-slate-50/50 max-h-[70vh] overflow-y-auto">
+          <div className="p-4 sm:p-8 bg-slate-50/50 dark:bg-slate-900/50 max-h-[70vh] overflow-y-auto transition-colors">
             <div className="grid grid-cols-3 sm:grid-cols-4 gap-2 sm:gap-4 mb-8">
               {AVATAR_OPTIONS.map((opt) => (
                 <button
@@ -867,13 +870,13 @@ export default function ProfilePage() {
                   className={cn(
                     "group relative flex flex-col items-center gap-1.5 sm:gap-3 p-2 sm:p-5 rounded-2xl sm:rounded-[2rem] border-[3px] transition-all duration-300",
                     selectedAvatar === opt.id 
-                      ? "bg-white border-yellow-400 shadow-xl scale-105 z-10" 
-                      : "bg-white/50 border-slate-100 hover:border-slate-200 hover:bg-white"
+                      ? "bg-white dark:bg-slate-800 border-yellow-400 dark:border-yellow-500 shadow-xl scale-105 z-10" 
+                      : "bg-white/50 dark:bg-slate-800/50 border-slate-100 dark:border-slate-700 hover:border-slate-200 dark:hover:border-slate-600 hover:bg-white dark:hover:bg-slate-800"
                   )}
                 >
                   <div className={cn(
                     "h-14 w-14 sm:h-20 sm:w-20 rounded-full flex items-center justify-center text-3xl sm:text-5xl transition-transform group-hover:scale-110",
-                    selectedAvatar === opt.id ? "bg-yellow-50" : "bg-slate-50"
+                    selectedAvatar === opt.id ? "bg-yellow-50 dark:bg-yellow-900/30" : "bg-slate-50 dark:bg-slate-900"
                   )}>
                     {opt.icon}
                   </div>
@@ -886,8 +889,8 @@ export default function ProfilePage() {
                       {opt.category}
                     </p>
                     <p className={cn(
-                      "text-[10px] sm:text-xs font-black tracking-tight leading-tight",
-                      selectedAvatar === opt.id ? "text-slate-800" : "text-slate-600"
+                      "text-[10px] sm:text-xs font-black tracking-tight leading-tight transition-colors",
+                      selectedAvatar === opt.id ? "text-slate-800 dark:text-white" : "text-slate-600 dark:text-slate-400"
                     )}>
                       {opt.label}
                     </p>
@@ -902,11 +905,11 @@ export default function ProfilePage() {
               ))}
             </div>
 
-            <div className="flex gap-2 sm:gap-4 sticky bottom-0 bg-white/80 backdrop-blur-sm p-2 rounded-2xl border-t border-slate-100 mt-2 sm:mt-0">
+            <div className="flex gap-2 sm:gap-4 sticky bottom-0 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm p-2 rounded-2xl border-t border-slate-100 dark:border-slate-700 mt-2 sm:mt-0 transition-colors">
               <Button
                 variant="outline"
                 onClick={() => setShowAvatarModal(false)}
-                className="flex-1 rounded-xl sm:rounded-2xl border-2 py-4 sm:py-6 font-bold text-slate-500 hover:bg-slate-100 transition-all text-xs sm:text-base"
+                className="flex-1 rounded-xl sm:rounded-2xl border-2 py-4 sm:py-6 font-bold text-slate-500 dark:text-slate-400 border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700 transition-all text-xs sm:text-base"
               >
                 Cancel
               </Button>
@@ -923,7 +926,7 @@ export default function ProfilePage() {
               </Button>
             </div>
             
-            <p className="text-center text-[11px] text-slate-400 font-bold mt-4 uppercase tracking-tighter">
+            <p className="text-center text-[11px] text-slate-400 dark:text-slate-500 font-bold mt-4 uppercase tracking-tighter transition-colors">
               Tip: Your hero will appear on your main dashboard mission map!
             </p>
           </div>

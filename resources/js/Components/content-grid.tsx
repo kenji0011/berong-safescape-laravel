@@ -35,7 +35,7 @@ export function ContentGrid({
   return (
     <div className={cn(
       "relative mb-24 max-w-7xl mx-auto",
-      isMap ? "p-0 md:p-12 md:pb-32 md:rounded-[3.5rem] md:bg-[#fdf8f1] md:border-4 md:border-[#e7d5b8] md:shadow-inner overflow-visible" : "p-0"
+      isMap ? "p-0 md:p-12 md:pb-32 md:rounded-[3.5rem] md:bg-[#fdf8f1] dark:md:bg-slate-900/90 md:border-4 md:border-[#e7d5b8] dark:md:border-slate-800 md:shadow-inner dark:md:shadow-none overflow-visible transition-colors" : "p-0"
     )}>
       {/* Adventure Path SVG Background (Desktop Only) */}
       {isMap && (
@@ -128,8 +128,8 @@ export function ContentGrid({
       )}
 
       <div className={cn(
-        "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 relative z-10",
-        isMap ? "gap-y-10 sm:gap-y-12 md:gap-y-24" : "gap-y-8"
+        "grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-8 relative z-10",
+        isMap ? "gap-y-6 sm:gap-y-12 md:gap-y-24" : "gap-y-4"
       )}>
         {isLoading ? (
           Array.from({ length: skeletonCount }).map((_, i) => (
@@ -140,8 +140,8 @@ export function ContentGrid({
                 isMap && i % 2 !== 0 ? "md:translate-y-20" : ""
               )}
             >
-              <div className="bg-white rounded-3xl sm:rounded-[2.5rem] overflow-hidden shadow-sm border border-slate-100 flex flex-col h-[380px] sm:h-[450px]">
-                <Skeleton className="h-40 sm:h-52 w-full rounded-none" />
+              <div className="bg-white rounded-2xl sm:rounded-[2.5rem] overflow-hidden shadow-sm border border-slate-100 flex flex-col h-[280px] sm:h-[450px]">
+                <Skeleton className="h-32 sm:h-52 w-full rounded-none" />
                 <div className="p-4 sm:p-6 flex-1 flex flex-col gap-4">
                   <Skeleton className="h-6 w-3/4 rounded-lg" />
                   <Skeleton className="h-4 w-full rounded-md" />

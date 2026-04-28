@@ -5,9 +5,9 @@ import { useState, useEffect } from "react"
 import { useAuth } from "@/lib/auth-context"
 import { useSettings } from "@/lib/settings-context"
 import { Button } from "@/components/ui/button"
-import { LogOut, User, Menu, X, Home, Users, Briefcase, Baby, Shield, Info, Settings, ChevronDown, Zap, Type } from "lucide-react"
+import { LogOut, User, Menu, X, Home, Users, Briefcase, Baby, Shield, Info, Settings, ChevronDown, Zap, Type, ArrowRight, Clock, Moon, Sun } from "lucide-react"
+import { cn } from "@/lib/utils"
 import { NotificationPopover } from "@/components/ui/notification-popover"
-import GooeyNav from "@/components/ui/gooey-nav"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -23,16 +23,9 @@ import {
   DialogFooter,
 } from "@/Components/ui/dialog"
 
-export function Navigation() {
-  const { user, logout, isAuthenticated } = useAuth()
-  const { reduceMotion, toggleReduceMotion, textSize, setTextSize } = useSettings()
-  const { url } = usePage();
-  const isDashboard = url === '/';
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+function TimeDisplay({ mobile = false }: { mobile?: boolean }) {
   const [currentTime, setCurrentTime] = useState<string>("")
-  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false)
 
-  // Update time every minute
   useEffect(() => {
     const updateTime = () => {
         const date = new Date()
@@ -44,20 +37,46 @@ export function Navigation() {
         })
         const dateStr = date.toLocaleString('en-US', {
           timeZone: 'Asia/Manila',
-          weekday: 'long',
-          month: 'long',
+          weekday: 'short',
+          month: 'short',
           day: 'numeric',
           year: 'numeric',
         })
-        setCurrentTime(`${dateStr} at ${timeStr}`)
+        setCurrentTime(`${dateStr} • ${timeStr}`)
     }
     updateTime()
     const interval = setInterval(updateTime, 60000)
     return () => clearInterval(interval)
   }, [])
 
+  if (mobile) {
+    return (
+      <p className="text-slate-200 text-[11px] leading-relaxed drop-shadow-sm font-medium">
+        {currentTime.split(' • ')[0] || 'Loading date...'} <br/> {currentTime.split(' • ')[1] || '...'}
+      </p>
+    )
+  }
+
   return (
-    <nav className="bg-gradient-to-r from-[#ff3b3b] to-[#ff7b00] sticky top-0 z-[80] shadow-md">
+    <div className="flex items-center gap-1.5 opacity-90">
+      <Clock className="h-3 w-3 text-yellow-400" strokeWidth={3} />
+      <p className="text-white text-[10px] font-bold uppercase tracking-wider drop-shadow-sm whitespace-nowrap">
+        {currentTime || "Loading..."}
+      </p>
+    </div>
+  )
+}
+
+export function Navigation() {
+  const { user, logout, isAuthenticated } = useAuth()
+  const { reduceMotion, toggleReduceMotion, textSize, setTextSize, isDarkMode, toggleDarkMode } = useSettings()
+  const { url } = usePage();
+  const isDashboard = url === '/';
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false)
+
+  return (
+    <nav className="bg-gradient-to-r from-[#ff3b3b] to-[#ff7b00] fixed inset-x-0 top-0 z-[80] shadow-md">
       {/* Background Image Layer - 10% opacity */}
       <div
         className="absolute inset-0 opacity-5 bg-cover bg-center"
@@ -109,8 +128,8 @@ export function Navigation() {
               <Link 
                 href="/" 
                 className={isDashboard 
-                  ? "font-extrabold text-sm tracking-wide uppercase px-4 xl:px-5 py-1.5 rounded-full border-[3px] border-white bg-yellow-400 text-black shadow-[0_4px_0_#b45309] hover:-translate-y-0.5 hover:shadow-[0_6px_0_#b45309] active:translate-y-1 active:shadow-none transition-all duration-200 active:duration-75"
-                  : "font-extrabold text-sm tracking-wide uppercase text-white hover:text-yellow-200 transition-colors drop-shadow-sm py-1.5 px-2 xl:px-3 whitespace-nowrap"
+                  ? "font-extrabold text-sm tracking-wide uppercase px-4 xl:px-5 py-1.5 rounded-full border-[3px] border-white dark:border-slate-200 bg-yellow-400 text-black shadow-[0_4px_0_#b45309] dark:shadow-[0_4px_0_#0f172a] hover:-translate-y-0.5 hover:shadow-[0_6px_0_#b45309] dark:hover:shadow-[0_6px_0_#0f172a] active:translate-y-1 active:shadow-none transition-none"
+                  : "font-extrabold text-sm tracking-wide uppercase text-white hover:text-yellow-200 transition-none drop-shadow-sm py-1.5 px-2 xl:px-3 whitespace-nowrap"
                 }
               >
                 DASHBOARD
@@ -120,8 +139,8 @@ export function Navigation() {
                 <Link
                   href="/kids"
                   className={(!isDashboard && url.startsWith('/kids'))
-                    ? "font-extrabold text-sm tracking-wide uppercase px-4 xl:px-5 py-1.5 rounded-full border-[3px] border-white bg-yellow-400 text-black shadow-[0_4px_0_#b45309] hover:-translate-y-0.5 hover:shadow-[0_6px_0_#b45309] active:translate-y-1 active:shadow-none transition-all duration-200 active:duration-75 flex items-center gap-1.5 whitespace-nowrap outline-none" 
-                    : "font-extrabold text-sm tracking-wide uppercase text-white hover:text-yellow-200 transition-colors drop-shadow-sm py-1.5 px-2 xl:px-3 flex items-center gap-1.5 whitespace-nowrap outline-none cursor-pointer"
+                    ? "font-extrabold text-sm tracking-wide uppercase px-4 xl:px-5 py-1.5 rounded-full border-[3px] border-white dark:border-slate-200 bg-yellow-400 text-black shadow-[0_4px_0_#b45309] dark:shadow-[0_4px_0_#0f172a] hover:-translate-y-0.5 hover:shadow-[0_6px_0_#b45309] dark:hover:shadow-[0_6px_0_#0f172a] active:translate-y-1 active:shadow-none transition-none flex items-center gap-1.5 whitespace-nowrap outline-none" 
+                    : "font-extrabold text-sm tracking-wide uppercase text-white hover:text-yellow-200 transition-none drop-shadow-sm py-1.5 px-2 xl:px-3 flex items-center gap-1.5 whitespace-nowrap outline-none cursor-pointer"
                   }
                 >
                   KIDS
@@ -130,8 +149,8 @@ export function Navigation() {
                 <DropdownMenu modal={false}>
                   <DropdownMenuTrigger 
                     className={(!isDashboard && url !== '/login' && url !== '/register' && url !== '/about' && url !== '/profile')
-                      ? "font-extrabold text-sm tracking-wide uppercase px-4 xl:px-5 py-1.5 rounded-full border-[3px] border-white bg-yellow-400 text-black shadow-[0_4px_0_#b45309] hover:-translate-y-0.5 hover:shadow-[0_6px_0_#b45309] active:translate-y-1 active:shadow-none data-[state=open]:translate-y-1 data-[state=open]:shadow-none transition-all duration-200 active:duration-75 flex items-center gap-1.5 group outline-none cursor-pointer" 
-                      : "font-extrabold text-sm tracking-wide uppercase text-white hover:text-yellow-200 transition-colors drop-shadow-sm py-1.5 px-2 xl:px-3 flex items-center gap-1.5 whitespace-nowrap outline-none cursor-pointer"
+                      ? "font-extrabold text-sm tracking-wide uppercase px-4 xl:px-5 py-1.5 rounded-full border-[3px] border-white dark:border-slate-200 bg-yellow-400 text-black shadow-[0_4px_0_#b45309] dark:shadow-[0_4px_0_#0f172a] hover:-translate-y-0.5 hover:shadow-[0_6px_0_#b45309] dark:hover:shadow-[0_6px_0_#0f172a] active:translate-y-1 active:shadow-none data-[state=open]:translate-y-1 data-[state=open]:shadow-none transition-none flex items-center gap-1.5 group outline-none cursor-pointer" 
+                      : "font-extrabold text-sm tracking-wide uppercase text-white hover:text-yellow-200 transition-none drop-shadow-sm py-1.5 px-2 xl:px-3 flex items-center gap-1.5 whitespace-nowrap outline-none cursor-pointer"
                     }
                   >
                     {url.startsWith('/professional') ? 'PROFESSIONAL' :
@@ -140,35 +159,35 @@ export function Navigation() {
                      url.startsWith('/admin') ? 'ADMIN' : 'MENU'}
                     <ChevronDown className={(!isDashboard && url !== '/login' && url !== '/register' && url !== '/about' && url !== '/profile') ? "h-4 w-4 text-black font-bold transition-transform group-data-[state=open]:rotate-180" : "h-4 w-4 text-white font-bold transition-transform group-data-[state=open]:rotate-180"} strokeWidth={3} />
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent className="w-56 bg-white border-2 border-slate-200 shadow-xl rounded-[14px] p-1.5 z-[100]" sideOffset={12}>
+                  <DropdownMenuContent className="w-56 bg-white dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-800 shadow-xl rounded-[14px] p-1.5 z-[100] transition-colors" sideOffset={12}>
                     {user?.permissions.accessProfessional && (
                       <Link href="/professional" className="block w-full">
-                        <DropdownMenuItem className="cursor-pointer font-bold rounded-lg py-2.5 px-3 flex items-center justify-between hover:bg-slate-100 focus:bg-slate-100 transition-colors">
-                          <span className={url.startsWith('/professional') ? "text-yellow-600" : "text-slate-700"}>PROFESSIONAL</span>
+                        <DropdownMenuItem className="cursor-pointer font-bold rounded-lg py-2.5 px-3 flex items-center justify-between hover:bg-slate-100 dark:hover:bg-slate-800 focus:bg-slate-100 dark:focus:bg-slate-800 transition-colors">
+                          <span className={url.startsWith('/professional') ? "text-yellow-600" : "text-slate-700 dark:text-slate-300"}>PROFESSIONAL</span>
                           {url.startsWith('/professional') && <div className="h-2 w-2 rounded-full bg-yellow-400 shadow-sm" />}
                         </DropdownMenuItem>
                       </Link>
                     )}
                     {user?.permissions.accessAdult && (
                       <Link href="/adult" className="block w-full">
-                        <DropdownMenuItem className="cursor-pointer font-bold rounded-lg py-2.5 px-3 flex items-center justify-between hover:bg-slate-100 focus:bg-slate-100 transition-colors">
-                          <span className={url.startsWith('/adult') ? "text-yellow-600" : "text-slate-700"}>ADULTS</span>
+                        <DropdownMenuItem className="cursor-pointer font-bold rounded-lg py-2.5 px-3 flex items-center justify-between hover:bg-slate-100 dark:hover:bg-slate-800 focus:bg-slate-100 dark:focus:bg-slate-800 transition-colors">
+                          <span className={url.startsWith('/adult') ? "text-yellow-600" : "text-slate-700 dark:text-slate-300"}>ADULTS</span>
                           {url.startsWith('/adult') && <div className="h-2 w-2 rounded-full bg-yellow-400 shadow-sm" />}
                         </DropdownMenuItem>
                       </Link>
                     )}
                     {user?.permissions.accessKids && (
                       <Link href="/kids" className="block w-full">
-                        <DropdownMenuItem className="cursor-pointer font-bold rounded-lg py-2.5 px-3 flex items-center justify-between hover:bg-slate-100 focus:bg-slate-100 transition-colors">
-                          <span className={url.startsWith('/kids') ? "text-yellow-600" : "text-slate-700"}>KIDS</span>
+                        <DropdownMenuItem className="cursor-pointer font-bold rounded-lg py-2.5 px-3 flex items-center justify-between hover:bg-slate-100 dark:hover:bg-slate-800 focus:bg-slate-100 dark:focus:bg-slate-800 transition-colors">
+                          <span className={url.startsWith('/kids') ? "text-yellow-600" : "text-slate-700 dark:text-slate-300"}>KIDS</span>
                           {url.startsWith('/kids') && <div className="h-2 w-2 rounded-full bg-yellow-400 shadow-sm" />}
                         </DropdownMenuItem>
                       </Link>
                     )}
                     {user?.role === 'admin' && (
                       <Link href="/admin" className="block w-full">
-                        <DropdownMenuItem className="cursor-pointer font-bold rounded-lg py-2.5 px-3 flex items-center justify-between hover:bg-slate-100 focus:bg-slate-100 transition-colors">
-                          <span className={url.startsWith('/admin') ? "text-yellow-600" : "text-slate-700"}>ADMIN PANEL</span>
+                        <DropdownMenuItem className="cursor-pointer font-bold rounded-lg py-2.5 px-3 flex items-center justify-between hover:bg-slate-100 dark:hover:bg-slate-800 focus:bg-slate-100 dark:focus:bg-slate-800 transition-colors">
+                          <span className={url.startsWith('/admin') ? "text-yellow-600" : "text-slate-700 dark:text-slate-300"}>ADMIN PANEL</span>
                           {url.startsWith('/admin') && <div className="h-2 w-2 rounded-full bg-yellow-400 shadow-sm" />}
                         </DropdownMenuItem>
                       </Link>
@@ -180,15 +199,13 @@ export function Navigation() {
 
             {/* RIGHT SECTION: Time + User Info + Icon Buttons */}
             <div className="flex-1 flex items-center justify-end gap-2 sm:gap-3">
-              {/* Time + User Info Column */}
-              <div className="text-right hidden xl:block mr-2 tracking-wide">
-                <p className="text-white text-xs whitespace-nowrap font-medium drop-shadow-sm">
-                  {currentTime}
-                </p>
+              {/* Time + User Info Column - Now Stacked Vertical */}
+              <div className="hidden xl:flex flex-col items-end justify-center min-w-0">
+                <TimeDisplay />
                 {isAuthenticated && (
-                  <div className="flex flex-col items-end mt-0.5 whitespace-nowrap">
-                    <p className="text-white font-bold text-sm leading-none drop-shadow-sm">{user?.name || 'Admin User'}</p>
-                    <p className="text-yellow-300 text-xs capitalize leading-tight mt-0.5 drop-shadow-sm">{user?.role || 'Admin'}</p>
+                  <div className="flex flex-col items-end whitespace-nowrap mt-0.5">
+                    <p className="text-white font-extrabold text-sm leading-none drop-shadow-sm">{user?.name || 'Admin User'}</p>
+                    <p className="text-yellow-300 text-[10px] font-bold uppercase tracking-widest leading-tight mt-1 drop-shadow-sm opacity-90">{user?.role || 'Admin'}</p>
                   </div>
                 )}
               </div>
@@ -205,7 +222,7 @@ export function Navigation() {
 
               {/* Profile & Settings - Only visible on desktop (lg+) */}
               {isAuthenticated ? (
-                <div className="hidden lg:flex items-center gap-2">
+                <div className="hidden lg:flex items-center gap-3">
                   <div className="relative group flex items-center">
                     <Link href="/profile" className="flex items-center justify-center p-0 h-10 w-10 sm:h-12 sm:w-12 rounded-full bg-[#facc15] border-[3px] border-white text-white shadow-[0_4px_0_#ca8a04] hover:-translate-y-0.5 hover:shadow-[0_6px_0_#ca8a04] active:translate-y-1 active:shadow-none transition-all duration-200 active:duration-75">
                       <User className="h-5 w-5 sm:h-6 sm:w-6" strokeWidth={2.5} />
@@ -222,17 +239,33 @@ export function Navigation() {
                       <Settings className="h-5 w-5 sm:h-6 sm:w-6" strokeWidth={2.5} />
                     </DropdownMenuTrigger>
                     
-                    <DropdownMenuContent className="w-56 bg-white border-2 border-slate-200 shadow-xl rounded-[14px] p-1.5 z-[100] mt-2 mr-2" align="end" sideOffset={8}>
-                      <div className="px-2 py-1.5 mb-1 border-b border-slate-100">
-                        <p className="text-sm font-semibold text-slate-800">Settings</p>
+                    <DropdownMenuContent className="w-56 bg-white dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-800 shadow-xl rounded-[14px] p-1.5 z-[100] mt-2 mr-2 transition-colors" align="end" sideOffset={8}>
+                      <div className="px-2 py-1.5 mb-1 border-b border-slate-100 dark:border-slate-800 transition-colors">
+                        <p className="text-sm font-semibold text-slate-800 dark:text-white transition-colors">Settings</p>
                       </div>
+
+                      {/* Dark Mode Toggle */}
+                      <div
+                        onClick={(e) => { e.preventDefault(); toggleDarkMode(); }}
+                        className="flex items-center justify-between rounded-lg cursor-pointer py-2.5 px-3 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
+                      >
+                        <span className="flex items-center gap-2 text-sm font-medium text-slate-700 dark:text-slate-300">
+                          {isDarkMode ? <Sun className="h-4 w-4 text-yellow-500" /> : <Moon className="h-4 w-4 text-indigo-500" />}
+                          Dark Mode
+                        </span>
+                        <div className={`relative w-9 h-5 rounded-full transition-colors duration-200 ${isDarkMode ? 'bg-indigo-600' : 'bg-slate-300'}`}>
+                          <div className={`absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform duration-200 ${isDarkMode ? 'translate-x-4' : 'translate-x-0'}`} />
+                        </div>
+                      </div>
+
+                      <div className="h-[1px] bg-slate-100 dark:bg-slate-800 my-1 transition-colors" />
 
                       {/* Reduce Animations Toggle */}
                       <div
                         onClick={(e) => { e.preventDefault(); toggleReduceMotion(); }}
-                        className="flex items-center justify-between rounded-lg cursor-pointer py-2 px-2.5 hover:bg-slate-50 transition-colors"
+                        className="flex items-center justify-between rounded-lg cursor-pointer py-2.5 px-3 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
                       >
-                        <span className="flex items-center gap-2 text-sm font-medium text-slate-700">
+                        <span className="flex items-center gap-2 text-sm font-medium text-slate-700 dark:text-slate-300">
                           <Zap className="h-4 w-4 text-amber-500" />
                           Reduce Animations
                         </span>
@@ -241,29 +274,30 @@ export function Navigation() {
                         </div>
                       </div>
 
-                      <div className="h-[1px] bg-slate-100 my-1" />
+                      <div className="h-[1px] bg-slate-100 dark:bg-slate-800 my-1 transition-colors" />
 
                       {/* Text Size Control */}
-                      <div className="py-2 px-2.5">
-                        <span className="flex items-center gap-2 text-sm font-medium text-slate-700 mb-2">
+                      <div className="py-2.5 px-3">
+                        <span className="flex items-center gap-2 text-sm font-medium text-slate-700 dark:text-slate-300 mb-2 transition-colors">
                           <Type className="h-4 w-4 text-blue-500" />
                           Text Size
                         </span>
-                        <div className="flex bg-slate-100 rounded-md p-1 border border-slate-200">
-                          <button onClick={(e) => { e.preventDefault(); setTextSize('normal'); }} className={`flex-1 py-1 rounded text-xs font-bold transition-all ${textSize === 'normal' ? 'bg-white text-slate-800 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}>A</button>
-                          <button onClick={(e) => { e.preventDefault(); setTextSize('large'); }} className={`flex-1 py-1 rounded text-sm font-bold transition-all ${textSize === 'large' ? 'bg-white text-slate-800 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}>A</button>
-                          <button onClick={(e) => { e.preventDefault(); setTextSize('xlarge'); }} className={`flex-1 py-1 rounded text-base font-bold transition-all ${textSize === 'xlarge' ? 'bg-white text-slate-800 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}>A</button>
+                        <div className="flex bg-slate-100 dark:bg-slate-800 rounded-md p-1 border border-slate-200 dark:border-slate-700 transition-colors">
+                          <button onClick={(e) => { e.preventDefault(); setTextSize('normal'); }} className={`flex-1 py-1 rounded text-xs font-bold transition-all ${textSize === 'normal' ? 'bg-white dark:bg-slate-600 text-slate-800 dark:text-white shadow-sm' : 'text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200'}`}>A</button>
+                          <button onClick={(e) => { e.preventDefault(); setTextSize('large'); }} className={`flex-1 py-1 rounded text-sm font-bold transition-all ${textSize === 'large' ? 'bg-white dark:bg-slate-600 text-slate-800 dark:text-white shadow-sm' : 'text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200'}`}>A</button>
+                          <button onClick={(e) => { e.preventDefault(); setTextSize('xlarge'); }} className={`flex-1 py-1 rounded text-base font-bold transition-all ${textSize === 'xlarge' ? 'bg-white dark:bg-slate-600 text-slate-800 dark:text-white shadow-sm' : 'text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200'}`}>A</button>
                         </div>
                       </div>
 
-                      <div className="h-[1px] bg-slate-100 my-1" />
+                      <div className="h-[1px] bg-slate-100 dark:bg-slate-800 my-1 transition-colors" />
 
+                      {/* Logout Button */}
                       <DropdownMenuItem 
-                        onClick={(e) => { e.preventDefault(); setShowLogoutConfirm(true); }} 
-                        className="focus:bg-red-50 focus:text-red-700 rounded-lg cursor-pointer py-2 px-2.5 transition-colors group flex items-center justify-between text-sm font-bold tracking-wide text-red-600 mt-1"
+                        onClick={(e) => { e.preventDefault(); setShowLogoutConfirm(true); }}
+                        className="cursor-pointer font-bold rounded-lg py-2.5 px-3 flex items-center justify-between hover:bg-red-50 dark:hover:bg-red-950/30 focus:bg-red-50 dark:focus:bg-red-950/30 transition-colors group"
                       >
-                        <span className="flex items-center gap-2">
-                          <LogOut className="h-4 w-4 text-red-500 group-hover:text-red-700 transition-colors" />
+                        <span className="flex items-center gap-2 text-sm text-red-600">
+                          <LogOut className="h-4 w-4 transition-transform group-hover:-translate-x-1" />
                           Log Out
                         </span>
                       </DropdownMenuItem>
@@ -279,29 +313,45 @@ export function Navigation() {
                       <Settings className="h-5 w-5" strokeWidth={2.5} />
                     </DropdownMenuTrigger>
                     
-                    <DropdownMenuContent className="w-56 bg-white border-2 border-slate-200 shadow-xl rounded-[14px] p-1.5 z-[100] mt-2 mr-2" align="end" sideOffset={8}>
-                      <div className="px-2 py-1.5 mb-1 border-b border-slate-100">
-                        <p className="text-sm font-semibold text-slate-800">Settings</p>
+                    <DropdownMenuContent className="w-56 bg-white dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-800 shadow-xl rounded-[14px] p-1.5 z-[100] mt-2 mr-2 transition-colors" align="end" sideOffset={8}>
+                      <div className="px-2 py-1.5 mb-1 border-b border-slate-100 dark:border-slate-800">
+                        <p className="text-sm font-semibold text-slate-800 dark:text-white transition-colors">Settings</p>
                       </div>
+
+                      {/* Dark Mode Toggle */}
+                      <div
+                        onClick={(e) => { e.preventDefault(); toggleDarkMode(); }}
+                        className="flex items-center justify-between rounded-lg cursor-pointer py-2.5 px-3 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
+                      >
+                        <span className="flex items-center gap-2 text-sm font-medium text-slate-700 dark:text-slate-300">
+                          {isDarkMode ? <Sun className="h-4 w-4 text-yellow-500" /> : <Moon className="h-4 w-4 text-indigo-500" />}
+                          Dark Mode
+                        </span>
+                        <div className={`relative w-9 h-5 rounded-full transition-colors duration-200 ${isDarkMode ? 'bg-indigo-600' : 'bg-slate-300'}`}>
+                          <div className={`absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform duration-200 ${isDarkMode ? 'translate-x-4' : 'translate-x-0'}`} />
+                        </div>
+                      </div>
+
+                      <div className="h-[1px] bg-slate-100 dark:bg-slate-800 my-1 transition-colors" />
 
                       {/* About Link */}
                       <Link href="/about" className="block w-full outline-none">
-                        <DropdownMenuItem className="cursor-pointer font-bold rounded-lg py-2.5 px-3 flex items-center justify-between hover:bg-slate-50 focus:bg-slate-50 transition-colors group">
-                          <span className="flex items-center gap-2 text-sm text-slate-700">
+                        <DropdownMenuItem className="cursor-pointer font-bold rounded-lg py-2.5 px-3 flex items-center justify-between hover:bg-slate-50 dark:hover:bg-slate-800 focus:bg-slate-50 dark:focus:bg-slate-800 transition-colors group">
+                          <span className="flex items-center gap-2 text-sm text-slate-700 dark:text-slate-300">
                             <Info className="h-4 w-4 text-blue-500 group-hover:text-blue-600 transition-colors" />
                             About Platform
                           </span>
                         </DropdownMenuItem>
                       </Link>
 
-                      <div className="h-[1px] bg-slate-100 my-1" />
+                      <div className="h-[1px] bg-slate-100 dark:bg-slate-800 my-1 transition-colors" />
 
                       {/* Reduce Animations Toggle */}
                       <div
                         onClick={(e) => { e.preventDefault(); toggleReduceMotion(); }}
-                        className="flex items-center justify-between rounded-lg cursor-pointer py-2.5 px-3 hover:bg-slate-50 transition-colors"
+                        className="flex items-center justify-between rounded-lg cursor-pointer py-2.5 px-3 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
                       >
-                        <span className="flex items-center gap-2 text-sm font-medium text-slate-700">
+                        <span className="flex items-center gap-2 text-sm font-medium text-slate-700 dark:text-slate-300">
                           <Zap className="h-4 w-4 text-amber-500" />
                           Reduce Animations
                         </span>
@@ -310,18 +360,18 @@ export function Navigation() {
                         </div>
                       </div>
 
-                      <div className="h-[1px] bg-slate-100 my-1" />
+                      <div className="h-[1px] bg-slate-100 dark:bg-slate-800 my-1 transition-colors" />
 
                       {/* Text Size Control */}
                       <div className="py-2.5 px-3">
-                        <span className="flex items-center gap-2 text-sm font-medium text-slate-700 mb-2">
+                        <span className="flex items-center gap-2 text-sm font-medium text-slate-700 dark:text-slate-300 mb-2 transition-colors">
                           <Type className="h-4 w-4 text-blue-500" />
                           Text Size
                         </span>
-                        <div className="flex bg-slate-100 rounded-md p-1 border border-slate-200">
-                          <button onClick={(e) => { e.preventDefault(); setTextSize('normal'); }} className={`flex-1 py-1 rounded text-xs font-bold transition-all ${textSize === 'normal' ? 'bg-white text-slate-800 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}>A</button>
-                          <button onClick={(e) => { e.preventDefault(); setTextSize('large'); }} className={`flex-1 py-1 rounded text-sm font-bold transition-all ${textSize === 'large' ? 'bg-white text-slate-800 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}>A</button>
-                          <button onClick={(e) => { e.preventDefault(); setTextSize('xlarge'); }} className={`flex-1 py-1 rounded text-base font-bold transition-all ${textSize === 'xlarge' ? 'bg-white text-slate-800 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}>A</button>
+                        <div className="flex bg-slate-100 dark:bg-slate-800 rounded-md p-1 border border-slate-200 dark:border-slate-700 transition-colors">
+                          <button onClick={(e) => { e.preventDefault(); setTextSize('normal'); }} className={`flex-1 py-1 rounded text-xs font-bold transition-all ${textSize === 'normal' ? 'bg-white dark:bg-slate-600 text-slate-800 dark:text-white shadow-sm' : 'text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200'}`}>A</button>
+                          <button onClick={(e) => { e.preventDefault(); setTextSize('large'); }} className={`flex-1 py-1 rounded text-sm font-bold transition-all ${textSize === 'large' ? 'bg-white dark:bg-slate-600 text-slate-800 dark:text-white shadow-sm' : 'text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200'}`}>A</button>
+                          <button onClick={(e) => { e.preventDefault(); setTextSize('xlarge'); }} className={`flex-1 py-1 rounded text-base font-bold transition-all ${textSize === 'xlarge' ? 'bg-white dark:bg-slate-600 text-slate-800 dark:text-white shadow-sm' : 'text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200'}`}>A</button>
                         </div>
                       </div>
                     </DropdownMenuContent>
@@ -448,13 +498,24 @@ export function Navigation() {
             <div className="h-[1px] bg-slate-800/60 w-full my-2"></div>
             
             <div className="px-6 py-2">
-              <p className="text-slate-200 text-[11px] leading-relaxed drop-shadow-sm font-medium">
-                {currentTime.split(' at ')[0] || 'Loading date...'} at <br/> {currentTime.split(' at ')[1] || '...'}
-              </p>
+              <TimeDisplay mobile />
+            </div>
+
+            {/* Dark Mode Toggle (Mobile) */}
+            <div
+              onClick={toggleDarkMode}
+              className="flex items-center justify-between px-6 py-3 cursor-pointer hover:bg-white/5 transition-colors"
+            >
+              <span className="flex items-center gap-3 text-[15px] font-bold text-white">
+                {isDarkMode ? <Sun className="h-5 w-5 text-yellow-400 shrink-0" strokeWidth={2.5} /> : <Moon className="h-5 w-5 text-indigo-400 shrink-0" strokeWidth={2.5} />}
+                Dark Mode
+              </span>
+              <div className={`relative w-10 h-6 rounded-full transition-colors duration-200 ${isDarkMode ? 'bg-indigo-500' : 'bg-slate-600'}`}>
+                <div className={`absolute top-1 left-1 w-4 h-4 bg-white rounded-full shadow transition-transform duration-200 ${isDarkMode ? 'translate-x-4' : 'translate-x-0'}`} />
+              </div>
             </div>
 
             {/* Reduce Animations Toggle (Mobile) */}
-            <div className="h-[1px] bg-slate-800/60 w-full my-2"></div>
             <div
               onClick={toggleReduceMotion}
               className="flex items-center justify-between px-6 py-3 cursor-pointer hover:bg-white/5 transition-colors"
@@ -517,17 +578,16 @@ export function Navigation() {
                   </div>
 
                   {/* Red Logout Button */}
-                  <Button
-                    variant="outline"
+                  <button
                     onClick={() => {
                       setMobileMenuOpen(false)
                       setShowLogoutConfirm(true)
                     }}
-                    className="rounded-full bg-[#e11d48] border-[2px] border-white text-white hover:bg-rose-700 hover:text-white h-9 sm:h-10 px-3 sm:px-4 font-bold text-xs sm:text-sm shadow-[0_3px_0_#9f1239] hover:-translate-y-0.5 hover:shadow-[0_4px_0_#9f1239] active:translate-y-1 active:shadow-[0_0px_0_#9f1239] transition-all shrink-0 outline-none"
+                    className="rounded-full bg-[#e11d48] border-[2px] border-white text-white hover:bg-rose-700 h-9 sm:h-10 px-3 sm:px-4 font-bold text-xs sm:text-sm shadow-[0_3px_0_#9f1239] hover:-translate-y-0.5 hover:shadow-[0_4px_0_#9f1239] active:translate-y-1 active:shadow-[0_0px_0_#9f1239] transition-all shrink-0 outline-none flex items-center justify-center"
                   >
                     <LogOut className="h-3.5 w-3.5 sm:h-4 sm:w-4 mr-1.5 sm:mr-2" strokeWidth={2.5} />
                     Log out
-                  </Button>
+                  </button>
                 </div>
               </>
             )}
@@ -536,7 +596,7 @@ export function Navigation() {
       </div>
       {/* Logout Confirmation Dialog */}
       <Dialog open={showLogoutConfirm} onOpenChange={setShowLogoutConfirm}>
-        <DialogContent className="max-w-[90vw] sm:max-w-md bg-white border-none rounded-[2rem] p-0 overflow-hidden shadow-2xl">
+        <DialogContent aria-describedby={undefined} className="max-w-[90vw] sm:max-w-md bg-white dark:bg-slate-900 border-none rounded-[2rem] p-0 overflow-hidden shadow-2xl transition-colors duration-500">
           <div className="bg-gradient-to-r from-[#ff3b3b] to-[#ff7b00] p-6 text-center border-b-[6px] border-white/20">
             <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center mx-auto mb-4 text-4xl shadow-xl transform rotate-3">
               🤖
@@ -544,13 +604,13 @@ export function Navigation() {
             <DialogTitle className="text-2xl font-black text-white uppercase tracking-tight italic drop-shadow-md">Logging out?</DialogTitle>
           </div>
           <div className="p-8 text-center">
-            <DialogDescription className="text-slate-500 font-bold text-lg leading-relaxed mb-8">
+            <DialogDescription className="text-slate-500 dark:text-slate-400 font-bold text-lg leading-relaxed mb-8 transition-colors">
               Are you sure you want to take a break, Hero? We'll miss you!
             </DialogDescription>
             <div className="flex flex-col sm:flex-row gap-3">
               <button 
                 onClick={() => setShowLogoutConfirm(false)}
-                className="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-600 font-black py-4 rounded-2xl transition-all uppercase tracking-widest text-sm"
+                className="flex-1 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 font-black py-4 rounded-2xl transition-all uppercase tracking-widest text-sm"
               >
                 Stay
               </button>

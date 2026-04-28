@@ -44,7 +44,7 @@ export function HeroCarouselClient({ images }: HeroCarouselClientProps) {
                 <CarouselContent>
                     {images.map((image, index) => (
                         <CarouselItem key={image.id}>
-                            <div className="relative isolate w-full h-[40vh] sm:h-[50vh] min-h-[300px] overflow-hidden rounded-[2.5rem] shadow-2xl border border-gray-200 group-slide [mask-image:radial-gradient(white,black)] [-webkit-mask-image:-webkit-radial-gradient(white,black)] bg-slate-200">
+                            <div className="relative isolate w-full h-[40vh] sm:h-[50vh] min-h-[300px] overflow-hidden rounded-[2.5rem] shadow-2xl border border-gray-200 dark:border-slate-800 group-slide [mask-image:radial-gradient(white,black)] [-webkit-mask-image:-webkit-radial-gradient(white,black)] bg-slate-200 dark:bg-slate-800 transition-colors duration-500">
                                 <style dangerouslySetInnerHTML={{ __html: `
                                     .carousel-zoom-image {
                                         transition: opacity 0.7s ease-out, transform 0.7s cubic-bezier(0.33, 1, 0.68, 1) !important;

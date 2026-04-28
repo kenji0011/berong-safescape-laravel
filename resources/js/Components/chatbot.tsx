@@ -153,6 +153,7 @@ export function Chatbot() {
   const [miniIsOnLeft, setMiniIsOnLeft] = useState(false)
 
   // Entry slide-in animation via motion value (so it doesn't conflict with snap)
+  const isMounted = useRef(false)
   useEffect(() => {
     if (!isOpen) {
       rotationValue.set(0)
@@ -160,15 +161,25 @@ export function Chatbot() {
         // Re-enter from the left side
         const screenWidth = window.innerWidth
         const chatheadWidth = chatheadRef.current?.offsetWidth || 160
-        const leftOffset = screenWidth < 640 ? 0 : 5  // less offset on mobile
+        const leftOffset = screenWidth < 640 ? 8 : 18  // mobile: 8px, desktop: 18px
         const targetX = -(screenWidth - chatheadWidth) + leftOffset  // adjust berong sides
-        dragX.set(targetX - 100) // start further off-screen left
-        animate(dragX, targetX, { type: "spring", stiffness: 400, damping: 25 })
+        
+        if (!isMounted.current) {
+          dragX.set(targetX)
+        } else {
+          dragX.set(targetX - 100) // start further off-screen left
+          animate(dragX, targetX, { type: "spring", stiffness: 400, damping: 25 })
+        }
       } else {
         // Re-enter from the right side (default)
-        dragX.set(100)
-        animate(dragX, 0, { type: "spring", stiffness: 400, damping: 25 })
+        if (!isMounted.current) {
+          dragX.set(0)
+        } else {
+          dragX.set(100)
+          animate(dragX, 0, { type: "spring", stiffness: 400, damping: 25 })
+        }
       }
+      isMounted.current = true
     }
   }, [isOpen])
 
@@ -188,7 +199,7 @@ export function Chatbot() {
 
     if (isCloserToLeft) {
       // Snap to left edge
-      const leftOffset = screenWidth < 640 ? 0 : 5  // less offset on mobile
+      const leftOffset = screenWidth < 640 ? 0 : 18  // mobile: 0px, desktop: 18px
       const targetX = -(screenWidth - chatheadWidth) + leftOffset  // adjust berong sides
       animate(dragX, targetX, { type: "spring", stiffness: 400, damping: 30 })
       setIsOnLeft(true)
@@ -448,7 +459,7 @@ export function Chatbot() {
       {/* Chatbot Toggle - Berong Character or Mini Button */}
       <div ref={constraintsRef} className="fixed inset-x-0 top-24 bottom-0 z-[60] pointer-events-none">
         {/* Full Mascot Mode */}
-        <AnimatePresence>
+        <AnimatePresence initial={false}>
           {!isOpen && !useMiniButton && (
             <motion.div
               className="pointer-events-auto fixed right-0 bottom-0"
@@ -524,11 +535,11 @@ export function Chatbot() {
         </AnimatePresence>
 
         {/* Mini Circle Button Mode (AssistiveTouch-style) */}
-        <AnimatePresence>
+        <AnimatePresence initial={false}>
           {!isOpen && useMiniButton && (
             <motion.div
               ref={miniRef}
-              className="pointer-events-auto fixed right-4 bottom-6"
+              className="pointer-events-auto fixed right-4 bottom-12"
               drag
               dragConstraints={constraintsRef}
               dragElastic={0.1}
@@ -542,23 +553,23 @@ export function Chatbot() {
                 const btnSize = el.offsetWidth
                 const screenW = window.innerWidth
                 const screenH = window.innerHeight
-                // The button's default position is right-4 bottom-6 (right:16px, bottom:24px)
+                // The button's default position is right-4 bottom-9 (right:16px, bottom:36px)
                 // So its default left = screenW - 16 - btnSize
                 const defaultLeft = screenW - 16 - btnSize
                 const currentLeft = defaultLeft + miniDragX.get()
                 const centerX = currentLeft + btnSize / 2
                 const isLeft = centerX < screenW / 2
-
+ 
                 // Clamp Y so it stays on screen
-                const defaultTop = screenH - 24 - btnSize
+                const defaultTop = screenH - 36 - btnSize
                 const currentTop = defaultTop + miniDragY.get()
                 const clampedTop = Math.max(8, Math.min(screenH - btnSize - 8, currentTop))
                 const clampedY = clampedTop - defaultTop
                 animate(miniDragY, clampedY, { type: 'spring', stiffness: 400, damping: 30 })
 
                 if (isLeft) {
-                  // Snap to left: target left = 16px
-                  const targetX = 16 - defaultLeft
+                  // Snap to left: target left margin (24px desktop, 12px mobile)
+                  const targetX = (screenW < 640 ? 12 : 30) - defaultLeft
                   animate(miniDragX, targetX, { type: 'spring', stiffness: 400, damping: 30 })
                   setMiniIsOnLeft(true)
                 } else {
@@ -630,9 +641,9 @@ export function Chatbot() {
               willChange: 'transform, opacity',
             }}
           >
-            <Card className="chatbot-window w-[480px] max-w-[90vw] h-[70vh] min-h-[450px] max-h-[620px] flex flex-col shadow-2xl p-0 gap-0 overflow-hidden border-[3px] border-[#ff6b00] rounded-2xl">
+              <Card className="chatbot-window w-[480px] max-w-[90vw] h-[70vh] min-h-[450px] max-h-[620px] flex flex-col shadow-2xl p-0 gap-0 overflow-hidden border-[3px] border-[#ff6b00] rounded-2xl dark:bg-slate-900 dark:border-[#ff8c00]">
               {/* Header — Orange */}
-              <div className="flex items-center justify-between px-4 py-3 bg-gradient-to-r from-[#ff6b00] to-[#ff8c00] text-white rounded-t-xl">
+              <div className="flex items-center justify-between px-4 py-3 bg-gradient-to-r from-[#ff6b00] to-[#ff8c00] text-white rounded-t-xl shrink-0">
                 <div className="flex items-center gap-3">
                   <Image
                     src="/RD Logo.png"
@@ -655,7 +666,7 @@ export function Chatbot() {
                   >
                     {readAloud ? <Volume2 className="h-5 w-5" strokeWidth={2.5} /> : <VolumeX className="h-5 w-5" strokeWidth={2.5} />}
                   </button>
-
+ 
                   {/* Toggle mini/full mascot mode */}
                   <button
                     onClick={toggleMiniMode}
@@ -672,27 +683,27 @@ export function Chatbot() {
                   </button>
                 </div>
               </div>
-
+ 
               {/* Quick Questions Section */}
               {loadingQuestions ? (
-                <div className="p-3 text-center">
-                  <div className="animate-pulse text-xs text-muted-foreground">Loading suggestions...</div>
+                <div className="p-3 text-center dark:bg-slate-950/50">
+                  <div className="animate-pulse text-xs text-muted-foreground dark:text-slate-500">Loading suggestions...</div>
                 </div>
               ) : Object.keys(quickQuestions).length > 0 && showQuickQuestions ? (
-                <div className="py-2 px-3 bg-gray-50/80 border-b backdrop-blur-sm">
+                <div className="py-2 px-3 bg-gray-50/80 dark:bg-slate-950/80 border-b dark:border-slate-800 backdrop-blur-sm shrink-0">
                   {/* Header with Icon */}
                   <div className="flex items-center gap-2 mb-2">
                     <div className="h-1.5 w-1.5 rounded-full bg-green-500 animate-pulse" />
-                    <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                    <h4 className="text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase tracking-wider">
                       Suggested Topics
                     </h4>
                   </div>
-
+ 
                   {/* Scrollable Area */}
-                  <div className="max-h-[110px] overflow-y-auto pr-1 space-y-4 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-gray-200 [&::-webkit-scrollbar-thumb]:rounded-full">
+                  <div className="max-h-[110px] overflow-y-auto pr-1 space-y-4 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-gray-200 dark:[&::-webkit-scrollbar-thumb]:bg-slate-800 [&::-webkit-scrollbar-thumb]:rounded-full">
                     {Object.entries(quickQuestions).map(([category, questions]) => (
                       <div key={category} className="first:mt-0">
-                        <h5 className="text-[10px] font-bold text-gray-400 mb-2 pl-1 uppercase">
+                        <h5 className="text-[10px] font-bold text-gray-400 dark:text-slate-500 mb-2 pl-1 uppercase">
                           {category}
                         </h5>
                         <div className="flex flex-wrap gap-2">
@@ -700,7 +711,7 @@ export function Chatbot() {
                             <button
                               key={question.id}
                               onClick={() => handleQuickQuestion(question.questionText, question.responseText)}
-                              className="text-xs text-left px-3 py-2 rounded-xl bg-white border border-gray-200 shadow-sm text-gray-700 transition-all duration-200 hover:border-orange-300 hover:bg-orange-50 hover:text-orange-700 hover:shadow-md active:scale-95"
+                              className="text-xs text-left px-3 py-2 rounded-xl bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800 shadow-sm text-gray-700 dark:text-slate-300 transition-all duration-200 hover:border-orange-300 dark:hover:border-orange-500/50 hover:bg-orange-50 dark:hover:bg-orange-500/10 hover:text-orange-700 dark:hover:text-orange-400 hover:shadow-md active:scale-95"
                             >
                               {question.questionText}
                             </button>
@@ -711,16 +722,16 @@ export function Chatbot() {
                   </div>
                 </div>
               ) : null}
-
-              {/* Messages — white background */}
-              <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-white">
+ 
+              {/* Messages — theme aware background */}
+              <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-white dark:bg-slate-900 scroll-smooth [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-gray-200 dark:[&::-webkit-scrollbar-thumb]:bg-slate-800 [&::-webkit-scrollbar-thumb]:rounded-full">
                 {messages.map((message) => (
                   <div key={message.id} className={`flex ${message.sender === "user" ? "justify-end" : "justify-start"}`}>
                     <div
-                      className={`max-w-[85%] rounded-2xl p-3 ${
+                      className={`max-w-[85%] rounded-2xl p-3 shadow-sm ${
                         message.sender === "user"
-                          ? "bg-[#1a6b3c] text-white rounded-br-md"
-                          : "bg-[#1e3a4a] text-white border border-[#2a5060] rounded-bl-md"
+                          ? "bg-[#1a6b3c] dark:bg-[#1a6b3c] text-white rounded-br-md"
+                          : "bg-[#1e3a4a] dark:bg-slate-800 text-white border border-[#2a5060] dark:border-slate-700 rounded-bl-md"
                       }`}
                     >
                       {message.sender === "bot" ? (
@@ -731,13 +742,13 @@ export function Chatbot() {
                           [&>h2]:text-sm [&>h2]:font-bold [&>h2]:mt-2 [&>h2]:mb-1
                           [&>h3]:text-sm [&>h3]:font-semibold [&>h3]:mt-1.5 [&>h3]:mb-0.5
                           [&>strong]:font-semibold [&>em]:italic
-                          [&>code]:bg-white/10 [&>code]:px-1 [&>code]:rounded [&>code]:text-xs
+                          [&>code]:bg-white/10 dark:[&>code]:bg-slate-950/50 [&>code]:px-1 [&>code]:rounded [&>code]:text-xs
                           [&>blockquote]:border-l-2 [&>blockquote]:border-orange-400 [&>blockquote]:pl-2 [&>blockquote]:italic
                         ">
                           <ReactMarkdown>{message.text}</ReactMarkdown>
                         </div>
                       ) : (
-                        <p className="text-sm">{message.text}</p>
+                        <p className="text-sm font-medium">{message.text}</p>
                       )}
                     </div>
                   </div>
@@ -745,7 +756,7 @@ export function Chatbot() {
                 {/* Typing Indicator */}
                 {isTyping && (
                   <div className="flex justify-start">
-                    <div className="bg-[#1e3a4a] text-white border border-[#2a5060] rounded-2xl rounded-bl-md p-3 px-4 flex items-center gap-1.5 h-10 w-16">
+                    <div className="bg-[#1e3a4a] dark:bg-slate-800 text-white border border-[#2a5060] dark:border-slate-700 rounded-2xl rounded-bl-md p-3 px-4 flex items-center gap-1.5 h-10 w-16">
                       <motion.div
                         className="w-1.5 h-1.5 bg-orange-400 rounded-full"
                         animate={{ y: [0, -5, 0] }}
@@ -764,12 +775,12 @@ export function Chatbot() {
                     </div>
                   </div>
                 )}
-
+ 
                 <div ref={messagesEndRef} />
               </div>
-
+ 
               {/* Input Footer — with mic + send */}
-              <div className="px-4 py-3 border-t border-gray-200 bg-white rounded-b-xl">
+              <div className="px-4 py-3 border-t border-gray-200 dark:border-slate-800 bg-white dark:bg-slate-900 rounded-b-xl shrink-0">
                 <div className="flex items-center gap-2">
                   <Input
                     value={inputValue}
@@ -781,15 +792,15 @@ export function Chatbot() {
                     }}
                     onKeyPress={(e) => e.key === "Enter" && handleSend()}
                     placeholder="Ask about fire safety..."
-                    className="flex-1 border-gray-300 bg-gray-50 rounded-xl focus:ring-orange-400 focus:border-orange-400"
+                    className="flex-1 border-gray-300 dark:border-slate-800 bg-gray-50 dark:bg-slate-950 rounded-xl focus:ring-orange-400 dark:focus:ring-orange-500 focus:border-orange-400 dark:focus:border-orange-500 text-slate-800 dark:text-slate-200 placeholder:text-slate-400 dark:placeholder:text-slate-600 transition-colors"
                   />
                   <button
                     type="button"
                     onClick={startListening}
                     className={`h-10 w-10 flex items-center justify-center transition-all ${
                       isListening 
-                        ? 'text-red-500 bg-red-100 rounded-full animate-pulse shadow-[0_0_15px_rgba(239,68,68,0.5)]' 
-                        : 'text-gray-400 hover:text-orange-500'
+                        ? 'text-red-500 bg-red-100 dark:bg-red-950/30 rounded-full animate-pulse shadow-[0_0_15px_rgba(239,68,68,0.5)]' 
+                        : 'text-gray-400 dark:text-slate-500 hover:text-orange-500 dark:hover:text-orange-400'
                     }`}
                     title={isListening ? "Listening..." : "Voice input"}
                   >
@@ -798,8 +809,7 @@ export function Chatbot() {
                   {isTyping ? (
                     <button
                       onClick={handleStopGeneration}
-                      className="h-10 w-10 flex items-center justify-center text-orange-500 hover:bg-orange-50 rounded-xl transition-colors"
-                      title="Stop generation"
+                      className="h-10 w-10 flex items-center justify-center text-red-500 hover:bg-red-50 dark:hover:bg-red-950/20 rounded-xl transition-colors"
                     >
                       <Square className="h-5 w-5 fill-current" />
                     </button>
@@ -807,7 +817,7 @@ export function Chatbot() {
                     <button
                       onClick={handleSend}
                       disabled={!inputValue.trim()}
-                      className="h-10 w-10 flex items-center justify-center text-white bg-[#ff6b00] hover:bg-[#ff8c00] disabled:bg-gray-200 disabled:text-gray-400 rounded-xl transition-all shadow-md active:scale-95"
+                      className="h-10 w-10 flex items-center justify-center bg-orange-500 hover:bg-orange-600 dark:bg-orange-600 dark:hover:bg-orange-500 text-white rounded-xl shadow-sm transition-all disabled:opacity-50 disabled:grayscale hover:scale-105 active:scale-95"
                     >
                       <Send className="h-5 w-5" strokeWidth={2.5} />
                     </button>

@@ -109,15 +109,15 @@ const KidsChallengesPage = () => {
   }, [])
 
   return (
-    <div className="min-h-screen relative bg-blue-50">
+    <div className="min-h-screen relative bg-blue-50 dark:bg-slate-950 transition-colors duration-500">
       {/* Background Image with Overlay */}
       <div className="absolute inset-0 z-0">
         <img 
           src="/challenges-bg.png" 
           alt="" 
-          className="w-full h-full object-cover opacity-40 mix-blend-multiply" 
+          className="w-full h-full object-cover opacity-40 dark:opacity-20 mix-blend-multiply" 
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-blue-50/80 via-white/40 to-blue-50/90"></div>
+        <div className="absolute inset-0 bg-gradient-to-b from-blue-50/80 via-white/40 to-blue-50/90 dark:from-slate-950/80 dark:via-slate-900/40 dark:to-slate-950/90"></div>
       </div>
       {/* Animated Particles Background */}
       {!isMobile && !reduceMotion && (
@@ -138,51 +138,51 @@ const KidsChallengesPage = () => {
             {/* Background Glow */}
             <div className="absolute -inset-2 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-[2.5rem] blur-xl opacity-20 group-hover:opacity-30 transition-opacity duration-500"></div>
             
-            <div className="relative bg-white rounded-[2rem] p-6 sm:p-8 shadow-xl border-2 border-slate-50 overflow-hidden">
+            <div className="relative bg-white dark:bg-slate-800 rounded-[2rem] p-6 sm:p-8 shadow-xl border-2 border-slate-50 dark:border-slate-700 overflow-hidden transition-colors duration-500">
                {/* Decorative floating elements */}
                <div className="absolute top-0 right-0 p-8 opacity-10 rotate-12 group-hover:rotate-0 transition-transform duration-700">
                   <div className="text-8xl sm:text-9xl font-black">🏆</div>
                </div>
-               <div className="absolute -bottom-4 -left-4 w-24 h-24 bg-blue-50 rounded-full blur-2xl opacity-60"></div>
+               <div className="absolute -bottom-4 -left-4 w-24 h-24 bg-blue-50 dark:bg-blue-900/20 rounded-full blur-2xl opacity-60"></div>
                
                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6 relative z-10">
                   <Link 
                     href="/kids" 
-                    className="group/btn bg-slate-50 p-4 rounded-2xl shadow-sm hover:shadow-md transition-all hover:-translate-x-1 border-2 border-slate-100 flex items-center justify-center"
+                    className="group/btn bg-slate-50 dark:bg-slate-700 p-4 rounded-2xl shadow-sm hover:shadow-md transition-all hover:-translate-x-1 border-2 border-slate-100 dark:border-slate-600 flex items-center justify-center"
                   >
-                     <ArrowLeft className="h-6 w-6 text-slate-600 group-hover/btn:text-blue-600 transition-colors" />
+                     <ArrowLeft className="h-6 w-6 text-slate-600 dark:text-slate-300 group-hover/btn:text-blue-600 transition-colors" />
                   </Link>
                   
                   <div className="flex-1">
                      <div className="flex items-center gap-3 mb-1">
-                        <span className="px-3 py-1 bg-blue-100 text-blue-600 text-[10px] font-black uppercase tracking-widest rounded-full border border-blue-200">
+                        <span className="px-3 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 text-[10px] font-black uppercase tracking-widest rounded-full border border-blue-200 dark:border-blue-800">
                            Mission: Possible
                         </span>
-                        <span className="flex items-center gap-1 text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                        <span className="flex items-center gap-1 text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest">
                            <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></div>
                            Live Ops
                         </span>
                      </div>
-                     <h1 className="text-3xl sm:text-4xl font-black text-slate-800 tracking-tight mb-2">
-                        Challenge <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">Center</span>
+                     <h1 className="text-3xl sm:text-4xl font-black text-slate-800 dark:text-white tracking-tight mb-2">
+                        Mini <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">Games</span>
                      </h1>
-                     <p className="text-slate-500 font-bold text-sm sm:text-base max-w-lg leading-relaxed">
-                        Ready to test your hero skills? Pick a mission below and prove you're the ultimate Fire Safety Master! 🌟
+                     <p className="text-slate-500 dark:text-slate-400 font-bold text-sm sm:text-base max-w-lg leading-relaxed">
+                        Ready to play? Pick a game below and prove you're a Fire Safety Master! 🌟
                      </p>
                   </div>
 
                   <div className="hidden lg:flex flex-col items-end gap-2 pr-4">
                      <div className="flex -space-x-3">
                         {[1,2,3,4,5].map(i => (
-                           <div key={i} className="w-10 h-10 rounded-full border-4 border-white bg-slate-100 flex items-center justify-center text-xs shadow-sm overflow-hidden">
+                           <div key={i} className="w-10 h-10 rounded-full border-4 border-white dark:border-slate-800 bg-slate-100 dark:bg-slate-700 flex items-center justify-center text-xs shadow-sm overflow-hidden">
                               <img src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${i * 123}`} alt="User" />
                            </div>
                         ))}
-                        <div className="w-10 h-10 rounded-full border-4 border-white bg-blue-500 flex items-center justify-center text-[10px] font-black text-white shadow-sm">
+                        <div className="w-10 h-10 rounded-full border-4 border-white dark:border-slate-800 bg-blue-500 flex items-center justify-center text-[10px] font-black text-white shadow-sm">
                            +{stats.onlineCount > 5 ? stats.onlineCount - 5 : 0}
                         </div>
                      </div>
-                     <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Heroes Online Now</span>
+                     <span className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest">Heroes Online Now</span>
                   </div>
                </div>
             </div>

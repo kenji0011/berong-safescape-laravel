@@ -46,7 +46,7 @@ export const FeedbackWidget = () => {
             {!isOpen && (
                 <button
                     onClick={() => setIsOpen(true)}
-                    className="bg-yellow-400 hover:bg-yellow-500 text-yellow-900 border-2 border-yellow-500 shadow-[0_4px_0_0_#ca8a04] active:translate-y-1 active:shadow-none hover:-translate-y-1 transition-all rounded-full px-4 py-3 font-black text-sm flex items-center gap-2"
+                    className="bg-yellow-400 hover:bg-yellow-500 text-yellow-900 border-2 border-yellow-500 shadow-[0_4px_0_0_#ca8a04] dark:shadow-[0_4px_0_0_#854d0e] active:translate-y-1 active:shadow-none hover:-translate-y-1 transition-all rounded-full px-4 py-3 font-black text-sm flex items-center gap-2"
                 >
                     <MessageSquare className="h-5 w-5" />
                     <span className="hidden sm:inline">Send Feedback</span>
@@ -55,13 +55,13 @@ export const FeedbackWidget = () => {
 
             {/* Modal Box */}
             {isOpen && (
-                <div className="bg-white rounded-[2rem] border-4 border-slate-200 shadow-2xl w-80 sm:w-96 overflow-hidden animate-in slide-in-from-bottom-8 fade-in flex flex-col">
-                    <div className="bg-slate-50 border-b-2 border-slate-200 p-4 flex items-center justify-between">
-                        <div className="flex items-center gap-2 text-slate-700 font-black">
+                <div className="bg-white dark:bg-slate-900 rounded-[2rem] border-4 border-slate-200 dark:border-slate-800 shadow-2xl w-80 sm:w-96 overflow-hidden animate-in slide-in-from-bottom-8 fade-in flex flex-col transition-colors duration-500">
+                    <div className="bg-slate-50 dark:bg-slate-950 border-b-2 border-slate-200 dark:border-slate-800 p-4 flex items-center justify-between">
+                        <div className="flex items-center gap-2 text-slate-700 dark:text-white font-black">
                             <MessageSquare className="h-5 w-5 text-blue-500" />
                             How are we doing?
                         </div>
-                        <button onClick={() => setIsOpen(false)} className="text-slate-400 hover:text-slate-600 bg-slate-200 hover:bg-slate-300 rounded-full p-1 transition-colors">
+                        <button onClick={() => setIsOpen(false)} className="text-slate-400 hover:text-slate-600 dark:text-slate-500 dark:hover:text-slate-300 bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 rounded-full p-1 transition-colors">
                             <X className="h-4 w-4" />
                         </button>
                     </div>
@@ -69,11 +69,11 @@ export const FeedbackWidget = () => {
                     <div className="p-6">
                         {isSuccess ? (
                             <div className="flex flex-col items-center justify-center text-center py-6 animate-in zoom-in fade-in">
-                                <div className="h-16 w-16 bg-green-100 rounded-full flex items-center justify-center mb-4 border-4 border-green-200">
+                                <div className="h-16 w-16 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center mb-4 border-4 border-green-200 dark:border-green-800">
                                     <CheckCircle className="h-8 w-8 text-green-500" />
                                 </div>
-                                <h3 className="font-black text-xl text-slate-800">Thank You!</h3>
-                                <p className="text-sm font-bold text-slate-500 mt-2">Your feedback makes SafeScape better.</p>
+                                <h3 className="font-black text-xl text-slate-800 dark:text-white transition-colors">Thank You!</h3>
+                                <p className="text-sm font-bold text-slate-500 dark:text-slate-400 mt-2 transition-colors">Your feedback makes SafeScape better.</p>
                             </div>
                         ) : (
                             <form onSubmit={handleSubmit} className="space-y-4">
@@ -92,7 +92,7 @@ export const FeedbackWidget = () => {
                                                     "h-8 w-8 sm:h-10 sm:w-10 transition-colors",
                                                     (hoverRating || rating) >= star 
                                                         ? "text-yellow-400 fill-yellow-400 drop-shadow-sm" 
-                                                        : "text-slate-200"
+                                                        : "text-slate-200 dark:text-slate-800"
                                                 )} 
                                             />
                                         </button>
@@ -100,14 +100,14 @@ export const FeedbackWidget = () => {
                                 </div>
 
                                 <div>
-                                    <label className="block text-xs font-black text-slate-500 uppercase tracking-wider mb-2">
+                                    <label className="block text-xs font-black text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2 transition-colors">
                                         Tell us more (Optional)
                                     </label>
                                     <textarea
                                         value={comments}
                                         onChange={(e) => setComments(e.target.value)}
                                         placeholder="What did you like? What can we improve?"
-                                        className="w-full resize-none border-2 border-slate-200 rounded-xl p-3 text-sm font-medium focus:border-blue-500 focus:ring-0 transition-colors h-24"
+                                        className="w-full resize-none bg-white dark:bg-slate-950 border-2 border-slate-200 dark:border-slate-800 rounded-xl p-3 text-sm font-medium text-slate-800 dark:text-white placeholder:text-slate-400 focus:border-blue-500 focus:ring-0 transition-colors h-24"
                                     />
                                     {errorMsg && <p className="text-red-500 text-xs font-bold mt-2">{errorMsg}</p>}
                                 </div>

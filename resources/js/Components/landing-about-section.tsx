@@ -67,25 +67,25 @@ const features = [
         icon: BookOpen,
         title: "E-Learning Modules",
         description: "Interactive courses for professionals, adults, and kids tailored to different learning needs.",
-        color: "bg-blue-100 text-blue-500",
+        color: "bg-gradient-to-br from-blue-500 to-cyan-600 text-white",
     },
     {
         icon: Brain,
         title: "AI-Powered Chatbot",
         description: "Berong AI assistant trained on official BFP protocols to answer your fire safety questions.",
-        color: "bg-purple-100 text-purple-500",
+        color: "bg-gradient-to-br from-purple-500 to-indigo-600 text-white",
     },
     {
         icon: Flame, // Or generic icon, change if needed
         title: "Fire Simulation",
         description: "Advanced fire spread simulation using PPO and UNet models for evacuation planning.",
-        color: "bg-green-100 text-green-500",
+        color: "bg-gradient-to-br from-green-500 to-emerald-600 text-white",
     },
     {
         icon: Gamepad2,
         title: "Educational Games",
         description: "Fun and engaging games that teach fire safety concepts to learners of all ages.",
-        color: "bg-orange-100 text-orange-500",
+        color: "bg-gradient-to-br from-orange-500 to-yellow-500 text-white",
     },
 ];
 
@@ -95,7 +95,6 @@ function FeatureCard({
     index,
     reduceMotion
 }: {
-    key?: React.Key;
     feature: { icon: any; title: string; description: string; color: string };
     index: number;
     reduceMotion: boolean;
@@ -106,20 +105,36 @@ function FeatureCard({
     return (
         <motion.div
             ref={ref}
-            initial={{ opacity: 0 }}
-            animate={isInView ? { opacity: 1 } : {}}
+            initial={{ opacity: 0, y: 20 }}
+            animate={isInView ? { 
+                opacity: 1, 
+                y: 0,
+                ...(reduceMotion ? {} : {
+                    y: [0, -8, 0],
+                })
+            } : {}}
             transition={{
-                duration: 0.5,
-                ease: "easeOut",
-                delay: index * 0.1
+                opacity: { duration: 0.5, delay: index * 0.1 },
+                y: reduceMotion 
+                    ? { duration: 0.5, delay: index * 0.1 } 
+                    : { duration: 4, repeat: Infinity, ease: "easeInOut", delay: index * 0.5 }
             }}
-            className="group bg-white rounded-2xl p-5 sm:p-8 shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-1 flex flex-col items-start border border-gray-100"
+            whileHover={reduceMotion ? {} : { 
+                scale: 1.05,
+                y: -12,
+                transition: { duration: 0.2 }
+            }}
+            className="group bg-white dark:bg-slate-800 rounded-[2rem] sm:rounded-3xl p-5 sm:p-8 shadow-[0_6px_0_#b45309] sm:shadow-[0_8px_0_#b45309] dark:shadow-[0_6px_0_#0f172a] sm:dark:shadow-[0_8px_0_#0f172a] hover:shadow-[0_10px_0_#b45309] sm:hover:shadow-[0_12px_0_#b45309] dark:hover:shadow-[0_10px_0_#000] active:translate-y-1 sm:active:translate-y-2 active:shadow-[0_0px_0_#b45309] transition-all duration-300 flex flex-col items-center text-center border-[3px] sm:border-[4px] border-white dark:border-slate-700 relative overflow-hidden h-full"
         >
-            <div className={`${feature.color} w-12 h-12 sm:w-16 sm:h-16 rounded-xl sm:rounded-2xl flex items-center justify-center mb-4 sm:mb-6 group-hover:scale-105 transition-transform duration-300 shadow-sm`}>
-                <feature.icon className="w-6 h-6 sm:w-8 sm:h-8" strokeWidth={2} />
+            {/* Playful Background Blob */}
+            <div className={`absolute -top-10 -right-10 w-24 h-24 ${feature.color.split(' ')[0]} opacity-10 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-700`} />
+            
+            <div className={`${feature.color} w-14 h-14 sm:w-20 sm:h-20 rounded-xl sm:rounded-2xl flex items-center justify-center mb-4 sm:mb-6 group-hover:rotate-6 transition-transform duration-300 shadow-inner border-2 border-white/50`}>
+                <feature.icon className="w-7 h-7 sm:w-10 sm:h-10 text-white drop-shadow-sm" strokeWidth={2.5} />
             </div>
-            <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-2 sm:mb-3">{feature.title}</h3>
-            <p className="text-sm sm:text-base text-gray-600 font-medium leading-relaxed">{feature.description}</p>
+            
+            <h3 className="text-lg sm:text-2xl font-black text-slate-800 dark:text-white mb-2 sm:mb-3 tracking-tight transition-colors">{feature.title}</h3>
+            <p className="text-xs sm:text-base text-slate-600 dark:text-slate-400 font-bold leading-relaxed transition-colors">{feature.description}</p>
         </motion.div>
     );
 }
@@ -143,7 +158,7 @@ function TeamCard({ member, index, reduceMotion }: { key?: React.Key; member: ty
                 scale: 1.02,
                 transition: { duration: 0.3 }
             }}
-            className="group relative bg-card rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 border border-border"
+            className="group relative bg-white dark:bg-slate-800 rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 border border-slate-200 dark:border-slate-700 h-full flex flex-col"
         >
             {/* Gradient Header */}
             <div className={`h-32 bg-gradient-to-r ${member.color} relative`}>
@@ -165,7 +180,7 @@ function TeamCard({ member, index, reduceMotion }: { key?: React.Key; member: ty
             <div className="relative -mt-16 flex justify-center">
                 <div className="relative">
                     <div className={`absolute inset-0 bg-gradient-to-r ${member.color} rounded-full blur-md opacity-50 group-hover:opacity-75 transition-opacity`} />
-                    <div className="relative w-32 h-32 rounded-full border-4 border-card overflow-hidden bg-white shadow-xl">
+                    <div className="relative w-32 h-32 rounded-full border-4 border-white dark:border-slate-800 overflow-hidden bg-white dark:bg-slate-900 shadow-xl">
                         <img
                             src={member.image}
                             alt={member.name}
@@ -176,18 +191,18 @@ function TeamCard({ member, index, reduceMotion }: { key?: React.Key; member: ty
             </div>
 
             {/* Content */}
-            <div className="p-6 pt-4 text-center">
-                <h3 className="text-xl font-bold text-foreground mb-2">{member.name}</h3>
+            <div className="p-6 pt-4 text-center flex flex-col flex-1">
+                <h3 className="text-xl font-bold text-slate-800 dark:text-white mb-2 transition-colors">{member.name}</h3>
 
                 {/* Roles */}
-                <div className="flex flex-wrap justify-center gap-2 mb-4">
+                <div className="flex flex-wrap justify-center gap-2 mb-4 flex-grow content-start">
                     {member.roles.map((role, roleIndex) => (
                         <motion.span
                             key={roleIndex}
                             initial={{ opacity: 0, y: 10 }}
                             animate={isInView ? { opacity: 1, y: 0 } : {}}
                             transition={{ delay: index * 0.1 + roleIndex * 0.05 + 0.15 }}
-                            className="inline-flex items-center gap-1 px-3 py-1 bg-muted rounded-full text-xs font-medium text-muted-foreground"
+                            className="inline-flex items-center gap-1 px-3 py-1 bg-slate-100 dark:bg-slate-700 rounded-full text-xs font-medium text-slate-600 dark:text-slate-300 h-fit transition-colors"
                         >
                             {member.roleIcons[roleIndex] && (
                                 <span className="w-3 h-3">
@@ -203,7 +218,7 @@ function TeamCard({ member, index, reduceMotion }: { key?: React.Key; member: ty
                 </div>
 
                 {/* Social Links */}
-                <div className="flex justify-center gap-3 pt-4 border-t border-border">
+                <div className="flex justify-center gap-3 pt-4 border-t border-slate-100 dark:border-slate-700 mt-auto transition-colors">
                     {member.socials.map((social, socialIndex) => (
                         <Link
                             key={socialIndex}
@@ -215,7 +230,7 @@ function TeamCard({ member, index, reduceMotion }: { key?: React.Key; member: ty
                             <Button
                                 variant="outline"
                                 size="icon"
-                                className="h-10 w-10 rounded-full hover:bg-red-600 hover:text-white hover:border-red-600 transition-all duration-300 group-hover/social:scale-110"
+                                className="h-10 w-10 rounded-full dark:bg-slate-700 dark:border-slate-600 hover:bg-red-600 hover:text-white hover:border-red-600 transition-all duration-300 group-hover/social:scale-110"
                             >
                                 <social.icon className="w-5 h-5" />
                             </Button>
@@ -246,7 +261,7 @@ function PartnershipCard({ children, delay = 0, reduceMotion = false }: { childr
                 scale: 1.02,
                 transition: { duration: 0.3 }
             }}
-            className="bg-[#1e293b] rounded-2xl p-5 sm:p-6 border border-slate-700 hover:border-slate-500 transition-all duration-300"
+            className="bg-[#1e293b] rounded-2xl p-5 sm:p-8 border border-slate-700 hover:border-slate-500 transition-all duration-300 h-full flex flex-col"
         >
             {children}
         </motion.div>
@@ -320,7 +335,7 @@ export function LandingAboutSection() {
             {/* Meet Berong Section */}
             <motion.section
                 ref={heroRef}
-                className="relative bg-white/95 backdrop-blur-sm pt-8 pb-10 sm:py-16 overflow-hidden rounded-2xl sm:rounded-3xl border border-gray-200/80 shadow-sm"
+                className="relative bg-white/95 dark:bg-slate-900/95 backdrop-blur-sm py-10 sm:py-16 overflow-hidden rounded-[2rem] sm:rounded-[2.5rem] border border-gray-200/80 dark:border-slate-800 shadow-sm mx-2 sm:mx-0 transition-colors duration-500"
                 style={{ opacity: heroOpacity, scale: heroScale }}
             >
                 {/* Background Pattern */}
@@ -384,13 +399,13 @@ export function LandingAboutSection() {
                                 transition={{ duration: 0.4 }}
                                 className="mb-4 flex justify-center lg:justify-start"
                             >
-                                <span className="bg-red-100 text-red-600 font-bold text-xs sm:text-sm uppercase tracking-widest px-4 py-1.5 rounded-full inline-block">
+                                <span className="bg-red-100 dark:bg-red-950/30 text-red-600 dark:text-red-400 font-bold text-xs sm:text-sm uppercase tracking-widest px-4 py-1.5 rounded-full inline-block border border-red-200 dark:border-red-900/30 transition-colors">
                                     About SafeScape
                                 </span>
                             </motion.div>
                             
                             <motion.h1
-                                className="text-3xl sm:text-5xl lg:text-6xl font-black mb-2 sm:mb-3 text-slate-800"
+                                className="text-3xl sm:text-5xl lg:text-6xl font-black mb-2 sm:mb-3 text-slate-800 dark:text-white transition-colors"
                                 initial={{ opacity: 0, y: 30 }}
                                 whileInView={{ opacity: 1, y: 0 }}
                                 viewport={{ once: true }}
@@ -410,13 +425,13 @@ export function LandingAboutSection() {
                             </motion.p>
                             
                             <motion.p
-                                className="text-sm sm:text-lg text-slate-600 font-medium leading-relaxed max-w-xl mx-auto lg:mx-0 px-2 sm:px-0"
+                                className="text-sm sm:text-lg text-slate-600 dark:text-slate-400 font-medium leading-relaxed max-w-xl mx-auto lg:mx-0 px-2 sm:px-0 transition-colors"
                                 initial={{ opacity: 0, y: 30 }}
                                 whileInView={{ opacity: 1, y: 0 }}
                                 viewport={{ once: true }}
                                 transition={{ duration: 0.4, delay: 0.15 }}
                             >
-                                <strong className="text-slate-800">SafeScape</strong>, locally known as <strong className="text-slate-800">&quot;Berong E-Learning&quot;</strong>, is named after the official mascot of the Bureau of Fire Protection.
+                                <strong className="text-slate-800 dark:text-white">SafeScape</strong>, locally known as <strong className="text-slate-800 dark:text-white">&quot;Berong E-Learning&quot;</strong>, is named after the official mascot of the Bureau of Fire Protection.
                                 Berong represents our commitment to making fire safety education accessible, engaging, and effective for every Filipino.
                             </motion.p>
                         </motion.div>
@@ -427,7 +442,7 @@ export function LandingAboutSection() {
             {/* Platform Overview Section */}
             <motion.section
                 ref={platformRef}
-                className="py-10 sm:py-24 bg-gradient-to-br from-[#ff4b3e] to-[#ff8c00] text-white relative overflow-hidden rounded-[2.5rem] shadow-sm"
+                className="py-10 sm:py-14 bg-gradient-to-br from-[#ff4b3e] to-[#ff8c00] dark:from-red-950 dark:to-orange-950 text-white relative overflow-hidden rounded-[2rem] sm:rounded-[2.5rem] shadow-sm mx-2 sm:mx-0 transition-colors duration-500"
                 style={{ opacity: platformOpacity, scale: platformScale }}
             >
                 {/* Background Pattern */}
@@ -444,10 +459,10 @@ export function LandingAboutSection() {
                         viewport={{ once: true }}
                         transition={{ duration: 0.7 }}
                     >
-                        <h2 className="text-4xl sm:text-5xl font-black text-white mb-4">
-                            What is <span className="text-yellow-300">SafeScape</span>?
+                        <h2 className="text-3xl sm:text-6xl font-black text-white mb-4 sm:mb-6 drop-shadow-lg uppercase tracking-tight italic">
+                            What is <span className="text-yellow-400 drop-shadow-[0_4px_0_#b45309]">SafeScape</span>?
                         </h2>
-                        <p className="text-white/95 font-medium max-w-3xl mx-auto text-sm sm:text-xl px-2">
+                        <p className="text-white font-bold max-w-2xl mx-auto text-sm sm:text-2xl px-4 leading-relaxed opacity-95">
                             A comprehensive fire safety education platform designed to empower communities with knowledge and skills.
                         </p>
                     </motion.div>
@@ -463,7 +478,7 @@ export function LandingAboutSection() {
             {/* Partnership Section */}
             <motion.section
                 ref={partnershipRef}
-                className="py-10 sm:py-14 bg-[#1e293b] text-white relative overflow-hidden rounded-[2.5rem] shadow-md"
+                className="py-10 sm:py-14 bg-[#1e293b] dark:bg-slate-950 text-white relative overflow-hidden rounded-[2.5rem] shadow-md transition-colors duration-500"
                 style={{ opacity: partnershipOpacity, scale: partnershipScale }}
             >
                 {/* Animated Background decoration */}
@@ -589,14 +604,14 @@ export function LandingAboutSection() {
                         transition={{ duration: 0.7 }}
                     >
                         <div className="mb-6 flex justify-center">
-                            <span className="bg-red-100 text-red-500 font-bold text-xs uppercase tracking-widest px-4 py-1.5 rounded-full inline-block">
+                            <span className="bg-red-100 dark:bg-red-950/30 text-red-500 dark:text-red-400 font-bold text-xs uppercase tracking-widest px-4 py-1.5 rounded-full inline-block border border-red-200 dark:border-red-900/30 transition-colors">
                                 The Research Team
                             </span>
                         </div>
-                        <h2 className="text-4xl sm:text-5xl font-black text-slate-800 mb-4">
+                        <h2 className="text-4xl sm:text-5xl font-black text-slate-800 dark:text-white mb-4 transition-colors">
                             Meet the Developers
                         </h2>
-                        <p className="text-slate-600 font-medium max-w-2xl mx-auto text-lg">
+                        <p className="text-slate-600 dark:text-slate-400 font-medium max-w-2xl mx-auto text-lg transition-colors">
                             Computer Science researchers majoring in Intelligent Systems who designed and developed SafeScape.
                         </p>
                     </motion.div>

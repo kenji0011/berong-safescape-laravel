@@ -69,7 +69,18 @@ export function Footer() {
   };
 
   return (
-    <footer className="bg-[#0f172a] text-white pt-8 pb-6 sm:pt-16 sm:pb-10">
+    <footer className="bg-[#0f172a] text-white pt-8 pb-6 sm:pt-16 sm:pb-10 relative overflow-hidden">
+      <style>{`
+        .footer-link {
+          transition: none !important;
+          will-change: transform;
+          backface-visibility: hidden;
+        }
+        .footer-link:hover {
+          color: white !important;
+          transform: translateX(4px);
+        }
+      `}</style>
       <div className="max-w-7xl mx-auto px-5 sm:px-8">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-x-4 gap-y-8 sm:gap-x-8 sm:gap-y-12">
           {/* BFP Logo and Description Column */}
@@ -104,7 +115,7 @@ export function Footer() {
                   <li key={linkIndex}>
                     <button
                       onClick={() => handleLinkClick(link)}
-                      className="text-[13px] sm:text-[15px] text-slate-400 hover:text-white font-medium transition-colors block text-left w-full py-1 sm:py-1.5"
+                      className="footer-link text-[13px] sm:text-[15px] text-slate-400 font-medium block text-left w-full py-1 sm:py-1.5"
                     >
                       {link.name}
                     </button>

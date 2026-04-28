@@ -23,12 +23,12 @@ export default function Welcome({ carouselImages }: { carouselImages?: any[] }) 
     <>
       <Head title="Berong E-Learning for BFP Sta Cruz">
         {carouselImages && carouselImages.length > 0 && (
-          <link rel="preload" as="image" href={carouselImages[0].imageUrl} fetchpriority="high" />
+          <link rel="preload" as="image" href={carouselImages[0].imageUrl} fetchPriority="high" />
         )}
       </Head>
       <div className="min-h-screen flex flex-col">
         <Navigation />
-        <main className="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 w-full">
+        <main className="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-[80px] sm:pt-[96px] pb-6 sm:pb-8 w-full">
           <section className="mb-8 sm:mb-12">
             <HeroCarousel initialImages={carouselImages} />
           </section>

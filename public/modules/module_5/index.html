@@ -5,16 +5,54 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SafeScape | Module 5: Ultimate Defense</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <script>
-        // Suppress Tailwind CDN warning
-        console.warn = (function (originalWarn) {
-            return function (...args) {
-                if (args[0] && args[0].includes && args[0].includes('cdn.tailwindcss.com')) return;
+        // Silence Tailwind production warning
+        (function() {
+            const originalWarn = console.warn;
+            console.warn = (...args) => {
+                if (args[0] && typeof args[0] === 'string' && (args[0].includes('cdn.tailwindcss.com') || args[0].includes('production'))) return;
                 originalWarn.apply(console, args);
             };
-        })(console.warn);
+        })();
+
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#ff4b3e',
+                        secondary: '#ff8235',
+                    }
+                }
+            }
+        }
     </script>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        // Theme sync logic
+        (function() {
+            const syncTheme = () => {
+                try {
+                    const isDark = window.parent.document.documentElement.classList.contains('dark') || 
+                                 window.parent.document.body.classList.contains('dark');
+                    if (isDark) {
+                        document.documentElement.classList.add('dark');
+                    } else {
+                        document.documentElement.classList.remove('dark');
+                    }
+                } catch (e) {
+                    // Fallback
+                }
+            };
+            
+            syncTheme();
+            try {
+                const observer = new MutationObserver(syncTheme);
+                observer.observe(window.parent.document.documentElement, { attributes: true, attributeFilter: ['class'] });
+            } catch (e) {}
+            setInterval(syncTheme, 1000);
+        })();
+    </script>
     <link href="https://fonts.googleapis.com/css2?family=Alice&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="../css/shared.css">
@@ -43,24 +81,38 @@
             display: flex;
             align-items: flex-start;
             justify-content: flex-start;
-            border-radius: 8px;
+            border-radius: 12px;
+            z-index: 40;
         }
 
         .hazard-box:hover {
-            background-color: rgba(255, 255, 255, 0.1);
+            background-color: rgba(255, 255, 255, 0.2);
+            border-color: rgba(34, 197, 94, 0.5);
         }
 
         .hazard-label {
             background-color: #22c55e;
             color: white;
-            font-size: 11px;
-            font-weight: bold;
-            font-family: monospace;
+            font-size: 9px;
+            font-weight: 900;
+            font-family: sans-serif;
             padding: 4px 8px;
-            border-radius: 4px;
+            border-radius: 6px;
             opacity: 0;
             transform: translateY(-5px);
             transition: all 0.3s;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            white-space: nowrap;
+        }
+
+        @media (min-width: 640px) {
+            .hazard-label {
+                font-size: 11px;
+                padding: 6px 12px;
+                border-radius: 8px;
+            }
         }
 
         .found .hazard-label {
@@ -147,12 +199,23 @@
             background-color: #fff7ed;
         }
 
+        .dark .quiz-option:hover {
+            background-color: #7c2d12/20;
+            border-color: #ea580c;
+        }
+
         /* Styling for when the radio inside is checked */
         .quiz-option:has(input:checked) {
             background-color: #ffedd5 !important;
             border-color: #f97316 !important;
             border-width: 3px !important;
             box-shadow: 0 10px 15px -3px rgba(249, 115, 22, 0.2) !important;
+        }
+
+        .dark .quiz-option:has(input:checked) {
+            background-color: #7c2d12/30 !important;
+            border-color: #f97316 !important;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5) !important;
         }
 
         .quiz-option input:checked + span {
@@ -167,7 +230,7 @@
             width: 100%;
             height: 320px;
             background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-            border-radius: 12px;
+            border-radius: 2rem;
             overflow: hidden;
             border: 2px solid #334155;
         }
@@ -301,23 +364,53 @@
         }
 
         .seq-step {
-            padding: 6px 16px;
-            border-radius: 6px;
-            font-weight: bold;
-            font-size: 0.875rem;
+            padding: 8px 16px;
+            border-radius: 0.75rem;
+            font-weight: 900;
+            font-size: 0.65rem;
             background: #334155;
-            color: #64748b;
-            transition: all 0.3s;
+            color: #475569;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            border: 2px solid transparent;
+        }
+
+        @media (min-width: 640px) {
+            .seq-step {
+                padding: 12px 32px;
+                border-radius: 1rem;
+                font-size: 0.75rem;
+                letter-spacing: 0.15em;
+            }
         }
 
         .seq-step.next {
             background: #fbbf24;
-            color: #1e293b;
+            color: #451a03;
+            box-shadow: 0 4px 10px -2px rgba(251, 191, 36, 0.2);
+            transform: translateY(-1px);
+            border-color: #f59e0b;
+        }
+
+        @media (min-width: 640px) {
+            .seq-step.next {
+                box-shadow: 0 10px 15px -3px rgba(251, 191, 36, 0.3);
+                transform: translateY(-2px);
+            }
         }
 
         .seq-step.done {
             background: #22c55e;
             color: white;
+            box-shadow: 0 4px 10px -2px rgba(34, 197, 94, 0.2);
+            border-color: #16a34a;
+        }
+
+        @media (min-width: 640px) {
+            .seq-step.done {
+                box-shadow: 0 10px 15px -3px rgba(34, 197, 94, 0.3);
+            }
         }
     </style>
 </head>
@@ -362,259 +455,358 @@
                 class="text-2xl sm:text-4xl md:text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-red-500 to-orange-500 drop-shadow-sm">
                 The Ultimate Defense
             </h1>
-            <p class="text-xs sm:text-lg text-slate-600 font-bold leading-relaxed max-w-2xl mx-auto">
+            <p class="text-xs sm:text-lg text-slate-600 dark:text-slate-300 font-bold leading-relaxed max-w-2xl mx-auto transition-colors">
                 React to danger. Prevent the spark. Prove your knowledge. <br>
                 This is your final training before becoming a certified hero.
             </p>
         </section>
 
         <!-- VIDEO -->
-        <section id="section-video" class="fade-in ss-section bg-white rounded-xl sm:rounded-[2rem] border-[3px] sm:border-[4px] border-red-200 shadow-sm p-4 sm:p-10 text-center" style="animation-delay: 0.2s;">
+        <section id="section-video" class="fade-in ss-section bg-white dark:bg-slate-900/50 border-[3px] sm:border-[4px] border-red-200 dark:border-red-900/30 shadow-sm p-4 sm:p-10 text-center transition-colors" style="animation-delay: 0.2s;">
             <div class="ss-section-badge bg-green-500 border-[3px] border-white shadow-sm text-white"><i class="fa-regular fa-circle-check"></i></div>
             <h2 class="text-lg sm:text-3xl font-black text-red-500 mb-4 sm:mb-6 drop-shadow-sm">Watch the Intro Video</h2>
-            <div class="w-full aspect-video bg-slate-100 rounded-xl sm:rounded-3xl overflow-hidden shadow-sm border-[3px] sm:border-[4px] border-red-200 relative group">
+            <div class="w-full aspect-video bg-slate-100 dark:bg-slate-950 rounded-[2rem] sm:rounded-[3rem] overflow-hidden shadow-sm border-[3px] sm:border-[4px] border-red-200 dark:border-red-900/30 relative group transition-colors">
                 <video id="module-video" controls class="w-full h-full object-cover" onplay="onVideoPlay()" onended="onVideoEnd()">
                     <source src="../assets/videos/m5.mp4" type="video/mp4">
                 </video>
             </div>
-            <p class="text-center text-yellow-600 font-bold text-xs sm:text-sm mt-4 sm:mt-6 uppercase tracking-widest"><i class="fa-solid fa-expand mr-1"></i> Watch in Fullscreen for best viewing</p>
-            <p class="text-center text-slate-500 font-bold text-xs sm:text-sm mt-2 pt-4 sm:pt-6 border-t-2 border-slate-100 uppercase tracking-widest">Watch the video until the end to continue</p>
+            <p class="text-center text-yellow-600 dark:text-yellow-500 font-bold text-xs sm:text-sm mt-4 sm:mt-6 uppercase tracking-widest transition-colors"><i class="fa-solid fa-expand mr-1"></i> Watch in Fullscreen for best viewing</p>
+            <p class="text-center text-slate-500 dark:text-slate-400 font-bold text-xs sm:text-sm mt-2 pt-4 sm:pt-6 border-t-2 border-slate-100 dark:border-slate-800 uppercase tracking-widest transition-colors">Watch the video until the end to continue</p>
         </section>
 
         <!-- PART 1: STOP DROP ROLL -->
-        <section id="section-sdr" class="fade-in ss-section grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-12 items-start"
-            style="animation-delay: 0.3s;">
+        <section id="section-sdr" class="fade-in ss-section bg-white/40 dark:bg-slate-900/40 backdrop-blur-sm border-[3px] border-slate-100 dark:border-slate-800 p-6 sm:p-10 lg:p-12 shadow-sm relative overflow-hidden transition-colors" style="animation-delay: 0.3s;">
             <div class="ss-section-badge bg-green-500 border-[3px] border-white shadow-sm text-white"><i class="fa-regular fa-circle-check"></i></div>
-            <div class="space-y-4 sm:space-y-6">
-                <h2 class="text-xl sm:text-4xl font-black text-slate-800 drop-shadow-sm"><i
-                        class="fa-solid fa-fire-extinguisher text-red-500 mr-2"></i> Protocol 1: Reactive</h2>
+            
+            <!-- Subtle background decorative element -->
+            <div class="absolute top-0 right-0 w-64 h-64 bg-red-50 dark:bg-red-900/20 rounded-full blur-3xl -mr-32 -mt-32 opacity-50 pointer-events-none transition-colors"></div>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-16 items-start relative z-10">
+                <!-- Left Content: The Steps (7/12 width) -->
+                <div class="lg:col-span-7 space-y-6 sm:space-y-8">
+                    <div class="space-y-4">
+                        <h2 class="text-2xl sm:text-4xl font-black text-slate-800 dark:text-white flex items-center gap-3 transition-colors">
+                            <span class="p-2 sm:p-3 bg-red-100 dark:bg-red-950/40 rounded-2xl transition-colors">
+                                <i class="fa-solid fa-fire-extinguisher text-red-500 text-xl sm:text-2xl"></i>
+                            </span>
+                            Protocol 1: Reactive
+                        </h2>
+                        <p class="text-slate-600 dark:text-slate-300 font-bold leading-relaxed text-sm sm:text-lg lg:pr-8 transition-colors">
+                            If your clothes catch fire, don't panic. These three moves are your ultimate defense. 
+                            Master them now so you're ready for any emergency.
+                        </p>
+                    </div>
 
-                <div class="prose prose-slate text-slate-600 font-medium leading-relaxed">
-                    <p class="text-xs sm:text-lg">
-                        It is very rare for a person's clothes to catch on fire, but knowing exactly what to do prevents
-                        panic.
-                        This is one of the most famous fire safety rules, and it's a powerful move that every hero
-                        should know by heart.
-                    </p>
-                    <h3 class="text-lg sm:text-2xl font-black text-orange-600 mt-3 sm:mt-6 mb-2 sm:mb-4 uppercase tracking-wide">The Three Hero Steps</h3>
-                    <ul class="space-y-3 sm:space-y-4 list-none p-0">
-                        <li class="bg-red-50 p-3 sm:p-5 rounded-xl sm:rounded-2xl border-2 sm:border-[3px] border-red-200 shadow-sm relative overflow-hidden">
-                            <div class="absolute -right-4 -bottom-4 opacity-10">
-                                <i class="fa-solid fa-hand text-5xl sm:text-8xl text-red-500"></i>
+                    <div class="grid grid-cols-1 gap-4 sm:gap-6">
+                        <!-- Card 1: STOP -->
+                        <div class="group bg-white dark:bg-slate-950 hover:bg-red-50 dark:hover:bg-red-950/30 p-4 sm:p-6 rounded-[1.5rem] sm:rounded-[2rem] border-2 sm:border-[3px] border-red-100 dark:border-red-900/30 hover:border-red-300 shadow-sm hover:shadow-md transition-all duration-300 relative overflow-hidden">
+                            <div class="absolute -right-2 -bottom-2 opacity-5 group-hover:opacity-10 group-hover:scale-110 transition-all duration-500">
+                                <i class="fa-solid fa-hand text-7xl sm:text-9xl text-red-600"></i>
                             </div>
-                            <strong class="text-red-600 block mb-1 sm:mb-2 text-sm sm:text-xl font-black uppercase tracking-widest relative z-10">1. STOP</strong>
-                            <p class="relative z-10 text-slate-700 text-xs sm:text-base">Stop right where you are. <strong class="text-red-600">Do not run!</strong> Running around only gives the fire
-                            more air (Oxygen), which makes it grow bigger and faster.</p>
-                        </li>
-                        <li class="bg-orange-50 p-3 sm:p-5 rounded-xl sm:rounded-2xl border-2 sm:border-[3px] border-orange-200 shadow-sm relative overflow-hidden">
-                            <div class="absolute -right-4 -bottom-4 opacity-10">
-                                <i class="fa-solid fa-arrow-down text-5xl sm:text-8xl text-orange-500"></i>
+                            <div class="flex items-start gap-4 sm:gap-6 relative z-10">
+                                <div class="w-10 h-10 sm:w-14 sm:h-14 shrink-0 bg-red-500 rounded-2xl flex items-center justify-center text-white font-black text-lg sm:text-2xl shadow-lg shadow-red-200 dark:shadow-red-900/40 transition-colors">1</div>
+                                <div>
+                                    <h4 class="text-red-600 dark:text-red-400 text-lg sm:text-2xl font-black uppercase tracking-widest mb-1 sm:mb-2 transition-colors">STOP</h4>
+                                    <p class="text-slate-700 dark:text-slate-400 text-xs sm:text-base leading-relaxed transition-colors">
+                                        Stop right where you are. <span class="text-red-600 dark:text-red-500 font-black">Do not run!</span> 
+                                        Running gives the fire oxygen, making it grow bigger.
+                                    </p>
+                                </div>
                             </div>
-                            <strong class="text-orange-600 block mb-1 sm:mb-2 text-sm sm:text-xl font-black uppercase tracking-widest relative z-10">2. DROP</strong>
-                            <p class="relative z-10 text-slate-700 text-xs sm:text-base">Drop to the ground right away. Lie flat on your tummy and cover your face with your hands to
-                            protect your eyes and skin from the flames.</p>
-                        </li>
-                        <li class="bg-green-50 p-3 sm:p-5 rounded-xl sm:rounded-2xl border-2 sm:border-[3px] border-green-200 shadow-sm relative overflow-hidden">
-                            <div class="absolute -right-4 -bottom-4 opacity-10">
-                                <i class="fa-solid fa-rotate-right text-5xl sm:text-8xl text-green-500"></i>
+                        </div>
+
+                        <!-- Card 2: DROP -->
+                        <div class="group bg-white dark:bg-slate-950 hover:bg-orange-50 dark:hover:bg-orange-950/30 p-4 sm:p-6 rounded-[1.5rem] sm:rounded-[2rem] border-2 sm:border-[3px] border-orange-100 dark:border-orange-900/30 hover:border-orange-300 shadow-sm hover:shadow-md transition-all duration-300 relative overflow-hidden">
+                            <div class="absolute -right-2 -bottom-2 opacity-5 group-hover:opacity-10 group-hover:scale-110 transition-all duration-500">
+                                <i class="fa-solid fa-arrow-down text-7xl sm:text-9xl text-orange-600"></i>
                             </div>
-                            <strong class="text-green-600 block mb-1 sm:mb-2 text-sm sm:text-xl font-black uppercase tracking-widest relative z-10">3. ROLL</strong>
-                            <p class="relative z-10 text-slate-700 text-xs sm:text-base">Roll over and over on the ground. Keep rolling until the fire is completely out. This
-                            smothers the flames by cutting off the air they need to burn.</p>
-                        </li>
-                    </ul>
-                </div>
-            </div>
+                            <div class="flex items-start gap-4 sm:gap-6 relative z-10">
+                                <div class="w-10 h-10 sm:w-14 sm:h-14 shrink-0 bg-orange-500 rounded-2xl flex items-center justify-center text-white font-black text-lg sm:text-2xl shadow-lg shadow-orange-200 dark:shadow-orange-900/40 transition-colors">2</div>
+                                <div>
+                                    <h4 class="text-orange-600 dark:text-orange-400 text-lg sm:text-2xl font-black uppercase tracking-widest mb-1 sm:mb-2 transition-colors">DROP</h4>
+                                    <p class="text-slate-700 dark:text-slate-400 text-xs sm:text-base leading-relaxed transition-colors">
+                                        Drop to the ground and cover your face. 
+                                        Lying flat protects your face and lungs from the heat.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
 
-            <!-- KEY PRESS GAME -->
-            <div class="bg-white p-4 sm:p-8 rounded-xl sm:rounded-3xl border-[3px] sm:border-[4px] border-red-200 text-center shadow-sm sticky top-24">
-                <h3 class="text-red-500 text-xs sm:text-sm font-black tracking-widest uppercase mb-3 sm:mb-4"><span class="hidden sm:inline">Keyboard</span><span class="sm:hidden">Tap</span> Reflex Test</h3>
-                <div id="sdr-screen"
-                    class="h-28 sm:h-40 bg-slate-50 border-2 border-slate-200 rounded-xl sm:rounded-2xl mb-4 sm:mb-6 flex items-center justify-center relative overflow-hidden shadow-inner">
-                    <div id="fire-overlay" class="absolute inset-0 bg-red-500/0 transition-all duration-200"></div>
-                    <i id="hero-icon" class="fa-solid fa-person text-4xl sm:text-6xl text-slate-400 transition-all duration-500"></i>
-                    <div id="game-text" class="absolute bottom-2 sm:bottom-3 text-xs sm:text-sm font-bold tracking-widest uppercase text-slate-400">Press START</div>
+                        <!-- Card 3: ROLL -->
+                        <div class="group bg-white dark:bg-slate-950 hover:bg-green-50 dark:hover:bg-green-950/30 p-4 sm:p-6 rounded-[1.5rem] sm:rounded-[2rem] border-2 sm:border-[3px] border-green-100 dark:border-green-900/30 hover:border-green-300 shadow-sm hover:shadow-md transition-all duration-300 relative overflow-hidden">
+                            <div class="absolute -right-2 -bottom-2 opacity-5 group-hover:opacity-10 group-hover:scale-110 transition-all duration-500">
+                                <i class="fa-solid fa-rotate-right text-7xl sm:text-9xl text-green-600"></i>
+                            </div>
+                            <div class="flex items-start gap-4 sm:gap-6 relative z-10">
+                                <div class="w-10 h-10 sm:w-14 sm:h-14 shrink-0 bg-green-500 rounded-2xl flex items-center justify-center text-white font-black text-lg sm:text-2xl shadow-lg shadow-green-200 dark:shadow-green-900/40 transition-colors">3</div>
+                                <div>
+                                    <h4 class="text-green-600 dark:text-green-400 text-lg sm:text-2xl font-black uppercase tracking-widest mb-1 sm:mb-2 transition-colors">ROLL</h4>
+                                    <p class="text-slate-700 dark:text-slate-400 text-xs sm:text-base leading-relaxed transition-colors">
+                                        Roll over and over until the fire is out. 
+                                        This smothers the flames and cuts off their air supply.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
-                <div class="flex justify-center gap-2 sm:gap-3 mb-4 sm:mb-6">
-                    <div id="key-s" onclick="handleMobileKey('s')"
-                        class="w-10 h-10 sm:w-14 sm:h-14 bg-white rounded-lg sm:rounded-xl border-2 border-slate-300 border-b-4 sm:border-b-[6px] flex items-center justify-center font-black text-slate-600 text-base sm:text-xl transition-all cursor-pointer select-none active:translate-y-1 active:border-b-2 hover:bg-slate-50">
-                        S</div>
-                    <div id="key-d" onclick="handleMobileKey('d')"
-                        class="w-10 h-10 sm:w-14 sm:h-14 bg-white rounded-lg sm:rounded-xl border-2 border-slate-300 border-b-4 sm:border-b-[6px] flex items-center justify-center font-black text-slate-600 text-base sm:text-xl transition-all cursor-pointer select-none active:translate-y-1 active:border-b-2 hover:bg-slate-50">
-                        D</div>
-                    <div id="key-r" onclick="handleMobileKey('r')"
-                        class="w-10 h-10 sm:w-14 sm:h-14 bg-white rounded-lg sm:rounded-xl border-2 border-slate-300 border-b-4 sm:border-b-[6px] flex items-center justify-center font-black text-slate-600 text-base sm:text-xl transition-all cursor-pointer select-none active:translate-y-1 active:border-b-2 hover:bg-slate-50">
-                        R</div>
-                </div>
-                <p class="text-slate-400 text-[10px] sm:hidden font-bold uppercase tracking-widest mb-3"><i class="fa-solid fa-hand-pointer mr-1"></i> Tap the keys above in order</p>
+                <!-- Right Content: The Simulation (5/12 width) -->
+                <div class="lg:col-span-5 lg:sticky lg:top-24 h-fit">
+                    <div class="bg-slate-900 p-1 rounded-[2.5rem] sm:rounded-[3.5rem] shadow-2xl overflow-hidden group">
+                        <div class="bg-white dark:bg-slate-900 rounded-[2.25rem] sm:rounded-[3.25rem] p-6 sm:p-8 border-[6px] border-slate-900 dark:border-slate-800 relative transition-colors">
+                            <!-- Tech decorations -->
+                            <div class="absolute top-4 left-1/2 -translate-x-1/2 w-12 h-1 bg-slate-100 rounded-full"></div>
+                            <div class="absolute -right-1 top-20 w-1 h-12 bg-slate-900 rounded-l-full"></div>
+                            
+                            <div class="text-center space-y-6 sm:space-y-8">
+                                <div>
+                                    <div class="inline-flex items-center gap-2 px-3 py-1 bg-red-50 text-red-600 rounded-full text-[10px] sm:text-xs font-black uppercase tracking-widest mb-2 border border-red-100">
+                                        <span class="w-2 h-2 bg-red-500 rounded-full animate-pulse"></span>
+                                        Simulation Terminal
+                                    </div>
+                                    <h3 class="text-slate-800 dark:text-white text-base sm:text-xl font-black uppercase tracking-tight italic transition-colors">Reflex Protocol Test</h3>
+                                </div>
 
-                <button onclick="startSDR()"
-                    class="bg-red-500 hover:bg-red-400 text-white font-black py-3 px-6 sm:py-4 sm:px-8 rounded-2xl w-full shadow-[0_4px_0_#dc2626] active:shadow-none active:translate-y-1 transition-all uppercase tracking-wide focus:outline-none text-sm sm:text-base">Start
-                    Simulation</button>
+                                <!-- LCD SCREEN - High Contrast -->
+                                <div id="sdr-screen" class="aspect-[4/3] bg-slate-950 rounded-2xl border-4 border-slate-800 relative overflow-hidden shadow-[inset_0_2px_40px_rgba(59,130,246,0.3)] group-hover:border-blue-500/50 transition-colors duration-500">
+                                    <!-- Scanlines overlay - reduced opacity -->
+                                    <div class="absolute inset-0 pointer-events-none opacity-[0.02] bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%),linear-gradient(90deg,rgba(255,0,0,0.06),rgba(0,255,0,0.02),rgba(0,0,255,0.06))] bg-[length:100%_2px,3px_100%]"></div>
+                                    
+                                    <div id="fire-overlay" class="absolute inset-0 bg-red-500/0 transition-all duration-200"></div>
+                                    
+                                    <div class="flex flex-col items-center justify-center h-full gap-4">
+                                        <div class="relative">
+                                            <!-- Glow Effect -->
+                                            <div class="absolute inset-0 bg-blue-500 blur-2xl opacity-20 animate-pulse"></div>
+                                            <i id="hero-icon" class="fa-solid fa-person text-5xl sm:text-7xl text-blue-400 drop-shadow-[0_0_15px_rgba(96,165,250,0.6)] transition-all duration-500 relative z-10"></i>
+                                        </div>
+                                        <div id="game-text" class="text-[10px] sm:text-xs font-black tracking-[0.3em] uppercase text-blue-200/80 animate-pulse">System Ready</div>
+                                    </div>
+
+                                    <!-- Corner accents - brightened -->
+                                    <div class="absolute top-2 left-2 w-4 h-4 border-t-2 border-l-2 border-slate-500 opacity-50"></div>
+                                    <div class="absolute top-2 right-2 w-4 h-4 border-t-2 border-r-2 border-slate-500 opacity-50"></div>
+                                    <div class="absolute bottom-2 left-2 w-4 h-4 border-b-2 border-l-2 border-slate-500 opacity-50"></div>
+                                    <div class="absolute bottom-2 right-2 w-4 h-4 border-b-2 border-r-2 border-slate-500 opacity-50"></div>
+                                </div>
+
+                                <!-- MECHANICAL KEYS -->
+                                <div class="flex justify-center gap-3 sm:gap-5 py-2">
+                                    <div id="key-s" onclick="handleMobileKey('s')" class="w-12 h-12 sm:w-16 sm:h-16 bg-white dark:bg-slate-800 rounded-xl border-[3px] border-slate-200 dark:border-slate-700 border-b-[8px] flex items-center justify-center font-black text-slate-700 dark:text-slate-300 text-lg sm:text-2xl transition-all cursor-pointer select-none active:translate-y-1 active:border-b-[3px] hover:border-red-400 hover:text-red-500 shadow-lg transition-colors">S</div>
+                                    <div id="key-d" onclick="handleMobileKey('d')" class="w-12 h-12 sm:w-16 sm:h-16 bg-white dark:bg-slate-800 rounded-xl border-[3px] border-slate-200 dark:border-slate-700 border-b-[8px] flex items-center justify-center font-black text-slate-700 dark:text-slate-300 text-lg sm:text-2xl transition-all cursor-pointer select-none active:translate-y-1 active:border-b-[3px] hover:border-orange-400 hover:text-orange-500 shadow-lg transition-colors">D</div>
+                                    <div id="key-r" onclick="handleMobileKey('r')" class="w-12 h-12 sm:w-16 sm:h-16 bg-white dark:bg-slate-800 rounded-xl border-[3px] border-slate-200 dark:border-slate-700 border-b-[8px] flex items-center justify-center font-black text-slate-700 dark:text-slate-300 text-lg sm:text-2xl transition-all cursor-pointer select-none active:translate-y-1 active:border-b-[3px] hover:border-green-400 hover:text-green-500 shadow-lg transition-colors">R</div>
+                                </div>
+
+                                <div class="space-y-4">
+                                    <button onclick="startSDR()" class="bg-slate-900 hover:bg-red-600 text-white font-black py-4 px-8 rounded-2xl w-full shadow-[0_6px_0_#000] active:shadow-none active:translate-y-1 transition-all uppercase tracking-widest text-xs sm:text-sm flex items-center justify-center gap-3 group/btn">
+                                        Initialize Simulation
+                                        <i class="fa-solid fa-bolt group-hover/btn:animate-bounce"></i>
+                                    </button>
+                                    <p class="text-slate-400 text-[10px] font-bold uppercase tracking-widest flex items-center justify-center gap-2">
+                                        <i class="fa-solid fa-keyboard text-slate-300"></i>
+                                        Use Keyboard or Tap Keys
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </section>
 
-        <!-- SDR SEQUENCE TRAP GAME -->
-        <section id="section-sdr-trap" class="fade-in ss-section space-y-4 sm:space-y-6" style="animation-delay: 0.35s;">
+        <section id="section-sdr-trap" class="fade-in ss-section max-w-5xl mx-auto bg-white/60 dark:bg-slate-900/60 backdrop-blur-md border-[3px] border-slate-100 dark:border-slate-800 shadow-xl p-6 sm:p-10 relative transition-colors" style="animation-delay: 0.35s;">
             <div class="ss-section-badge bg-green-500 border-[3px] border-white shadow-sm text-white"><i class="fa-regular fa-circle-check"></i></div>
 
-            <div class="text-center">
-                <h2 class="text-xl sm:text-3xl font-black text-slate-800 drop-shadow-sm"><i class="fa-solid fa-crosshairs text-orange-500 mr-2"></i>
-                    SDR Sequence Challenge</h2>
-                <p class="text-slate-600 font-bold mt-1 sm:mt-2 text-xs sm:text-base">Words will spawn randomly. Click STOP → DROP → ROLL in order. Avoid
-                    decoys!</p>
-            </div>
-
-            <div class="bg-white p-4 sm:p-8 rounded-xl sm:rounded-[2rem] border-[3px] sm:border-[4px] border-orange-200 shadow-sm max-w-3xl mx-auto">
-                <!-- Round Indicator -->
-                <div class="text-center mb-3 sm:mb-6">
-                    <div class="text-xs sm:text-sm text-slate-500 font-black tracking-widest uppercase mb-1 sm:mb-2">ROUND</div>
-                    <div class="round-indicator flex justify-center gap-2 sm:gap-3" id="round-indicator">
-                        <div class="round-dot w-3 h-3 sm:w-4 sm:h-4 rounded-full bg-slate-200" data-round="1"></div>
-                        <div class="round-dot w-3 h-3 sm:w-4 sm:h-4 rounded-full bg-slate-200" data-round="2"></div>
-                        <div class="round-dot w-3 h-3 sm:w-4 sm:h-4 rounded-full bg-slate-200" data-round="3"></div>
-                    </div>
-                    <div id="round-difficulty" class="text-xs sm:text-sm font-bold text-slate-500 mt-1 sm:mt-2 uppercase tracking-wider">Easy</div>
-                </div>
-
-                <!-- Game Arena -->
-                <div class="sdr-trap-arena bg-slate-50 border-[3px] sm:border-[4px] border-slate-200 rounded-xl sm:rounded-3xl h-56 sm:h-80 relative overflow-hidden shadow-inner" id="sdr-trap-arena">
-                    <div id="trap-game-overlay"
-                        class="absolute inset-0 bg-white/95 backdrop-blur-sm flex items-center justify-center z-20">
-                        <div class="text-center p-4 sm:p-6">
-                            <i class="fa-solid fa-fire-flame-curved text-4xl sm:text-6xl text-orange-500 mb-3 sm:mb-4 drop-shadow-sm"></i>
-                            <h3 class="text-base sm:text-xl font-black text-slate-800 mb-1 sm:mb-2 uppercase tracking-wide">Ready for the Challenge?</h3>
-                            <p class="text-slate-600 font-bold mb-3 sm:mb-5 text-xs sm:text-base">Click words in order: <br><span class="text-red-500">STOP</span> → <span class="text-orange-500">DROP</span> → <span class="text-green-500">ROLL</span><br>Avoid
-                                RUN, JUMP, HIDE!</p>
-                            <button onclick="startTrapGame()"
-                                class="bg-orange-500 hover:bg-orange-400 text-white font-black py-2 px-6 sm:py-3 sm:px-8 text-xs sm:text-base rounded-full border-[3px] border-orange-600 shadow-[0_4px_0_#c2410c] active:shadow-none active:translate-y-1 transition-all uppercase tracking-wide focus:outline-none">
-                                <i class="fa-solid fa-play mr-2"></i>Start Challenge
-                            </button>
+            <div>
+                <!-- Header -->
+                <div class="flex flex-col sm:flex-row items-center justify-between mb-8 pb-6 border-b border-slate-100 dark:border-slate-800 transition-colors gap-4">
+                    <div class="flex items-center gap-3 sm:gap-4">
+                        <div class="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-orange-400 to-orange-600 rounded-xl sm:rounded-2xl flex items-center justify-center text-white shadow-lg shadow-orange-200 dark:shadow-orange-950/40 shrink-0">
+                            <i class="fa-solid fa-crosshairs text-lg sm:text-xl"></i>
+                        </div>
+                        <div>
+                            <h2 class="text-lg sm:text-3xl font-black text-slate-800 dark:text-white tracking-tight leading-none transition-colors">Sequence Challenge</h2>
+                            <p class="text-slate-400 text-[8px] sm:text-xs font-bold uppercase tracking-widest mt-0.5 sm:mt-1">Master the Stop, Drop, and Roll order</p>
                         </div>
                     </div>
-
-                    <!-- Words spawn here dynamically -->
+                    
+                    <div class="flex items-center gap-4 sm:gap-6 bg-slate-50 dark:bg-slate-800/30 px-3 sm:px-4 py-1.5 sm:py-2 rounded-xl sm:rounded-2xl border border-slate-100 dark:border-slate-800 transition-colors">
+                        <div class="text-center">
+                            <div class="text-[8px] sm:text-[10px] font-black text-slate-400 uppercase tracking-tighter">DIFFICULTY</div>
+                            <div id="round-difficulty" class="text-[10px] sm:text-xs font-black text-slate-800 dark:text-white uppercase transition-colors">EASY</div>
+                        </div>
+                        <div class="w-px h-4 sm:h-6 bg-slate-200 dark:bg-slate-700"></div>
+                        <div class="round-indicator flex gap-1.5 sm:gap-2" id="round-indicator">
+                            <div class="round-dot w-2 sm:w-2.5 h-2 sm:h-2.5 rounded-full shadow-inner" data-round="1"></div>
+                            <div class="round-dot w-2 sm:w-2.5 h-2 sm:h-2.5 rounded-full shadow-inner" data-round="2"></div>
+                            <div class="round-dot w-2 sm:w-2.5 h-2 sm:h-2.5 rounded-full shadow-inner" data-round="3"></div>
+                        </div>
+                    </div>
                 </div>
 
-                <!-- Sequence Tracker -->
-                <div class="sequence-tracker flex justify-center gap-2 sm:gap-4 mt-4 sm:mt-6" id="sequence-tracker">
-                    <div class="seq-step next bg-red-100 text-red-700 border-2 border-red-300 font-black px-3 py-1 sm:px-6 sm:py-2 text-xs sm:text-base rounded-lg sm:rounded-xl" data-step="stop">STOP</div>
-                    <div class="seq-step bg-slate-100 text-slate-400 border-2 border-slate-200 font-black px-3 py-1 sm:px-6 sm:py-2 text-xs sm:text-base rounded-lg sm:rounded-xl" data-step="drop">DROP</div>
-                    <div class="seq-step bg-slate-100 text-slate-400 border-2 border-slate-200 font-black px-3 py-1 sm:px-6 sm:py-2 text-xs sm:text-base rounded-lg sm:rounded-xl" data-step="roll">ROLL</div>
+                <!-- Arena -->
+                <div class="relative mb-8">
+                    <div id="sdr-trap-arena" class="sdr-trap-arena bg-[#0f172a] rounded-[2rem] sm:rounded-[3rem] h-56 sm:h-80 lg:h-96 relative overflow-hidden shadow-2xl border-2 sm:border-4 border-slate-800">
+                        <div class="absolute inset-0 pointer-events-none opacity-[0.08]" style="background-image: radial-gradient(#64748b 1px, transparent 1px); background-size: 32px 32px;"></div>
+                        
+                        <!-- Game Status HUD -->
+                        <div id="trap-game-status" class="absolute top-6 left-0 right-0 text-center text-white/40 text-[10px] font-black uppercase tracking-[0.3em] z-20 pointer-events-none"></div>
+                        
+                        <div id="trap-game-overlay" class="absolute inset-0 bg-slate-900/95 backdrop-blur-md flex items-center justify-center z-30 transition-all duration-500">
+                            <div class="text-center p-4 sm:p-8 space-y-4 sm:space-y-6">
+                                <div class="w-16 h-16 sm:w-20 sm:h-20 bg-orange-500/10 rounded-full flex items-center justify-center mx-auto mb-2 sm:mb-4 border-2 border-orange-500/20">
+                                    <i class="fa-solid fa-play text-2xl sm:text-3xl text-orange-500 animate-pulse"></i>
+                                </div>
+                                <div class="space-y-1 sm:space-y-2">
+                                    <h3 class="text-white text-xl sm:text-2xl font-black uppercase tracking-tight">Begin Training</h3>
+                                    <p class="text-slate-400 text-xs sm:text-sm font-bold max-w-xs mx-auto">Click STOP → DROP → ROLL in order.</p>
+                                </div>
+                                <button onclick="startTrapGame()" class="bg-orange-500 hover:bg-orange-400 text-white font-black py-3 sm:py-4 px-10 sm:px-12 rounded-xl sm:rounded-2xl shadow-xl shadow-orange-900/40 active:translate-y-1 transition-all uppercase tracking-widest text-[10px] sm:text-sm">
+                                    Start Simulation
+                                </button>
+                            </div>
+                        </div>
+
+                        <div id="trap-game-result" class="hidden absolute inset-0 z-40 bg-slate-900/98 flex items-center justify-center p-4 sm:p-8 text-center">
+                            <div class="space-y-4 sm:space-y-6">
+                                <div id="trap-result-icon" class="text-5xl sm:text-7xl mb-1 sm:mb-2"></div>
+                                <div class="space-y-1 sm:space-y-2">
+                                    <h3 id="trap-result-title" class="text-xl sm:text-4xl font-black text-white uppercase tracking-tighter"></h3>
+                                    <p id="trap-result-desc" class="text-slate-400 text-xs sm:text-lg font-bold max-w-md mx-auto"></p>
+                                </div>
+                                <button onclick="restartTrapGame()" id="trap-retry-btn" class="bg-white/10 hover:bg-white/20 text-white text-[10px] sm:text-xs font-black uppercase tracking-widest py-2.5 sm:py-3 px-6 sm:px-8 rounded-lg sm:rounded-xl border border-white/20 transition-all">
+                                    <i class="fa-solid fa-rotate-right mr-2"></i>Try Again
+                                </button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
-                <!-- Game Status -->
-                <div id="trap-game-status" class="text-center mt-4 sm:mt-6 text-xs sm:text-sm font-bold tracking-widest uppercase text-slate-400">
-                    Complete all 3 rounds to master SDR!
-                </div>
-
-                <!-- Result Screen (Hidden by default) -->
-                <div id="trap-game-result" class="hidden text-center mt-4 sm:mt-6 p-4 sm:p-8 bg-slate-50 rounded-xl sm:rounded-3xl border-2 sm:border-[3px] border-slate-200">
-                    <div id="trap-result-icon" class="text-4xl sm:text-6xl mb-3 sm:mb-4 drop-shadow-sm"></div>
-                    <h3 id="trap-result-title" class="text-xl sm:text-2xl font-black text-slate-800 mb-1 sm:mb-2 uppercase tracking-wide"></h3>
-                    <p id="trap-result-desc" class="text-slate-600 font-bold mb-4 sm:mb-6 text-sm sm:text-lg"></p>
-                    <button onclick="restartTrapGame()" id="trap-retry-btn"
-                        class="bg-orange-500 hover:bg-orange-400 text-white font-black py-2 px-6 sm:py-3 sm:px-8 rounded-full border-[3px] border-orange-600 shadow-[0_4px_0_#c2410c] active:shadow-none active:translate-y-1 transition-all uppercase tracking-wide text-xs sm:text-base">
-                        <i class="fa-solid fa-redo mr-2"></i>Try Again
-                    </button>
+                <!-- Tracker HUD - Redesigned for Legibility -->
+                <div class="flex flex-wrap items-center justify-center gap-4 sm:gap-6" id="sequence-tracker">
+                    <div class="seq-step next" data-step="stop">STOP</div>
+                    <div class="seq-step" data-step="drop">DROP</div>
+                    <div class="seq-step" data-step="roll">ROLL</div>
                 </div>
             </div>
         </section>
 
-        <!-- PART 2: HAZARD HUNT -->
-        <section id="section-hazard" class="fade-in ss-section space-y-4 sm:space-y-8" style="animation-delay: 0.4s;">
+        <!-- PART 2: HAZARD HUNT (2-COLUMN PREMIUM LAYOUT) -->
+        <section id="section-hazard" class="fade-in ss-section max-w-6xl mx-auto" style="animation-delay: 0.4s;">
             <div class="ss-section-badge bg-green-500 border-[3px] border-white shadow-sm text-white"><i class="fa-regular fa-circle-check"></i></div>
-            <div class="text-center max-w-4xl mx-auto">
-                <h2 class="text-xl sm:text-4xl font-black text-slate-800 drop-shadow-sm"><i
-                        class="fa-solid fa-magnifying-glass-chart text-green-500 mr-2"></i> Protocol 2: Prevention</h2>
-                <p class="text-slate-600 mt-2 sm:mt-4 text-xs sm:text-xl font-bold leading-relaxed">
-                    Being a hero isn't just about emergencies. It is about doing small things every day to stop fires
-                    before they start.
-                    You can be a great <strong class="text-green-600">Fire Safety Helper</strong> for your family!
-                </p>
-            </div>
+            
+            <div class="flex flex-col gap-8">
+                <!-- Top: Briefing & Checklist -->
+                <div class="w-full">
+                    <div id="hazard-protocol-card" class="bg-white dark:bg-slate-900/60 p-6 sm:p-10 rounded-[2.5rem] sm:rounded-[3.5rem] border-[3px] border-slate-100 dark:border-slate-800 shadow-sm transition-all duration-300">
+                        <div class="space-y-4 mb-8">
+                            <h2 class="text-2xl sm:text-4xl font-black text-slate-800 dark:text-white leading-tight transition-colors">Protocol 2: <span class="text-green-500">Prevention</span></h2>
+                            <p class="text-slate-500 dark:text-slate-400 font-bold text-sm sm:text-lg transition-colors">
+                                Heroes stop fires before they start. Use your <strong class="text-slate-800 dark:text-white">Safety Scanning</strong> skills!
+                            </p>
+                        </div>
 
-            <div class="flex flex-col gap-4 sm:gap-8 max-w-3xl mx-auto">
-                <!-- Left Column: The Checklist Text -->
-                <div class="bg-white p-4 sm:p-8 rounded-xl sm:rounded-[2rem] border-[3px] sm:border-[4px] border-yellow-200 shadow-sm h-fit">
-                    <h3 class="text-lg sm:text-2xl font-black text-yellow-600 mb-3 sm:mb-6 uppercase tracking-wide"><i class="fa-solid fa-list-check mr-2"></i> Your
-                        Helper Checklist</h3>
-                    <ul class="space-y-3 sm:space-y-6 text-slate-600 font-bold">
-                        <li class="flex gap-2 sm:gap-4">
-                            <i class="fa-solid fa-ruler-horizontal text-blue-500 mt-0.5 sm:mt-1 text-sm sm:text-xl"></i>
-                            <span class="text-xs sm:text-base">Keep toys, books, and papers at least <strong class="text-slate-800">three feet</strong> (three big steps)
-                                away from heaters, stoves, and fireplaces.</span>
-                        </li>
-                        <li class="flex gap-2 sm:gap-4">
-                            <i class="fa-solid fa-plug text-red-500 mt-0.5 sm:mt-1 text-sm sm:text-xl"></i>
-                            <span class="text-xs sm:text-base">Tell a grown-up if you see an electrical cord that looks broken, cracked, or worn
-                                out.</span>
-                        </li>
-                        <li class="flex gap-2 sm:gap-4">
-                            <i class="fa-solid fa-ban text-red-600 mt-0.5 sm:mt-1 text-sm sm:text-xl"></i>
-                            <span class="text-red-500 text-xs sm:text-base">Never, ever stick your fingers or objects into an electrical socket.</span>
-                        </li>
-                        <li class="flex gap-2 sm:gap-4">
-                            <i class="fa-solid fa-wind text-slate-400 mt-0.5 sm:mt-1 text-sm sm:text-xl"></i>
-                            <span class="text-xs sm:text-base">If you smell something strange, like rotten eggs, tell a grown-up immediately. It
-                                could be a gas leak.</span>
-                        </li>
-                        <li class="flex gap-2 sm:gap-4">
-                            <i class="fa-solid fa-cake-candles text-orange-500 mt-0.5 sm:mt-1 text-sm sm:text-xl"></i>
-                            <span class="text-xs sm:text-base">Remind grown-ups to blow out candles before leaving a room.</span>
-                        </li>
-                    </ul>
+                        <h3 class="text-sm font-black text-slate-400 uppercase tracking-[0.2em] mb-6 flex items-center gap-2 border-b dark:border-slate-800 pb-2 transition-colors">
+                            <i class="fa-solid fa-clipboard-check text-green-500"></i>
+                            Hero Checklist
+                        </h3>
+                        
+                        <ul class="space-y-3 sm:space-y-4">
+                            <li class="group flex gap-3 sm:gap-4 p-3 sm:p-4 rounded-xl sm:rounded-2xl hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors border border-transparent hover:border-slate-100 dark:hover:border-slate-700">
+                                <div class="w-8 h-8 sm:w-10 sm:h-10 shrink-0 bg-blue-100 dark:bg-blue-900/30 rounded-lg sm:rounded-xl flex items-center justify-center text-blue-600 dark:text-blue-400 font-black text-xs sm:text-base transition-colors">1</div>
+                                <span class="text-slate-600 dark:text-slate-300 font-bold text-xs sm:text-base leading-snug transition-colors">Keep toys <strong class="text-slate-800 dark:text-white">3 feet away</strong> from heaters and stoves.</span>
+                            </li>
+                            <li class="group flex gap-3 sm:gap-4 p-3 sm:p-4 rounded-xl sm:rounded-2xl hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors border border-transparent hover:border-slate-100 dark:hover:border-slate-700">
+                                <div class="w-8 h-8 sm:w-10 sm:h-10 shrink-0 bg-red-100 dark:bg-red-900/30 rounded-lg sm:rounded-xl flex items-center justify-center text-red-600 dark:text-red-400 font-black text-xs sm:text-base transition-colors">2</div>
+                                <span class="text-slate-600 dark:text-slate-300 font-bold text-xs sm:text-base leading-snug transition-colors">Report <strong class="text-slate-800 dark:text-white">broken cords</strong> to a grown-up immediately.</span>
+                            </li>
+                            <li class="group flex gap-3 sm:gap-4 p-3 sm:p-4 rounded-xl sm:rounded-2xl hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors border border-transparent hover:border-slate-100 dark:hover:border-slate-700">
+                                <div class="w-8 h-8 sm:w-10 sm:h-10 shrink-0 bg-orange-100 dark:bg-orange-900/30 rounded-lg sm:rounded-xl flex items-center justify-center text-orange-600 dark:text-orange-400 font-black text-xs sm:text-base transition-colors">3</div>
+                                <span class="text-slate-600 dark:text-slate-300 font-bold text-xs sm:text-base leading-snug transition-colors">Remind adults to <strong class="text-slate-800 dark:text-white">blow out candles</strong> before leaving.</span>
+                            </li>
+                            <li class="group flex gap-3 sm:gap-4 p-3 sm:p-4 bg-red-50 dark:bg-red-950/40 rounded-xl sm:rounded-2xl border border-red-100 dark:border-red-900/30 mt-4 transition-colors">
+                                <div class="w-8 h-8 sm:w-10 sm:h-10 shrink-0 bg-red-500 rounded-lg sm:rounded-xl flex items-center justify-center text-white shadow-lg shadow-red-200 dark:shadow-red-950/40 transition-colors"><i class="fa-solid fa-ban text-[10px] sm:text-sm"></i></div>
+                                <span class="text-red-700 dark:text-red-400 font-black text-xs sm:text-base leading-snug underline decoration-red-200 dark:decoration-red-900 decoration-2 transition-colors">NEVER put objects into electrical sockets!</span>
+                            </li>
+                        </ul>
+                    </div>
                 </div>
 
-                <!-- Right Column: The Game -->
-                <div class="bg-white p-3 sm:p-6 rounded-xl sm:rounded-[2rem] border-[3px] sm:border-[4px] border-slate-200 shadow-sm flex flex-col justify-center">
-                    <div class="text-center mb-3 sm:mb-4 text-xs sm:text-sm font-black tracking-widest uppercase text-green-500">
-                        <i class="fa-solid fa-radar animate-pulse mr-2"></i>ACTIVE SCANNING: FIND 4 HAZARDS
-                    </div>
-
-                    <!-- Hazard Room Image Container -->
-                    <div class="relative w-full mx-auto">
-                        <img src="../assets/images/hazard_room.png" alt="Room with hazards"
-                            class="w-full rounded-xl sm:rounded-2xl shadow-sm border-[3px] sm:border-[4px] border-slate-100"
-                            onerror="this.classList.add('hidden'); this.nextElementSibling.classList.remove('hidden');">
-                        <div
-                            class="w-full aspect-video bg-slate-50 border-[3px] sm:border-[4px] border-slate-200 flex items-center justify-center text-slate-400 rounded-xl sm:rounded-2xl hidden font-bold tracking-widest uppercase">
-                            <div class="text-center">
-                                <i class="fa-regular fa-image text-6xl block mx-auto mb-3 text-slate-300"></i>
-                                [ hazard_room.png ]
+                <!-- Bottom: Hazard Hunt Arena -->
+                <div class="w-full">
+                    <div class="bg-slate-900 p-2 sm:p-6 rounded-[2rem] sm:rounded-[3rem] shadow-2xl border-[4px] sm:border-[6px] border-slate-800 relative overflow-hidden group">
+                        <!-- Scanning HUD Overlay -->
+                        <div class="absolute top-8 left-8 z-20 pointer-events-none">
+                            <div class="flex items-center gap-3 text-green-400 font-black text-[10px] tracking-[0.3em] uppercase animate-pulse">
+                                <span class="w-2 h-2 bg-green-500 rounded-full"></span>
+                                Active Scanning: Area Alpha
                             </div>
                         </div>
 
-                        <!-- CLICK ZONES - Invisible until clicked -->
-                        <!-- Candle: Left side on small table near curtains -->
-                        <div onclick="foundHazard(this, 'Candle')" class="hazard-box w-17 h-14"
-                            style="top: 50%; left: 11%;">
-                            <div class="hazard-label bg-green-500 shadow-sm">CANDLE</div>
-                        </div>
-                        <!-- Power Strip: Bottom center, overloaded on floor -->
-                        <div onclick="foundHazard(this, 'Power Strip')" class="hazard-box w-15 h-12"
-                            style="bottom: 6%; left: 50%;">
-                            <div class="hazard-label bg-green-500 shadow-sm">POWER STRIP</div>
-                        </div>
-                        <!-- Heater: Center-right, space heater with blanket/teddy -->
-                        <div onclick="foundHazard(this, 'Heater')" class="hazard-box w-20 h-20"
-                            style="bottom: 20%; right: 25%;">
-                            <div class="hazard-label bg-green-500 shadow-sm">HEATER</div>
-                        </div>
-                        <!-- Fireplace: Far right, stone fireplace with fire -->
-                        <div onclick="foundHazard(this, 'Fireplace')" class="hazard-box w-20 h-20"
-                            style="top: 45%; right: 9%;">
-                            <div class="hazard-label bg-green-500 shadow-sm">FIREPLACE</div>
-                        </div>
-                    </div>
+                        <div class="bg-black rounded-[1.5rem] sm:rounded-[2.5rem] overflow-hidden relative aspect-video w-full">
+                            <img src="../assets/images/hazard_room.png" alt="Room with hazards"
+                                class="w-full h-full object-contain transition-all duration-700"
+                                onerror="this.classList.add('hidden'); this.nextElementSibling.classList.remove('hidden');">
+                            
+                            <!-- Placeholder -->
+                            <div class="w-full h-full bg-slate-900 flex items-center justify-center text-slate-500 hidden font-black tracking-widest uppercase text-center p-12">
+                                <div>
+                                    <i class="fa-solid fa-camera text-4xl mb-4 text-slate-700"></i>
+                                    <p class="text-xs">Hazard Room Interface Loading...</p>
+                                </div>
+                            </div>
 
-                    <!-- Counter -->
-                    <div class="text-center mt-4 sm:mt-8">
-                        <span
-                            class="bg-green-100 px-4 py-2 sm:px-8 sm:py-3 rounded-lg sm:rounded-xl text-green-700 font-black border-2 border-green-300 shadow-sm inline-block text-xs sm:text-lg">
-                            HAZARDS FOUND: <span id="hazard-count" class="text-base sm:text-2xl ml-1">0</span>/4
-                        </span>
+                            <!-- Hazard Targets -->
+                            <div id="hazard-targets-container">
+                                <!-- Candle -->
+                                <div onclick="foundHazard(this, 'Candle')" class="hazard-box w-17 h-14" style="top: 50%; left: 11%;">
+                                    <div class="hazard-label bg-green-500 shadow-sm">CANDLE</div>
+                                </div>
+                                <!-- Power Strip -->
+                                <div onclick="foundHazard(this, 'Power Strip')" class="hazard-box w-15 h-12" style="bottom: 6%; left: 50%;">
+                                    <div class="hazard-label bg-green-500 shadow-sm">POWER STRIP</div>
+                                </div>
+                                <!-- Heater -->
+                                <div onclick="foundHazard(this, 'Heater')" class="hazard-box w-20 h-20" style="bottom: 20%; right: 25%;">
+                                    <div class="hazard-label bg-green-500 shadow-sm">HEATER</div>
+                                </div>
+                                <!-- Fireplace -->
+                                <div onclick="foundHazard(this, 'Fireplace')" class="hazard-box w-20 h-20" style="top: 45%; right: 9%;">
+                                    <div class="hazard-label bg-green-500 shadow-sm">FIREPLACE</div>
+                                </div>
+                            </div>
+                        </div>
+
+
+
+                        <!-- Progress HUD -->
+                        <div class="absolute bottom-3 sm:bottom-6 left-3 sm:left-6 right-3 sm:right-6 z-30 flex justify-between items-center pointer-events-none">
+                            <div class="bg-green-500 text-white px-4 sm:px-6 py-2 sm:py-3 rounded-xl sm:rounded-2xl text-[10px] sm:text-sm font-black shadow-lg shadow-green-900/40 pointer-events-auto">
+                                HAZARDS FOUND: <span id="hazard-count">0</span>/4
+                            </div>
+                            <div class="flex gap-2">
+                                <div class="w-12 h-1.5 bg-green-500 rounded-full opacity-20"></div>
+                                <div class="w-12 h-1.5 bg-green-500 rounded-full opacity-20"></div>
+                                <div class="w-12 h-1.5 bg-green-500 rounded-full opacity-20"></div>
+                            </div>
+                        </div>
+
+                        <!-- Hazard Hunt Completion Overlay -->
+                        <div id="hazard-hunt-result" class="hidden absolute inset-0 z-50 bg-slate-900/95 backdrop-blur-md flex items-center justify-center p-4 sm:p-8 text-center transition-all duration-500">
+                            <div class="space-y-3 sm:space-y-6">
+                                <div class="w-16 h-16 sm:w-24 sm:h-24 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-2 sm:mb-6 border-2 border-green-500/30">
+                                    <i class="fa-solid fa-certificate text-3xl sm:text-5xl text-green-500 animate-bounce"></i>
+                                </div>
+                                <div class="space-y-1 sm:space-y-2">
+                                    <h3 class="text-xl sm:text-3xl font-black text-white uppercase tracking-tighter">Area Secured!</h3>
+                                    <p class="text-slate-400 text-xs sm:text-lg font-bold max-w-md mx-auto">All hazards identified. You have successfully prevented a potential fire!</p>
+                                </div>
+                                <button onclick="hideHazardResult()" class="bg-green-500 hover:bg-green-400 text-white font-black py-2.5 sm:py-4 px-8 sm:px-12 rounded-xl sm:rounded-2xl shadow-xl shadow-green-900/40 active:translate-y-1 transition-all uppercase tracking-widest text-[10px] sm:text-sm mt-2 sm:mt-4">
+                                    Continue Mission
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -622,7 +814,7 @@
 
         <!-- HERO SUMMARY -->
         <section
-            class="fade-in mt-8 sm:mt-24 bg-gradient-to-br from-blue-500 to-indigo-600 p-4 sm:p-12 rounded-xl sm:rounded-[3rem] border-[3px] sm:border-[4px] border-blue-400 shadow-xl text-center relative overflow-hidden"
+            class="fade-in mt-8 sm:mt-24 bg-gradient-to-br from-blue-500 to-indigo-600 p-4 sm:p-12 ss-section border-[3px] sm:border-[4px] border-blue-400 shadow-xl text-center relative overflow-hidden"
             style="animation-delay: 0.5s;">
             <div class="absolute top-0 left-0 w-full h-full opacity-10 pointer-events-none">
                 <i class="fa-solid fa-shield-cat text-7xl sm:text-9xl absolute -top-4 sm:-top-10 -left-4 sm:-left-10 text-white"></i>
@@ -630,22 +822,22 @@
             </div>
 
             <div class="relative z-10 max-w-4xl mx-auto space-y-4 sm:space-y-8">
-                <h2 class="text-xl sm:text-4xl md:text-5xl font-black text-white drop-shadow-md">You Are a Fire Safety Hero!</h2>
-                <div class="h-1 sm:h-2 w-16 sm:w-32 bg-yellow-400 mx-auto rounded-full"></div>
+                <h2 class="text-xl sm:text-4xl md:text-5xl font-black text-white drop-shadow-md leading-tight">You Are a Fire Safety Hero!</h2>
+                <div class="h-1 sm:h-2 w-12 sm:w-32 bg-yellow-400 mx-auto rounded-full"></div>
 
-                <p class="text-xs sm:text-xl text-blue-50 font-bold leading-relaxed">
+                <p class="text-[11px] sm:text-xl text-blue-50 font-bold leading-relaxed px-2 sm:px-0">
                     Congratulations! You have completed your training. You learned that <strong class="text-white">fire is a tool, not a
                         toy</strong>, and what it needs to burn (Fuel, Heat, Oxygen).
                     You know that <strong class="text-white">smoke alarms</strong> are your home's nose, and you know exactly what to do
                     when they beep.
                 </p>
-                <p class="text-xs sm:text-xl text-blue-50 font-bold leading-relaxed">
+                <p class="text-[11px] sm:text-xl text-blue-50 font-bold leading-relaxed px-2 sm:px-0">
                     You mastered the <strong class="text-white">Family Escape Plan</strong> with two ways out and a safe meeting spot.
                     And you've learned the special hero moves of <strong class="text-white">"Get Low and Go"</strong> and <strong class="text-white">"Stop,
                         Drop, and Roll!"</strong>
                 </p>
-                <div class="bg-white/20 p-3 sm:p-6 rounded-xl sm:rounded-2xl border-2 border-white/30 backdrop-blur-sm inline-block">
-                    <p class="text-xs sm:text-2xl font-black text-white italic drop-shadow-sm">
+                <div class="bg-white/20 p-4 sm:p-6 rounded-xl sm:rounded-2xl border-2 border-white/30 backdrop-blur-sm inline-block mx-2 sm:mx-0">
+                    <p class="text-[10px] sm:text-2xl font-black text-white italic drop-shadow-sm leading-normal">
                         "By remembering these rules and sharing them, you are protecting everyone you love. Your knowledge
                         is your power. Be proud, be prepared, and stay safe!"
                     </p>
@@ -655,26 +847,25 @@
 
         <!-- FINAL EXAM -->
         <section id="final-exam"
-            class="fade-in ss-section bg-yellow-50 rounded-[2rem] sm:rounded-[3rem] p-6 sm:p-12 border-[4px] border-yellow-300 shadow-sm mt-12 sm:mt-24"
+            class="fade-in ss-section bg-yellow-50 dark:bg-yellow-950/20 p-6 sm:p-12 border-[4px] border-yellow-300 dark:border-yellow-900/50 shadow-sm mt-12 sm:mt-24 transition-colors"
             style="animation-delay: 0.6s;">
-            <div class="ss-section-badge bg-green-500 border-[3px] border-white shadow-sm text-white"><i class="fa-regular fa-circle-check"></i></div>
-            <div id="final-exam-header" class="text-center mb-12">
-                <h2 class="text-5xl font-black text-yellow-900 mb-4 drop-shadow-sm uppercase tracking-widest">The Final Exam</h2>
-                <p class="text-slate-600 font-bold text-lg">15 Questions. Module 1 - 5. Prove you are a SafeScape Hero.</p>
+            <div class="ss-section-badge bg-green-500 border-[3px] border-white dark:border-slate-800 shadow-sm text-white transition-colors"><i class="fa-regular fa-circle-check"></i></div>
+            <div id="final-exam-header" class="text-center mb-6 sm:mb-12">
+                <h2 class="text-3xl sm:text-5xl font-black text-yellow-900 dark:text-yellow-400 mb-2 sm:mb-4 drop-shadow-sm uppercase tracking-widest transition-colors">The Final Exam</h2>
+                <p class="text-slate-600 dark:text-slate-400 font-bold text-xs sm:text-lg transition-colors">15 Questions. Module 1 - 5. Prove you are a SafeScape Hero.</p>
             </div>
 
             <div id="quiz-container" class="space-y-6 max-w-3xl mx-auto"></div>
 
-            <div id="exam-result" class="hidden text-center mt-6 sm:mt-10 p-4 sm:p-8 bg-white rounded-xl sm:rounded-[2rem] border-[3px] sm:border-[4px] border-green-200 shadow-sm">
-                <div class="text-4xl sm:text-6xl mb-3 sm:mb-6 drop-shadow-md" id="result-icon"></div>
-                <h3 class="text-xl sm:text-3xl font-black text-green-600 mb-1 sm:mb-2 drop-shadow-sm" id="result-title"></h3>
-                <p class="text-slate-600 font-bold mb-4 sm:mb-8 text-sm sm:text-lg" id="result-desc"></p>
+            <div id="exam-result" class="hidden ss-completion-card success mx-auto mt-10">
+                <div class="ss-completion-icon" id="result-icon">🏆</div>
+                <h3 class="ss-completion-title" id="result-title"></h3>
+                <p class="ss-completion-desc" id="result-desc"></p>
 
-                <div class="flex flex-col-reverse sm:flex-row items-center justify-center gap-4 sm:gap-6">
-                    <button id="btn-retake" onclick="loadExam()"
-                        class="hidden text-xs sm:text-sm font-bold text-slate-500 hover:text-slate-800 underline uppercase tracking-wide mt-2 sm:mt-0 whitespace-nowrap">Retake Exam</button>
-                    <button id="btn-view-cert" onclick="showCertificate()" class="hidden bg-green-500 text-white font-black px-5 py-2 sm:px-10 sm:py-4 text-xs sm:text-base rounded-full shadow-[0_4px_0_#15803d] hover:-translate-y-0.5 active:translate-y-1 active:shadow-none transition-all uppercase tracking-wide text-center w-full sm:w-auto">
-                        View Certificate <i class="fa-solid fa-award ml-2"></i>
+                <div class="ss-completion-actions">
+                    <button id="btn-retake" onclick="loadExam()" class="hidden ss-btn-premium ss-btn-outline">Retake Exam</button>
+                    <button id="btn-view-cert" onclick="showCertificate()" class="hidden ss-btn-premium ss-btn-emerald">
+                        View Certificate <i class="fa-solid fa-award"></i>
                     </button>
                 </div>
             </div>
@@ -692,7 +883,7 @@
 
 
 
-    <footer class="bg-transparent text-slate-500 py-8 text-center text-sm border-t-2 border-slate-300 mt-16 font-bold uppercase tracking-widest">
+    <footer class="bg-transparent text-slate-500 dark:text-slate-400 py-8 text-center text-sm border-t-2 border-slate-300 dark:border-slate-800 mt-16 font-bold uppercase tracking-widest transition-colors">
         <p>SafeScape Intelligent Systems Project | Course Complete</p>
         <p class="mt-2 text-xs opacity-50">Module 5: Ultimate Defense</p>
     </footer>
@@ -833,7 +1024,10 @@
             if (localState.videoWatched) document.getElementById('section-video').classList.add('completed');
             if (localState.sdrCompleted) document.getElementById('section-sdr').classList.add('completed');
             if (localState.sdrTrapCompleted) document.getElementById('section-sdr-trap').classList.add('completed');
-            if (localState.hazardHuntCompleted) document.getElementById('section-hazard').classList.add('completed');
+            if (localState.hazardHuntCompleted) {
+                document.getElementById('section-hazard').classList.add('completed');
+                document.getElementById('hazard-protocol-card').style.borderColor = '#22c55e';
+            }
             if (localState.finalExamPassed) document.getElementById('final-exam').classList.add('completed');
 
             // Locked states (sequential)
@@ -945,12 +1139,23 @@
 
             if (hazardsFound === 4) {
                 document.getElementById('hazard-count').classList.add('text-yellow-400', 'animate-bounce');
+                
+                // Show completion overlay with delay
+                setTimeout(() => {
+                    document.getElementById('hazard-hunt-result').classList.remove('hidden');
+                    playSound('win');
+                }, 800);
+
                 if (!localState.hazardHuntCompleted) {
                     localState.hazardHuntCompleted = true;
                     saveLocalProgress();
                     showToast('success', 'All hazards detected! Good eye, Detective!');
                 }
             }
+        }
+
+        function hideHazardResult() {
+            document.getElementById('hazard-hunt-result').classList.add('hidden');
         }
 
         // --- SDR SEQUENCE TRAP GAME ---
@@ -1240,7 +1445,7 @@
                 
                 document.getElementById('result-icon').innerText = "🏆";
                 document.getElementById('result-title').innerText = "CONGRATULATIONS, HERO!";
-                document.getElementById('result-title').className = "text-3xl font-black text-green-600 mb-3 uppercase tracking-wide";
+                document.getElementById('result-title').className = "ss-completion-title";
                 document.getElementById('result-desc').innerText = "You have proven yourself as a Fire Safety Hero!";
                 
                 document.getElementById('btn-view-cert').classList.remove('hidden');
@@ -1256,10 +1461,10 @@
 
             finalQuestions.forEach((item, idx) => {
                 const div = document.createElement('div');
-                div.className = "bg-white p-5 sm:p-8 rounded-[2rem] border-[3px] border-yellow-200 shadow-sm relative overflow-hidden";
+                div.className = "bg-white dark:bg-slate-900 p-5 sm:p-8 rounded-[2rem] border-[3px] border-yellow-200 dark:border-yellow-900/30 shadow-sm relative overflow-hidden transition-colors";
                 div.innerHTML = `
                     <div class="absolute top-0 left-0 w-1 h-full bg-yellow-400"></div>
-                    <p class="font-black text-slate-800 text-base sm:text-xl mb-6 pl-2 tracking-tight">${item.q}</p>
+                    <p class="font-black text-slate-800 dark:text-white text-base sm:text-xl mb-6 pl-2 tracking-tight transition-colors">${item.q}</p>
                 `;
 
                 const opts = document.createElement('div');
@@ -1267,12 +1472,12 @@
 
                 item.o.forEach((opt, optIdx) => {
                     opts.innerHTML += `
-                        <label class="quiz-option bg-slate-50 border-2 border-slate-200 p-4 sm:p-5 rounded-2xl cursor-pointer flex items-center gap-4 transition-all shadow-sm group">
-                            <div class="relative flex items-center justify-center w-6 h-6 sm:w-7 sm:h-7 rounded-full border-2 border-slate-300 bg-white shrink-0 group-hover:border-orange-400 transition-colors">
+                        <label class="quiz-option bg-slate-50 dark:bg-slate-950 border-2 border-slate-200 dark:border-slate-800 p-4 sm:p-5 rounded-2xl cursor-pointer flex items-center gap-4 transition-all shadow-sm group">
+                            <div class="relative flex items-center justify-center w-6 h-6 sm:w-7 sm:h-7 rounded-full border-2 border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 shrink-0 group-hover:border-orange-400 transition-colors">
                                 <input type="radio" name="q${idx}" value="${optIdx}" class="peer absolute inset-0 opacity-0 cursor-pointer">
                                 <div class="w-3 h-3 sm:w-4 sm:h-4 rounded-full bg-orange-500 scale-0 peer-checked:scale-100 transition-transform"></div>
                             </div>
-                            <span class="text-xs sm:text-sm font-black text-slate-600 tracking-tight group-hover:text-slate-800 transition-colors">${opt}</span>
+                            <span class="text-xs sm:text-sm font-black text-slate-600 dark:text-slate-400 tracking-tight group-hover:text-slate-800 dark:group-hover:text-slate-200 transition-colors">${opt}</span>
                         </label>
                     `;
                 });
@@ -1316,10 +1521,12 @@
             document.getElementById('final-exam-header').classList.add('hidden');
 
             if (score >= 12) {
-                icon.innerText = "🏆";
-                title.innerText = "CONGRATULATIONS, HERO!";
-                title.className = "text-3xl font-black text-green-600 mb-3 uppercase tracking-wide";
-                desc.innerText = `You scored ${score}/15. You have proven yourself as a Fire Safety Hero!`;
+                icon.innerText = score >= 12 ? "🏆" : "🔥";
+                title.innerText = score >= 12 ? "CONGRATULATIONS!" : "KEEP TRAINING!";
+                title.className = "ss-completion-title";
+                desc.innerText = score >= 12 
+                    ? `You scored ${score}/15. You are now a SafeScape certified Fire Safety Hero!`
+                    : `You scored ${score}/15. You need at least 12/15 to pass. Try again!`;
                 document.getElementById('btn-view-cert').classList.remove('hidden');
 
                 if (!localState.finalExamPassed) {
@@ -1332,7 +1539,7 @@
             } else {
                 icon.innerText = "📚";
                 title.innerText = "KEEP PRACTICING";
-                title.className = "text-3xl font-black text-orange-600 mb-3 uppercase tracking-wide";
+                title.className = "ss-completion-title !text-orange-600";
                 desc.innerText = `You scored ${score}/15. Review the modules and try again!`;
                 document.getElementById('btn-retake').classList.remove('hidden');
             }

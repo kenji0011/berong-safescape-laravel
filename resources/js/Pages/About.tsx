@@ -135,7 +135,7 @@ function TeamCard({ member, index }: { member: typeof teamMembers[0]; index: num
                 scale: 1.02,
                 transition: { duration: 0.3 }
             }}
-            className="group relative bg-card rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 border border-border"
+            className="group relative bg-white dark:bg-slate-800 rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 border border-slate-200 dark:border-slate-700 transition-colors"
         >
             {/* Gradient Header */}
             <div className={`h-32 bg-gradient-to-r ${member.color} relative`}>
@@ -157,7 +157,7 @@ function TeamCard({ member, index }: { member: typeof teamMembers[0]; index: num
             <div className="relative -mt-16 flex justify-center">
                 <div className="relative">
                     <div className={`absolute inset-0 bg-gradient-to-r ${member.color} rounded-full blur-md opacity-50 group-hover:opacity-75 transition-opacity`} />
-                    <div className="relative w-32 h-32 rounded-full border-4 border-card overflow-hidden bg-white shadow-xl">
+                    <div className="relative w-32 h-32 rounded-full border-4 border-white dark:border-slate-800 overflow-hidden bg-white dark:bg-slate-900 shadow-xl">
                         <Image
                             src={member.image}
                             alt={member.name}
@@ -170,7 +170,7 @@ function TeamCard({ member, index }: { member: typeof teamMembers[0]; index: num
 
             {/* Content */}
             <div className="p-6 pt-4 text-center">
-                <h3 className="text-xl font-bold text-foreground mb-2">{member.name}</h3>
+                <h3 className="text-xl font-bold text-slate-800 dark:text-white mb-2 transition-colors">{member.name}</h3>
 
                 {/* Roles */}
                 <div className="flex flex-wrap justify-center gap-2 mb-4">
@@ -180,7 +180,7 @@ function TeamCard({ member, index }: { member: typeof teamMembers[0]; index: num
                             initial={{ opacity: 0, y: 10 }}
                             animate={isInView ? { opacity: 1, y: 0 } : {}}
                             transition={{ delay: index * 0.1 + roleIndex * 0.05 + 0.15 }}
-                            className="inline-flex items-center gap-1 px-3 py-1 bg-muted rounded-full text-xs font-medium text-muted-foreground"
+                            className="inline-flex items-center gap-1 px-3 py-1 bg-slate-100 dark:bg-slate-700 rounded-full text-xs font-medium text-slate-600 dark:text-slate-300 transition-colors"
                         >
                             {member.roleIcons[roleIndex] && (
                                 <span className="w-3 h-3">
@@ -196,7 +196,7 @@ function TeamCard({ member, index }: { member: typeof teamMembers[0]; index: num
                 </div>
 
                 {/* Social Links */}
-                <div className="flex justify-center gap-3 pt-4 border-t border-border">
+                <div className="flex justify-center gap-3 pt-4 border-t border-slate-100 dark:border-slate-700 transition-colors">
                     {member.socials.map((social, socialIndex) => (
                         <Link
                             key={socialIndex}
@@ -208,7 +208,7 @@ function TeamCard({ member, index }: { member: typeof teamMembers[0]; index: num
                             <Button
                                 variant="outline"
                                 size="icon"
-                                className="h-10 w-10 rounded-full hover:bg-red-600 hover:text-white hover:border-red-600 transition-all duration-300 group-hover/social:scale-110"
+                                className="h-10 w-10 rounded-full dark:bg-slate-700 dark:border-slate-600 hover:bg-red-600 hover:text-white hover:border-red-600 transition-all duration-300 group-hover/social:scale-110"
                             >
                                 <social.icon className="w-5 h-5" />
                             </Button>
@@ -346,7 +346,7 @@ export default function AboutPage() {
                 {/* Hero Section with 3D Parallax */}
                 <motion.section
                     ref={heroRef}
-                    className="relative bg-white py-10 sm:py-28 overflow-hidden"
+                    className="relative bg-white dark:bg-slate-950 py-10 sm:py-28 overflow-hidden transition-colors duration-500"
                     style={{ opacity: heroOpacity, scale: heroScale }}
                 >
                     {/* Background Pattern */}
@@ -407,7 +407,7 @@ export default function AboutPage() {
                                 style={{ y: heroTextY, opacity: heroOpacity }}
                             >
                                 <motion.span
-                                    className="text-red-600 font-semibold text-sm sm:text-xl uppercase tracking-wider mb-2 sm:mb-4 block"
+                                    className="text-red-600 dark:text-red-400 font-semibold text-sm sm:text-xl uppercase tracking-wider mb-2 sm:mb-4 block transition-colors"
                                     initial={{ opacity: 0, y: 20 }}
                                     animate={{ opacity: 1, y: 0 }}
                                     transition={{ duration: 0.4 }}
@@ -415,15 +415,15 @@ export default function AboutPage() {
                                     About SafeScape
                                 </motion.span>
                                 <motion.h1
-                                    className="text-3xl sm:text-5xl lg:text-6xl font-bold mb-2 sm:mb-6 leading-tight text-gray-900"
+                                    className="text-3xl sm:text-5xl lg:text-6xl font-bold mb-2 sm:mb-6 leading-tight text-gray-900 dark:text-white transition-colors"
                                     initial={{ opacity: 0, y: 30 }}
                                     animate={{ opacity: 1, y: 0 }}
                                     transition={{ duration: 0.4, delay: 0.05 }}
                                 >
-                                    Meet <span className="text-red-600">Berong</span>
+                                    Meet <span className="text-red-600 dark:text-red-500">Berong</span>
                                 </motion.h1>
                                 <motion.p
-                                    className="text-lg sm:text-3xl font-light mb-4 sm:mb-6 text-gray-700"
+                                    className="text-lg sm:text-3xl font-light mb-4 sm:mb-6 text-gray-700 dark:text-slate-300 transition-colors"
                                     initial={{ opacity: 0, y: 30 }}
                                     animate={{ opacity: 1, y: 0 }}
                                     transition={{ duration: 0.4, delay: 0.1 }}
@@ -431,12 +431,12 @@ export default function AboutPage() {
                                     Your Fire Safety Companion
                                 </motion.p>
                                 <motion.p
-                                    className="text-sm sm:text-xl text-gray-600 leading-relaxed px-2 sm:px-0"
+                                    className="text-sm sm:text-xl text-gray-600 dark:text-slate-400 leading-relaxed px-2 sm:px-0 transition-colors"
                                     initial={{ opacity: 0, y: 30 }}
                                     animate={{ opacity: 1, y: 0 }}
                                     transition={{ duration: 0.4, delay: 0.15 }}
                                 >
-                                    <strong className="text-gray-900">SafeScape</strong>, locally known as <strong className="text-gray-900">&quot;Berong E-Learning&quot;</strong>, is named after the official mascot of the Bureau of Fire Protection.
+                                    <strong className="text-gray-900 dark:text-white">SafeScape</strong>, locally known as <strong className="text-gray-900 dark:text-white">&quot;Berong E-Learning&quot;</strong>, is named after the official mascot of the Bureau of Fire Protection.
                                     Berong represents our commitment to making fire safety education accessible, engaging, and effective for every Filipino.
                                 </motion.p>
                             </motion.div>
@@ -447,7 +447,7 @@ export default function AboutPage() {
                 {/* Platform Overview Section - Card Flip Animation */}
                 <motion.section
                     ref={platformRef}
-                    className="py-10 sm:py-20 bg-gradient-to-br from-red-700 via-red-600 to-orange-500 text-white relative overflow-hidden"
+                    className="py-10 sm:py-20 bg-gradient-to-br from-red-700 via-red-600 to-orange-500 dark:from-red-950 dark:to-orange-950 text-white relative overflow-hidden transition-colors duration-500"
                     style={{ opacity: platformOpacity, scale: platformScale }}
                 >
                     {/* Background Pattern */}
@@ -599,7 +599,7 @@ export default function AboutPage() {
                 {/* Research Team Section - Staggered 3D Cards */}
                 <motion.section
                     ref={teamRef}
-                    className="py-16 sm:py-20 bg-white"
+                    className="py-16 sm:py-20 bg-white dark:bg-slate-900 transition-colors duration-500"
                     style={{ opacity: teamOpacity, scale: teamScale }}
                 >
                     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -610,13 +610,13 @@ export default function AboutPage() {
                             viewport={{ once: true }}
                             transition={{ duration: 0.7 }}
                         >
-                            <span className="text-red-600 font-semibold text-lg uppercase tracking-wider mb-4 block">
+                            <span className="text-red-600 dark:text-red-400 font-semibold text-lg uppercase tracking-wider mb-4 block transition-colors">
                                 The Research Team
                             </span>
-                            <h2 className="text-3xl sm:text-4xl font-bold text-foreground mb-4">
+                            <h2 className="text-3xl sm:text-4xl font-bold text-slate-800 dark:text-white mb-4 transition-colors">
                                 Meet the Developers
                             </h2>
-                            <p className="text-muted-foreground max-w-2xl mx-auto text-lg">
+                            <p className="text-slate-600 dark:text-slate-400 max-w-2xl mx-auto text-lg transition-colors">
                                 Computer Science researchers majoring in Intelligent Systems who designed and developed SafeScape.
                             </p>
                         </motion.div>
@@ -632,7 +632,7 @@ export default function AboutPage() {
                 {/* Call to Action - Zoom and Fade */}
                 <motion.section
                     ref={ctaRef}
-                    className="py-16 sm:py-20 bg-gradient-to-r from-red-600 to-orange-500 text-white"
+                    className="py-16 sm:py-20 bg-gradient-to-r from-red-600 to-orange-500 dark:from-red-950 dark:to-orange-950 text-white transition-colors duration-500"
                     style={{ scale: ctaScale, opacity: ctaOpacity }}
                 >
                     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">

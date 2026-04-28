@@ -124,21 +124,21 @@ export function ImageUpload({ onUploadComplete, title = "Image Upload", descript
   };
 
   return (
-    <Card className="rounded-[1.5rem] border-[3px] border-slate-200 shadow-sm hover:shadow-[0_4px_0_#e2e8f0] overflow-hidden bg-white transition-all h-full flex flex-col">
+    <Card className="rounded-[1.5rem] border-[3px] border-slate-200 dark:border-slate-700 shadow-sm hover:shadow-[0_4px_0_#e2e8f0] dark:hover:shadow-[0_4px_0_#0f172a] overflow-hidden bg-white dark:bg-slate-800 transition-all h-full flex flex-col">
       <CardHeader>
-        <CardTitle className="text-xl font-bold text-slate-800">{title}</CardTitle>
-        <CardDescription className="text-slate-500 font-medium">{description}</CardDescription>
+        <CardTitle className="text-xl font-bold text-slate-800 dark:text-white">{title}</CardTitle>
+        <CardDescription className="text-slate-500 dark:text-slate-400 font-medium">{description}</CardDescription>
       </CardHeader>
       <CardContent className="flex-1 flex flex-col justify-center">
         {error && (
-          <div className="mb-4 p-3 bg-red-50 border-2 border-red-200 rounded-xl flex items-center gap-2">
-            <span className="text-sm font-bold text-red-700">{error}</span>
+          <div className="mb-4 p-3 bg-red-50 dark:bg-red-900/30 border-2 border-red-200 dark:border-red-900/50 rounded-xl flex items-center gap-2">
+            <span className="text-sm font-bold text-red-700 dark:text-red-400">{error}</span>
           </div>
         )}
         
         <div className={`grid gap-6 ${previewUrl || uploadUrl ? 'grid-cols-1 sm:grid-cols-2' : 'grid-cols-1'} h-full items-stretch`}>
           <div
-            className="border-[3px] border-dashed border-slate-300 rounded-[1.5rem] p-6 text-center cursor-pointer bg-slate-50 hover:bg-slate-100 hover:border-slate-400 transition-all shadow-inner flex flex-col items-center justify-center min-h-[200px]"
+            className="border-[3px] border-dashed border-slate-300 dark:border-slate-700 rounded-[1.5rem] p-6 text-center cursor-pointer bg-slate-50 dark:bg-slate-900/50 hover:bg-slate-100 dark:hover:bg-slate-900/80 hover:border-slate-400 dark:hover:border-slate-600 transition-all shadow-inner flex flex-col items-center justify-center min-h-[200px]"
             onDragOver={handleDragOver}
             onDrop={handleDrop}
             onClick={() => fileInputRef.current?.click()}
@@ -151,14 +151,14 @@ export function ImageUpload({ onUploadComplete, title = "Image Upload", descript
               className="hidden"
             />
             <div className="flex flex-col items-center justify-center gap-3">
-              <div className="bg-white p-3 rounded-full shadow-sm border-2 border-slate-200">
-                <Upload className="h-6 w-6 text-slate-400" />
+              <div className="bg-white dark:bg-slate-800 p-3 rounded-full shadow-sm border-2 border-slate-200 dark:border-slate-700">
+                <Upload className="h-6 w-6 text-slate-400 dark:text-slate-500" />
               </div>
               <div>
-                <p className="text-sm font-bold text-slate-700">
+                <p className="text-sm font-bold text-slate-700 dark:text-slate-300">
                   {file ? file.name : 'Click or drag image'}
                 </p>
-                <p className="text-xs font-medium text-slate-500 mt-1">
+                <p className="text-xs font-medium text-slate-500 dark:text-slate-500 mt-1">
                   Max size: 15MB
                 </p>
               </div>
@@ -166,10 +166,10 @@ export function ImageUpload({ onUploadComplete, title = "Image Upload", descript
           </div>
 
           {(previewUrl || uploadUrl) && (
-            <div className="flex flex-col items-center justify-between border-2 border-slate-200 bg-slate-50 rounded-[1.5rem] p-4 shadow-sm min-h-[200px]">
+            <div className="flex flex-col items-center justify-between border-2 border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/50 rounded-[1.5rem] p-4 shadow-sm min-h-[200px]">
               {previewUrl && !uploadUrl && (
                 <>
-                  <div className="flex-1 w-full flex items-center justify-center bg-white rounded-xl border-2 border-slate-200 mb-4 overflow-hidden p-2">
+                  <div className="flex-1 w-full flex items-center justify-center bg-white dark:bg-slate-900 rounded-xl border-2 border-slate-200 dark:border-slate-700 mb-4 overflow-hidden p-2">
                     <img
                       src={previewUrl}
                       alt="Preview"
@@ -198,7 +198,7 @@ export function ImageUpload({ onUploadComplete, title = "Image Upload", descript
 
               {uploadUrl && (
                 <>
-                  <div className="flex-1 w-full flex items-center justify-center bg-white rounded-xl border-2 border-slate-200 mb-4 overflow-hidden p-2">
+                  <div className="flex-1 w-full flex items-center justify-center bg-white dark:bg-slate-900 rounded-xl border-2 border-slate-200 dark:border-slate-700 mb-4 overflow-hidden p-2">
                     <img
                       src={uploadUrl}
                       alt="Uploaded"
@@ -206,9 +206,9 @@ export function ImageUpload({ onUploadComplete, title = "Image Upload", descript
                     />
                   </div>
                   <div className="w-full flex flex-col gap-2">
-                    <div className="w-full flex items-center justify-center gap-2 p-2.5 bg-green-50 border-2 border-green-200 rounded-xl">
-                      <Check className="h-5 w-5 text-green-600" strokeWidth={2.5} />
-                      <span className="text-sm font-bold text-green-700">
+                    <div className="w-full flex items-center justify-center gap-2 p-2.5 bg-green-50 dark:bg-green-900/30 border-2 border-green-200 dark:border-green-900/50 rounded-xl">
+                      <Check className="h-5 w-5 text-green-600 dark:text-green-400" strokeWidth={2.5} />
+                      <span className="text-sm font-bold text-green-700 dark:text-green-400">
                         Upload Success!
                       </span>
                     </div>

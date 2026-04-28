@@ -51,10 +51,10 @@ function SortableCarouselItem({
         <div
             ref={setNodeRef}
             style={style}
-            className={`flex items-center gap-3 p-4 border-2 rounded-2xl bg-white transition-shadow transition-colors duration-200 ${
+            className={`flex items-center gap-3 p-4 border-2 rounded-2xl bg-white dark:bg-slate-900 transition-shadow transition-colors duration-200 ${
                 isDragging 
-                    ? 'border-red-400 shadow-[0_20px_25px_-5px_rgba(0,0,0,0.1),0_8px_10px_-6px_rgba(0,0,0,0.1)] opacity-95 ring-4 ring-red-100' 
-                    : 'border-slate-200 shadow-sm hover:shadow-[0_4px_0_#e2e8f0]'
+                    ? 'border-red-400 dark:border-red-500 shadow-[0_20px_25px_-5px_rgba(0,0,0,0.1),0_8px_10px_-6px_rgba(0,0,0,0.1)] opacity-95 ring-4 ring-red-100 dark:ring-red-900/30' 
+                    : 'border-slate-200 dark:border-slate-700 shadow-sm hover:shadow-[0_4px_0_#e2e8f0] dark:hover:shadow-[0_4px_0_#0f172a]'
             }`}
         >
             <button
@@ -62,8 +62,8 @@ function SortableCarouselItem({
                 {...listeners}
                 className={`touch-none cursor-grab active:cursor-grabbing p-2 rounded-xl transition-all flex items-center justify-center shrink-0 ${
                     isDragging 
-                        ? 'bg-red-50 text-red-600 border-2 border-red-200 shadow-inner' 
-                        : 'bg-slate-50 text-slate-400 border-2 border-slate-200 hover:bg-slate-100 hover:text-slate-600 shadow-sm hover:shadow-[0_2px_0_#e2e8f0]'
+                        ? 'bg-red-50 dark:bg-red-900/30 text-red-600 dark:text-red-400 border-2 border-red-200 dark:border-red-900/50 shadow-inner' 
+                        : 'bg-slate-50 dark:bg-slate-800 text-slate-400 dark:text-slate-500 border-2 border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-slate-600 dark:hover:text-slate-300 shadow-sm hover:shadow-[0_2px_0_#e2e8f0] dark:hover:shadow-[0_2px_0_#0f172a]'
                 }`}
                 aria-label="Drag to reorder"
             >
@@ -71,8 +71,8 @@ function SortableCarouselItem({
             </button>
 
             <div className="flex-1 min-w-0">
-                <h4 className="font-semibold truncate">{image.title}</h4>
-                <p className="text-sm text-muted-foreground truncate">{image.altText}</p>
+                <h4 className="font-semibold text-slate-800 dark:text-white truncate">{image.title}</h4>
+                <p className="text-sm text-slate-500 dark:text-slate-400 truncate">{image.altText}</p>
             </div>
 
             <button
@@ -150,15 +150,15 @@ export function SortableCarouselList({
     }
 
     return (
-        <Card className="rounded-[2rem] border-[3px] border-slate-200 shadow-[0_8px_0_#cbd5e1] overflow-hidden bg-slate-50 transition-all mb-6">
+        <Card className="rounded-[2rem] border-[3px] border-slate-200 dark:border-slate-700 shadow-[0_8px_0_#cbd5e1] dark:shadow-[0_8px_0_#0f172a] overflow-hidden bg-slate-50 dark:bg-slate-800/50 backdrop-blur-md transition-all mb-6">
             <CardHeader className="px-6 pt-6 pb-2">
                 <div className="flex items-center gap-3">
-                    <div className="bg-white border-2 border-slate-200 p-2 rounded-xl shadow-sm">
+                    <div className="bg-white dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-700 p-2 rounded-xl shadow-sm">
                         <ImageIcon className="h-6 w-6 text-[#d60000]" strokeWidth={2.5} />
                     </div>
                     <div>
-                        <CardTitle className="text-2xl font-black text-slate-800 tracking-tight">Current Carousel Images</CardTitle>
-                        <CardDescription className="text-slate-500 font-medium mt-1">
+                        <CardTitle className="text-2xl font-black text-slate-800 dark:text-white tracking-tight">Current Carousel Images</CardTitle>
+                        <CardDescription className="text-slate-500 dark:text-slate-400 font-medium mt-1">
                             {images.length} images in carousel • Drag to reorder
                         </CardDescription>
                     </div>

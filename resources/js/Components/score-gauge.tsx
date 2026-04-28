@@ -50,7 +50,7 @@ export const ScoreGauge = ({
         />
       </svg>
       <div className="flex flex-col items-center justify-center">
-        <span className="text-2xl font-black text-slate-800 leading-none">{percentage}%</span>
+        <span className="text-2xl font-black text-slate-800 dark:text-white leading-none transition-colors">{percentage}%</span>
       </div>
     </div>
   )

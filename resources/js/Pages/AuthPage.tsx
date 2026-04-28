@@ -219,11 +219,11 @@ function AuthContent() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-orange-50/50 via-white to-orange-100/50 flex flex-col items-center justify-center p-4 sm:p-6 relative overflow-hidden">
+    <div className="min-h-screen bg-gradient-to-br from-orange-50/50 via-white to-orange-100/50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 flex flex-col items-center justify-center p-4 sm:p-6 relative overflow-hidden transition-colors duration-500">
       {/* Decorative background blobs */}
-      <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-orange-400/15 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-red-400/10 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute top-1/2 left-1/4 w-[300px] h-[300px] bg-orange-300/10 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-orange-400/15 dark:bg-orange-500/5 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-red-400/10 dark:bg-red-500/5 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute top-1/2 left-1/4 w-[300px] h-[300px] bg-orange-300/10 dark:bg-orange-400/5 rounded-full blur-3xl pointer-events-none" />
 
       {/* Registration Wizard Modal - Full screen overlay */}
       {showRegistrationWizard && (
@@ -238,10 +238,10 @@ function AuthContent() {
         {/* Left Side — Branding */}
         <div className="flex-1 flex flex-col items-center lg:items-start text-center lg:text-left">
           <div className="flex justify-center lg:justify-start gap-3 sm:gap-4 mb-4 sm:mb-6">
-            <div className="h-16 w-16 sm:h-20 sm:w-20 bg-white rounded-full shadow-[0_4px_20px_rgba(0,0,0,0.15)] border border-gray-100 flex items-center justify-center p-1.5 sm:p-2 flex-shrink-0">
+            <div className="h-16 w-16 sm:h-20 sm:w-20 bg-white dark:bg-slate-900 rounded-full shadow-[0_4px_20px_rgba(0,0,0,0.15)] border border-gray-100 dark:border-slate-800 flex items-center justify-center p-1.5 sm:p-2 flex-shrink-0 transition-colors">
               <img src="/bfp-logo-red.jpg" alt="BFP Logo" width="72" height="72" className="object-contain w-full h-full" />
             </div>
-            <div className="h-16 w-16 sm:h-20 sm:w-20 bg-white rounded-full shadow-[0_4px_20px_rgba(0,0,0,0.15)] border border-gray-100 flex items-center justify-center p-1.5 sm:p-2 flex-shrink-0">
+            <div className="h-16 w-16 sm:h-20 sm:w-20 bg-white dark:bg-slate-900 rounded-full shadow-[0_4px_20px_rgba(0,0,0,0.15)] border border-gray-100 dark:border-slate-800 flex items-center justify-center p-1.5 sm:p-2 flex-shrink-0 transition-colors">
               <img
                 src="/philippine-flag-seal.jpg"
                 alt="Philippine Seal"
@@ -251,33 +251,33 @@ function AuthContent() {
               />
             </div>
           </div>
-          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-[#d60000] mb-3 sm:mb-4 tracking-tight drop-shadow-sm">Berong E-Learning</h1>
-          <div className="inline-flex items-center justify-center px-5 sm:px-6 py-2 bg-white border border-gray-200 rounded-full shadow-[0_2px_10px_rgba(0,0,0,0.05)]">
-            <p className="text-[10px] sm:text-xs font-bold text-gray-500 uppercase tracking-widest text-center leading-tight">BFP Sta Cruz Fire Safety Education</p>
+          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-[#d60000] dark:text-red-500 mb-3 sm:mb-4 tracking-tight drop-shadow-sm transition-colors">Berong E-Learning</h1>
+          <div className="inline-flex items-center justify-center px-5 sm:px-6 py-2 bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800 rounded-full shadow-[0_2px_10px_rgba(0,0,0,0.05)] transition-colors">
+            <p className="text-[10px] sm:text-xs font-bold text-gray-500 dark:text-slate-400 uppercase tracking-widest text-center leading-tight">BFP Sta Cruz Fire Safety Education</p>
           </div>
         </div>
 
         {/* Right Side — Login Card */}
         <div className="w-full max-w-md flex-shrink-0">
-        <Card className="border-[2px] sm:border-[3px] border-[#fb923c] rounded-[1.75rem] sm:rounded-[2.5rem] shadow-2xl bg-white overflow-hidden relative pb-2 sm:pb-4 mx-auto w-full">
+        <Card className="border-[2px] sm:border-[3px] border-[#fb923c] dark:border-orange-500/50 rounded-[1.75rem] sm:rounded-[2.5rem] shadow-2xl bg-white dark:bg-slate-900 overflow-hidden relative pb-2 sm:pb-4 mx-auto w-full transition-colors duration-500">
           {/* Decorative shapes */}
-          <div className="absolute top-0 right-0 w-32 h-32 sm:w-48 sm:h-48 bg-orange-50 rounded-bl-[100px] sm:rounded-bl-[120px] pointer-events-none" />
-          <div className="absolute bottom-0 left-0 w-24 h-24 sm:w-32 sm:h-32 bg-blue-50/40 rounded-tr-[80px] sm:rounded-tr-[100px] pointer-events-none" />
+          <div className="absolute top-0 right-0 w-32 h-32 sm:w-48 sm:h-48 bg-orange-50 dark:bg-orange-500/5 rounded-bl-[100px] sm:rounded-bl-[120px] pointer-events-none transition-colors" />
+          <div className="absolute bottom-0 left-0 w-24 h-24 sm:w-32 sm:h-32 bg-blue-50/40 dark:bg-blue-500/5 rounded-tr-[80px] sm:rounded-tr-[100px] pointer-events-none transition-colors" />
 
           <CardHeader className="pt-6 sm:pt-8 pb-1 sm:pb-2 relative z-10 px-5 sm:px-6">
             <div className="flex flex-col items-center mb-1 sm:mb-2">
-              <div className="mx-auto w-10 h-10 sm:w-12 sm:h-12 bg-red-50 border border-red-200 rounded-[14px] sm:rounded-2xl flex items-center justify-center mb-3 sm:mb-4">
-                <Shield className="h-5 w-5 sm:h-6 sm:w-6 text-[#d60000]" />
+              <div className="mx-auto w-10 h-10 sm:w-12 sm:h-12 bg-red-50 dark:bg-red-500/10 border border-red-200 dark:border-red-500/20 rounded-[14px] sm:rounded-2xl flex items-center justify-center mb-3 sm:mb-4 transition-colors">
+                <Shield className="h-5 w-5 sm:h-6 sm:w-6 text-[#d60000] dark:text-red-500" />
               </div>
-              <CardTitle className="text-xl sm:text-2xl font-black text-slate-800 tracking-tight text-center">Access your Account</CardTitle>
+              <CardTitle className="text-xl sm:text-2xl font-black text-slate-800 dark:text-white tracking-tight text-center transition-colors">Access your Account</CardTitle>
             </div>
-            <CardDescription className="text-center text-slate-500 font-medium text-xs sm:text-sm">Sign in or create an account to access learning materials</CardDescription>
+            <CardDescription className="text-center text-slate-500 dark:text-slate-400 font-medium text-xs sm:text-sm transition-colors">Sign in or create an account to access learning materials</CardDescription>
           </CardHeader>
           <CardContent className="relative z-10 px-5 sm:px-8">
             <Tabs defaultValue={defaultTab} className="w-full">
-              <TabsList className="grid w-full grid-cols-2 bg-slate-100 p-1 sm:p-1.5 rounded-xl sm:rounded-2xl h-12 sm:h-14 mb-4 sm:mb-6">
-                <TabsTrigger value="login" className="rounded-lg sm:rounded-xl font-extrabold text-slate-400 text-xs sm:text-sm data-[state=active]:bg-white data-[state=active]:text-[#d60000] data-[state=active]:shadow-[0_2px_0_#dc2626] data-[state=active]:border-2 data-[state=active]:border-red-200 transition-all duration-300 h-full">Log In</TabsTrigger>
-                <TabsTrigger value="register" className="rounded-lg sm:rounded-xl font-extrabold text-slate-400 text-xs sm:text-sm data-[state=active]:bg-white data-[state=active]:text-blue-600 data-[state=active]:shadow-[0_2px_0_#2563eb] data-[state=active]:border-2 data-[state=active]:border-blue-200 transition-all duration-300 h-full">Register</TabsTrigger>
+              <TabsList className="grid w-full grid-cols-2 bg-slate-100 dark:bg-slate-800 p-1 sm:p-1.5 rounded-xl sm:rounded-2xl h-12 sm:h-14 mb-4 sm:mb-6 transition-colors">
+                <TabsTrigger value="login" className="rounded-lg sm:rounded-xl font-extrabold text-slate-400 dark:text-slate-500 text-xs sm:text-sm data-[state=active]:bg-white dark:data-[state=active]:bg-slate-700 data-[state=active]:text-[#d60000] dark:data-[state=active]:text-red-400 data-[state=active]:shadow-[0_2px_0_#dc2626] data-[state=active]:border-2 data-[state=active]:border-red-200 dark:data-[state=active]:border-red-500/30 transition-all duration-300 h-full">Log In</TabsTrigger>
+                <TabsTrigger value="register" className="rounded-lg sm:rounded-xl font-extrabold text-slate-400 dark:text-slate-500 text-xs sm:text-sm data-[state=active]:bg-white dark:data-[state=active]:bg-slate-700 data-[state=active]:text-blue-600 dark:data-[state=active]:text-blue-400 data-[state=active]:shadow-[0_2px_0_#2563eb] data-[state=active]:border-2 data-[state=active]:border-blue-200 dark:data-[state=active]:border-blue-500/30 transition-all duration-300 h-full">Register</TabsTrigger>
               </TabsList>
 
 
@@ -285,7 +285,7 @@ function AuthContent() {
               <TabsContent value="login" className="mt-0 animate-in fade-in-0 slide-in-from-left-4 duration-300">
                 <form onSubmit={handleLogin} className="space-y-3 sm:space-y-4">
                   <div className="space-y-1 sm:space-y-1.5">
-                    <Label htmlFor="login-username" className="text-[11px] sm:text-xs font-bold text-slate-700 ml-1">Username</Label>
+                    <Label htmlFor="login-username" className="text-[11px] sm:text-xs font-bold text-slate-700 dark:text-slate-300 ml-1 transition-colors">Username</Label>
                     <Input
                       id="login-username"
                       type="text"
@@ -294,14 +294,14 @@ function AuthContent() {
                       onChange={(e) => setLoginData({ ...loginData, username: e.target.value })}
                       required
                       autoComplete="off"
-                      className="h-11 sm:h-12 rounded-lg sm:rounded-xl border-slate-200 bg-slate-50 px-3 sm:px-4 text-sm placeholder:text-slate-400 focus-visible:ring-[#d60000] focus-visible:border-[#d60000] transition-all font-medium text-slate-800"
+                      className="h-11 sm:h-12 rounded-lg sm:rounded-xl border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 px-3 sm:px-4 text-sm placeholder:text-slate-400 dark:placeholder:text-slate-600 focus-visible:ring-[#d60000] dark:focus-visible:ring-red-500 focus-visible:border-[#d60000] dark:focus-visible:border-red-500 transition-all font-medium text-slate-800 dark:text-slate-200"
                     />
                     {validationErrors.username && (
                       <p className="mt-1 text-[11px] sm:text-sm text-red-600">{validationErrors.username}</p>
                     )}
                   </div>
                   <div className="space-y-1 sm:space-y-1.5">
-                    <Label htmlFor="login-password" className="text-[11px] sm:text-xs font-bold text-slate-700 ml-1">Password</Label>
+                    <Label htmlFor="login-password" className="text-[11px] sm:text-xs font-bold text-slate-700 dark:text-slate-300 ml-1 transition-colors">Password</Label>
                     <div className="relative">
                       <Input
                         id="login-password"
@@ -311,12 +311,12 @@ function AuthContent() {
                         onChange={(e) => setLoginData({ ...loginData, password: e.target.value })}
                         required
                         autoComplete="new-password"
-                        className="h-11 sm:h-12 rounded-lg sm:rounded-xl border-slate-200 bg-slate-50 px-3 sm:px-4 text-sm placeholder:text-slate-400 focus-visible:ring-[#d60000] focus-visible:border-[#d60000] transition-all pr-10 sm:pr-12 font-medium text-slate-800"
+                        className="h-11 sm:h-12 rounded-lg sm:rounded-xl border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 px-3 sm:px-4 text-sm placeholder:text-slate-400 dark:placeholder:text-slate-600 focus-visible:ring-[#d60000] dark:focus-visible:ring-red-500 focus-visible:border-[#d60000] dark:focus-visible:border-red-500 transition-all pr-10 sm:pr-12 font-medium text-slate-800 dark:text-slate-200"
                       />
                       <button
                         type="button"
                         onClick={() => setShowPassword(!showPassword)}
-                        className="absolute right-2 sm:right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 p-1 sm:p-1.5 transition-colors"
+                        className="absolute right-2 sm:right-3 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-600 hover:text-slate-600 dark:hover:text-slate-400 p-1 sm:p-1.5 transition-colors"
                         tabIndex={-1}
                       >
                         {showPassword ? <EyeOff className="h-4 w-4 sm:h-5 sm:w-5" /> : <Eye className="h-4 w-4 sm:h-5 sm:w-5" />}
@@ -337,7 +337,7 @@ function AuthContent() {
                   <button
                     type="submit"
                     disabled={loading}
-                    className="w-full bg-[#d60000] text-white font-extrabold h-12 sm:h-13 rounded-xl sm:rounded-2xl text-sm sm:text-base mt-1 sm:mt-2 shadow-[0_5px_0_#991b1b] hover:-translate-y-0.5 hover:shadow-[0_7px_0_#991b1b] active:translate-y-1 active:shadow-[0_0px_0_#991b1b] transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0 disabled:hover:shadow-[0_5px_0_#991b1b]"
+                    className="w-full bg-[#d60000] dark:bg-red-600 text-white font-extrabold h-12 sm:h-13 rounded-xl sm:rounded-2xl text-sm sm:text-base mt-1 sm:mt-2 shadow-[0_5px_0_#991b1b] dark:shadow-[0_5px_0_#7f1d1d] hover:-translate-y-0.5 hover:shadow-[0_7px_0_#991b1b] dark:hover:shadow-[0_7px_0_#7f1d1d] active:translate-y-1 active:shadow-[0_0px_0_#991b1b] dark:active:shadow-none transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0 disabled:hover:shadow-[0_5px_0_#991b1b]"
                   >
                     {loading ? "Signing in..." : "Log In"}
                   </button>
@@ -346,7 +346,7 @@ function AuthContent() {
                     <Button
                       type="button"
                       variant="ghost"
-                      className="text-[11px] sm:text-xs font-semibold text-slate-500 hover:text-slate-800 hover:bg-slate-100 rounded-md sm:rounded-lg h-7 sm:h-8 px-2 sm:px-3"
+                      className="text-[11px] sm:text-xs font-semibold text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-md sm:rounded-lg h-7 sm:h-8 px-2 sm:px-3 transition-colors"
                       onClick={() => {
                         setShowResetDialog(true)
                         setResetMessage(null)
@@ -355,13 +355,13 @@ function AuthContent() {
                         setResetStep(1)
                       }}
                     >
-                      <KeyRound className="h-3 w-3 sm:h-3.5 sm:w-3.5 mr-1.5 text-slate-400" />
+                      <KeyRound className="h-3 w-3 sm:h-3.5 sm:w-3.5 mr-1.5 text-slate-400 dark:text-slate-500" />
                       Forgot Password?
                     </Button>
                     
                     <Link href="/">
-                      <Button variant="ghost" className="text-[11px] sm:text-xs font-semibold text-slate-500 hover:text-slate-800 hover:bg-slate-100 rounded-md sm:rounded-lg h-7 sm:h-8 px-2 sm:px-3">
-                        <ArrowLeft className="h-3 w-3 sm:h-3.5 sm:w-3.5 mr-1.5 text-slate-400" />
+                      <Button variant="ghost" className="text-[11px] sm:text-xs font-semibold text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-md sm:rounded-lg h-7 sm:h-8 px-2 sm:px-3 transition-colors">
+                        <ArrowLeft className="h-3 w-3 sm:h-3.5 sm:w-3.5 mr-1.5 text-slate-400 dark:text-slate-500" />
                         Back to Dashboard
                       </Button>
                     </Link>
@@ -369,12 +369,11 @@ function AuthContent() {
                 </form>
               </TabsContent>
 
-              {/* Register Tab */}
               <TabsContent value="register" className="mt-0 animate-in fade-in-0 slide-in-from-right-4 duration-300">
                 <div className="space-y-3 sm:space-y-4 py-2 sm:py-4">
                   <div className="text-center">
-                    <h3 className="text-base sm:text-lg font-bold text-slate-800 mb-1 sm:mb-2 mt-1 sm:mt-2 tracking-tight">Create Your Account</h3>
-                    <p className="text-xs sm:text-sm text-slate-500 font-medium mb-4 sm:mb-6">
+                    <h3 className="text-base sm:text-lg font-bold text-slate-800 dark:text-white mb-1 sm:mb-2 mt-1 sm:mt-2 tracking-tight transition-colors">Create Your Account</h3>
+                    <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 font-medium mb-4 sm:mb-6 transition-colors">
                       Join our fire safety community and help protect Santa Cruz, Laguna
                     </p>
                   </div>
@@ -387,14 +386,14 @@ function AuthContent() {
                     Start Registration
                   </button>
 
-                  <p className="text-[10px] sm:text-[11px] text-center text-slate-400 font-medium mt-4 sm:mt-6 px-2 sm:px-4 leading-relaxed">
+                  <p className="text-[10px] sm:text-[11px] text-center text-slate-400 dark:text-slate-500 font-medium mt-4 sm:mt-6 px-2 sm:px-4 leading-relaxed transition-colors">
                     Registration includes a quick fire safety assessment to personalize your learning experience.
                   </p>
                   
                   <div className="flex flex-col items-center pt-1 sm:pt-2">
                     <Link href="/">
-                      <Button variant="ghost" className="text-[11px] sm:text-xs font-semibold text-slate-500 hover:text-slate-800 hover:bg-slate-100 rounded-md sm:rounded-lg h-7 sm:h-8 px-2 sm:px-3">
-                        <ArrowLeft className="h-3 w-3 sm:h-3.5 sm:w-3.5 mr-1.5 text-slate-400" />
+                      <Button variant="ghost" className="text-[11px] sm:text-xs font-semibold text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-md sm:rounded-lg h-7 sm:h-8 px-2 sm:px-3 transition-colors">
+                        <ArrowLeft className="h-3 w-3 sm:h-3.5 sm:w-3.5 mr-1.5 text-slate-400 dark:text-slate-500" />
                         Back to Dashboard
                       </Button>
                     </Link>
@@ -407,13 +406,13 @@ function AuthContent() {
 
         {/* Reset Password Dialog */}
         <Dialog open={showResetDialog} onOpenChange={setShowResetDialog}>
-          <DialogContent className="sm:max-w-md">
+          <DialogContent className="sm:max-w-md bg-white dark:bg-slate-900 border-none dark:border-slate-800 transition-colors">
             <DialogHeader>
-              <DialogTitle className="flex items-center gap-2">
+              <DialogTitle className="flex items-center gap-2 text-slate-900 dark:text-white transition-colors">
                 <KeyRound className="h-5 w-5 text-orange-500" />
                 Reset Password
               </DialogTitle>
-              <DialogDescription>
+              <DialogDescription className="text-slate-500 dark:text-slate-400 transition-colors">
                 {resetStep === 1 && 'Enter your username. A verification code will be sent to your email.'}
                 {resetStep === 2 && 'Enter the 6-digit verification code sent to your email.'}
                 {resetStep === 3 && 'Your password has been reset successfully!'}
@@ -424,7 +423,7 @@ function AuthContent() {
               {/* Step 1: Username */}
               {resetStep === 1 && (
                 <div className="space-y-2">
-                  <Label htmlFor="reset-username">Username</Label>
+                  <Label htmlFor="reset-username" className="text-slate-700 dark:text-slate-300 transition-colors">Username</Label>
                   <Input
                     id="reset-username"
                     placeholder="Enter your username"
@@ -434,6 +433,7 @@ function AuthContent() {
                       setResetMessage(null)
                     }}
                     onKeyDown={(e) => { if (e.key === 'Enter') handleResetPassword() }}
+                    className="dark:bg-slate-950 dark:border-slate-800 dark:text-white dark:placeholder:text-slate-600 transition-all"
                   />
                 </div>
               )}
@@ -441,7 +441,7 @@ function AuthContent() {
               {/* Step 2: Verification Code */}
               {resetStep === 2 && (
                 <div className="space-y-2">
-                  <Label htmlFor="reset-code">Verification Code</Label>
+                  <Label htmlFor="reset-code" className="text-slate-700 dark:text-slate-300 transition-colors">Verification Code</Label>
                   <Input
                     id="reset-code"
                     placeholder="Enter 6-digit code"
@@ -452,14 +452,14 @@ function AuthContent() {
                     }}
                     onKeyDown={(e) => { if (e.key === 'Enter' && resetCode.length === 6) handleResetPassword() }}
                     maxLength={6}
-                    className="text-center text-2xl tracking-[0.5em] font-Arial"
+                    className="text-center text-2xl tracking-[0.5em] font-Arial dark:bg-slate-950 dark:border-slate-800 dark:text-white dark:placeholder:text-slate-700 transition-all"
                   />
                 </div>
               )}
 
               {resetMessage && (
                 <Alert variant={resetMessage.type === 'error' ? 'destructive' : 'default'}
-                  className={resetMessage.type === 'success' ? 'border-green-500 bg-green-50 text-green-800' : ''}
+                  className={resetMessage.type === 'success' ? 'border-green-500 dark:border-green-500/50 bg-green-50 dark:bg-green-500/10 text-green-800 dark:text-green-400 transition-colors' : 'dark:bg-red-500/10 dark:text-red-400 transition-colors'}
                 >
                   <AlertCircle className="h-4 w-4" />
                   <AlertDescription>{resetMessage.text}</AlertDescription>
@@ -474,7 +474,7 @@ function AuthContent() {
                 </Button>
               ) : (
                 <>
-                  <Button variant="outline" onClick={() => {
+                  <Button variant="outline" className="dark:border-slate-800 dark:text-slate-300 dark:hover:bg-slate-800 transition-colors" onClick={() => {
                     if (resetStep === 2) {
                       setResetStep(1)
                       setResetCode("")
@@ -512,10 +512,10 @@ function AuthContent() {
 
 function AuthLoading() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary/10 via-secondary/10 to-accent/10 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-orange-50/50 via-white to-orange-100/50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 flex items-center justify-center p-4 transition-colors duration-500">
       <div className="flex flex-col items-center gap-4">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
-        <p className="text-muted-foreground">Loading...</p>
+        <Loader2 className="h-8 w-8 animate-spin text-orange-500" />
+        <p className="text-slate-500 dark:text-slate-400 font-medium">Loading platform...</p>
       </div>
     </div>
   )

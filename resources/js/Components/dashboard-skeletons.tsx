@@ -92,17 +92,17 @@ export function HeroCarouselSkeleton() {
 
 export function BlogCardSkeleton() {
   return (
-    <div className="flex flex-col h-full bg-white rounded-2xl sm:rounded-3xl border-2 sm:border-[4px] border-white overflow-hidden relative shadow-[0_4px_0_#cbd5e1] sm:shadow-[0_6px_0_#cbd5e1] animate-pulse">
-      <Skeleton className="h-28 sm:h-48 w-full" />
+    <div className="flex flex-col h-full bg-white dark:bg-slate-800 rounded-2xl sm:rounded-3xl border-2 sm:border-[4px] border-white dark:border-slate-700 overflow-hidden relative shadow-[0_4px_0_#cbd5e1] dark:shadow-[0_4px_0_#1e293b] sm:shadow-[0_6px_0_#cbd5e1] sm:dark:shadow-[0_6px_0_#1e293b] animate-pulse transition-colors">
+      <Skeleton className="h-28 sm:h-48 w-full bg-slate-200 dark:bg-slate-700" />
       <div className="p-3 sm:p-5 flex flex-col flex-1 gap-3">
-        <Skeleton className="h-5 sm:h-7 w-3/4" />
+        <Skeleton className="h-5 sm:h-7 w-3/4 bg-slate-200 dark:bg-slate-700" />
         <div className="hidden sm:flex flex-col gap-2">
-          <Skeleton className="h-4 w-full" />
-          <Skeleton className="h-4 w-5/6" />
+          <Skeleton className="h-4 w-full bg-slate-200 dark:bg-slate-700" />
+          <Skeleton className="h-4 w-5/6 bg-slate-200 dark:bg-slate-700" />
         </div>
-        <div className="mt-auto pt-4 border-t-2 border-dashed border-slate-100 flex justify-between">
-          <Skeleton className="h-6 w-24 rounded-lg" />
-          <Skeleton className="h-6 w-24 rounded-lg" />
+        <div className="mt-auto pt-4 border-t-2 border-dashed border-slate-100 dark:border-slate-700 flex justify-between transition-colors">
+          <Skeleton className="h-6 w-24 rounded-lg bg-slate-200 dark:bg-slate-700" />
+          <Skeleton className="h-6 w-24 rounded-lg bg-slate-200 dark:bg-slate-700" />
         </div>
       </div>
     </div>
@@ -113,22 +113,22 @@ export function AdultDashboardSkeleton() {
   return (
     <div className="space-y-8">
       {/* Banner Skeleton */}
-      <Skeleton className="h-32 sm:h-48 w-full rounded-[2rem]" />
+      <Skeleton className="h-32 sm:h-48 w-full rounded-[2rem] bg-slate-200 dark:bg-slate-800" />
       
       {/* Notice Skeleton */}
-      <Skeleton className="h-16 w-full rounded-2xl" />
+      <Skeleton className="h-16 w-full rounded-2xl bg-slate-200 dark:bg-slate-800" />
       
       {/* Feature Cards Skeleton */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
-        <Skeleton className="h-32 w-full rounded-[2rem]" />
-        <Skeleton className="h-32 w-full rounded-[2rem]" />
+        <Skeleton className="h-32 w-full rounded-[2rem] bg-slate-200 dark:bg-slate-800" />
+        <Skeleton className="h-32 w-full rounded-[2rem] bg-slate-200 dark:bg-slate-800" />
       </div>
       
       {/* Search Skeleton */}
-      <Skeleton className="h-14 w-full rounded-full" />
+      <Skeleton className="h-14 w-full rounded-full bg-slate-200 dark:bg-slate-800" />
       
       {/* Grid Header Skeleton */}
-      <Skeleton className="h-8 w-48 mb-6" />
+      <Skeleton className="h-8 w-48 mb-6 bg-slate-200 dark:bg-slate-800" />
       
       {/* Blog Grid Skeleton */}
       <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6">

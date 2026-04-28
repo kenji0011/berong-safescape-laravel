@@ -6,13 +6,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SafeScape | Module 2: The School Drill</title>
     <script>
-        // Suppress Tailwind CDN warning
-        console.warn = (function (originalWarn) {
-            return function (...args) {
-                if (args[0] && args[0].includes && args[0].includes('cdn.tailwindcss.com')) return;
+        // Silence Tailwind production warning
+        (function() {
+            const originalWarn = console.warn;
+            console.warn = (...args) => {
+                if (args[0] && typeof args[0] === 'string' && (args[0].includes('cdn.tailwindcss.com') || args[0].includes('production'))) return;
                 originalWarn.apply(console, args);
             };
-        })(console.warn);
+        })();
     </script>
     <script>
         // Suppress Tailwind CDN warning
@@ -24,6 +25,20 @@
         })(console.warn);
     </script>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        // Silence Tailwind production warning
+        (function() {
+            const originalWarn = console.warn;
+            console.warn = (...args) => {
+                if (args[0] && typeof args[0] === 'string' && (args[0].includes('cdn.tailwindcss.com') || args[0].includes('production'))) return;
+                originalWarn.apply(console, args);
+            };
+        })();
+
+        tailwind.config = {
+            darkMode: 'class',
+        }
+    </script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="../css/shared.css">
 
@@ -159,7 +174,7 @@
     </style>
 </head>
 
-<body class="bg-transparent text-slate-800 font-sans min-h-screen">
+<body class="bg-transparent text-slate-800 dark:text-slate-200 font-sans min-h-screen transition-colors duration-500">
 
     <!-- NAVIGATION (Hidden by React wrapper but kept for legacy) -->
     <nav class="ss-nav">
@@ -197,72 +212,90 @@
                 class="text-3xl sm:text-4xl md:text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-red-500 to-orange-500 drop-shadow-sm">
                 Listen, Line Up, Lead
             </h1>
-            <p class="text-base sm:text-lg text-slate-600 font-bold leading-relaxed max-w-2xl mx-auto">
+            <p class="text-base sm:text-lg text-slate-600 dark:text-slate-400 font-bold leading-relaxed max-w-2xl mx-auto transition-colors">
                 In school, safety is about teamwork. Recognize the signal, gather your team, and lead them to safety
                 with rhythm and calm.
             </p>
         </section>
 
         <!-- VIDEO PRESENTATION -->
-        <section id="section-video" class="fade-in ss-section bg-white rounded-xl sm:rounded-[2rem] border-[3px] sm:border-[4px] border-blue-200 shadow-sm p-4 sm:p-10 text-center" style="animation-delay: 0.2s;">
-            <div class="ss-section-badge bg-green-500 border-[3px] border-white shadow-sm text-white"><i class="fa-regular fa-circle-check"></i></div>
-            <h2 class="text-2xl sm:text-3xl font-black text-blue-600 mb-4 sm:mb-6 drop-shadow-sm">Watch the Intro Video</h2>
+        <section id="section-video" class="fade-in ss-section bg-white dark:bg-slate-900 border-[3px] sm:border-[4px] border-blue-200 dark:border-blue-900/50 shadow-sm p-4 sm:p-10 text-center transition-colors" style="animation-delay: 0.2s;">
+            <div class="ss-section-badge bg-green-500 border-[3px] border-white dark:border-slate-800 shadow-sm text-white"><i class="fa-regular fa-circle-check"></i></div>
+            <h2 class="text-2xl sm:text-3xl font-black text-blue-600 dark:text-blue-400 mb-4 sm:mb-6 drop-shadow-sm transition-colors">Watch the Intro Video</h2>
             <div
-                class="w-full aspect-video bg-slate-100 rounded-xl sm:rounded-3xl overflow-hidden shadow-sm border-[3px] sm:border-[4px] border-blue-200 relative group">
+                class="w-full aspect-video bg-slate-100 dark:bg-slate-950 rounded-[2rem] sm:rounded-[3rem] overflow-hidden shadow-sm border-[3px] sm:border-[4px] border-blue-200 dark:border-blue-900/50 relative group transition-colors">
                 <video id="module-video" controls class="w-full h-full object-cover" onplay="onVideoPlay()" onended="onVideoEnd()">
                     <source src="../assets/videos/m2.mp4" type="video/mp4">
                 </video>
             </div>
-            <p class="text-center text-yellow-600 font-bold text-xs sm:text-sm mt-4 sm:mt-6 uppercase tracking-widest"><i class="fa-solid fa-expand mr-1"></i> Watch in Fullscreen for best viewing</p>
-            <p class="text-center text-slate-500 font-bold text-xs sm:text-sm mt-2 pt-4 sm:pt-6 border-t-2 border-slate-100 uppercase tracking-widest">Watch the video until the end to continue</p>
+            <p class="text-center text-yellow-600 dark:text-yellow-500 font-bold text-xs sm:text-sm mt-4 sm:mt-6 uppercase tracking-widest transition-colors"><i class="fa-solid fa-expand mr-1"></i> Watch in Fullscreen for best viewing</p>
+            <p class="text-center text-slate-500 dark:text-slate-400 font-bold text-xs sm:text-sm mt-2 pt-4 sm:pt-6 border-t-2 border-slate-100 dark:border-slate-800 uppercase tracking-widest transition-colors">Watch the video until the end to continue</p>
         </section>
 
         <!-- PART 1: THE SOUND DETECTIVE -->
         <section id="section-sound"
-            class="fade-in ss-section bg-white rounded-xl sm:rounded-[2rem] p-4 sm:p-8 sm:p-10 border-[3px] sm:border-[4px] border-blue-200 shadow-sm relative overflow-hidden"
+            class="fade-in ss-section bg-white dark:bg-slate-900 p-4 sm:p-8 sm:p-10 border-[3px] sm:border-[4px] border-blue-200 dark:border-blue-900/50 shadow-sm relative overflow-hidden transition-colors"
             style="animation-delay: 0.2s;">
-            <div class="ss-section-badge bg-green-500 border-[3px] border-white shadow-sm text-white"><i class="fa-regular fa-circle-check"></i></div>
+            <div class="ss-section-badge bg-green-500 border-[3px] border-white dark:border-slate-800 shadow-sm text-white"><i class="fa-regular fa-circle-check"></i></div>
             <div class="relative z-10 text-center space-y-4 sm:space-y-8">
-                <h2 class="text-lg sm:text-3xl font-black text-blue-800 drop-shadow-sm"><i class="fa-solid fa-ear-listen text-blue-500 mr-2"></i> The
+                <h2 class="text-lg sm:text-3xl font-black text-blue-800 dark:text-blue-300 drop-shadow-sm transition-colors"><i class="fa-solid fa-ear-listen text-blue-500 dark:text-blue-400 mr-2"></i> The
                     Sound Detective</h2>
-                <p class="text-slate-600 font-bold text-xs sm:text-lg">Step 1: Listen to all three sounds.<br>Step 2: Choose the correct
-                    <strong class="text-blue-700 font-black">School Fire Alarm</strong>.
+                <p class="text-slate-600 dark:text-slate-400 font-bold text-xs sm:text-lg transition-colors">Step 1: Listen to all three sounds.<br>Step 2: Choose the correct
+                    <strong class="text-blue-700 dark:text-blue-400 font-black">School Fire Alarm</strong>.
                 </p>
 
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-3 sm:gap-6 max-w-4xl mx-auto">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 max-w-4xl mx-auto">
                     <!-- Option A -->
-                    <div class="bg-blue-50 p-2 sm:p-6 rounded-xl sm:rounded-3xl border-2 sm:border-[3px] border-blue-200 shadow-sm flex flex-col gap-1.5 sm:gap-4">
-                        <button onclick="playSound('recess')"
-                            class="bg-white hover:bg-slate-50 text-slate-800 border-2 border-blue-200 shadow-[0_4px_0_#bfdbfe] hover:-translate-y-0.5 active:translate-y-1 active:shadow-[0_0px_0_#bfdbfe] p-2 sm:p-4 rounded-lg sm:rounded-xl transition-all flex items-center justify-center gap-2">
-                            <i class="fa-solid fa-play text-yellow-500 text-sm sm:text-xl"></i> <span class="font-black tracking-wide uppercase text-xs sm:text-base">Play Sound A</span>
-                        </button>
+                    <div class="bg-blue-50/50 dark:bg-blue-900/20 p-4 rounded-[2rem] border-2 border-blue-200 dark:border-blue-800 shadow-sm flex flex-col gap-3 group transition-all hover:bg-blue-50 dark:hover:bg-blue-900/30">
+                        <div class="flex items-center gap-4">
+                            <button onclick="playSound('recess')"
+                                class="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-white dark:bg-slate-800 border-2 border-blue-200 dark:border-blue-700 text-yellow-500 dark:text-yellow-400 shadow-[0_4px_0_#bfdbfe] dark:shadow-[0_4px_0_#1e1b4b] hover:-translate-y-0.5 active:translate-y-1 active:shadow-none transition-all flex items-center justify-center shrink-0">
+                                <i class="fa-solid fa-play text-xl sm:text-2xl"></i>
+                            </button>
+                            <div class="text-left">
+                                <p class="text-sm sm:text-lg font-black text-blue-900 dark:text-blue-200 uppercase tracking-tight transition-colors">Sound Option A</p>
+                                <p class="text-[10px] sm:text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider transition-colors">Listen carefully</p>
+                            </div>
+                        </div>
                         <button onclick="checkSoundAnswer('recess', this)"
-                            class="w-full border-2 border-blue-200 bg-white hover:bg-blue-100 hover:border-blue-400 text-blue-600 font-bold py-2 sm:py-3 rounded-xl transition-all text-xs sm:text-sm shadow-sm hover:-translate-y-0.5 active:translate-y-1 uppercase tracking-wider">
-                            Choose A
+                            class="w-full bg-white dark:bg-slate-800 border-2 border-blue-200 dark:border-blue-700 text-blue-600 dark:text-blue-300 font-black py-2.5 sm:py-3.5 rounded-2xl transition-all text-xs sm:text-sm shadow-sm hover:bg-blue-500 dark:hover:bg-blue-600 hover:text-white hover:border-blue-600 uppercase tracking-widest">
+                            Select Option A
                         </button>
                     </div>
 
                     <!-- Option B -->
-                    <div class="bg-blue-50 p-2 sm:p-6 rounded-xl sm:rounded-3xl border-2 sm:border-[3px] border-blue-200 shadow-sm flex flex-col gap-1.5 sm:gap-4">
-                        <button onclick="playSound('whistle')"
-                            class="bg-white hover:bg-slate-50 text-slate-800 border-2 border-blue-200 shadow-[0_4px_0_#bfdbfe] hover:-translate-y-0.5 active:translate-y-1 active:shadow-[0_0px_0_#bfdbfe] p-2 sm:p-4 rounded-lg sm:rounded-xl transition-all flex items-center justify-center gap-2">
-                            <i class="fa-solid fa-play text-blue-500 text-sm sm:text-xl"></i> <span class="font-black tracking-wide uppercase text-xs sm:text-base">Play Sound B</span>
-                        </button>
+                    <div class="bg-blue-50/50 dark:bg-blue-900/20 p-4 rounded-[2rem] border-2 border-blue-200 dark:border-blue-800 shadow-sm flex flex-col gap-3 group transition-all hover:bg-blue-50 dark:hover:bg-blue-900/30">
+                        <div class="flex items-center gap-4">
+                            <button onclick="playSound('whistle')"
+                                class="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-white dark:bg-slate-800 border-2 border-blue-200 dark:border-blue-700 text-blue-500 dark:text-blue-400 shadow-[0_4px_0_#bfdbfe] dark:shadow-[0_4px_0_#1e1b4b] hover:-translate-y-0.5 active:translate-y-1 active:shadow-none transition-all flex items-center justify-center shrink-0">
+                                <i class="fa-solid fa-play text-xl sm:text-2xl"></i>
+                            </button>
+                            <div class="text-left">
+                                <p class="text-sm sm:text-lg font-black text-blue-900 dark:text-blue-200 uppercase tracking-tight transition-colors">Sound Option B</p>
+                                <p class="text-[10px] sm:text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider transition-colors">Analyze signal</p>
+                            </div>
+                        </div>
                         <button onclick="checkSoundAnswer('whistle', this)"
-                            class="w-full border-2 border-blue-200 bg-white hover:bg-blue-100 hover:border-blue-400 text-blue-600 font-bold py-2 sm:py-3 rounded-xl transition-all text-xs sm:text-sm shadow-sm hover:-translate-y-0.5 active:translate-y-1 uppercase tracking-wider">
-                            Choose B
+                            class="w-full bg-white dark:bg-slate-800 border-2 border-blue-200 dark:border-blue-700 text-blue-600 dark:text-blue-300 font-black py-2.5 sm:py-3.5 rounded-2xl transition-all text-xs sm:text-sm shadow-sm hover:bg-blue-500 dark:hover:bg-blue-600 hover:text-white hover:border-blue-600 uppercase tracking-widest">
+                            Select Option B
                         </button>
                     </div>
 
                     <!-- Option C -->
-                    <div class="bg-blue-50 p-2 sm:p-6 rounded-xl sm:rounded-3xl border-2 sm:border-[3px] border-blue-200 shadow-sm flex flex-col gap-1.5 sm:gap-4">
-                        <button onclick="playSound('fire')"
-                            class="bg-white hover:bg-slate-50 text-slate-800 border-2 border-blue-200 shadow-[0_4px_0_#bfdbfe] hover:-translate-y-0.5 active:translate-y-1 active:shadow-[0_0px_0_#bfdbfe] p-2 sm:p-4 rounded-lg sm:rounded-xl transition-all flex items-center justify-center gap-2">
-                            <i class="fa-solid fa-play text-red-500 text-sm sm:text-xl"></i> <span class="font-black tracking-wide uppercase text-xs sm:text-base">Play Sound C</span>
-                        </button>
+                    <div class="bg-blue-50/50 dark:bg-blue-900/20 p-4 rounded-[2rem] border-2 border-blue-200 dark:border-blue-800 shadow-sm flex flex-col gap-3 group transition-all hover:bg-blue-50 dark:hover:bg-blue-900/30">
+                        <div class="flex items-center gap-4">
+                            <button onclick="playSound('fire')"
+                                class="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-white dark:bg-slate-800 border-2 border-blue-200 dark:border-blue-700 text-red-500 dark:text-red-400 shadow-[0_4px_0_#bfdbfe] dark:shadow-[0_4px_0_#1e1b4b] hover:-translate-y-0.5 active:translate-y-1 active:shadow-none transition-all flex items-center justify-center shrink-0">
+                                <i class="fa-solid fa-play text-xl sm:text-2xl"></i>
+                            </button>
+                            <div class="text-left">
+                                <p class="text-sm sm:text-lg font-black text-blue-900 dark:text-blue-200 uppercase tracking-tight transition-colors">Sound Option C</p>
+                                <p class="text-[10px] sm:text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider transition-colors">Check frequency</p>
+                            </div>
+                        </div>
                         <button onclick="checkSoundAnswer('fire', this)"
-                            class="w-full border-2 border-blue-200 bg-white hover:bg-red-100 hover:border-red-400 text-red-600 font-bold py-2 sm:py-3 rounded-xl transition-all text-xs sm:text-sm shadow-sm hover:-translate-y-0.5 active:translate-y-1 uppercase tracking-wider">
-                            Choose C
+                            class="w-full bg-white dark:bg-slate-800 border-2 border-blue-200 dark:border-blue-700 text-red-600 dark:text-red-300 font-black py-2.5 sm:py-3.5 rounded-2xl transition-all text-xs sm:text-sm shadow-sm hover:bg-red-500 dark:hover:bg-red-600 hover:text-white hover:border-red-600 uppercase tracking-widest">
+                            Select Option C
                         </button>
                     </div>
                 </div>
@@ -272,28 +305,28 @@
         </section>
 
         <!-- PART 2: READABLE CONTENT & RED BOX LOGIC -->
-        <section id="section-content" class="fade-in ss-section bg-orange-50/50 rounded-xl sm:rounded-[3rem] border-[3px] sm:border-[4px] border-orange-200 p-4 sm:p-8 md:p-12 shadow-sm relative" style="animation-delay: 0.3s;">
+        <section id="section-content" class="fade-in ss-section bg-orange-50/50 dark:bg-orange-950/20 border-[3px] sm:border-[4px] border-orange-200 dark:border-orange-900/30 p-4 sm:p-8 md:p-12 shadow-sm relative transition-colors" style="animation-delay: 0.3s;">
             <div class="ss-section-badge"><i class="fa-regular fa-circle-check"></i></div>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8 sm:gap-12 items-center">
                 <div class="space-y-4 sm:space-y-6">
                     <div>
                         <div class="flex items-center gap-2 sm:gap-3 mb-1 sm:mb-2">
-                            <span class="bg-orange-100 text-orange-600 border-2 border-orange-200 shadow-sm px-2 py-0.5 sm:px-3 sm:py-1 rounded-lg sm:rounded-xl text-xs sm:text-sm font-black">2.1</span>
-                            <h2 class="text-lg sm:text-3xl font-black text-slate-800">Recess vs. Emergency</h2>
+                            <span class="bg-orange-100 dark:bg-orange-900/50 text-orange-600 dark:text-orange-400 border-2 border-orange-200 dark:border-orange-800 shadow-sm px-2 py-0.5 sm:px-3 sm:py-1 rounded-lg sm:rounded-xl text-xs sm:text-sm font-black transition-colors">2.1</span>
+                            <h2 class="text-lg sm:text-3xl font-black text-slate-800 dark:text-white transition-colors">Recess vs. Emergency</h2>
                         </div>
-                        <p class="text-slate-600 font-medium leading-relaxed text-xs sm:text-base">
-                            A <strong class="text-slate-800">Fire Alarm</strong> is a <span class="text-red-500 font-black uppercase">long, continuous
+                        <p class="text-slate-600 dark:text-slate-400 font-medium leading-relaxed text-xs sm:text-base transition-colors">
+                            A <strong class="text-slate-800 dark:text-white transition-colors">Fire Alarm</strong> is a <span class="text-red-500 font-black uppercase">long, continuous
                                 ring</span>. It is an order: Stop what you are doing and evacuate.
                         </p>
                     </div>
                     <div>
                         <div class="flex items-center gap-2 sm:gap-3 mb-1 sm:mb-2">
-                            <span class="bg-orange-100 text-orange-600 border-2 border-orange-200 shadow-sm px-2 py-0.5 sm:px-3 sm:py-1 rounded-lg sm:rounded-xl text-xs sm:text-sm font-black">2.2</span>
-                            <h2 class="text-lg sm:text-3xl font-black text-slate-800">The Red Box</h2>
+                            <span class="bg-orange-100 dark:bg-orange-900/50 text-orange-600 dark:text-orange-400 border-2 border-orange-200 dark:border-orange-800 shadow-sm px-2 py-0.5 sm:px-3 sm:py-1 rounded-lg sm:rounded-xl text-xs sm:text-sm font-black transition-colors">2.2</span>
+                            <h2 class="text-lg sm:text-3xl font-black text-slate-800 dark:text-white transition-colors">The Red Box</h2>
                         </div>
-                        <p class="text-slate-600 font-medium leading-relaxed text-xs sm:text-base">
-                            The red box on the wall is a <strong class="text-slate-800">Manual Call Point</strong>. Inside is a switch that
-                            triggers the alarm for the <em class="font-bold text-slate-800">whole school</em>.
+                        <p class="text-slate-600 dark:text-slate-400 font-medium leading-relaxed text-xs sm:text-base transition-colors">
+                            The red box on the wall is a <strong class="text-slate-800 dark:text-white transition-colors">Manual Call Point</strong>. Inside is a switch that
+                            triggers the alarm for the <em class="font-bold text-slate-800 dark:text-white transition-colors">whole school</em>.
                         </p>
                     </div>
 
@@ -303,41 +336,46 @@
                 </div>
 
                 <!-- INTERACTIVE: NETWORK MAP -->
-                <div class="bg-slate-800 rounded-xl sm:rounded-[2.5rem] p-3 sm:p-6 border-[3px] sm:border-[6px] border-slate-700 shadow-[inset_0_4px_20px_rgba(0,0,0,0.5)] relative min-h-[200px] sm:min-h-[350px] flex items-center justify-center overflow-hidden group">
+                <div class="bg-slate-800 dark:bg-slate-950 rounded-[2rem] sm:rounded-[3rem] p-3 sm:p-6 border-[3px] sm:border-[6px] border-slate-700 dark:border-slate-800 shadow-[inset_0_4px_20px_rgba(0,0,0,0.5)] relative min-h-[220px] sm:min-h-[350px] flex items-center justify-center overflow-hidden group transition-colors">
                     <div class="absolute inset-0 opacity-10 bg-[radial-gradient(#ffffff_2px,transparent_2px)] [background-size:24px_24px]"></div>
                     <div class="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-transparent via-blue-500 to-transparent opacity-50"></div>
                     
                     <h3 class="absolute top-4 sm:top-6 w-full text-center text-blue-400 text-[10px] sm:text-xs font-black uppercase tracking-[0.2em] z-10 drop-shadow-md">Interactive System Map</h3>
 
                     <svg viewBox="0 0 400 300" class="w-full h-auto z-0 drop-shadow-lg">
-                        <path id="wire-path" d="M 80 150 L 200 150 L 200 80 M 200 150 L 200 220 M 200 150 L 280 150"
+                        <!-- Connecting Wires -->
+                        <path id="wire-path" d="M 80 150 L 180 150 M 180 65 L 180 235 M 180 65 L 260 65 M 180 150 L 260 150 M 180 235 L 260 235"
                             fill="none" stroke="#ef4444" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" class="signal-path opacity-20 transition-opacity duration-300" />
                         
-                        <rect x="150" y="40" width="100" height="60" fill="#1e293b" stroke="#3b82f6" stroke-width="3" rx="12" />
-                        <text x="200" y="65" fill="#93c5fd" font-size="10" text-anchor="middle" font-family="sans-serif" font-weight="bold" letter-spacing="1">CLASSROOMS</text>
-                        <g id="bell-1" transform="translate(200, 80)" class="text-yellow-500">
+                        <!-- Location 1: Classrooms -->
+                        <rect x="250" y="35" width="110" height="60" fill="#1e293b" stroke="#3b82f6" stroke-width="3" rx="12" />
+                        <text x="305" y="60" fill="#93c5fd" font-size="10" text-anchor="middle" font-family="sans-serif" font-weight="bold" letter-spacing="1">CLASSROOMS</text>
+                        <g id="bell-1" transform="translate(250, 65)" class="text-yellow-500">
                             <circle cx="0" cy="0" r="6" fill="#1e293b" stroke="#fbbf24" stroke-width="2" />
                         </g>
 
-                        <rect x="150" y="200" width="100" height="60" fill="#1e293b" stroke="#3b82f6" stroke-width="3" rx="12" />
-                        <text x="200" y="225" fill="#93c5fd" font-size="10" text-anchor="middle" font-family="sans-serif" font-weight="bold" letter-spacing="1">CANTEEN</text>
-                        <g id="bell-2" transform="translate(200, 240)" class="text-yellow-500">
+                        <!-- Location 2: Gymnasium -->
+                        <rect x="250" y="120" width="110" height="60" fill="#1e293b" stroke="#3b82f6" stroke-width="3" rx="12" />
+                        <text x="305" y="145" fill="#93c5fd" font-size="10" text-anchor="middle" font-family="sans-serif" font-weight="bold" letter-spacing="1">GYMNASIUM</text>
+                        <g id="bell-2" transform="translate(250, 150)" class="text-yellow-500">
                             <circle cx="0" cy="0" r="6" fill="#1e293b" stroke="#fbbf24" stroke-width="2" />
                         </g>
 
-                        <rect x="260" y="120" width="100" height="60" fill="#1e293b" stroke="#3b82f6" stroke-width="3" rx="12" />
-                        <text x="310" y="145" fill="#93c5fd" font-size="10" text-anchor="middle" font-family="sans-serif" font-weight="bold" letter-spacing="1">GYMNASIUM</text>
-                        <g id="bell-3" transform="translate(280, 150)" class="text-yellow-500">
+                        <!-- Location 3: Canteen -->
+                        <rect x="250" y="205" width="110" height="60" fill="#1e293b" stroke="#3b82f6" stroke-width="3" rx="12" />
+                        <text x="305" y="230" fill="#93c5fd" font-size="10" text-anchor="middle" font-family="sans-serif" font-weight="bold" letter-spacing="1">CANTEEN</text>
+                        <g id="bell-3" transform="translate(250, 235)" class="text-yellow-500">
                             <circle cx="0" cy="0" r="6" fill="#1e293b" stroke="#fbbf24" stroke-width="2" />
                         </g>
                     </svg>
 
-                    <div class="absolute z-10 left-[12px] sm:left-[40px] md:left-[60px] top-[100px] sm:top-[125px]">
+                    <!-- The PUSH Button -->
+                    <div class="absolute z-10 left-[20px] sm:left-[40px] top-[110px] sm:top-[125px]">
                         <button onclick="triggerNetwork()"
-                            class="relative w-16 h-16 sm:w-24 sm:h-24 bg-red-600 rounded-full shadow-[0_0_30px_rgba(220,38,38,0.4)] border-[4px] sm:border-[6px] border-red-800 active:border-[2px] active:translate-y-2 transition-all flex flex-col items-center justify-center hover:bg-red-500 hover:shadow-[0_0_40px_rgba(220,38,38,0.6)] overflow-hidden">
+                            class="relative w-20 h-20 sm:w-28 sm:h-28 bg-red-600 rounded-full shadow-[0_0_30px_rgba(220,38,38,0.4)] border-[4px] sm:border-[6px] border-red-800 active:border-[2px] active:translate-y-2 transition-all flex flex-col items-center justify-center hover:bg-red-500 hover:shadow-[0_0_40px_rgba(220,38,38,0.6)] overflow-hidden">
                             <div class="absolute inset-0 bg-gradient-to-tr from-white/20 to-transparent"></div>
-                            <i class="fa-solid fa-power-off text-white/90 text-2xl sm:text-3xl mb-1 drop-shadow-md"></i>
-                            <span class="text-[9px] sm:text-[10px] text-white font-black tracking-widest uppercase drop-shadow-md">Push</span>
+                            <i class="fa-solid fa-power-off text-white/90 text-2xl sm:text-4xl mb-1 drop-shadow-md"></i>
+                            <span class="text-[10px] sm:text-[12px] text-white font-black tracking-widest uppercase drop-shadow-md">Push</span>
                         </button>
                     </div>
                 </div>
@@ -349,19 +387,16 @@
             <!-- Text Block 2.3 -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-12 items-center">
                 <div
-                    class="order-2 md:order-1 bg-white rounded-xl sm:rounded-[2rem] overflow-hidden shadow-sm border-[3px] sm:border-[4px] border-orange-200 h-48 sm:h-64 relative flex items-center justify-center p-2 sm:p-4">
-                    <div
-                        class="bg-white rounded-xl sm:rounded-[1.5rem] overflow-hidden shadow-sm border-[3px] sm:border-[4px] border-orange-100 h-full w-full relative flex items-center justify-center transform rotate-1 hover:rotate-0 transition-transform duration-500">
-                        <img src="../assets/images/line.png" alt="Line Up" class="w-full h-full object-contain">
-                    </div>
+                    class="order-2 md:order-1 bg-white dark:bg-slate-900 rounded-xl sm:rounded-[2rem] overflow-hidden shadow-sm border-[3px] sm:border-[4px] border-orange-200 dark:border-orange-900/30 h-48 sm:h-64 relative flex items-center justify-center p-2 sm:p-4 transform rotate-1 hover:rotate-0 transition-all duration-500">
+                    <img src="../assets/images/line.png" alt="Line Up" class="w-full h-full object-contain dark:brightness-90">
                 </div>
                 <div class="order-1 md:order-2 space-y-3 sm:space-y-6">
                     <div class="flex items-center gap-2 sm:gap-3 mb-1 sm:mb-2">
-                        <span class="bg-orange-100 text-orange-600 border-2 border-orange-200 shadow-sm px-2 py-0.5 sm:px-3 sm:py-1 rounded-lg sm:rounded-xl text-xs sm:text-sm font-black">2.3</span>
-                        <h2 class="text-lg sm:text-3xl font-black text-slate-800">The Buddy System</h2>
+                        <span class="bg-orange-100 dark:bg-orange-900/50 text-orange-600 dark:text-orange-400 border-2 border-orange-200 dark:border-orange-800 shadow-sm px-2 py-0.5 sm:px-3 sm:py-1 rounded-lg sm:rounded-xl text-xs sm:text-sm font-black transition-colors">2.3</span>
+                        <h2 class="text-lg sm:text-3xl font-black text-slate-800 dark:text-white transition-colors">The Buddy System</h2>
                     </div>
-                    <p class="text-slate-600 font-medium leading-relaxed text-xs sm:text-base">
-                        The number one rule in a Philippine Fire Drill is: <strong class="text-slate-800">"Huwag Tumakbo"
+                    <p class="text-slate-600 dark:text-slate-400 font-medium leading-relaxed text-xs sm:text-base transition-colors">
+                        The number one rule in a Philippine Fire Drill is: <strong class="text-slate-800 dark:text-white transition-colors">"Huwag Tumakbo"
                             (Do Not Run)</strong>.
                         We line up in pairs. Hold your buddy's hand. If your buddy is missing, tell the teacher
                         immediately.
@@ -372,37 +407,37 @@
 
         <!-- PART 3: THE GAME (RHYTHM MARSHAL) -->
         <section id="section-game"
-            class="fade-in ss-section bg-purple-50 rounded-xl sm:rounded-[2rem] p-4 sm:p-8 md:p-10 shadow-sm border-[3px] sm:border-[4px] border-purple-200 text-center"
+            class="fade-in ss-section bg-purple-50 dark:bg-purple-950/20 p-4 sm:p-8 md:p-10 shadow-sm border-[3px] sm:border-[4px] border-purple-200 dark:border-purple-900/30 text-center transition-colors"
             style="animation-delay: 0.5s;">
-            <div class="ss-section-badge bg-green-500 border-[3px] border-white shadow-sm text-white"><i class="fa-regular fa-circle-check"></i></div>
+            <div class="ss-section-badge bg-green-500 border-[3px] border-white dark:border-slate-800 shadow-sm text-white transition-colors"><i class="fa-regular fa-circle-check"></i></div>
             <div class="mb-4 sm:mb-6">
-                <h2 class="text-lg sm:text-3xl font-black text-purple-900 mb-1 sm:mb-2"><i class="fa-solid fa-drum text-purple-600 mr-2"></i>
+                <h2 class="text-lg sm:text-3xl font-black text-purple-900 dark:text-purple-300 mb-1 sm:mb-2 transition-colors"><i class="fa-solid fa-drum text-purple-600 dark:text-purple-500 mr-2"></i>
                     Rhythm Marshal Challenge</h2>
-                <p class="text-slate-700 font-bold text-xs sm:text-base hidden sm:block">Press <strong
-                        class="text-slate-700 border-2 border-slate-300 bg-white px-2 py-0.5 rounded shadow-[0_2px_0_#cbd5e1]">SPACEBAR</strong> on the beat. Keep moving!
+                <p class="text-slate-700 dark:text-slate-400 font-bold text-xs sm:text-base hidden sm:block transition-colors">Press <strong
+                        class="text-slate-700 dark:text-white border-2 border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 px-2 py-0.5 rounded shadow-[0_2px_0_#cbd5e1] dark:shadow-[0_2px_0_#0f172a] transition-colors">SPACEBAR</strong> on the beat. Keep moving!
                 </p>
-                <p class="text-slate-700 font-bold text-xs sm:hidden">Tap the <strong
-                        class="text-slate-700 border-2 border-slate-300 bg-white px-2 py-0.5 rounded shadow-[0_2px_0_#cbd5e1]">WALK</strong> button on the beat. Keep moving!
+                <p class="text-slate-700 dark:text-slate-400 font-bold text-xs sm:hidden transition-colors">Tap the <strong
+                        class="text-slate-700 dark:text-white border-2 border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 px-2 py-0.5 rounded shadow-[0_2px_0_#cbd5e1] dark:shadow-[0_2px_0_#0f172a] transition-colors">WALK</strong> button on the beat. Keep moving!
                 </p>
             </div>
 
             <div
-                class="relative w-full max-w-2xl mx-auto bg-white h-40 sm:h-72 rounded-xl sm:rounded-3xl border-[3px] sm:border-[4px] border-purple-300 shadow-sm overflow-hidden flex flex-col relative">
+                class="relative w-full max-w-2xl mx-auto bg-white dark:bg-slate-900 h-40 sm:h-72 rounded-xl sm:rounded-3xl border-[3px] sm:border-[4px] border-purple-300 dark:border-purple-900/50 shadow-sm overflow-hidden flex flex-col relative transition-colors">
                 <div
-                    class="w-full bg-slate-100 h-8 sm:h-10 border-b-2 border-slate-200 relative flex items-center justify-between px-3 sm:px-4 z-10">
+                    class="w-full bg-slate-100 dark:bg-slate-800 h-8 sm:h-10 border-b-2 border-slate-200 dark:border-slate-700 relative flex items-center justify-between px-3 sm:px-4 z-10 transition-colors">
                     <div class="flex items-center gap-1 sm:gap-2">
-                        <i class="fa-solid fa-stopwatch text-slate-500 text-xs sm:text-base"></i>
-                        <span id="game-timer" class="font-black text-slate-800 text-sm sm:text-lg">15s</span>
+                        <i class="fa-solid fa-stopwatch text-slate-500 dark:text-slate-400 text-xs sm:text-base transition-colors"></i>
+                        <span id="game-timer" class="font-black text-slate-800 dark:text-white text-sm sm:text-lg transition-colors">15s</span>
                     </div>
-                    <div class="font-black text-orange-600 text-sm sm:text-base" id="score-display">Score: 0</div>
+                    <div class="font-black text-orange-600 dark:text-orange-400 text-sm sm:text-base transition-colors" id="score-display">Score: 0</div>
                     <div class="absolute left-0 top-0 w-full h-full pointer-events-none overflow-hidden">
                         <div id="beat-pill" class="beat-pill bg-purple-400"></div>
                         <div class="absolute right-8 h-full w-2 bg-green-400/60"></div>
                     </div>
                 </div>
 
-                <div class="flex-1 relative flex items-center overflow-hidden bg-slate-50">
-                    <div class="absolute bottom-1 sm:bottom-2 w-full flex justify-between px-4 sm:px-8 text-slate-400 font-bold text-[10px] sm:text-xs uppercase tracking-widest">
+                <div class="flex-1 relative flex items-center overflow-hidden bg-slate-50 dark:bg-slate-950 transition-colors">
+                    <div class="absolute bottom-1 sm:bottom-2 w-full flex justify-between px-4 sm:px-8 text-slate-400 dark:text-slate-500 font-bold text-[10px] sm:text-xs uppercase tracking-widest transition-colors">
                         <span>START</span>
                         <span>FINISH LINE</span>
                     </div>
@@ -425,18 +460,18 @@
                 </div>
 
                 <div id="rhythm-overlay"
-                    class="absolute inset-0 bg-white/90 backdrop-blur-sm flex flex-col items-center justify-center z-30">
-                    <p class="text-slate-700 font-bold mb-3 sm:mb-6 text-xs sm:text-lg">Lead 5 students to safety in 15s.</p>
+                    class="absolute inset-0 bg-white/90 dark:bg-slate-900/90 backdrop-blur-sm flex flex-col items-center justify-center z-30 transition-colors">
+                    <p class="text-slate-700 dark:text-slate-300 font-bold mb-3 sm:mb-6 text-xs sm:text-lg transition-colors">Lead 5 students to safety in 15s.</p>
                     <button onclick="startRhythmGame()"
-                        class="bg-yellow-400 text-red-600 font-black py-2 px-6 sm:py-4 sm:px-10 rounded-full border-[3px] border-white shadow-[0_4px_0_#b45309] hover:-translate-y-0.5 active:translate-y-1 active:shadow-none transition-all uppercase tracking-wide text-xs sm:text-lg">
+                        class="bg-yellow-400 text-red-600 font-black py-2 px-6 sm:py-4 sm:px-10 rounded-full border-[3px] border-white dark:border-slate-800 shadow-[0_4px_0_#b45309] hover:-translate-y-0.5 active:translate-y-1 active:shadow-none transition-all uppercase tracking-wide text-xs sm:text-lg transition-all">
                         START WALKING
                     </button>
                 </div>
 
                 <div id="game-over-overlay"
-                    class="hidden absolute inset-0 bg-white/95 backdrop-blur-sm flex flex-col items-center justify-center z-40 text-center p-6">
-                    <h3 id="go-title" class="text-xl sm:text-3xl font-black mb-1 sm:mb-2 text-red-600 drop-shadow-sm"></h3>
-                    <p id="go-desc" class="text-slate-600 font-bold mb-4 sm:mb-8 text-xs sm:text-lg"></p>
+                    class="hidden absolute inset-0 bg-white/95 dark:bg-slate-900/95 backdrop-blur-sm flex flex-col items-center justify-center z-40 text-center p-6 transition-colors">
+                    <h3 id="go-title" class="text-xl sm:text-3xl font-black mb-1 sm:mb-2 text-red-600 dark:text-red-500 drop-shadow-sm transition-colors"></h3>
+                    <p id="go-desc" class="text-slate-600 dark:text-slate-400 font-bold mb-4 sm:mb-8 text-xs sm:text-lg transition-colors"></p>
                     <button onclick="resetRhythmGame()"
                         class="bg-blue-500 text-white font-black py-2 px-6 sm:py-3 sm:px-8 rounded-full border-[3px] border-blue-600 shadow-[0_4px_0_#1d4ed8] hover:-translate-y-0.5 active:translate-y-1 active:shadow-none transition-all uppercase tracking-wide text-xs sm:text-base">
                         TRY AGAIN
@@ -451,13 +486,13 @@
                 </button>
             </div>
 
-            <div id="completion-msg" class="hidden mt-4 sm:mt-6 bg-white p-4 sm:p-8 rounded-xl sm:rounded-[2rem] border-[3px] sm:border-[4px] border-green-200 shadow-sm">
-                <h3 class="text-green-600 text-lg sm:text-2xl font-black mb-1 sm:mb-2 drop-shadow-sm">Safe & Sound!</h3>
-                <p class="text-slate-600 mb-3 sm:mb-6 font-bold text-xs sm:text-lg">Final Score: <span id="final-score"
-                        class="text-orange-500 text-lg sm:text-2xl font-black ml-1 sm:ml-2">0</span></p>
+            <div id="completion-msg" class="hidden mt-4 sm:mt-6 bg-white dark:bg-slate-900 p-4 sm:p-8 rounded-xl sm:rounded-[2rem] border-[3px] sm:border-[4px] border-green-200 dark:border-green-900/50 shadow-sm transition-colors">
+                <h3 class="text-green-600 dark:text-green-400 text-lg sm:text-2xl font-black mb-1 sm:mb-2 drop-shadow-sm transition-colors">Safe & Sound!</h3>
+                <p class="text-slate-600 dark:text-slate-400 mb-3 sm:mb-6 font-bold text-xs sm:text-lg transition-colors">Final Score: <span id="final-score"
+                        class="text-orange-500 dark:text-orange-400 text-lg sm:text-2xl font-black ml-1 sm:ml-2 transition-colors">0</span></p>
                 <div class="flex flex-col sm:flex-row justify-center gap-3 sm:gap-4 flex-wrap">
                     <button onclick="resetRhythmGame()"
-                        class="bg-white hover:bg-slate-50 text-slate-700 font-bold px-4 py-2 sm:px-6 sm:py-3 rounded-full border-2 border-slate-300 shadow-[0_4px_0_#cbd5e1] hover:-translate-y-0.5 active:translate-y-1 active:shadow-none transition-all uppercase tracking-wide text-xs sm:text-base">
+                        class="bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-bold px-4 py-2 sm:px-6 sm:py-3 rounded-full border-2 border-slate-300 dark:border-slate-700 shadow-[0_4px_0_#cbd5e1] dark:shadow-[0_4px_0_#0f172a] hover:-translate-y-0.5 active:translate-y-1 active:shadow-none transition-all uppercase tracking-wide text-xs sm:text-base transition-all">
                         <i class="fa-solid fa-rotate-right mr-1 sm:mr-2"></i>Play Again
                     </button>
                     <button onclick="scrollToQuiz()"
@@ -470,12 +505,12 @@
 
         <!-- FINAL QUIZ SECTION -->
         <section id="final-quiz"
-            class="fade-in ss-section bg-yellow-50 rounded-xl sm:rounded-[2rem] p-4 sm:p-8 md:p-12 border-[3px] sm:border-[4px] border-yellow-300 shadow-sm"
+            class="fade-in ss-section bg-yellow-50 dark:bg-yellow-950/20 rounded-xl sm:rounded-[2rem] p-4 sm:p-8 md:p-12 border-[3px] sm:border-[4px] border-yellow-300 dark:border-yellow-900/30 shadow-sm transition-colors"
             style="animation-delay: 0.6s;">
-            <div class="ss-section-badge bg-green-500 border-[3px] border-white shadow-sm text-white"><i class="fa-regular fa-circle-check"></i></div>
+            <div class="ss-section-badge bg-green-500 border-[3px] border-white dark:border-slate-800 shadow-sm text-white transition-colors"><i class="fa-regular fa-circle-check"></i></div>
             <div class="text-center mb-4 sm:mb-10">
-                <h2 class="text-lg sm:text-3xl font-black text-yellow-900 mb-2 sm:mb-3 drop-shadow-sm"><i
-                        class="fa-solid fa-graduation-cap text-orange-500 mr-2"></i> Marshal Certification</h2>
+                <h2 class="text-lg sm:text-3xl font-black text-yellow-900 dark:text-yellow-300 mb-2 sm:mb-3 drop-shadow-sm transition-colors"><i
+                        class="fa-solid fa-graduation-cap text-orange-500 dark:text-orange-400 mr-2"></i> Marshal Certification</h2>
                 
             </div>
 
@@ -483,18 +518,16 @@
                 <!-- Questions are injected by JS -->
             </div>
 
-            <div id="quiz-result" class="hidden text-center mt-5 sm:mt-10 p-4 sm:p-8 bg-white rounded-xl sm:rounded-[2rem] border-[3px] sm:border-[4px] border-green-200 shadow-sm">
-                <div class="text-3xl sm:text-6xl mb-3 sm:mb-6 drop-shadow-md" id="result-icon"></div>
-                <h3 class="text-xl sm:text-3xl font-black text-green-700 mb-1 sm:mb-3 drop-shadow-sm" id="result-title"></h3>
-                <p class="text-slate-600 font-bold mb-4 sm:mb-8 text-xs sm:text-lg" id="result-desc"></p>
+            <div id="quiz-result" class="hidden ss-completion-card success mx-auto mt-10">
+                <div class="ss-completion-icon" id="result-icon">🏆</div>
+                <h3 class="ss-completion-title" id="result-title"></h3>
+                <p class="ss-completion-desc" id="result-desc"></p>
 
-                <div class="flex flex-col-reverse sm:flex-row items-center justify-center gap-3 sm:gap-6">
-                    <button id="btn-retake" onclick="renderQuiz()"
-                        class="text-xs sm:text-sm font-bold text-slate-500 hover:text-slate-800 underline hidden uppercase tracking-wide mt-1 sm:mt-0">Retake Quiz</button>
-                    <button id="btn-review" onclick="toggleReview()"
-                        class="text-xs sm:text-sm font-bold text-slate-500 hover:text-slate-800 underline hidden uppercase tracking-wide mt-1 sm:mt-0 whitespace-nowrap">Review Answers</button>
-                    <a href="../module_3/index.html" id="btn-next-module" class="hidden bg-yellow-400 text-red-600 font-black px-5 py-2 sm:px-10 sm:py-4 text-xs sm:text-base rounded-full shadow-[0_4px_0_#b45309] hover:-translate-y-0.5 active:translate-y-1 active:shadow-none transition-all uppercase tracking-wide text-center w-full sm:w-auto">
-                        Go to Module 3 <i class="fa-solid fa-arrow-right ml-2"></i>
+                <div class="ss-completion-actions">
+                    <button id="btn-retake" onclick="renderQuiz()" class="hidden ss-btn-premium ss-btn-outline">Retake Quiz</button>
+                    <button id="btn-review" onclick="toggleReview()" class="hidden ss-btn-premium ss-btn-outline">Review Answers</button>
+                    <a href="../module_3/index.html" id="btn-next-module" class="hidden ss-btn-premium ss-btn-gold">
+                        Go to Module 3 <i class="fa-solid fa-arrow-right"></i>
                     </a>
                 </div>
             </div>
@@ -503,7 +536,7 @@
 
     </main>
 
-    <footer class="bg-transparent text-slate-500 py-8 text-center text-sm border-t-2 border-slate-300 mt-12 font-bold uppercase tracking-widest">
+    <footer class="bg-transparent text-slate-500 dark:text-slate-400 py-8 text-center text-sm border-t-2 border-slate-300 dark:border-slate-800 mt-12 font-bold uppercase tracking-widest transition-colors">
         <p>SafeScape Intelligent Systems Project</p>
         <p class="mt-2 text-xs opacity-50">Module 2: The School Drill</p>
     </footer>
@@ -881,15 +914,15 @@
                 document.getElementById('btn-review').classList.remove('hidden');
                 document.getElementById('result-icon').innerText = "🏆";
                 document.getElementById('result-title').innerText = "MARSHAL CERTIFIED!";
-                document.getElementById('result-title').className = "text-xl sm:text-3xl font-black text-green-600 mb-1 sm:mb-2 drop-shadow-sm";
+                document.getElementById('result-title').className = "ss-completion-title";
                 document.getElementById('result-desc').innerText = "You have already completed this quiz!";
                 document.getElementById('btn-next-module').classList.remove('hidden');
                 // Render questions with correct answers for review
                 container.innerHTML = '';
                 quizData.forEach((item, idx) => {
                     const qDiv = document.createElement('div');
-                    qDiv.className = "bg-white p-6 rounded-3xl border-[3px] border-yellow-200 shadow-sm";
-                    qDiv.innerHTML = `<h3 class="text-slate-800 font-black mb-4 text-lg">${idx + 1}. ${item.q}</h3>`;
+                    qDiv.className = "bg-white dark:bg-slate-900 p-6 rounded-3xl border-[3px] border-yellow-200 dark:border-yellow-900/30 shadow-sm transition-colors";
+                    qDiv.innerHTML = `<h3 class="text-slate-800 dark:text-white font-black mb-4 text-lg transition-colors">${idx + 1}. ${item.q}</h3>`;
                     const optionsDiv = document.createElement('div');
                     optionsDiv.className = "grid grid-cols-1 gap-3";
                     item.options.forEach((opt, optIdx) => {
@@ -897,9 +930,9 @@
                         btn.disabled = true;
                         btn.innerText = opt;
                         if (optIdx === item.correct) {
-                            btn.className = "quiz-option w-full text-left p-4 rounded-xl border-2 font-bold transition-all bg-green-500 border-green-600 text-white";
+                            btn.className = "quiz-option w-full text-left p-4 rounded-xl border-2 font-bold transition-all bg-green-500 border-green-600 text-white shadow-sm";
                         } else {
-                            btn.className = "quiz-option w-full text-left p-4 rounded-xl border-2 border-slate-200 text-slate-400 font-bold bg-white opacity-50 cursor-not-allowed";
+                            btn.className = "quiz-option w-full text-left p-4 rounded-xl border-2 border-slate-200 dark:border-slate-800 text-slate-400 dark:text-slate-600 font-bold bg-white dark:bg-slate-950 opacity-50 cursor-not-allowed transition-colors";
                         }
                         optionsDiv.appendChild(btn);
                     });
@@ -921,15 +954,15 @@
 
             quizData.forEach((item, idx) => {
                 const qDiv = document.createElement('div');
-                qDiv.className = "bg-white p-6 rounded-3xl border-[3px] border-yellow-200 shadow-sm";
-                qDiv.innerHTML = `<h3 class="text-slate-800 font-black mb-4 text-lg">${idx + 1}. ${item.q}</h3>`;
+                qDiv.className = "bg-white dark:bg-slate-900 p-6 rounded-3xl border-[3px] border-yellow-200 dark:border-yellow-900/30 shadow-sm transition-colors";
+                qDiv.innerHTML = `<h3 class="text-slate-800 dark:text-white font-black mb-4 text-lg transition-colors">${idx + 1}. ${item.q}</h3>`;
 
                 const optionsDiv = document.createElement('div');
                 optionsDiv.className = "grid grid-cols-1 gap-3";
 
                 item.options.forEach((opt, optIdx) => {
                     const btn = document.createElement('button');
-                    btn.className = "quiz-option w-full text-left p-4 rounded-xl border-2 border-slate-200 text-slate-600 font-bold bg-white hover:bg-slate-50 shadow-sm hover:-translate-y-0.5 active:translate-y-1 active:shadow-none transition-all";
+                    btn.className = "quiz-option w-full text-left p-4 rounded-xl border-2 border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 font-bold bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800 shadow-sm hover:-translate-y-0.5 active:translate-y-1 active:shadow-none transition-all";
                     btn.innerText = opt;
                     btn.onclick = () => checkQuizAnswer(btn, optIdx, item.correct, idx);
                     optionsDiv.appendChild(btn);
@@ -977,7 +1010,7 @@
             if (correctCount >= 4) {
                 icon.innerText = "🏆";
                 title.innerText = "MARSHAL CERTIFIED!";
-                title.className = "text-3xl font-black text-green-600 mb-2 drop-shadow-sm";
+                title.className = "ss-completion-title";
                 desc.innerText = `You scored ${correctCount}/5. You are ready to lead!`;
 
                 nextBtn.classList.remove('hidden');
@@ -993,7 +1026,7 @@
             } else {
                 icon.innerText = "⚠️";
                 title.innerText = "KEEP PRACTICING";
-                title.className = "text-3xl font-black text-red-500 mb-2 drop-shadow-sm";
+                title.className = "ss-completion-title !text-red-500";
                 desc.innerText = `You scored ${correctCount}/5. You need 4/5 to pass.`;
                 retakeBtn.classList.remove('hidden');
             }

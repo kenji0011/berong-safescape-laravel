@@ -225,19 +225,19 @@ const ModuleOnePage = () => {
 
   // ─────────────────────────────────────────────
   return (
-    <div className="min-h-screen bg-blue-50 bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] [background-size:16px_16px] font-sans flex flex-col">
+    <div className="min-h-screen bg-blue-50 dark:bg-slate-950 bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] dark:bg-[radial-gradient(#1e293b_1px,transparent_1px)] [background-size:16px_16px] font-sans flex flex-col transition-colors duration-500">
 
       {/* ── Sub Header ── */}
-      <div className="bg-white border-b border-slate-200 py-3 px-4 sm:px-6 lg:px-8 shadow-sm z-20 relative">
+      <div className="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 py-3 px-4 sm:px-6 lg:px-8 shadow-sm z-20 relative transition-colors">
         <div className="max-w-7xl mx-auto flex flex-row items-center justify-between gap-2 sm:gap-4">
           <div className="flex items-center gap-2 sm:gap-4">
-            <Link href="/kids/safescape" className="inline-flex items-center justify-center gap-2 p-2 sm:px-4 sm:py-2 bg-white rounded-full text-slate-700 font-bold hover:text-slate-900 border-[3px] border-slate-200 shadow-[0_3px_0_#cbd5e1] hover:-translate-y-0.5 active:translate-y-1 active:shadow-[0_0px_0_#cbd5e1] transition-all text-sm whitespace-nowrap">
+            <Link href="/kids/safescape" className="inline-flex items-center justify-center gap-2 p-2 sm:px-4 sm:py-2 bg-white dark:bg-slate-800 rounded-full text-slate-700 dark:text-slate-300 font-bold hover:text-slate-900 dark:hover:text-white border-[3px] border-slate-200 dark:border-slate-700 shadow-[0_3px_0_#cbd5e1] dark:shadow-[0_3px_0_#0f172a] hover:-translate-y-0.5 active:translate-y-1 active:shadow-none transition-all text-sm whitespace-nowrap">
               <ArrowLeft className="h-4 w-4" />
               <span className="hidden sm:inline">Back to Dashboard</span>
             </Link>
             <div className="hidden sm:flex items-center gap-2">
               <Flame className="h-5 w-5 text-[#ff4b3e]" />
-              <h1 className="text-xl font-black text-slate-800">SafeScape Fire Safety Course</h1>
+              <h1 className="text-xl font-black text-slate-800 dark:text-white transition-colors">SafeScape Fire Safety Course</h1>
             </div>
           </div>
           <div className="flex items-center gap-2 sm:gap-6">
@@ -250,16 +250,16 @@ const ModuleOnePage = () => {
                     className={cn(
                       "h-8 w-8 sm:h-10 sm:w-10 rounded-full flex items-center justify-center text-xs sm:text-sm font-black transition-all shrink-0 border-[3px] focus:outline-none",
                       n === 1
-                        ? "bg-[#ff4b3e] text-white border-white shadow-[0_4px_0_#991b1b] -translate-y-0.5 pointer-events-none"
-                        : "bg-white text-slate-400 border-slate-200 shadow-[0_3px_0_#cbd5e1] hover:-translate-y-0.5 hover:shadow-[0_4px_0_#cbd5e1] hover:text-slate-600 active:translate-y-1 active:shadow-[0_0px_0_#cbd5e1]"
+                        ? "bg-[#ff4b3e] text-white border-white dark:border-slate-200 shadow-[0_4px_0_#991b1b] -translate-y-0.5 pointer-events-none"
+                        : "bg-white dark:bg-slate-800 text-slate-400 dark:text-slate-500 border-slate-200 dark:border-slate-700 shadow-[0_3px_0_#cbd5e1] dark:shadow-[0_3px_0_#0f172a] hover:-translate-y-0.5 hover:shadow-[0_4px_0_#cbd5e1] dark:hover:shadow-[0_4px_0_#0f172a] hover:text-slate-600 dark:hover:text-slate-300 active:translate-y-1 active:shadow-none"
                     )}
                   >{n}</Link>
-                  {n < 5 && <div className="h-0.5 w-2 sm:w-6 bg-slate-200 rounded shrink-0" />}
+                  {n < 5 && <div className="h-0.5 w-2 sm:w-6 bg-slate-200 dark:bg-slate-700 rounded shrink-0 transition-colors" />}
                 </React.Fragment>
               ))}
             </div>
             {/* Progress */}
-            <div className="text-sm font-bold text-slate-500 bg-slate-50 px-4 py-2 rounded-xl border border-slate-200 whitespace-nowrap hidden lg:block">
+            <div className="text-sm font-bold text-slate-500 dark:text-slate-400 bg-slate-50 dark:bg-slate-900/50 px-4 py-2 rounded-xl border border-slate-200 dark:border-slate-800 whitespace-nowrap hidden lg:block transition-colors">
               Progress: <span className="text-[#ff4b3e] font-black ml-1">{progress}%</span>
             </div>
           </div>
@@ -271,17 +271,17 @@ const ModuleOnePage = () => {
         
         {/* Skeleton Loader (Simulated for visual consistency with other modules) */}
         {moduleLoading && (
-          <div className="absolute inset-0 z-10 bg-blue-50 bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] [background-size:16px_16px] flex flex-col items-center justify-start pt-32 px-4 pointer-events-none">
-            <div className="w-16 h-16 sm:w-20 sm:h-20 bg-white rounded-2xl shadow-sm border-[3px] border-blue-200 flex items-center justify-center mb-6 animate-bounce">
+          <div className="absolute inset-0 z-10 bg-blue-50 dark:bg-slate-950 bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] dark:bg-[radial-gradient(#1e293b_1px,transparent_1px)] [background-size:16px_16px] flex flex-col items-center justify-start pt-32 px-4 pointer-events-none transition-colors">
+            <div className="w-16 h-16 sm:w-20 sm:h-20 bg-white dark:bg-slate-900 rounded-2xl shadow-sm border-[3px] border-blue-200 dark:border-slate-800 flex items-center justify-center mb-6 animate-bounce transition-colors">
               <Flame className="h-8 w-8 sm:h-10 sm:w-10 text-[#ff4b3e] animate-pulse" />
             </div>
             <div className="flex flex-col items-center gap-3 w-full max-w-2xl px-2 sm:px-6">
-              <div className="h-6 sm:h-10 w-48 sm:w-64 bg-blue-200/50 rounded-full animate-pulse"></div>
-              <div className="h-4 sm:h-5 w-64 sm:w-96 bg-blue-200/50 rounded-full animate-pulse delay-75 mb-6"></div>
+              <div className="h-6 sm:h-10 w-48 sm:w-64 bg-blue-200/50 dark:bg-blue-900/30 rounded-full animate-pulse"></div>
+              <div className="h-4 sm:h-5 w-64 sm:w-96 bg-blue-200/50 dark:bg-blue-900/30 rounded-full animate-pulse delay-75 mb-6"></div>
               
               <div className="w-full space-y-4">
-                <div className="h-48 sm:h-64 w-full bg-white/60 rounded-[2rem] border-[3px] border-blue-200/50 animate-pulse delay-150"></div>
-                <div className="h-32 sm:h-48 w-full bg-white/60 rounded-[2rem] border-[3px] border-blue-200/50 animate-pulse delay-200"></div>
+                <div className="h-48 sm:h-64 w-full bg-white/60 dark:bg-slate-900/60 rounded-[2rem] border-[3px] border-blue-200/50 dark:border-slate-800/50 animate-pulse delay-150 transition-colors"></div>
+                <div className="h-32 sm:h-48 w-full bg-white/60 dark:bg-slate-900/60 rounded-[2rem] border-[3px] border-blue-200/50 dark:border-slate-800/50 animate-pulse delay-200 transition-colors"></div>
               </div>
             </div>
             <p className="mt-8 text-blue-400 font-bold tracking-widest uppercase text-sm animate-pulse delay-300">Loading Module Content...</p>
@@ -300,7 +300,7 @@ const ModuleOnePage = () => {
             <h1 className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-[#ff4b3e] to-[#ff8c00] leading-tight drop-shadow-sm">
               Fire is a Tool, Not a Toy
             </h1>
-            <p className="text-sm sm:text-base md:text-lg text-slate-600 font-bold leading-relaxed max-w-2xl mx-auto">
+            <p className="text-sm sm:text-base md:text-lg text-slate-600 dark:text-slate-400 font-bold leading-relaxed max-w-2xl mx-auto transition-colors">
               To be a fire safety hero, the first thing you need to do is understand what fire is and respect its power.
               Just like some tools are only for grown-ups to use, fire is also something that needs to be handled with great care.
               This module will help you understand why fire is a tool for adults and not a toy for kids.
@@ -308,14 +308,14 @@ const ModuleOnePage = () => {
           </div>
 
           {/* ── Video Section ── */}
-          <section className={cn("relative bg-white rounded-[1.5rem] sm:rounded-[2rem] border-[3px] sm:border-[4px] border-blue-200 shadow-sm p-4 sm:p-6 md:p-10 text-center transition-all", videoStarted && "border-green-200")}>
+          <section className={cn("relative bg-white dark:bg-slate-900 rounded-[1.5rem] sm:rounded-[2rem] border-[3px] sm:border-[4px] border-blue-200 dark:border-blue-900/50 shadow-sm p-4 sm:p-6 md:p-10 text-center transition-all", videoStarted && "border-green-200 dark:border-green-900/50")}>
             {videoStarted && (
               <div className="absolute top-3 right-3 sm:top-4 sm:right-4 z-10 h-8 w-8 sm:h-10 sm:w-10 rounded-full bg-green-500 border-[3px] border-white shadow-sm flex items-center justify-center">
                 <CheckCircle className="h-4 w-4 sm:h-5 sm:w-5 text-white" />
               </div>
             )}
-            <h2 className="text-xl sm:text-2xl md:text-3xl font-black text-blue-600 mb-4 sm:mb-6 drop-shadow-sm">Watch the Intro Video</h2>
-            <div className="w-full aspect-video bg-slate-100 rounded-2xl sm:rounded-3xl overflow-hidden shadow-sm border-[3px] sm:border-[4px] border-blue-200 relative">
+            <h2 className="text-xl sm:text-2xl md:text-3xl font-black text-blue-600 dark:text-blue-400 mb-4 sm:mb-6 drop-shadow-sm transition-colors">Watch the Intro Video</h2>
+            <div className="w-full aspect-video bg-slate-100 dark:bg-slate-950 rounded-2xl sm:rounded-3xl overflow-hidden shadow-sm border-[3px] sm:border-[4px] border-blue-200 dark:border-blue-900/50 relative transition-colors">
               <video
                 ref={videoRef}
                 controls
@@ -326,14 +326,14 @@ const ModuleOnePage = () => {
                 Your browser doesn't support HTML5 video.
               </video>
             </div>
-            <p className="text-center text-slate-500 font-bold text-xs sm:text-sm mt-4 sm:mt-6 pt-4 sm:pt-6 border-t-2 border-slate-100 uppercase tracking-widest">Watch the video to continue</p>
+            <p className="text-center text-slate-500 dark:text-slate-400 font-bold text-xs sm:text-sm mt-4 sm:mt-6 pt-4 sm:pt-6 border-t-2 border-slate-100 dark:border-slate-800 uppercase tracking-widest transition-colors">Watch the video to continue</p>
           </section>
 
           {/* ── Section 1.1 — What Makes a Fire? (unlocked after video) ── */}
           <section className={cn(
-            "relative bg-orange-50/50 rounded-[2rem] border-[4px] border-orange-200 p-5 sm:p-8 md:p-12 shadow-sm transition-all duration-500",
+            "relative bg-orange-50/50 dark:bg-orange-950/20 rounded-[2rem] border-[4px] border-orange-200 dark:border-orange-900/30 p-5 sm:p-8 md:p-12 shadow-sm transition-all duration-500",
             !videoStarted && "opacity-30 pointer-events-none select-none",
-            section1Done && "border-green-200"
+            section1Done && "border-green-200 dark:border-green-900/50"
           )}>
             {section1Done && (
               <div className="absolute top-4 right-4 h-10 w-10 rounded-full bg-green-500 border-[3px] border-white shadow-sm flex items-center justify-center">
@@ -341,8 +341,8 @@ const ModuleOnePage = () => {
               </div>
             )}
             {!videoStarted && (
-              <div className="absolute inset-0 rounded-[2rem] bg-white/60 backdrop-blur-[2px] flex items-center justify-center z-10">
-                <p className="text-slate-500 font-bold text-lg bg-white px-6 py-3 rounded-full border-2 border-slate-200 shadow-sm">
+              <div className="absolute inset-0 rounded-[2rem] bg-white/60 dark:bg-slate-900/60 backdrop-blur-[2px] flex items-center justify-center z-10 transition-colors">
+                <p className="text-slate-500 dark:text-slate-300 font-bold text-lg bg-white dark:bg-slate-800 px-6 py-3 rounded-full border-2 border-slate-200 dark:border-slate-700 shadow-sm transition-colors">
                   🎬 Watch the video first to unlock
                 </p>
               </div>
@@ -352,35 +352,35 @@ const ModuleOnePage = () => {
               {/* Text content */}
               <div className="space-y-4 sm:space-y-6 order-2 md:order-1">
                 <div className="flex items-center gap-2 sm:gap-3 mb-1 sm:mb-2">
-                  <span className="bg-orange-100 text-orange-600 border-2 border-orange-200 shadow-sm px-2 py-0.5 sm:px-3 sm:py-1 rounded-xl text-xs sm:text-sm font-black">1.1</span>
-                  <h2 className="text-xl sm:text-2xl md:text-3xl font-black text-slate-800">What Makes a Fire?</h2>
+                  <span className="bg-orange-100 dark:bg-orange-900/50 text-orange-600 dark:text-orange-400 border-2 border-orange-200 dark:border-orange-800 shadow-sm px-2 py-0.5 sm:px-3 sm:py-1 rounded-xl text-xs sm:text-sm font-black transition-colors">1.1</span>
+                  <h2 className="text-xl sm:text-2xl md:text-3xl font-black text-slate-800 dark:text-white transition-colors">What Makes a Fire?</h2>
                 </div>
-                <div className="text-slate-600 leading-relaxed text-sm sm:text-base space-y-3 sm:space-y-4 font-medium">
+                <div className="text-slate-600 dark:text-slate-400 leading-relaxed text-sm sm:text-base space-y-3 sm:space-y-4 font-medium transition-colors">
                   <p>
                     Have you ever seen a stool with three legs? If you take one leg away, the stool falls over.{" "}
-                    <strong className="text-slate-800">Fire is just like that!</strong> It needs three things to exist, and we call this the "fire triangle."
+                    <strong className="text-slate-800 dark:text-white transition-colors">Fire is just like that!</strong> It needs three things to exist, and we call this the "fire triangle."
                     If you take any one of them away, the fire goes out.
                   </p>
-                  <ul className="space-y-3 sm:space-y-4 bg-white p-4 sm:p-6 rounded-2xl border-[3px] border-orange-100 shadow-sm">
+                  <ul className="space-y-3 sm:space-y-4 bg-white dark:bg-slate-900 p-4 sm:p-6 rounded-2xl border-[3px] border-orange-100 dark:border-orange-900/30 shadow-sm transition-colors">
                     <li className="flex gap-3 sm:gap-4 items-start">
                       <span className="text-red-400 text-lg sm:text-xl mt-0.5">🔥</span>
                       <div>
-                        <strong className="text-slate-800 block text-sm sm:text-base">Heat</strong>
-                        <span className="text-xs sm:text-sm text-slate-500">This is something hot, like a spark or a flame, that gets the fire started.</span>
+                        <strong className="text-slate-800 dark:text-white block text-sm sm:text-base transition-colors">Heat</strong>
+                        <span className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 transition-colors">This is something hot, like a spark or a flame, that gets the fire started.</span>
                       </div>
                     </li>
                     <li className="flex gap-3 sm:gap-4 items-start">
                       <span className="text-amber-400 text-lg sm:text-xl mt-0.5">🌲</span>
                       <div>
-                        <strong className="text-slate-800 block text-sm sm:text-base">Fuel</strong>
-                        <span className="text-xs sm:text-sm text-slate-500">This is anything that can burn, like paper, wood, or cloth.</span>
+                        <strong className="text-slate-800 dark:text-white block text-sm sm:text-base transition-colors">Fuel</strong>
+                        <span className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 transition-colors">This is anything that can burn, like paper, wood, or cloth.</span>
                       </div>
                     </li>
                     <li className="flex gap-3 sm:gap-4 items-start">
                       <span className="text-blue-400 text-lg sm:text-xl mt-0.5">💨</span>
                       <div>
-                        <strong className="text-slate-800 block text-sm sm:text-base">Air (Oxygen)</strong>
-                        <span className="text-xs sm:text-sm text-slate-500">Fire needs to breathe, just like we do! It uses a part of the air called oxygen to stay alive.</span>
+                        <strong className="text-slate-800 dark:text-white block text-sm sm:text-base transition-colors">Air (Oxygen)</strong>
+                        <span className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 transition-colors">Fire needs to breathe, just like we do! It uses a part of the air called oxygen to stay alive.</span>
                       </div>
                     </li>
                   </ul>
@@ -402,11 +402,11 @@ const ModuleOnePage = () => {
 
               {/* Fire Triangle Image */}
               <div className="order-1 md:order-2">
-                <div className="bg-white rounded-[1.5rem] sm:rounded-[2rem] overflow-hidden border-[3px] sm:border-[4px] border-orange-200 shadow-sm transform hover:rotate-0 rotate-1 transition-transform duration-500 flex items-center justify-center p-3 sm:p-4">
+                <div className="bg-white dark:bg-slate-900 rounded-[1.5rem] sm:rounded-[2rem] overflow-hidden border-[3px] sm:border-[4px] border-orange-200 dark:border-orange-900/30 shadow-sm transform hover:rotate-0 rotate-1 transition-all duration-500 flex items-center justify-center p-3 sm:p-4">
                   <img
                     src="/modules/assets/images/m1.png"
                     alt="The Fire Triangle — Heat, Fuel, Oxygen"
-                    className="w-full h-auto max-h-48 sm:max-h-60 md:max-h-72 object-contain"
+                    className="w-full h-auto max-h-48 sm:max-h-60 md:max-h-72 object-contain dark:brightness-90"
                   />
                 </div>
               </div>
@@ -415,9 +415,9 @@ const ModuleOnePage = () => {
 
           {/* ── Section 1.2 — Grown-Up Tools (unlocked after section1) ── */}
           <section className={cn(
-            "relative bg-white rounded-[2rem] border-[4px] border-red-200 p-5 sm:p-8 md:p-12 overflow-hidden shadow-sm transition-all duration-500",
+            "relative bg-white dark:bg-slate-900 rounded-[2rem] border-[4px] border-red-200 dark:border-red-900/30 p-5 sm:p-8 md:p-12 overflow-hidden shadow-sm transition-all duration-500",
             !section1Done && "opacity-30 pointer-events-none select-none",
-            section2Done && "border-green-200"
+            section2Done && "border-green-200 dark:border-green-900/50"
           )}>
             {section2Done && (
               <div className="absolute top-4 right-4 h-10 w-10 rounded-full bg-green-500 border-[3px] border-white shadow-sm flex items-center justify-center">
@@ -425,8 +425,8 @@ const ModuleOnePage = () => {
               </div>
             )}
             {!section1Done && (
-              <div className="absolute inset-0 rounded-[2rem] bg-white/60 backdrop-blur-[2px] flex items-center justify-center z-10">
-                <p className="text-slate-500 font-bold text-lg bg-white px-6 py-3 rounded-full border-2 border-slate-200 shadow-sm">
+              <div className="absolute inset-0 rounded-[2rem] bg-white/60 dark:bg-slate-900/60 backdrop-blur-[2px] flex items-center justify-center z-10 transition-colors">
+                <p className="text-slate-500 dark:text-slate-300 font-bold text-lg bg-white dark:bg-slate-800 px-6 py-3 rounded-full border-2 border-slate-200 dark:border-slate-700 shadow-sm transition-colors">
                   ✅ Complete Section 1.1 first
                 </p>
               </div>
@@ -434,12 +434,12 @@ const ModuleOnePage = () => {
 
             <div className="relative z-10">
               <div className="flex items-center gap-2 sm:gap-3 mb-5 sm:mb-8">
-                <span className="bg-red-100 text-red-600 border-2 border-red-200 shadow-sm px-2 py-0.5 sm:px-3 sm:py-1 rounded-xl text-xs sm:text-sm font-black">1.2</span>
-                <h2 className="text-xl sm:text-2xl md:text-3xl font-black text-slate-800">Grown-Up Tools</h2>
+                <span className="bg-red-100 dark:bg-red-900/50 text-red-600 dark:text-red-400 border-2 border-red-200 dark:border-red-800 shadow-sm px-2 py-0.5 sm:px-3 sm:py-1 rounded-xl text-xs sm:text-sm font-black transition-colors">1.2</span>
+                <h2 className="text-xl sm:text-2xl md:text-3xl font-black text-slate-800 dark:text-white transition-colors">Grown-Up Tools</h2>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-5 sm:gap-6 md:gap-8">
-                <div className="md:col-span-2 text-slate-600 space-y-3 sm:space-y-5 leading-relaxed text-sm sm:text-base font-medium">
+                <div className="md:col-span-2 text-slate-600 dark:text-slate-400 space-y-3 sm:space-y-5 leading-relaxed text-sm sm:text-base font-medium transition-colors">
                   <p>
                     You know that grown-ups use special tools for their jobs, like power saws or even cars.
                     These tools are very helpful, but they can be very dangerous if they aren't used correctly,
@@ -466,12 +466,12 @@ const ModuleOnePage = () => {
                 </div>
 
                 {/* Golden Rule Card */}
-                <div className="bg-red-50 border-[3px] border-red-200 rounded-xl sm:rounded-2xl p-4 sm:p-6 flex flex-col items-center justify-center text-center shadow-sm hover:scale-105 transition-transform duration-300">
-            <div className="bg-red-500 w-10 h-10 sm:w-12 sm:h-12 rounded-full flex items-center justify-center mb-3 sm:mb-4 shadow-md border-[3px] border-white">
+                <div className="bg-red-50 dark:bg-red-950/20 border-[3px] border-red-200 dark:border-red-900/30 rounded-xl sm:rounded-2xl p-4 sm:p-6 flex flex-col items-center justify-center text-center shadow-sm hover:scale-105 transition-all duration-300">
+            <div className="bg-red-500 w-10 h-10 sm:w-12 sm:h-12 rounded-full flex items-center justify-center mb-3 sm:mb-4 shadow-md border-[3px] border-white dark:border-red-900">
                     <span className="text-white text-lg sm:text-xl">✋</span>
                   </div>
-                  <h3 className="text-red-600 font-black mb-2 sm:mb-3 uppercase tracking-wider text-[10px] sm:text-xs">Powerful Rule</h3>
-                  <p className="text-slate-700 font-medium italic text-xs sm:text-sm leading-relaxed">
+                  <h3 className="text-red-600 dark:text-red-400 font-black mb-2 sm:mb-3 uppercase tracking-wider text-[10px] sm:text-xs transition-colors">Powerful Rule</h3>
+                  <p className="text-slate-700 dark:text-slate-300 font-medium italic text-xs sm:text-sm leading-relaxed transition-colors">
                     "If you find matches or a lighter,{" "}
                     <span className="text-red-500 font-black">do not touch them</span>.
                     Go and tell a grown-up right away."
@@ -483,9 +483,9 @@ const ModuleOnePage = () => {
 
           {/* ── Element Mixer Lab (unlocked after section2) ── */}
           <section className={cn(
-            "relative bg-purple-50 rounded-[2rem] border-[4px] border-purple-200 p-5 sm:p-8 md:p-12 shadow-sm transition-all duration-500",
+            "relative bg-purple-50 dark:bg-purple-950/20 rounded-[2rem] border-[4px] border-purple-200 dark:border-purple-900/30 p-5 sm:p-8 md:p-12 shadow-sm transition-all duration-500",
             !section2Done && "opacity-30 pointer-events-none select-none",
-            labCompleted && "border-green-200"
+            labCompleted && "border-green-200 dark:border-green-900/50"
           )}>
             {labCompleted && (
               <div className="absolute top-4 right-4 h-10 w-10 rounded-full bg-green-500 border-[3px] border-white shadow-sm flex items-center justify-center">
@@ -493,8 +493,8 @@ const ModuleOnePage = () => {
               </div>
             )}
             {!section2Done && (
-              <div className="absolute inset-0 rounded-[2rem] bg-white/60 backdrop-blur-[2px] flex items-center justify-center z-10">
-                <p className="text-slate-500 font-bold text-lg bg-white px-6 py-3 rounded-full border-2 border-slate-200 shadow-sm">
+              <div className="absolute inset-0 rounded-[2rem] bg-white/60 dark:bg-slate-900/60 backdrop-blur-[2px] flex items-center justify-center z-10 transition-colors">
+                <p className="text-slate-500 dark:text-slate-300 font-bold text-lg bg-white dark:bg-slate-800 px-6 py-3 rounded-full border-2 border-slate-200 dark:border-slate-700 shadow-sm transition-colors">
                   ✅ Complete Section 1.2 first
                 </p>
               </div>
@@ -502,10 +502,10 @@ const ModuleOnePage = () => {
 
             <div className="text-center mb-6 sm:mb-8 md:mb-10">
               <div className="flex items-center justify-center gap-2 sm:gap-3 mb-2 sm:mb-3">
-                <FlaskConical className="h-5 w-5 sm:h-7 sm:w-7 text-purple-500" />
-                <h2 className="text-xl sm:text-2xl md:text-3xl font-black text-purple-900">The Element Mixer Lab</h2>
+                <FlaskConical className="h-5 w-5 sm:h-7 sm:w-7 text-purple-500 dark:text-purple-400 transition-colors" />
+                <h2 className="text-xl sm:text-2xl md:text-3xl font-black text-purple-900 dark:text-purple-300 transition-colors">The Element Mixer Lab</h2>
               </div>
-              <p className="text-slate-600 font-bold leading-relaxed text-sm sm:text-base">
+              <p className="text-slate-600 dark:text-slate-400 font-bold leading-relaxed text-sm sm:text-base transition-colors">
                 By understanding what fire needs to start, you are already taking a huge step in preventing fires.
                 <br />Prove your knowledge by building the Fire Triangle below!
               </p>
@@ -541,7 +541,7 @@ const ModuleOnePage = () => {
               <div className="flex flex-col items-center gap-3">
                 <div
                   className={cn(
-                    "relative w-44 h-44 sm:w-60 sm:h-60 md:w-72 md:h-72 rounded-full border-4 border-dashed flex flex-col items-center justify-center overflow-hidden transition-all duration-300 bg-white",
+                    "relative w-44 h-44 sm:w-60 sm:h-60 md:w-72 md:h-72 rounded-full border-4 border-dashed flex flex-col items-center justify-center overflow-hidden transition-all duration-300 bg-white dark:bg-slate-900",
                     labCompleted
                       ? "border-[#ff4b3e] shadow-[0_0_50px_rgba(255,75,62,0.4)]"
                       : isDragOver
@@ -550,7 +550,7 @@ const ModuleOnePage = () => {
                       ? "border-cyan-400 shadow-[0_0_20px_rgba(34,211,238,0.2)]"
                       : pitItems.length > 0
                       ? "border-orange-600"
-                      : "border-slate-600"
+                      : "border-slate-600 dark:border-slate-700"
                   )}
                   onDragOver={handleDragOver}
                   onDragLeave={handleDragLeave}
@@ -599,7 +599,7 @@ const ModuleOnePage = () => {
 
                   {/* Placeholder */}
                   {pitItems.length === 0 && !pitWater && !labCompleted && (
-                    <p className="text-slate-500 font-black text-xs sm:text-sm uppercase tracking-widest text-center z-10 px-8">
+                    <p className="text-slate-500 dark:text-slate-400 font-black text-xs sm:text-sm uppercase tracking-widest text-center z-10 px-8 transition-colors">
                       TAP OR DROP HERE
                     </p>
                   )}
@@ -608,7 +608,7 @@ const ModuleOnePage = () => {
                 {/* Status message — BELOW pit */}
                 <p className={cn(
                   "text-xs sm:text-sm font-bold text-center transition-colors min-h-[20px]",
-                  labCompleted ? "text-orange-500" : "text-slate-500"
+                  labCompleted ? "text-orange-500" : "text-slate-500 dark:text-slate-400"
                 )}>
                   {labCompleted ? "⚠️ FIRE STARTED! The Triangle is complete!" : pitMessage}
                 </p>
@@ -627,10 +627,10 @@ const ModuleOnePage = () => {
 
           {/* ── Module 1 Complete Card ── */}
           {mixerEverCompleted && (
-            <div className="bg-white rounded-3xl p-8 sm:p-12 border-4 border-green-200 shadow-sm text-center">
+            <div className="bg-white dark:bg-slate-900 rounded-3xl p-8 sm:p-12 border-4 border-green-200 dark:border-green-900/30 shadow-sm text-center transition-colors">
               <CheckCircle className="h-16 w-16 text-green-500 mx-auto mb-4" />
-              <h2 className="text-3xl font-black text-slate-800 mb-2">Module 1 Complete!</h2>
-              <p className="text-slate-600 font-bold mb-8">
+              <h2 className="text-3xl font-black text-slate-800 dark:text-white mb-2 transition-colors">Module 1 Complete!</h2>
+              <p className="text-slate-600 dark:text-slate-400 font-bold mb-8 transition-colors">
                 Great job! You've learned about the Fire Triangle and why fire tools are for grown-ups only.
               </p>
               <div className="flex justify-center">
@@ -657,9 +657,9 @@ const ModuleOnePage = () => {
           )}
 
           {/* ── Footer ── */}
-          <div className="text-center py-8 border-t-2 border-slate-200">
-            <p className="text-slate-500 text-sm font-bold uppercase tracking-widest">SafeScape Intelligent Systems Project</p>
-            <p className="text-slate-400 text-xs mt-1 opacity-50">Module 1: Fire is a Tool, Not a Toy</p>
+          <div className="text-center py-8 border-t-2 border-slate-200 dark:border-slate-800 transition-colors">
+            <p className="text-slate-500 dark:text-slate-400 text-sm font-bold uppercase tracking-widest transition-colors">SafeScape Intelligent Systems Project</p>
+            <p className="text-slate-400 dark:text-slate-500 text-xs mt-1 opacity-50 transition-colors">Module 1: Fire is a Tool, Not a Toy</p>
           </div>
 
         </div>
