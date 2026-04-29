@@ -365,7 +365,7 @@ export function LandingAboutSection() {
                                     initial={{ opacity: 0, scale: 0.8 }}
                                     whileInView={{ opacity: 1, scale: 1 }}
                                     viewport={{ once: true }}
-                                    animate={{ 
+                                    animate={reduceMotion ? { y: 0 } : { 
                                         y: [-12, 12, -12],
                                         filter: [
                                             "drop-shadow(0px 30px 25px rgba(0, 0, 0, 0.15))",
@@ -373,7 +373,7 @@ export function LandingAboutSection() {
                                             "drop-shadow(0px 30px 25px rgba(0, 0, 0, 0.15))"
                                         ]
                                     }}
-                                    transition={{
+                                    transition={reduceMotion ? { duration: 0.6 } : {
                                         y: { duration: 4, ease: "easeInOut", repeat: Infinity },
                                         filter: { duration: 4, ease: "easeInOut", repeat: Infinity },
                                         opacity: { duration: 0.6 },

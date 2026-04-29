@@ -299,8 +299,9 @@ const ModuleFivePage = ({ moduleNum }: { moduleNum: number }) => {
             const ctaBtn = iframeDoc.createElement('a');
             ctaBtn.id = 'post-test-cta';
             ctaBtn.href = '/assessment/post-test';
-            ctaBtn.className = 'bg-yellow-400 text-red-600 font-black px-6 py-3 sm:px-10 sm:py-4 text-sm sm:text-base rounded-full shadow-[0_4px_0_#b45309] hover:-translate-y-0.5 active:translate-y-1 active:shadow-none transition-all uppercase tracking-wide text-center w-full sm:w-auto block whitespace-nowrap';
-            ctaBtn.innerHTML = `Take Post-Test <i class="fa-solid fa-arrow-right ml-2"></i>`;
+            ctaBtn.target = '_top';
+            ctaBtn.className = 'ss-btn-premium ss-btn-gold block whitespace-nowrap';
+            ctaBtn.innerHTML = `Take Post-Test <i class="fa-solid fa-arrow-right"></i>`;
             
             btnContainer.appendChild(ctaBtn);
             resizeIframe();
@@ -352,7 +353,7 @@ const ModuleFivePage = ({ moduleNum }: { moduleNum: number }) => {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 font-sans flex flex-col transition-colors duration-500">
+    <div className="min-h-screen bg-white dark:bg-slate-950 font-sans flex flex-col transition-colors duration-500">
       <Head title={`Module ${currentModule} | SafeScape`} />
 
       {/* ── Sub Header ── */}
@@ -391,56 +392,9 @@ const ModuleFivePage = ({ moduleNum }: { moduleNum: number }) => {
         </div>
       </div>
 
-      {/* ── Module 5 Completion Banner ── */}
-      {moduleCompleted && (user?.postTestScore === null || user?.postTestScore === undefined) && (
-        <div className="bg-emerald-500 px-4 sm:px-6 py-6 sm:py-8 relative overflow-hidden animate-in slide-in-from-top fade-in duration-500">
-          <div className="max-w-4xl mx-auto relative z-10 flex flex-col sm:flex-row items-center gap-4 sm:gap-8">
-            <div className="flex items-center gap-4 flex-1">
-              <div className="h-14 w-14 sm:h-16 sm:w-16 bg-white/20 rounded-2xl flex items-center justify-center shrink-0 border-2 border-white/30">
-                <Trophy className="h-7 w-7 sm:h-8 sm:w-8 text-yellow-200" />
-              </div>
-              <div>
-                <h3 className="text-lg sm:text-xl font-black text-white tracking-tight">All Modules Complete!</h3>
-                <p className="text-white/80 text-xs sm:text-sm font-bold mt-0.5">You've finished all 5 fire safety modules. Take the final Post-Test to earn your certificate!</p>
-              </div>
-            </div>
-            <button
-              onClick={() => router.visit('/assessment/post-test')}
-              className="w-full sm:w-auto bg-white hover:bg-yellow-50 text-green-700 font-black px-6 py-3.5 rounded-full border-b-[4px] border-b-green-200 active:border-b-2 active:translate-y-[2px] shadow-lg transition-all flex items-center justify-center gap-2 text-sm sm:text-base shrink-0 uppercase tracking-wider"
-            >
-              <ClipboardCheck className="h-5 w-5" />
-              Take Post-Test
-              <ChevronRight className="h-4 w-4" />
-            </button>
-          </div>
-        </div>
-      )}
-      {moduleCompleted && user?.postTestScore !== null && user?.postTestScore !== undefined && (
-        <div className="bg-primary px-4 sm:px-6 py-6 sm:py-8 relative overflow-hidden animate-in slide-in-from-top fade-in duration-500">
-          <div className="max-w-4xl mx-auto relative z-10 flex flex-col sm:flex-row items-center gap-4 sm:gap-8">
-            <div className="flex items-center gap-4 flex-1">
-              <div className="h-14 w-14 sm:h-16 sm:w-16 bg-white/20 rounded-2xl flex items-center justify-center shrink-0 border-2 border-white/30">
-                <CheckCircle className="h-7 w-7 sm:h-8 sm:w-8 text-blue-200" />
-              </div>
-              <div>
-                <h3 className="text-lg sm:text-xl font-black text-white tracking-tight">Course Completed!</h3>
-                <p className="text-white/80 text-xs sm:text-sm font-bold mt-0.5">You've successfully finished your fire safety training. View your official certificate!</p>
-              </div>
-            </div>
-            <Link
-              href="/kids/certificate"
-              className="w-full sm:w-auto bg-white hover:bg-blue-50 text-indigo-700 font-black px-6 py-3.5 rounded-full border-b-[4px] border-b-blue-200 active:border-b-2 active:translate-y-[2px] shadow-lg transition-all flex items-center justify-center gap-2 text-sm sm:text-base shrink-0 uppercase tracking-wider"
-            >
-              <Trophy className="h-5 w-5 text-yellow-500" />
-              View Certificate
-              <ChevronRight className="h-4 w-4" />
-            </Link>
-          </div>
-        </div>
-      )}
 
       {/* ── Dark Module Content Area ── */}
-      <div className="flex-1 bg-blue-50 dark:bg-slate-950 bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] dark:bg-[radial-gradient(#1e293b_1px,transparent_1px)] [background-size:16px_16px] flex flex-col w-full relative transition-colors">
+      <div className="flex-1 bg-white dark:bg-slate-950 bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] dark:bg-[radial-gradient(#1e293b_1px,transparent_1px)] [background-size:16px_16px] flex flex-col w-full relative transition-colors">
         
         {/* Skeleton Loader */}
         {iframeLoading && (

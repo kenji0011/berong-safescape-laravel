@@ -4,33 +4,53 @@ import { cn } from "@/lib/utils"
 
 export function KidsWelcomeBannerSkeleton() {
   return (
-    <div className="relative overflow-hidden bg-slate-200 dark:bg-slate-800 rounded-[1.5rem] sm:rounded-[2rem] mb-6 sm:mb-8 border-4 border-white dark:border-slate-700 text-center animate-pulse transition-colors">
-      <div className="relative z-10 px-4 sm:px-6 py-6 sm:py-8 flex flex-col items-center">
-        <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-8 mb-6">
-          {/* Avatar Skeleton */}
-          <Skeleton className="h-14 w-14 sm:h-20 sm:w-20 rounded-full" />
-          
-          {/* Badge Stats Skeleton */}
-          <div className="bg-white/50 dark:bg-slate-900/50 backdrop-blur-md border-2 border-white/30 dark:border-white/10 rounded-2xl p-2.5 sm:p-4 flex flex-col items-center sm:items-start gap-2 shadow-inner w-40 sm:w-56">
-            <Skeleton className="h-3 w-20" />
-            <div className="flex gap-1 mt-1">
-              {[1, 2, 3, 4, 5].map((i) => (
-                <Skeleton key={i} className="h-7 w-7 sm:h-10 sm:w-10 rounded-full" />
-              ))}
-            </div>
-            <Skeleton className="h-2 w-24 mt-1" />
+    <div className="relative bg-slate-200 dark:bg-slate-900/80 rounded-2xl sm:rounded-[2.5rem] shadow-xl mb-6 sm:mb-8 border-[3px] sm:border-[6px] border-white/90 dark:border-slate-800 overflow-hidden animate-pulse transition-colors">
+      <div className="relative z-10 px-4 sm:px-10 pt-6 sm:pt-8 lg:pt-10 pb-4 sm:pb-6 lg:pb-4 flex flex-col items-center">
+        
+        {/* Header Skeleton */}
+        <div className="text-center mb-6 lg:mb-8 flex flex-col items-center gap-3">
+          <Skeleton className="sm:hidden h-16 w-16 rounded-full bg-white/20" />
+          <div className="flex flex-col items-center gap-2">
+            <Skeleton className="h-10 sm:h-16 lg:h-20 w-64 sm:w-[500px] bg-white/20 rounded-xl" />
+            <Skeleton className="h-4 sm:h-6 w-48 sm:w-80 bg-white/10 rounded-lg" />
           </div>
         </div>
 
-        {/* Welcome Text Skeleton */}
-        <Skeleton className="h-8 sm:h-12 w-64 sm:w-96 mb-3" />
-        <Skeleton className="h-4 sm:h-6 w-48 sm:w-80 mb-6" />
+        {/* Stats Grid Skeleton */}
+        <div className="w-full max-w-5xl grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 mb-4 sm:mb-6">
+           {/* Card 1 Identity */}
+           <div className="hidden lg:flex bg-white/5 dark:bg-white/5 rounded-[2rem] p-6 border border-white/10 items-center gap-6">
+              <Skeleton className="h-20 w-20 sm:h-24 sm:w-24 rounded-full bg-white/10" />
+              <div className="flex-1 space-y-3">
+                 <Skeleton className="h-3 w-24 bg-white/10" />
+                 <Skeleton className="h-10 w-48 bg-white/20" />
+                 <Skeleton className="h-6 w-20 bg-white/10 rounded-full" />
+              </div>
+           </div>
 
-        {/* Buttons Skeleton */}
-        <div className="flex flex-wrap justify-center gap-2 sm:gap-4">
-          {[1, 2, 3].map((i) => (
-            <Skeleton key={i} className="h-10 sm:h-14 w-32 sm:w-44 rounded-full" />
-          ))}
+           {/* Card 2 Badges */}
+           <div className="bg-white/5 dark:bg-white/5 rounded-[2rem] p-6 border border-white/10 flex flex-col gap-4">
+              <div className="flex items-center justify-between">
+                <Skeleton className="h-4 w-32 bg-white/10" />
+                <Skeleton className="h-8 w-24 bg-white/20 rounded-xl" />
+              </div>
+              <div className="flex gap-3">
+                {[1, 2, 3, 4, 5, 6].map(i => (
+                  <Skeleton key={i} className="h-10 w-10 sm:h-12 sm:w-12 rounded-xl bg-white/10" />
+                ))}
+              </div>
+              <div className="space-y-2 mt-2">
+                <Skeleton className="h-2 w-full bg-white/5 rounded-full" />
+                <Skeleton className="h-3 w-full bg-white/10 rounded-full" />
+              </div>
+           </div>
+        </div>
+
+        {/* Motto Tags Skeleton */}
+        <div className="flex items-center justify-center gap-2 sm:gap-4 mt-1 sm:mt-2">
+           <Skeleton className="h-10 sm:h-14 w-24 sm:w-40 rounded-xl sm:rounded-2xl bg-white/20" />
+           <Skeleton className="h-10 sm:h-14 w-24 sm:w-40 rounded-xl sm:rounded-2xl bg-white/20" />
+           <Skeleton className="h-10 sm:h-14 w-24 sm:w-40 rounded-xl sm:rounded-2xl bg-white/20" />
         </div>
       </div>
     </div>

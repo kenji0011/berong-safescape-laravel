@@ -230,10 +230,11 @@ function AdminDashboard({
     action: "",
     item: null as any,
     onConfirm: () => { },
+    variant: 'default' as 'default' | 'destructive',
   });
 
   // Confirmation Dialog Functions
-  const openConfirmationDialog = (title: string, description: string, action: string, onConfirm: () => void, item: any = null) => {
+  const openConfirmationDialog = (title: string, description: string, action: string, onConfirm: () => void, item: any = null, variant: 'default' | 'destructive' = 'default') => {
     setConfirmationDialog({
       isOpen: true,
       title,
@@ -241,7 +242,8 @@ function AdminDashboard({
       action,
       item,
       onConfirm,
-    });
+      variant, // Add variant here
+    } as any);
   };
 
   const closeConfirmationDialog = () => {
@@ -437,7 +439,9 @@ function AdminDashboard({
         } finally {
           closeConfirmationDialog();
         }
-      }
+      },
+      null,
+      "destructive"
     );
   }
 
@@ -485,9 +489,8 @@ function AdminDashboard({
     );
   }
 
-  // Accept string OR number to avoid TypeErrors
   const handleDeleteCarousel = (id: string | number) => {
-    const numericId = Number(id); // Use Number() instead of parseInt for safety
+    const numericId = Number(id);
     if (isNaN(numericId)) {
       setError("Invalid carousel image ID");
       return;
@@ -517,7 +520,8 @@ function AdminDashboard({
           closeConfirmationDialog();
         }
       },
-      { id: numericId }
+      { id: numericId },
+      "destructive"
     );
   }
 
@@ -699,7 +703,8 @@ function AdminDashboard({
           closeConfirmationDialog();
         }
       },
-      { id }
+      { id },
+      "destructive"
     );
   }
 
@@ -765,7 +770,6 @@ function AdminDashboard({
     );
   }
 
-  // Accept string OR number
   const handleDeleteVideo = (id: string | number) => {
     const numericId = Number(id);
     if (isNaN(numericId)) {
@@ -797,7 +801,8 @@ function AdminDashboard({
           closeConfirmationDialog();
         }
       },
-      { id: numericId }
+      { id: numericId },
+      "destructive"
     );
   }
 
@@ -932,7 +937,8 @@ function AdminDashboard({
           closeConfirmationDialog();
         }
       },
-      { id }
+      { id },
+      "destructive"
     );
   }
 
@@ -954,10 +960,10 @@ function AdminDashboard({
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 relative z-10">
         {/* Header */}
-        <div className="mb-4 sm:mb-8 bg-white dark:bg-slate-800/90 backdrop-blur-md p-4 sm:p-6 rounded-2xl sm:rounded-[2rem] border-[3px] border-slate-200 dark:border-slate-700 shadow-[0_6px_0_#cbd5e1] dark:shadow-[0_6px_0_#0f172a] sm:shadow-[0_8px_0_#cbd5e1] sm:dark:shadow-[0_8px_0_#0f172a] flex items-center justify-between gap-3 transition-colors">
+        <div className="mb-4 sm:mb-8 bg-white/90 dark:bg-slate-800/50 backdrop-blur-md p-4 sm:p-6 rounded-2xl sm:rounded-[2rem] border-[3px] border-slate-200 dark:border-slate-700 shadow-[0_6px_0_#cbd5e1] dark:shadow-[0_8px_0_#0f172a] sm:shadow-[0_8px_0_#cbd5e1] flex items-center justify-between gap-3 transition-colors">
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 sm:gap-3 mb-0.5 sm:mb-1">
-              <div className="bg-red-100 dark:bg-red-900/30 p-2 sm:p-2 rounded-lg sm:rounded-xl">
+              <div className="bg-red-100/50 dark:bg-red-900/30 p-2 sm:p-2 rounded-lg sm:rounded-xl backdrop-blur-sm">
                 <Shield className="h-6 w-6 sm:h-8 sm:w-8 text-[#d60000] dark:text-red-500" strokeWidth={2.5} />
               </div>
               <h1 className="text-xl sm:text-3xl font-black text-slate-800 dark:text-white tracking-tight truncate">Admin Panel</h1>
@@ -1032,6 +1038,7 @@ function AdminDashboard({
             }}
             title={confirmationDialog.title}
             description={confirmationDialog.description}
+            variant={(confirmationDialog as any).variant || 'default'}
           />
 
           {/* Password Verification Dialog for Role Changes */}
@@ -1088,7 +1095,7 @@ function AdminDashboard({
                 onUploadComplete={(url) => setNewCarousel({ ...newCarousel, url })}
               />
 
-              <Card className="rounded-[1.5rem] border-[3px] border-slate-200 dark:border-slate-700 shadow-sm hover:shadow-[0_4px_0_#e2e8f0] dark:hover:shadow-[0_4px_0_#0f172a] overflow-hidden bg-white dark:bg-slate-800 transition-all h-full flex flex-col">
+              <Card className="rounded-[1.5rem] border-[3px] border-slate-200 dark:border-slate-700 shadow-sm hover:shadow-[0_4px_0_#e2e8f0] dark:hover:shadow-[0_4px_0_#0f172a] overflow-hidden bg-slate-50 dark:bg-slate-800/50 backdrop-blur-md transition-all h-full flex flex-col">
                 <CardHeader>
                   <CardTitle className="text-xl font-bold text-slate-800 dark:text-white">Add New Carousel Image</CardTitle>
                   <CardDescription className="text-slate-500 dark:text-slate-400 font-medium">Add images to the dashboard carousel</CardDescription>
@@ -1152,7 +1159,7 @@ function AdminDashboard({
                 onUploadComplete={(url) => setNewBlog({ ...newBlog, imageUrl: url })}
               />
 
-              <Card className="rounded-[1.5rem] border-[3px] border-slate-200 dark:border-slate-700 shadow-sm hover:shadow-[0_4px_0_#e2e8f0] dark:hover:shadow-[0_4px_0_#0f172a] overflow-hidden bg-white dark:bg-slate-800 transition-all h-full flex flex-col">
+              <Card className="rounded-[1.5rem] border-[3px] border-slate-200 dark:border-slate-700 shadow-sm hover:shadow-[0_4px_0_#e2e8f0] dark:hover:shadow-[0_4px_0_#0f172a] overflow-hidden bg-slate-50 dark:bg-slate-800/50 backdrop-blur-md transition-all h-full flex flex-col">
                 <CardHeader>
                   <CardTitle className="text-xl font-bold text-slate-800 dark:text-white">Add New Blog Post</CardTitle>
                   <CardDescription className="text-slate-500 dark:text-slate-400 font-medium">Create educational content for adult and professional sections</CardDescription>
@@ -1255,7 +1262,7 @@ function AdminDashboard({
 
           {/* Video Management */}
           <TabsContent value="videos" className="space-y-6">
-            <Card className="rounded-[1.5rem] border-[3px] border-slate-200 dark:border-slate-700 shadow-sm hover:shadow-[0_4px_0_#e2e8f0] dark:hover:shadow-[0_4px_0_#0f172a] overflow-hidden bg-white dark:bg-slate-800 transition-all mb-6">
+            <Card className="rounded-[1.5rem] border-[3px] border-slate-200 dark:border-slate-700 shadow-sm hover:shadow-[0_4px_0_#e2e8f0] dark:hover:shadow-[0_4px_0_#0f172a] overflow-hidden bg-slate-50 dark:bg-slate-800/50 backdrop-blur-md transition-all mb-6">
               <CardHeader>
                 <CardTitle className="text-xl font-bold text-slate-800 dark:text-white">Add New Video</CardTitle>
                 <CardDescription className="text-slate-500 dark:text-slate-400 font-medium">Add educational videos for different sections</CardDescription>
@@ -1399,7 +1406,7 @@ function AdminDashboard({
             <Card className="rounded-[2rem] border-[3px] border-slate-200 dark:border-slate-700 shadow-[0_8px_0_#cbd5e1] dark:shadow-[0_8px_0_#0f172a] overflow-hidden bg-slate-50 dark:bg-slate-800/50 backdrop-blur-md transition-all mb-6">
               <CardHeader className="px-6 pt-6 pb-2">
                 <div className="flex items-center gap-3">
-                  <div className="bg-white dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-700 p-2 rounded-xl shadow-sm">
+                  <div className="bg-white/50 dark:bg-slate-900/50 backdrop-blur-sm border-2 border-slate-200 dark:border-slate-700 p-2 rounded-xl shadow-sm">
                     <Users className="h-6 w-6 text-[#d60000]" strokeWidth={2.5} />
                   </div>
                   <div>
@@ -1415,7 +1422,7 @@ function AdminDashboard({
                     placeholder="Search users by name, email, or role..."
                     value={userSearchQuery}
                     onChange={(e) => setUserSearchQuery(e.target.value)}
-                    className="pl-12 border-[3px] border-slate-200 dark:border-slate-700 focus-visible:ring-red-500 rounded-2xl h-14 text-base shadow-inner bg-white dark:bg-slate-900 dark:text-white font-medium transition-colors"
+                    className="pl-12 border-[3px] border-slate-200 dark:border-slate-700 focus-visible:ring-red-500 rounded-2xl h-14 text-base shadow-inner bg-white/50 dark:bg-slate-900/50 backdrop-blur-sm dark:text-white font-medium transition-colors"
                     autoComplete="off"
                   />
                   <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 h-6 w-6 text-slate-400" strokeWidth={2.5} />
@@ -1425,7 +1432,7 @@ function AdminDashboard({
                     <p className="text-slate-500 font-medium text-center py-8">No users found</p>
                   ) : (
                     filteredUsers.map((u) => (
-                      <div key={u.id} className="p-5 border-2 border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 rounded-2xl shadow-sm hover:shadow-[0_4px_0_#e2e8f0] dark:hover:shadow-[0_4px_0_#0f172a] hover:-translate-y-0.5 transition-all">
+                      <div key={u.id} className="p-5 border-2 border-slate-200 dark:border-slate-700 bg-white/50 dark:bg-slate-900/50 backdrop-blur-sm rounded-2xl shadow-sm hover:shadow-[0_4px_0_#e2e8f0] dark:hover:shadow-[0_4px_0_#0f172a] hover:-translate-y-0.5 transition-all">
                         <div className="flex items-center justify-between mb-4 pb-4 border-b-2 border-slate-100 dark:border-slate-800">
                           <div>
                             <h4 className="font-bold text-lg text-slate-800 dark:text-white">{u.name}</h4>
@@ -1492,7 +1499,7 @@ function AdminDashboard({
 
           {/* Quick Questions Management */}
           <TabsContent value="quick-questions" className="space-y-6">
-            <Card className="rounded-[1.5rem] border-[3px] border-slate-200 dark:border-slate-700 shadow-sm hover:shadow-[0_4px_0_#e2e8f0] dark:hover:shadow-[0_4px_0_#0f172a] overflow-hidden bg-white dark:bg-slate-800 transition-all mb-6">
+            <Card className="rounded-[1.5rem] border-[3px] border-slate-200 dark:border-slate-700 shadow-sm hover:shadow-[0_4px_0_#e2e8f0] dark:hover:shadow-[0_4px_0_#0f172a] overflow-hidden bg-slate-50 dark:bg-slate-800/50 backdrop-blur-md transition-all mb-6">
               <CardHeader>
                 <CardTitle className="text-xl font-bold text-slate-800 dark:text-white">Add New Quick Question</CardTitle>
                 <CardDescription className="text-slate-500 dark:text-slate-400 font-medium">Create frequently asked questions for the chatbot</CardDescription>
@@ -1589,7 +1596,7 @@ function AdminDashboard({
             <Card className="rounded-[2rem] border-[3px] border-slate-200 dark:border-slate-700 shadow-[0_8px_0_#cbd5e1] dark:shadow-[0_8px_0_#0f172a] overflow-hidden bg-slate-50 dark:bg-slate-800/50 backdrop-blur-md transition-all mb-6">
               <CardHeader className="px-6 pt-6 pb-2">
                 <div className="flex items-center gap-3">
-                  <div className="bg-white dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-700 p-2 rounded-xl shadow-sm">
+                  <div className="bg-white/50 dark:bg-slate-900/50 backdrop-blur-sm border-2 border-slate-200 dark:border-slate-700 p-2 rounded-xl shadow-sm">
                     <HelpCircle className="h-6 w-6 text-[#d60000]" strokeWidth={2.5} />
                   </div>
                   <div>
@@ -1604,7 +1611,7 @@ function AdminDashboard({
                     <p className="text-slate-500 font-medium text-center py-8">No quick questions yet</p>
                   ) : (
                     quickQuestions.map((question) => (
-                      <div key={question.id} className="flex items-start justify-between gap-2 sm:gap-3 p-3 sm:p-4 border-2 border-slate-200 dark:border-slate-700 rounded-2xl bg-white dark:bg-slate-900 shadow-sm hover:shadow-[0_4px_0_#e2e8f0] dark:hover:shadow-[0_4px_0_#0f172a] hover:-translate-y-0.5 transition-all">
+                      <div key={question.id} className="flex items-start justify-between gap-2 sm:gap-3 p-3 sm:p-4 border-2 border-slate-200 dark:border-slate-700 rounded-2xl bg-white/50 dark:bg-slate-900/50 backdrop-blur-sm shadow-sm hover:shadow-[0_4px_0_#e2e8f0] dark:hover:shadow-[0_4px_0_#0f172a] hover:-translate-y-0.5 transition-all">
                         <div className="flex-1 min-w-0">
                           <div className="flex flex-wrap items-start sm:items-center gap-2 mb-2">
                             <h4 className="font-bold text-slate-800 dark:text-white w-full sm:w-auto">{question.questionText}</h4>
@@ -1635,7 +1642,7 @@ function AdminDashboard({
 
           {/* Fire Codes Management */}
           <TabsContent value="fire-codes" className="space-y-6">
-            <Card className="rounded-[1.5rem] border-[3px] border-slate-200 dark:border-slate-700 shadow-sm hover:shadow-[0_4px_0_#e2e8f0] dark:hover:shadow-[0_4px_0_#0f172a] overflow-hidden bg-white dark:bg-slate-800 transition-all mb-6">
+            <Card className="rounded-[1.5rem] border-[3px] border-slate-200 dark:border-slate-700 shadow-sm hover:shadow-[0_4px_0_#e2e8f0] dark:hover:shadow-[0_4px_0_#0f172a] overflow-hidden bg-slate-50 dark:bg-slate-800/50 backdrop-blur-md transition-all mb-6">
               <CardHeader>
                 <CardTitle className="text-xl font-bold text-slate-800 dark:text-white">Add New Fire Code Section</CardTitle>
                 <CardDescription className="text-slate-500 dark:text-slate-400 font-medium">Add sections to the Fire Code & Regulations</CardDescription>
@@ -1702,7 +1709,7 @@ function AdminDashboard({
             <Card className="rounded-[2rem] border-[3px] border-slate-200 dark:border-slate-700 shadow-[0_8px_0_#cbd5e1] dark:shadow-[0_8px_0_#0f172a] overflow-hidden bg-slate-50 dark:bg-slate-800/50 backdrop-blur-md transition-all mb-6">
               <CardHeader className="px-6 pt-6 pb-2">
                 <div className="flex items-center gap-3">
-                  <div className="bg-white dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-700 p-2 rounded-xl shadow-sm">
+                  <div className="bg-white/50 dark:bg-slate-900/50 backdrop-blur-sm border-2 border-slate-200 dark:border-slate-700 p-2 rounded-xl shadow-sm">
                     <BookOpen className="h-6 w-6 text-[#d60000]" strokeWidth={2.5} />
                   </div>
                   <div>
@@ -1717,7 +1724,7 @@ function AdminDashboard({
                     <p className="text-slate-500 font-medium text-center py-8">No fire code sections yet</p>
                   ) : (
                     fireCodeSections.map((section) => (
-                      <div key={section.id} className="flex items-start justify-between gap-2 sm:gap-3 p-3 sm:p-4 border-2 border-slate-200 dark:border-slate-700 rounded-2xl bg-white dark:bg-slate-900 shadow-sm hover:shadow-[0_4px_0_#e2e8f0] dark:hover:shadow-[0_4px_0_#0f172a] hover:-translate-y-0.5 transition-all">
+                      <div key={section.id} className="flex items-start justify-between gap-2 sm:gap-3 p-3 sm:p-4 border-2 border-slate-200 dark:border-slate-700 rounded-2xl bg-white/50 dark:bg-slate-900/50 backdrop-blur-sm shadow-sm hover:shadow-[0_4px_0_#e2e8f0] dark:hover:shadow-[0_4px_0_#0f172a] hover:-translate-y-0.5 transition-all">
                         <div className="flex-1 min-w-0">
                           <div className="flex flex-wrap items-start sm:items-center gap-2 mb-2">
                             <h4 className="font-bold text-slate-800 dark:text-white w-full sm:w-auto">{section.title}</h4>

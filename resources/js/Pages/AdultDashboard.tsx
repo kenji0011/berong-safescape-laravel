@@ -66,60 +66,60 @@ const AdultPageClient = ({ initialBlogs }: AdultPageClientProps) => {
                             onClick={(e) => { e.preventDefault(); document.getElementById('articles-section')?.scrollIntoView({ behavior: 'smooth' }) }} 
                             className="block group h-full outline-none"
                         >
-                            <div className="relative overflow-hidden bg-white dark:bg-slate-800 rounded-[2rem] p-4 flex items-center gap-4 sm:gap-6 shadow-[0_8px_0_#cbd5e1] dark:shadow-[0_8px_0_#1e293b] hover:shadow-[0_12px_0_#cbd5e1] dark:hover:shadow-[0_12px_0_#1e293b] hover:-translate-y-1 transition-all duration-300 border-[3px] border-white dark:border-slate-700 h-full transition-colors">
+                            <div className="relative overflow-hidden bg-white dark:bg-slate-800 rounded-[1.5rem] sm:rounded-[2rem] p-3 sm:p-4 flex items-center gap-3 sm:gap-6 shadow-[0_6px_0_#cbd5e1] dark:shadow-[0_6px_0_#1e293b] sm:shadow-[0_8px_0_#cbd5e1] sm:dark:shadow-[0_8px_0_#1e293b] hover:shadow-[0_12px_0_#cbd5e1] dark:hover:shadow-[0_12px_0_#1e293b] hover:-translate-y-1 transition-all duration-300 border-[3px] border-white dark:border-slate-700 h-full transition-colors">
                                 {/* Subtle Background Image */}
                                 <div className="absolute inset-0 z-0 opacity-[0.05] dark:opacity-[0.1] group-hover:opacity-[0.08] dark:group-hover:opacity-[0.15] transition-opacity duration-500">
                                     <img src="/Articles Modal.png" className="w-full h-full object-cover dark:brightness-50" alt="" />
                                 </div>
 
                                 {/* Icon Box */}
-                                <div className="h-16 w-16 sm:h-20 sm:w-20 rounded-[1.5rem] bg-white dark:bg-slate-900 border-[3px] border-slate-100 dark:border-slate-700 flex items-center justify-center shrink-0 shadow-sm z-10 group-hover:scale-105 transition-all">
-                                    <BookOpen className="h-8 w-8 sm:h-10 sm:w-10 text-orange-500" strokeWidth={2.5} />
+                                <div className="h-12 w-12 sm:h-20 sm:w-20 rounded-xl sm:rounded-[1.5rem] bg-white dark:bg-slate-900 border-[2px] sm:border-[3px] border-slate-100 dark:border-slate-700 flex items-center justify-center shrink-0 shadow-sm z-10 group-hover:scale-105 transition-all">
+                                    <BookOpen className="h-6 w-6 sm:h-10 sm:w-10 text-orange-500" strokeWidth={2.5} />
                                 </div>
 
                                 {/* Content */}
-                                <div className="flex-1 z-10">
-                                    <h3 className="text-xl sm:text-2xl font-black text-slate-800 dark:text-white leading-tight group-hover:text-orange-600 dark:group-hover:text-orange-400 transition-colors">
+                                <div className="flex-1 z-10 min-w-0">
+                                    <h3 className="text-base sm:text-2xl font-black text-slate-800 dark:text-white leading-tight group-hover:text-orange-600 dark:group-hover:text-orange-400 transition-colors truncate">
                                         Fire Safety Articles
                                     </h3>
-                                    <p className="text-slate-500 dark:text-slate-400 font-bold text-xs sm:text-sm mt-1 sm:mt-1.5 line-clamp-1 sm:line-clamp-2 transition-colors">
+                                    <p className="text-slate-500 dark:text-slate-400 font-bold text-[10px] sm:text-sm mt-0.5 sm:mt-1.5 line-clamp-1 transition-colors">
                                         {blogs.length} professional fire safety guides
                                     </p>
                                 </div>
 
                                 {/* Arrow */}
-                                <div className="h-10 w-10 sm:h-12 sm:w-12 bg-slate-50 dark:bg-slate-700 rounded-full border-[3px] border-slate-100 dark:border-slate-600 flex items-center justify-center text-slate-300 dark:text-slate-500 group-hover:bg-orange-500 dark:group-hover:bg-orange-500 group-hover:text-white dark:group-hover:text-white group-hover:border-orange-400 dark:group-hover:border-orange-400 group-hover:scale-110 group-hover:shadow-[0_0_30px_rgba(249,115,22,0.8)] group-hover:ring-4 group-hover:ring-orange-500/30 transition-all duration-300 z-10 shrink-0">
-                                    <ArrowRight className="h-5 w-5 sm:h-6 sm:w-6 drop-shadow-[0_0_8px_rgba(255,255,255,0.5)]" strokeWidth={3} />
+                                <div className="h-8 w-8 sm:h-12 sm:w-12 bg-slate-50 dark:bg-slate-700 rounded-full border-[2px] sm:border-[3px] border-slate-100 dark:border-slate-600 flex items-center justify-center text-slate-300 dark:text-slate-500 group-hover:bg-orange-500 dark:group-hover:bg-orange-500 group-hover:text-white dark:group-hover:text-white group-hover:border-orange-400 dark:group-hover:border-orange-400 group-hover:scale-110 group-hover:shadow-[0_0_30px_rgba(249,115,22,0.8)] group-hover:ring-4 group-hover:ring-orange-500/30 transition-all duration-300 z-10 shrink-0">
+                                    <ArrowRight className="h-4 w-4 sm:h-6 sm:w-6 drop-shadow-[0_0_8px_rgba(255,255,255,0.5)]" strokeWidth={3} />
                                 </div>
                             </div>
                         </Link>
 
                         {/* EDITH Feature */}
                         <Link href="/adult/simulation" className="block group h-full outline-none">
-                            <div className="relative overflow-hidden bg-white dark:bg-slate-800 rounded-[2rem] p-4 flex items-center gap-4 sm:gap-6 shadow-[0_8px_0_#cbd5e1] dark:shadow-[0_8px_0_#1e293b] hover:shadow-[0_12px_0_#cbd5e1] dark:hover:shadow-[0_12px_0_#1e293b] hover:-translate-y-1 transition-all duration-300 border-[3px] border-white dark:border-slate-700 h-full transition-colors">
+                            <div className="relative overflow-hidden bg-white dark:bg-slate-800 rounded-[1.5rem] sm:rounded-[2rem] p-3 sm:p-4 flex items-center gap-3 sm:gap-6 shadow-[0_6px_0_#cbd5e1] dark:shadow-[0_6px_0_#1e293b] sm:shadow-[0_8px_0_#cbd5e1] sm:dark:shadow-[0_8px_0_#1e293b] hover:shadow-[0_12px_0_#cbd5e1] dark:hover:shadow-[0_12px_0_#1e293b] hover:-translate-y-1 transition-all duration-300 border-[3px] border-white dark:border-slate-700 h-full transition-colors">
                                 {/* Subtle Background Image */}
                                 <div className="absolute inset-0 z-0 opacity-[0.05] dark:opacity-[0.1] group-hover:opacity-[0.08] dark:group-hover:opacity-[0.15] transition-opacity duration-500">
                                     <img src="/EDITH Modal.png" className="w-full h-full object-cover dark:brightness-50" alt="" />
                                 </div>
 
                                 {/* Icon Box */}
-                                <div className="h-16 w-16 sm:h-20 sm:w-20 rounded-[1.5rem] bg-white dark:bg-slate-900 border-[3px] border-slate-100 dark:border-slate-700 flex items-center justify-center shrink-0 shadow-sm z-10 group-hover:scale-105 transition-all">
-                                    <Flame className="h-8 w-8 sm:h-10 sm:w-10 text-red-500" strokeWidth={2.5} />
+                                <div className="h-12 w-12 sm:h-20 sm:w-20 rounded-xl sm:rounded-[1.5rem] bg-white dark:bg-slate-900 border-[2px] sm:border-[3px] border-slate-100 dark:border-slate-700 flex items-center justify-center shrink-0 shadow-sm z-10 group-hover:scale-105 transition-all">
+                                    <Flame className="h-6 w-6 sm:h-10 sm:w-10 text-red-500" strokeWidth={2.5} />
                                 </div>
 
                                 {/* Content */}
-                                <div className="flex-1 z-10">
-                                    <h3 className="text-xl sm:text-2xl font-black text-slate-800 dark:text-white leading-tight group-hover:text-red-600 dark:group-hover:text-red-400 transition-colors">
+                                <div className="flex-1 z-10 min-w-0">
+                                    <h3 className="text-base sm:text-2xl font-black text-slate-800 dark:text-white leading-tight group-hover:text-red-600 dark:group-hover:text-red-400 transition-colors truncate">
                                         Exit Drill (EDITH)
                                     </h3>
-                                    <p className="text-slate-500 dark:text-slate-400 font-bold text-xs sm:text-sm mt-1 sm:mt-1.5 line-clamp-1 sm:line-clamp-2 transition-colors">
+                                    <p className="text-slate-500 dark:text-slate-400 font-bold text-[10px] sm:text-sm mt-0.5 sm:mt-1.5 line-clamp-1 transition-colors">
                                         Interactive home fire spread simulator
                                     </p>
                                 </div>
 
                                 {/* Arrow */}
-                                <div className="h-10 w-10 sm:h-12 sm:w-12 bg-slate-50 dark:bg-slate-700 rounded-full border-[3px] border-slate-100 dark:border-slate-600 flex items-center justify-center text-slate-300 dark:text-slate-500 group-hover:bg-red-500 dark:group-hover:bg-red-500 group-hover:text-white dark:group-hover:text-white group-hover:border-red-400 dark:group-hover:border-red-400 group-hover:scale-110 group-hover:shadow-[0_0_30_rgba(239,68,68,0.8)] group-hover:ring-4 group-hover:ring-red-500/30 transition-all duration-300 z-10 shrink-0">
-                                    <ArrowRight className="h-5 w-5 sm:h-6 sm:w-6 drop-shadow-[0_0_8px_rgba(255,255,255,0.5)]" strokeWidth={3} />
+                                <div className="h-8 w-8 sm:h-12 sm:w-12 bg-slate-50 dark:bg-slate-700 rounded-full border-[2px] sm:border-[3px] border-slate-100 dark:border-slate-600 flex items-center justify-center text-slate-300 dark:text-slate-500 group-hover:bg-red-500 dark:group-hover:bg-red-500 group-hover:text-white dark:group-hover:text-white group-hover:border-red-400 dark:group-hover:border-red-400 group-hover:scale-110 group-hover:shadow-[0_0_30_rgba(239,68,68,0.8)] group-hover:ring-4 group-hover:ring-red-500/30 transition-all duration-300 z-10 shrink-0">
+                                    <ArrowRight className="h-4 w-4 sm:h-6 sm:w-6 drop-shadow-[0_0_8px_rgba(255,255,255,0.5)]" strokeWidth={3} />
                                 </div>
                             </div>
                         </Link>
@@ -189,8 +189,8 @@ const AdultPageClient = ({ initialBlogs }: AdultPageClientProps) => {
                                                 />
                                                 {/* Image Overlay - Subtle darkening for text contrast if needed, but removed for now as it was obscuring the image */}
                                                 <div className="absolute inset-0 bg-black/10 dark:bg-black/20 z-0 transition-opacity" />
-                                                {/* Tag / Badge */}
-                                                <div className="absolute top-2 left-2 sm:top-3 sm:left-3 bg-yellow-400 text-red-600 text-[9px] sm:text-xs font-extrabold px-2 py-0.5 sm:px-3 sm:py-1 rounded-full border-[2px] border-white dark:border-slate-700 shadow-[0_2px_0_rgba(0,0,0,0.15)] uppercase tracking-wide z-10 transition-colors">
+                                                {/* Tag / Badge - Updated to Glassmorphism */}
+                                                <div className="absolute top-2 left-2 sm:top-3 sm:left-3 bg-black/40 backdrop-blur-md text-white text-[9px] sm:text-xs font-extrabold px-2 py-0.5 sm:px-3 sm:py-1 rounded-full border border-white/30 shadow-sm uppercase tracking-wide z-10">
                                                     Article
                                                 </div>
                                             </div>

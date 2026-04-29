@@ -100,7 +100,7 @@ export default function HotOrNot() {
                style={{ opacity: dangerGlow }} 
                className="absolute -left-12 md:-left-24 top-1/2 -translate-y-1/2 flex flex-col items-center z-10"
             >
-               <Flame className="h-32 w-32 md:h-64 md:w-64 text-rose-500/40" />
+               <Flame className="h-32 w-32 md:h-64 md:w-64 text-rose-500/80 dark:text-rose-400 transition-all duration-500 dark:drop-shadow-[0_0_35px_rgba(244,63,94,0.6)]" />
             </motion.div>
          </div>
          {/* Safe Zone (Right) */}
@@ -113,7 +113,7 @@ export default function HotOrNot() {
                style={{ opacity: safeGlow }} 
                className="absolute -right-12 md:-right-24 top-1/2 -translate-y-1/2 flex flex-col items-center z-10"
             >
-               <Box className="h-32 w-32 md:h-64 md:w-64 text-emerald-500/40" />
+               <Box className="h-32 w-32 md:h-64 md:w-64 text-emerald-500/80 dark:text-emerald-400 transition-all duration-500 dark:drop-shadow-[0_0_35px_rgba(16,185,129,0.6)]" />
             </motion.div>
          </div>
       </div>
@@ -174,7 +174,7 @@ export default function HotOrNot() {
            <div className="relative flex flex-col items-center gap-12 w-full max-w-lg mx-auto">
               {/* Mission Control (Hint + Progress) */}
               <div className="flex flex-col items-center gap-6 w-full max-w-sm px-4">
-                 <div className="flex items-center gap-3 bg-white dark:bg-slate-900 border-2 border-slate-100 dark:border-slate-800 px-6 py-4 rounded-[2rem] shadow-xl w-full">
+                 <div className="hidden md:flex items-center gap-3 bg-white dark:bg-slate-900 border-2 border-slate-100 dark:border-slate-800 px-6 py-4 rounded-[2rem] shadow-xl w-full transition-colors">
                     <div className="text-3xl md:text-4xl">🤖</div>
                     <div className="text-[10px] md:text-xs font-black text-slate-600 dark:text-slate-300 uppercase tracking-[0.15em] leading-relaxed">
                        "Swipe right for toys, <br className="md:hidden" /> left for hot things!"
@@ -270,7 +270,7 @@ function SwipeCard({ item, onSwipe, dangerGlow, safeGlow, dangerBg, safeBg }: an
    const x = useMotionValue(0)
    const [exitX, setExitX] = useState(0)
    const rotate = useTransform(x, [-200, 200], [-25, 25])
-   const opacity = useTransform(x, [-200, -150, 0, 150, 200], [0, 1, 1, 1, 0])
+   const opacity = useTransform(x, [-300, -250, 0, 250, 300], [0.8, 1, 1, 1, 0.8])
    const glowBg = useTransform(
       x,
       [-150, 0, 150],
@@ -309,6 +309,8 @@ function SwipeCard({ item, onSwipe, dangerGlow, safeGlow, dangerBg, safeBg }: an
       return () => unsubscribeX()
    }, [x, dangerGlow, safeGlow, dangerBg, safeBg])
 
+   const isMobile = typeof window !== 'undefined' && window.innerWidth < 768
+
    return (
       <motion.div
          style={{ x, rotate, opacity, position: 'absolute' }}
@@ -327,7 +329,23 @@ function SwipeCard({ item, onSwipe, dangerGlow, safeGlow, dangerBg, safeBg }: an
          whileTap={{ scale: 0.98 }}
          initial={{ scale: 0.8, opacity: 0, y: 20 }}
          animate={{ scale: 1, opacity: 1, y: 0 }}
-         exit={{ x: exitX, opacity: 0, scale: 0.5, transition: { duration: 0.3 } }}
+         exit={isMobile ? {
+            x: exitX,
+            opacity: 0,
+            transition: { duration: 0.2 }
+         } : { 
+            x: exitX, 
+            y: 0,
+            scale: 0, 
+            opacity: 0,
+            rotate: exitX > 0 ? 45 : -45,
+            transition: { 
+               type: 'spring',
+               stiffness: 300,
+               damping: 30,
+               duration: 0.4
+            } 
+         }}
       >
          {/* Dynamic Glow Background */}
          <motion.div 

@@ -971,6 +971,14 @@
                     oscillator.start(audioCtx.currentTime);
                     oscillator.stop(audioCtx.currentTime + 0.25);
                     break;
+                case 'tap':
+                    const tapAudio = new Audio('../../sounds/tap.mp3');
+                    tapAudio.play().catch(e => {});
+                    break;
+                case 'winGame':
+                    const winAudio = new Audio('../../sounds/wingame.mp3');
+                    winAudio.play().catch(e => {});
+                    break;
             }
         }
 
@@ -1084,6 +1092,7 @@
 
         function handleMobileKey(key) {
             if (!sdrActive) return;
+            playSound('tap');
             // Simulate the keydown event for the tapped key
             const event = new KeyboardEvent('keydown', { key: key });
             document.dispatchEvent(event);
@@ -1092,6 +1101,10 @@
         document.addEventListener('keydown', (e) => {
             if (!sdrActive) return;
             const key = e.key.toLowerCase();
+            
+            if (['s', 'd', 'r'].includes(key)) {
+                playSound('tap');
+            }
 
             if (document.getElementById(`key-${key}`)) {
                 document.getElementById(`key-${key}`).classList.add('bg-yellow-500');
@@ -1117,6 +1130,7 @@
                     document.getElementById('hero-icon').classList.add('text-green-600');
                     document.getElementById('game-text').innerText = "FIRE OUT! SAFE.";
                     document.getElementById('game-text').className = "text-green-700 font-black absolute bottom-2 drop-shadow-sm tracking-wider";
+                    playSound('winGame');
 
                     if (!localState.sdrCompleted) {
                         localState.sdrCompleted = true;
@@ -1322,7 +1336,7 @@
 
                     if (trapGameState.currentRound >= trapGameConfig.rounds.length - 1) {
                         // All rounds complete - WIN!
-                        playSound('win');
+                        playSound('winGame');
                         endGame(true, 'You mastered all 3 rounds!');
                     } else {
                         // Next round

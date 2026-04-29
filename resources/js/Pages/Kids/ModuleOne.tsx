@@ -225,7 +225,7 @@ const ModuleOnePage = () => {
 
   // ─────────────────────────────────────────────
   return (
-    <div className="min-h-screen bg-background font-sans flex flex-col transition-colors duration-500">
+    <div className="min-h-screen bg-white dark:bg-slate-950 bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] dark:bg-[radial-gradient(#1e293b_1px,transparent_1px)] [background-size:16px_16px] font-sans flex flex-col transition-colors duration-500">
 
       {/* ── Sub Header ── */}
       <div className="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 py-3 px-4 sm:px-6 lg:px-8 shadow-sm z-20 relative transition-colors">
@@ -271,7 +271,7 @@ const ModuleOnePage = () => {
         
         {/* Skeleton Loader (Simulated for visual consistency with other modules) */}
         {moduleLoading && (
-          <div className="absolute inset-0 z-10 bg-background flex flex-col items-center justify-start pt-32 px-4 pointer-events-none transition-colors">
+          <div className="absolute inset-0 z-10 bg-white dark:bg-slate-950 bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] dark:bg-[radial-gradient(#1e293b_1px,transparent_1px)] [background-size:16px_16px] flex flex-col items-center justify-start pt-32 px-4 pointer-events-none transition-colors">
             <div className="w-16 h-16 sm:w-20 sm:h-20 bg-white dark:bg-slate-900 rounded-2xl shadow-sm border-[3px] border-blue-200 dark:border-slate-800 flex items-center justify-center mb-6 animate-bounce transition-colors">
               <Flame className="h-8 w-8 sm:h-10 sm:w-10 text-[#ff4b3e] animate-pulse" />
             </div>

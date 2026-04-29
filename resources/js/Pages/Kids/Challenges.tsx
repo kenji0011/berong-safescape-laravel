@@ -10,7 +10,14 @@ import { useSettings } from "@/lib/settings-context"
 import { ArrowLeft } from "lucide-react"
 import { Link } from "@inertiajs/react"
 
-const KidsChallengesPage = () => {
+interface ChallengesProps {
+  progress?: {
+    completedModules: number[]
+    earnedBadges: any[]
+  }
+}
+
+const KidsChallengesPage = ({ progress }: ChallengesProps) => {
   const { reduceMotion } = useSettings()
   const [isMobile, setIsMobile] = useState(false)
 
@@ -30,16 +37,19 @@ const KidsChallengesPage = () => {
         // Artificial delay to show off the cool skeleton loading
         await new Promise(resolve => setTimeout(resolve, 1000))
 
+        const earnedBadgeIds = progress?.earnedBadges?.map(b => b.badge_id) || []
+
         const content: ContentCardData[] = [
           {
             id: "activity-1",
             title: "Fire Safety Quiz",
-            description: "Test your knowledge with fun questions and earn your Safety Scout badge!",
+            description: "Test your knowledge with fun questions and earn your Quiz Hero badge!",
             type: "activity",
             imageUrl: "/fire_safety_quiz.jpg",
             href: "/kids/quiz",
             difficulty: "medium",
-            category: "activities"
+            category: "activities",
+            isCompleted: earnedBadgeIds.includes('quiz_hero')
           },
             {
               id: "activity-2",
@@ -49,7 +59,8 @@ const KidsChallengesPage = () => {
               imageUrl: "/memory_game.jpg",
               href: "/kids/memory-game",
               difficulty: "easy",
-              category: "activities"
+              category: "activities",
+              isCompleted: earnedBadgeIds.includes('memory_master')
             },
             {
               id: "activity-3",
@@ -59,7 +70,8 @@ const KidsChallengesPage = () => {
               imageUrl: "/smoke_crawl.png",
               href: "/kids/smoke-crawl",
               difficulty: "hard",
-              category: "activities"
+              category: "activities",
+              isCompleted: earnedBadgeIds.includes('smoke_scout')
             },
             {
               id: "activity-7",
@@ -69,7 +81,8 @@ const KidsChallengesPage = () => {
               imageUrl: "/hotornot.jpg",
               href: "/kids/hot-or-not",
               difficulty: "easy",
-              category: "activities"
+              category: "activities",
+              isCompleted: earnedBadgeIds.includes('safety_scout')
             }
           ]
 
@@ -89,7 +102,7 @@ const KidsChallengesPage = () => {
       }
     }
     fetchData()
-  }, [])
+  }, [progress])
 
   return (
     <div className="min-h-screen relative bg-background transition-colors duration-500">
@@ -121,32 +134,32 @@ const KidsChallengesPage = () => {
             {/* Background Glow */}
             <div className="absolute -inset-2 bg-blue-500/10 rounded-[2.5rem] opacity-20 group-hover:opacity-30 transition-opacity duration-500"></div>
             
-            <div className="relative bg-white dark:bg-slate-800 rounded-[2rem] p-6 sm:p-8 shadow-xl border-2 border-slate-50 dark:border-slate-700 overflow-hidden transition-colors duration-500">
+            <div className="relative bg-white dark:bg-slate-800 rounded-[2rem] p-5 sm:p-8 shadow-xl border-2 border-slate-50 dark:border-slate-700 overflow-hidden transition-colors duration-500">
                {/* Decorative floating elements */}
-               <div className="absolute top-0 right-0 p-8 opacity-10 rotate-12 group-hover:rotate-0 transition-transform duration-700">
+               <div className="hidden sm:block absolute top-0 right-0 p-8 opacity-10 rotate-12 group-hover:rotate-0 transition-transform duration-700">
                   <div className="text-8xl sm:text-9xl font-black">🏆</div>
                </div>
                <div className="absolute -bottom-4 -left-4 w-24 h-24 bg-blue-50 dark:bg-blue-900/20 rounded-full opacity-60"></div>
                
-               <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6 relative z-10">
+               <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-6 relative z-10">
                   <Link 
                     href="/kids" 
-                    className="group/btn bg-slate-50 dark:bg-slate-700 p-4 rounded-2xl shadow-sm hover:shadow-md transition-all hover:-translate-x-1 border-2 border-slate-100 dark:border-slate-600 flex items-center justify-center"
+                    className="group/btn bg-slate-50 dark:bg-slate-700 p-3 sm:p-4 rounded-xl sm:rounded-2xl shadow-sm hover:shadow-md transition-all hover:-translate-x-1 border-2 border-slate-100 dark:border-slate-600 flex items-center justify-center shrink-0"
                   >
-                     <ArrowLeft className="h-6 w-6 text-slate-600 dark:text-slate-300 group-hover/btn:text-blue-600 transition-colors" />
+                     <ArrowLeft className="h-5 w-5 sm:h-6 sm:w-6 text-slate-600 dark:text-slate-300 group-hover/btn:text-blue-600 transition-colors" />
                   </Link>
                   
                   <div className="flex-1">
                      <div className="flex items-center gap-3 mb-1">
-                        <span className="px-3 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 text-[10px] font-black uppercase tracking-widest rounded-full border border-blue-200 dark:border-blue-800">
+                        <span className="px-2.5 py-0.5 bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 text-[10px] font-black uppercase tracking-widest rounded-full border border-blue-200 dark:border-blue-800">
                            Mission: Possible
                         </span>
                         <span className="flex items-center gap-1 text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest">
-                           <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></div>
+                           <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></div>
                            Live Ops
                         </span>
                      </div>
-                     <h1 className="text-3xl sm:text-4xl font-black text-slate-800 dark:text-white tracking-tight mb-2">
+                     <h1 className="text-2xl sm:text-4xl font-black text-slate-800 dark:text-white tracking-tight mb-1 sm:mb-2 uppercase">
                         Mini <span className="text-blue-600 dark:text-blue-400">Games</span>
                      </h1>
                      <p className="text-slate-500 dark:text-slate-400 font-bold text-sm sm:text-base max-w-lg leading-relaxed">

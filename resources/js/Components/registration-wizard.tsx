@@ -85,7 +85,11 @@ const STEPS = [
   { id: 4, title: "Pre-Test", icon: ClipboardList, description: "Quick assessment" },
 ]
 
-export function RegistrationWizard() {
+interface RegistrationWizardProps {
+  onBackToLogin?: () => void
+}
+
+export function RegistrationWizard({ onBackToLogin }: RegistrationWizardProps) {
   
   const [currentStep, setCurrentStep] = useState(1)
   const [loading, setLoading] = useState(false)
@@ -295,6 +299,8 @@ export function RegistrationWizard() {
     if (currentStep > 1) {
       setCurrentStep(prev => prev - 1)
       setError("")
+    } else if (currentStep === 1 && onBackToLogin) {
+      onBackToLogin()
     }
   }
 
@@ -411,7 +417,7 @@ export function RegistrationWizard() {
           <div className="mx-auto w-20 h-20 bg-white rounded-full flex items-center justify-center mb-4 shadow-lg">
             <Check className="w-10 h-10 text-green-500" />
           </div>
-          <h2 className="text-2xl font-bold text-white">Registration Complete! 🎉</h2>
+          <h2 className="text-2xl font-bold text-white">Registration Complete!</h2>
           <p className="text-white/80 text-sm mt-1">Welcome to SafeScape Fire Safety Learning</p>
         </div>
         <CardContent className="space-y-6 p-6">
@@ -433,7 +439,7 @@ export function RegistrationWizard() {
             onClick={handleContinue}
             className="w-full bg-yellow-400 text-red-600 font-extrabold py-3 rounded-full text-lg shadow-[0_4px_0_#b45309] hover:-translate-y-0.5 hover:shadow-[0_6px_0_#b45309] active:translate-y-1 active:shadow-[0_0px_0_#b45309] transition-all flex items-center justify-center gap-2 mt-4"
           >
-            🚀 Start Learning
+            Start Learning
             <ChevronRight className="h-5 w-5" />
           </button>
         </CardContent>
@@ -556,6 +562,11 @@ export function RegistrationWizard() {
                 max="120"
                 value={data.age}
                 onChange={(e) => updateField("age", e.target.value)}
+                onKeyDown={(e) => {
+                  if (['.', 'e', 'E', '+', '-'].includes(e.key)) {
+                    e.preventDefault();
+                  }
+                }}
                 className={`rounded-xl border-2 h-11 text-base focus:border-orange-400 focus:ring-orange-400 dark:bg-slate-950 dark:text-white dark:border-slate-800 ${validationErrors.age ? "border-red-400 bg-red-50 dark:bg-red-500/10" : "border-gray-200"}`}
               />
               {validationErrors.age && (
@@ -882,33 +893,6 @@ export function RegistrationWizard() {
                   </RadioGroup>
                 </div>
 
-                {/* Question Navigation */}
-                <div className="flex justify-end mt-4 sm:mt-5">
-
-                  {currentQuestionIndex === questions.length - 1 && (
-                    <button
-                      onClick={handleSubmit}
-                      disabled={loading || Object.keys(data.preTestAnswers).length < questions.length}
-                      className={`flex items-center gap-1 font-extrabold px-5 py-2 rounded-full border-[3px] transition-all text-sm ${
-                        loading || Object.keys(data.preTestAnswers).length < questions.length
-                          ? "bg-gray-200 text-gray-400 border-gray-300 cursor-not-allowed"
-                          : "bg-green-500 text-white border-green-300 shadow-[0_4px_0_#166534] hover:-translate-y-0.5 hover:shadow-[0_6px_0_#166534] active:translate-y-1 active:shadow-[0_0px_0_#166534]"
-                      }`}
-                    >
-                      {loading ? (
-                        <>
-                          <Loader2 className="h-4 w-4 animate-spin" />
-                          Submitting...
-                        </>
-                      ) : (
-                        <>
-                          Complete Registration
-                          <Check className="h-4 w-4" />
-                        </>
-                      )}
-                    </button>
-                  )}
-                </div>
 
                 {/* Question dots for quick navigation */}
                 <div className="flex flex-wrap justify-center gap-1.5 sm:gap-2 mt-5 sm:mt-6">
@@ -942,15 +926,15 @@ export function RegistrationWizard() {
           <div className="flex justify-between mt-8">
             <button
               onClick={handleBack}
-              disabled={currentStep === 1}
+              disabled={currentStep === 1 && !onBackToLogin}
               className={`flex items-center gap-1 font-bold px-5 py-2.5 rounded-full border-[3px] transition-all text-sm ${
-                currentStep === 1
+                currentStep === 1 && !onBackToLogin
                   ? "border-gray-200 dark:border-slate-800 text-gray-300 dark:text-slate-700 cursor-not-allowed"
                   : "border-gray-300 dark:border-slate-700 text-slate-600 dark:text-slate-400 shadow-[0_3px_0_#94a3b8] dark:shadow-[0_3px_0_#1e293b] hover:-translate-y-0.5 hover:shadow-[0_5px_0_#94a3b8] dark:hover:shadow-[0_5px_0_#1e293b] active:translate-y-1 active:shadow-[0_0px_0_#94a3b8]"
               }`}
             >
               <ChevronLeft className="h-4 w-4" />
-              Back
+              {currentStep === 1 ? "Back to Login" : "Back"}
             </button>
             <button
               onClick={handleNext}
@@ -963,7 +947,7 @@ export function RegistrationWizard() {
         )}
 
         {currentStep === 4 && questions.length > 0 && (
-          <div className="flex justify-start mt-6 sm:mt-8">
+          <div className="flex justify-between items-center mt-6 sm:mt-8">
             <button
               onClick={handleBack}
               className="flex items-center gap-1 font-bold px-5 py-2.5 rounded-full border-[3px] border-gray-300 dark:border-slate-700 text-slate-600 dark:text-slate-400 shadow-[0_3px_0_#94a3b8] dark:shadow-[0_3px_0_#1e293b] hover:-translate-y-0.5 hover:shadow-[0_5px_0_#94a3b8] dark:hover:shadow-[0_5px_0_#1e293b] active:translate-y-1 active:shadow-[0_0px_0_#94a3b8] transition-all text-sm"
@@ -971,6 +955,30 @@ export function RegistrationWizard() {
               <ChevronLeft className="h-4 w-4" />
               Back to Account
             </button>
+
+            {currentQuestionIndex === questions.length - 1 && (
+              <button
+                onClick={handleSubmit}
+                disabled={loading || Object.keys(data.preTestAnswers).length < questions.length}
+                className={`flex items-center gap-1 font-extrabold px-8 py-2.5 rounded-full border-[3px] transition-all text-sm ${
+                  loading || Object.keys(data.preTestAnswers).length < questions.length
+                    ? "bg-gray-200 text-gray-400 border-gray-300 cursor-not-allowed"
+                    : "bg-yellow-400 text-red-600 border-white shadow-[0_4px_0_#b45309] hover:-translate-y-0.5 hover:shadow-[0_6px_0_#b45309] active:translate-y-1 active:shadow-[0_0px_0_#b45309]"
+                }`}
+              >
+                {loading ? (
+                  <>
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                    Submitting...
+                  </>
+                ) : (
+                  <>
+                    Submit
+                    <ChevronRight className="h-4 w-4" />
+                  </>
+                )}
+              </button>
+            )}
           </div>
         )}
       </CardContent>

@@ -42,14 +42,13 @@ const KidsDashboardPage = ({ modules, progress }: KidsPageProps) => {
       type: "module",
       emoji: "🛡️",
       href: "/kids/safescape",
-      isNew: true,
       category: "modules",
       isCompleted: completedIds.length >= 5
     },
     {
       id: "video-game",
-      title: "Fire Safety Adventure",
-      description: "The ultimate 3D fire safety game is under development. Prepare for an epic mission!",
+      title: "Task Master",
+      description: "Complete daily missions and earn legendary rewards! Show your skills as a top fire safety expert.",
       type: "game",
       emoji: "🕹️",
       href: "#",
@@ -59,8 +58,8 @@ const KidsDashboardPage = ({ modules, progress }: KidsPageProps) => {
     },
     {
       id: "escape-room-game",
-      title: "Fire Escape Room",
-      description: "Test your speed and logic in our upcoming virtual escape room challenge. Can you find the way out?",
+      title: "The Right Call",
+      description: "Answer emergency calls and dispatch the right team! Do you have what it takes to be a dispatching hero?",
       type: "game",
       emoji: "🔦",
       href: "#",
@@ -97,7 +96,8 @@ const KidsDashboardPage = ({ modules, progress }: KidsPageProps) => {
       href: "#",
       isLocked: true,
       category: "activities",
-      duration: "More contents soon!"
+      duration: "More contents soon!",
+      hideBadge: true
     },
   ]
 
@@ -122,7 +122,7 @@ const KidsDashboardPage = ({ modules, progress }: KidsPageProps) => {
           WebkitBackfaceVisibility: 'hidden'
         }}
       >
-        <div className="absolute inset-0 bg-background/60"></div>
+        <div className="absolute inset-0 bg-white/10 dark:bg-slate-900/60"></div>
       </div>
 
       {!isMobile && !reduceMotion && (

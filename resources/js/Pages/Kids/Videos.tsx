@@ -1,6 +1,6 @@
 import React, { useState, useRef } from "react"
 import { Link } from '@inertiajs/react'
-import { ArrowLeft, Play, Tv, Star, GraduationCap } from "lucide-react"
+import { ArrowLeft, Play, Tv, Star, GraduationCap, BadgeCheck } from "lucide-react"
 import DashboardLayout from "@/Layouts/DashboardLayout"
 import axios from "axios"
 import { cn } from "@/lib/utils"
@@ -76,19 +76,42 @@ const VideosPage = () => {
     })
   }
 
+  const activeVideoRef = useRef(activeVideo)
+  
+  useEffect(() => {
+    activeVideoRef.current = activeVideo
+  }, [activeVideo])
+
+  const [watchedVideos, setWatchedVideos] = useState<Set<string>>(new Set())
+  const [badgeAwarded, setBadgeAwarded] = useState(false)
+
   const onPlayerStateChange = (event: any) => {
     // YT.PlayerState.ENDED is 0
     if (event.data === 0) {
-      awardBadge()
+      setWatchedVideos(prev => {
+        const newWatched = new Set(prev)
+        const currentVideoId = activeVideoRef.current.id
+        newWatched.add(currentVideoId)
+        
+        // Check if all videos have been watched
+        if (!badgeAwarded && newWatched.size === moreVideos.length) {
+          awardBadge()
+        }
+        return newWatched
+      })
     }
   }
 
   const awardBadge = () => {
+    setBadgeAwarded(true)
     axios.post('/api/badges/award', {
       badge_id: 'intel_analyst',
       badge_name: 'Intel Analyst',
       badge_icon: '🎬'
-    }).catch(err => console.error("Failed to award badge:", err.response?.data || err.message))
+    }).catch(err => {
+      setBadgeAwarded(false)
+      console.error("Failed to award badge:", err.response?.data || err.message)
+    })
   }
 
   const handleVideoSelect = (video: any) => {
@@ -157,24 +180,24 @@ const VideosPage = () => {
           <div className="relative mb-12 group">
             <div className="absolute -inset-2 bg-primary/20 rounded-[2.5rem] group-hover:opacity-30 transition-opacity duration-500"></div>
             
-            <div className="relative bg-white dark:bg-slate-800 rounded-[2rem] p-6 sm:p-8 shadow-xl border-2 border-slate-50 dark:border-slate-700 overflow-hidden transition-colors duration-500">
+            <div className="relative bg-white dark:bg-slate-800 rounded-[2rem] p-5 sm:p-8 shadow-xl border-2 border-slate-50 dark:border-slate-700 overflow-hidden transition-colors duration-500">
                {/* Decorative floating elements */}
-               <div className="absolute top-0 right-0 p-8 opacity-10 rotate-12 group-hover:rotate-0 transition-transform duration-700">
+               <div className="hidden sm:block absolute top-0 right-0 p-8 opacity-10 rotate-12 group-hover:rotate-0 transition-transform duration-700">
                   <div className="text-8xl sm:text-9xl font-black">🎬</div>
                </div>
                <div className="absolute -bottom-4 -left-4 w-24 h-24 bg-red-50 dark:bg-red-900/10 rounded-full blur-2xl opacity-60"></div>
                
-               <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6 relative z-10">
+               <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-6 relative z-10">
                   <Link 
                     href="/kids" 
-                    className="group/btn bg-slate-50 dark:bg-slate-700 p-4 rounded-2xl shadow-sm hover:shadow-md transition-all hover:-translate-x-1 border-2 border-slate-100 dark:border-slate-600 flex items-center justify-center"
+                    className="group/btn bg-slate-50 dark:bg-slate-700 p-3 sm:p-4 rounded-xl sm:rounded-2xl shadow-sm hover:shadow-md transition-all hover:-translate-x-1 border-2 border-slate-100 dark:border-slate-600 flex items-center justify-center shrink-0"
                   >
-                     <ArrowLeft className="h-6 w-6 text-slate-600 dark:text-slate-300 group-hover/btn:text-red-600 transition-colors" />
+                     <ArrowLeft className="h-5 w-5 sm:h-6 sm:w-6 text-slate-600 dark:text-slate-300 group-hover/btn:text-red-600 transition-colors" />
                   </Link>
                   
                   <div className="flex-1">
-                      <div className="flex items-center gap-3 mb-1">
-                        <span className="px-3 py-1 bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 text-[10px] font-black uppercase tracking-widest rounded-full border border-red-200 dark:border-red-800">
+                      <div className="flex items-center gap-3 mb-1.5">
+                        <span className="px-2.5 py-0.5 bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 text-[10px] font-black uppercase tracking-widest rounded-full border border-red-200 dark:border-red-800">
                            Watch & Learn
                         </span>
                         <span className="flex items-center gap-1 text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest">
@@ -182,12 +205,31 @@ const VideosPage = () => {
                            Live Comms
                         </span>
                      </div>
-                     <h1 className="text-3xl sm:text-4xl font-black text-slate-800 dark:text-white tracking-tight mb-2">
+                     <h1 className="text-2xl sm:text-4xl font-black text-slate-800 dark:text-white tracking-tight mb-1 sm:mb-2 uppercase">
                         Fire Safety <span className="text-primary">Videos</span>
                      </h1>
                      <p className="text-slate-500 dark:text-slate-400 font-bold text-sm sm:text-base max-w-lg leading-relaxed">
-                        Watch any fire safety video to the end to earn your <span className="text-red-600 font-black">Intel Analyst Badge</span>! 🎬
+                        Watch all fire safety videos to the end to earn your <span className="text-red-600 font-black">Intel Analyst Badge</span>! 🎬
                      </p>
+                  </div>
+               </div>
+
+               {/* Badge Progress Tracker */}
+               <div className="mt-6 flex flex-col gap-2">
+                  <div className="flex items-center justify-between">
+                     <span className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest flex items-center gap-2">
+                        <Star className={cn("h-3 w-3", watchedVideos.size > 0 ? "text-amber-500 fill-amber-500" : "text-slate-300 dark:text-slate-600")} />
+                        Intel Analyst Badge Progress
+                     </span>
+                     <span className="text-[10px] font-black text-slate-600 dark:text-slate-300 uppercase tracking-widest">
+                        {watchedVideos.size} / {moreVideos.length} Completed
+                     </span>
+                  </div>
+                  <div className="w-full h-3 bg-slate-100 dark:bg-slate-700 rounded-full border-2 border-slate-200 dark:border-slate-600 overflow-hidden shadow-inner">
+                     <div 
+                        className="h-full bg-gradient-to-r from-amber-400 to-amber-600 rounded-full transition-all duration-1000 shadow-[0_0_15px_rgba(251,191,36,0.5)]" 
+                        style={{ width: `${(watchedVideos.size / moreVideos.length) * 100}%` }}
+                     />
                   </div>
                </div>
             </div>
@@ -218,17 +260,17 @@ const VideosPage = () => {
                </div>
 
                {/* Tactical Info Panel */}
-               <div className="px-6 sm:px-10 py-6 bg-slate-800 border-t border-slate-700 flex flex-col sm:flex-row gap-4 items-center">
-                  <div className="flex-1">
-                    <p className="text-slate-300 font-bold text-base sm:text-lg leading-relaxed italic">
+               <div className="px-6 sm:px-10 py-6 bg-slate-800 border-t border-slate-700 flex flex-col sm:flex-row gap-6 items-center sm:items-start lg:items-center">
+                  <div className="flex-1 text-center sm:text-left">
+                    <p className="text-slate-300 font-bold text-sm sm:text-lg leading-relaxed">
                       " {activeVideo.description} "
                     </p>
                   </div>
-                  <div className="flex gap-2">
-                    <div className="px-4 py-2 bg-slate-700 rounded-xl text-slate-300 font-black text-xs uppercase tracking-tighter">Day 0{activeVideo.id}</div>
-                    <div className="px-4 py-2 bg-red-600 rounded-xl text-white font-black text-xs uppercase tracking-tighter shadow-lg shadow-red-900/20">Active Intel</div>
-                    <div className="px-4 py-2 bg-amber-500 rounded-xl text-white font-black text-xs uppercase tracking-tighter shadow-lg shadow-amber-900/20 flex items-center gap-2">
-                      <span>🎬</span>
+                  <div className="flex flex-wrap justify-center sm:justify-end gap-2 w-full sm:w-auto">
+                    <div className="px-3 sm:px-4 py-2 bg-slate-700 rounded-xl text-slate-300 font-black text-[10px] sm:text-xs uppercase tracking-tighter whitespace-nowrap">Day 0{activeVideo.id}</div>
+                    <div className="px-3 sm:px-4 py-2 bg-red-600 rounded-xl text-white font-black text-[10px] sm:text-xs uppercase tracking-tighter shadow-lg shadow-red-900/20 whitespace-nowrap">Active Intel</div>
+                    <div className="px-3 sm:px-4 py-2 bg-amber-500 rounded-xl text-white font-black text-[10px] sm:text-xs uppercase tracking-tighter shadow-lg shadow-amber-900/20 flex items-center gap-1.5 whitespace-nowrap">
+                      <span className="hidden sm:inline text-xs">🎬</span>
                       <span>REWARD AVAILABLE</span>
                     </div>
                   </div>
@@ -244,13 +286,13 @@ const VideosPage = () => {
                      <Play className="h-6 w-6 text-white fill-current" />
                   </div>
                   <div>
-                    <h3 className="text-2xl sm:text-3xl font-black text-slate-800 dark:text-white tracking-tight">Mission Briefings</h3>
-                    <p className="text-slate-500 dark:text-slate-400 font-bold text-sm uppercase tracking-widest">Select a target to begin training</p>
+                    <h3 className="text-xl sm:text-3xl font-black text-slate-800 dark:text-white tracking-tight uppercase">Mission Briefings</h3>
+                    <p className="text-slate-500 dark:text-slate-400 font-black text-[10px] uppercase tracking-[0.2em]">Select a target to begin training</p>
                   </div>
                </div>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
               {moreVideos.map((video) => {
                 const isActive = activeVideo.id === video.id
                 return (
@@ -258,51 +300,58 @@ const VideosPage = () => {
                     key={video.id}
                     onClick={() => handleVideoSelect(video)}
                     className={cn(
-                      "group relative flex flex-col bg-white dark:bg-slate-800 rounded-[2.5rem] overflow-hidden transition-all duration-500 cursor-pointer h-full border-2",
-                      isActive 
-                        ? "border-red-500 shadow-2xl shadow-red-200 dark:shadow-red-950/20 scale-[1.02] z-10" 
-                        : "border-slate-50 dark:border-slate-700 shadow-xl hover:shadow-2xl hover:border-red-200 dark:hover:border-red-800 hover:-translate-y-2"
+                      "group relative flex flex-col cursor-pointer transition-all duration-300",
+                      isActive ? "scale-[1.02]" : "hover:scale-[1.02]"
                     )}
                   >
-                    {/* Full-bleed Thumbnail */}
-                    <div className="relative w-full h-48 sm:h-52 overflow-hidden">
-                       <img src={video.thumbnail} alt={video.title} className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
-                       <div className="absolute inset-0 bg-slate-900/40 group-hover:opacity-40 transition-opacity" />
+                    {/* Thumbnail Container */}
+                    <div className="relative w-full aspect-video rounded-2xl overflow-hidden mb-4 shadow-md group-hover:shadow-xl transition-shadow">
+                       <img src={video.thumbnail} alt={video.title} className="absolute inset-0 w-full h-full object-cover" />
+                       <div className="absolute inset-0 bg-black/10 group-hover:bg-black/0 transition-colors" />
                        
-                       {/* Play Overlay */}
-                       <div className={cn(
-                         "absolute inset-0 flex items-center justify-center transition-all duration-500",
-                         isActive ? "opacity-100" : "opacity-0 group-hover:opacity-100"
-                       )}>
-                          <div className="w-16 h-16 rounded-full bg-red-600 border-4 border-white dark:border-slate-800 flex items-center justify-center shadow-2xl transform transition-transform group-hover:scale-110">
-                             <Play className="h-6 w-6 text-white fill-current ml-1" />
-                          </div>
-                       </div>
-
-                       {/* Duration Badge */}
-                       <div className="absolute bottom-4 right-4 bg-slate-900 px-3 py-1 rounded-full text-[10px] font-black text-white uppercase tracking-widest border border-white/20">
+                       {/* Duration Overlay */}
+                       <div className="absolute bottom-2 right-2 bg-black/80 px-2 py-0.5 rounded text-[10px] font-bold text-white tracking-wider">
                           {video.id === "1" ? "3:45" : video.id === "2" ? "2:15" : "4:30"}
                        </div>
+
+                       {/* Active Glow */}
+                       {isActive && (
+                         <div className="absolute inset-0 border-[4px] border-primary rounded-2xl animate-pulse pointer-events-none" />
+                       )}
                     </div>
 
-                    <div className="p-6 flex flex-col flex-1">
-                      <div className="flex items-center gap-2 mb-3">
-                         <span className="text-xl">{video.icon}</span>
-                         <span className="text-[10px] font-black text-red-500 uppercase tracking-widest bg-red-50 dark:bg-red-900/20 px-2 py-0.5 rounded">NEW VIDEO</span>
-                         <span className="ml-auto text-[10px] font-black text-amber-600 uppercase tracking-widest bg-amber-50 dark:bg-amber-900/20 px-2 py-0.5 rounded border border-amber-200 dark:border-amber-900/30 flex items-center gap-1">
-                           🎬 BADGE
-                         </span>
-                      </div>
-                      <h4 className="font-black text-slate-800 dark:text-white text-xl mb-3 tracking-tight leading-tight group-hover:text-red-600 dark:group-hover:text-red-400 transition-colors">{video.title}</h4>
-                      <p className="text-slate-500 dark:text-slate-400 font-bold text-sm leading-relaxed flex-1">
-                        {video.description}
-                      </p>
-                      
-                      {isActive && (
-                        <div className="mt-6 w-full bg-red-600 text-white font-black text-[10px] py-3 rounded-2xl shadow-lg shadow-red-200 dark:shadow-red-950/20 flex items-center justify-center gap-2 tracking-[0.2em] uppercase animate-pulse">
-                          <Tv className="h-4 w-4" /> Now Playing
-                        </div>
-                      )}
+                    {/* Info Section - Modern Layout */}
+                    <div className="flex flex-col px-1">
+                       <div className="flex-1 min-w-0">
+                          <h4 className={cn(
+                            "font-black text-base sm:text-xl tracking-tight leading-snug line-clamp-2 mb-1 transition-colors uppercase",
+                            isActive ? "text-primary" : "text-slate-800 dark:text-white group-hover:text-primary"
+                          )}>
+                             {video.title}
+                          </h4>
+                          
+                          <div className="flex flex-col gap-0.5">
+                             <div className="flex items-center gap-1.5 text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-[0.15em]">
+                                <span>HQ Briefing</span>
+                                {watchedVideos.has(video.id) && (
+                                  <>
+                                    <div className="w-1 h-1 rounded-full bg-slate-400" />
+                                    <span className="flex items-center gap-1 text-emerald-600 dark:text-emerald-500">
+                                       <BadgeCheck className="h-3 w-3 fill-current" />
+                                       Watched
+                                    </span>
+                                  </>
+                                )}
+                             </div>
+                             
+                             {isActive && (
+                               <div className="flex items-center gap-1.5 text-[10px] font-black text-red-600 uppercase tracking-[0.15em] mt-1">
+                                  <div className="w-2 h-2 rounded-full bg-red-600 animate-ping" />
+                                  Now Playing
+                               </div>
+                             )}
+                          </div>
+                       </div>
                     </div>
                   </div>
                 )
@@ -322,8 +371,8 @@ const VideosPage = () => {
                 <div className="h-20 w-20 bg-amber-500 border-4 border-white dark:border-slate-800 rounded-[2rem] shadow-xl flex items-center justify-center mb-8 transform rotate-3 group-hover/footer:rotate-12 transition-transform duration-500">
                   <Star className="h-10 w-10 text-white fill-white" />
                 </div>
-                <h3 className="text-slate-800 dark:text-white text-3xl sm:text-4xl font-black mb-4 tracking-tight">Great Job, Hero! 🌟</h3>
-                <p className="text-slate-500 dark:text-slate-400 font-bold text-lg max-w-lg leading-relaxed mb-8">
+                <h3 className="text-slate-800 dark:text-white text-2xl sm:text-4xl font-black mb-4 tracking-tight uppercase">Great Job, Hero! 🌟</h3>
+                <p className="text-slate-500 dark:text-slate-400 font-bold text-sm sm:text-base max-w-lg leading-relaxed mb-8">
                   Every video you watch adds to your hero knowledge. Keep training to earn your master badge!
                 </p>
                 <Link 

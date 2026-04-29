@@ -235,3 +235,30 @@ html.text-size-large {
 html.text-size-xlarge {
   font-size: 20px; /* default 16px → 20px */
 }
+
+/* ============================================
+   AUTOFILL DARK MODE FIX
+   ============================================
+   Prevents browsers from overriding input 
+   backgrounds with white/yellow on autofill.
+   ============================================ */
+.dark input:-webkit-autofill,
+.dark input:-webkit-autofill:hover, 
+.dark input:-webkit-autofill:focus, 
+.dark input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 30px #020617 inset !important;
+  -webkit-text-fill-color: #ffffff !important;
+  transition: background-color 5000s ease-in-out 0s;
+}
+
+/* Hide number input spin buttons */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type="number"] {
+  -moz-appearance: textfield;
+  appearance: textfield;
+}

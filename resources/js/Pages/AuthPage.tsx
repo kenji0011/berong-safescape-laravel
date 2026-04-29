@@ -226,7 +226,7 @@ function AuthContent() {
       {showRegistrationWizard && (
         <div className="fixed inset-0 z-50 bg-background flex items-start justify-center overflow-y-auto py-6 sm:py-8">
           <div className="w-full max-w-3xl mx-2 sm:mx-4">
-            <RegistrationWizard />
+            <RegistrationWizard onBackToLogin={() => setShowRegistrationWizard(false)} />
           </div>
         </div>
       )}
@@ -271,8 +271,8 @@ function AuthContent() {
           <CardContent className="relative z-10 px-5 sm:px-8">
             <Tabs defaultValue={defaultTab} className="w-full">
               <TabsList className="grid w-full grid-cols-2 bg-slate-100 dark:bg-slate-800 p-1 sm:p-1.5 rounded-xl sm:rounded-2xl h-12 sm:h-14 mb-4 sm:mb-6 transition-colors">
-                <TabsTrigger value="login" className="rounded-lg sm:rounded-xl font-extrabold text-slate-400 dark:text-slate-500 text-xs sm:text-sm data-[state=active]:bg-white dark:data-[state=active]:bg-slate-700 data-[state=active]:text-[#d60000] dark:data-[state=active]:text-red-400 data-[state=active]:shadow-[0_2px_0_#dc2626] data-[state=active]:border-2 data-[state=active]:border-red-200 dark:data-[state=active]:border-red-500/30 transition-all duration-300 h-full">Log In</TabsTrigger>
-                <TabsTrigger value="register" className="rounded-lg sm:rounded-xl font-extrabold text-slate-400 dark:text-slate-500 text-xs sm:text-sm data-[state=active]:bg-white dark:data-[state=active]:bg-slate-700 data-[state=active]:text-blue-600 dark:data-[state=active]:text-blue-400 data-[state=active]:shadow-[0_2px_0_#2563eb] data-[state=active]:border-2 data-[state=active]:border-blue-200 dark:data-[state=active]:border-blue-500/30 transition-all duration-300 h-full">Register</TabsTrigger>
+                <TabsTrigger value="login" className="rounded-lg sm:rounded-xl font-extrabold text-slate-400 dark:text-slate-500 text-xs sm:text-sm data-[state=active]:bg-[#d60000] dark:data-[state=active]:bg-red-600 data-[state=active]:text-white dark:data-[state=active]:text-white data-[state=active]:shadow-[0_3px_0_#991b1b] dark:data-[state=active]:shadow-[0_3px_0_#7f1d1d] transition-all duration-300 h-full">Log In</TabsTrigger>
+                <TabsTrigger value="register" className="rounded-lg sm:rounded-xl font-extrabold text-slate-400 dark:text-slate-500 text-xs sm:text-sm data-[state=active]:bg-[#2563eb] dark:data-[state=active]:bg-blue-600 data-[state=active]:text-white dark:data-[state=active]:text-white data-[state=active]:shadow-[0_3px_0_#1e40af] dark:data-[state=active]:shadow-[0_3px_0_#1e3a8a] transition-all duration-300 h-full">Register</TabsTrigger>
               </TabsList>
 
 
@@ -399,26 +399,29 @@ function AuthContent() {
           </CardContent>
         </Card>
 
-        {/* Reset Password Dialog */}
         <Dialog open={showResetDialog} onOpenChange={setShowResetDialog}>
-          <DialogContent className="sm:max-w-md bg-white dark:bg-slate-900 border-none dark:border-slate-800 transition-colors">
-            <DialogHeader>
-              <DialogTitle className="flex items-center gap-2 text-slate-900 dark:text-white transition-colors">
-                <KeyRound className="h-5 w-5 text-orange-500" />
-                Reset Password
-              </DialogTitle>
-              <DialogDescription className="text-slate-500 dark:text-slate-400 transition-colors">
-                {resetStep === 1 && 'Enter your username. A verification code will be sent to your email.'}
-                {resetStep === 2 && 'Enter the 6-digit verification code sent to your email.'}
-                {resetStep === 3 && 'Your password has been reset successfully!'}
-              </DialogDescription>
-            </DialogHeader>
+          <DialogContent className="sm:max-w-md bg-white/95 dark:bg-slate-900/90 backdrop-blur-xl rounded-[2rem] border-[3px] border-slate-200 dark:border-slate-700 shadow-2xl p-0 overflow-hidden transition-all duration-300">
+            <div className="bg-slate-50 dark:bg-slate-950/50 border-b-2 border-slate-100 dark:border-slate-800 p-6 sm:p-8 transition-colors">
+              <DialogHeader>
+                <DialogTitle className="flex items-center gap-3 text-2xl font-black text-slate-800 dark:text-white transition-colors">
+                  <div className="bg-orange-100 dark:bg-orange-900/30 p-2 rounded-xl transition-colors">
+                    <KeyRound className="h-6 w-6 text-orange-600 dark:text-orange-400" strokeWidth={2.5} />
+                  </div>
+                  Reset Password
+                </DialogTitle>
+                <DialogDescription className="text-slate-500 dark:text-slate-400 font-bold mt-2 ml-1 text-sm transition-colors">
+                  {resetStep === 1 && 'Enter your username. A verification code will be sent to your email.'}
+                  {resetStep === 2 && 'Enter the 6-digit verification code sent to your email.'}
+                  {resetStep === 3 && 'Your password has been reset successfully!'}
+                </DialogDescription>
+              </DialogHeader>
+            </div>
 
-            <div className="space-y-4 py-2">
+            <div className="p-6 sm:p-8 space-y-6">
               {/* Step 1: Username */}
               {resetStep === 1 && (
-                <div className="space-y-2">
-                  <Label htmlFor="reset-username" className="text-slate-700 dark:text-slate-300 transition-colors">Username</Label>
+                <div className="space-y-3">
+                  <Label htmlFor="reset-username" className="font-black text-slate-700 dark:text-slate-300 ml-1 uppercase tracking-widest text-[10px] transition-colors">Username</Label>
                   <Input
                     id="reset-username"
                     placeholder="Enter your username"
@@ -428,18 +431,18 @@ function AuthContent() {
                       setResetMessage(null)
                     }}
                     onKeyDown={(e) => { if (e.key === 'Enter') handleResetPassword() }}
-                    className="dark:bg-slate-950 dark:border-slate-800 dark:text-white dark:placeholder:text-slate-600 transition-all"
+                    className="rounded-2xl border-2 border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-950 px-4 py-6 focus-visible:ring-0 focus-visible:border-orange-500 dark:focus-visible:border-orange-500 font-bold text-slate-700 dark:text-white transition-all"
                   />
                 </div>
               )}
 
               {/* Step 2: Verification Code */}
               {resetStep === 2 && (
-                <div className="space-y-2">
-                  <Label htmlFor="reset-code" className="text-slate-700 dark:text-slate-300 transition-colors">Verification Code</Label>
+                <div className="space-y-3 text-center">
+                  <Label htmlFor="reset-code" className="font-black text-slate-700 dark:text-slate-300 uppercase tracking-widest text-[10px] transition-colors">Verification Code</Label>
                   <Input
                     id="reset-code"
-                    placeholder="Enter 6-digit code"
+                    placeholder="000000"
                     value={resetCode}
                     onChange={(e) => {
                       setResetCode(e.target.value.replace(/\D/g, '').slice(0, 6))
@@ -447,8 +450,9 @@ function AuthContent() {
                     }}
                     onKeyDown={(e) => { if (e.key === 'Enter' && resetCode.length === 6) handleResetPassword() }}
                     maxLength={6}
-                    className="text-center text-2xl tracking-[0.5em] font-Arial dark:bg-slate-950 dark:border-slate-800 dark:text-white dark:placeholder:text-slate-700 transition-all"
+                    className="text-center text-3xl tracking-[0.6em] font-mono h-20 rounded-[1.5rem] border-2 border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-950 text-slate-800 dark:text-white dark:placeholder:text-slate-800 transition-all focus-visible:ring-0 focus-visible:border-orange-500 dark:focus-visible:border-orange-500"
                   />
+                  <p className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">Code was sent to your associated email</p>
                 </div>
               )}
 
@@ -462,41 +466,45 @@ function AuthContent() {
               )}
             </div>
 
-            <DialogFooter>
+            <div className="px-6 sm:p-8 pt-0 pb-8 flex flex-col gap-3">
               {resetStep === 3 ? (
-                <Button onClick={() => setShowResetDialog(false)} className="w-full">
+                <Button 
+                  onClick={() => setShowResetDialog(false)} 
+                  className="w-full bg-slate-900 dark:bg-slate-700 text-white rounded-2xl h-14 font-black uppercase tracking-wider shadow-lg hover:bg-slate-800 transition-all"
+                >
                   Back to Sign In
                 </Button>
               ) : (
-                <>
-                  <Button variant="outline" className="dark:border-slate-800 dark:text-slate-300 dark:hover:bg-slate-800 transition-colors" onClick={() => {
-                    if (resetStep === 2) {
-                      setResetStep(1)
-                      setResetCode("")
-                      setResetMessage(null)
-                    } else {
-                      setShowResetDialog(false)
-                    }
-                  }}>
+                <div className="flex flex-col sm:flex-row gap-3">
+                  <Button 
+                    variant="outline" 
+                    className="flex-1 rounded-2xl h-12 sm:h-14 font-bold text-slate-500 dark:text-slate-400 border-2 border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all" 
+                    onClick={() => {
+                      if (resetStep === 2) {
+                        setResetStep(1)
+                        setResetCode("")
+                        setResetMessage(null)
+                      } else {
+                        setShowResetDialog(false)
+                      }
+                    }}
+                  >
                     {resetStep === 2 ? 'Back' : 'Cancel'}
                   </Button>
                   <Button
                     onClick={handleResetPassword}
-                    disabled={resetLoading || (resetStep === 1 ? !resetUsername.trim() : resetCode.length !== 6)}
-                    className="bg-orange-500 hover:bg-orange-600"
+                    disabled={resetLoading || (resetStep === 1 && !resetUsername) || (resetStep === 2 && resetCode.length !== 6)}
+                    className="flex-[1.5] bg-orange-500 hover:bg-orange-400 text-white rounded-2xl h-12 sm:h-14 font-black uppercase tracking-wider shadow-[0_4px_0_#c2410c] active:translate-y-1 active:shadow-none transition-all"
                   >
                     {resetLoading ? (
-                      <>
-                        <Loader2 className="h-4 w-4 animate-spin mr-2" />
-                        {resetStep === 1 ? 'Sending...' : 'Verifying...'}
-                      </>
+                      <Loader2 className="h-5 w-5 animate-spin" />
                     ) : (
-                      resetStep === 1 ? 'Send Code' : 'Verify & Reset'
+                      resetStep === 1 ? 'Send Code' : 'Verify Code'
                     )}
                   </Button>
-                </>
+                </div>
               )}
-            </DialogFooter>
+            </div>
           </DialogContent>
         </Dialog>
         </div>

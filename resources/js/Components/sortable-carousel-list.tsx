@@ -51,7 +51,7 @@ function SortableCarouselItem({
         <div
             ref={setNodeRef}
             style={style}
-            className={`flex items-center gap-3 p-4 border-2 rounded-2xl bg-white dark:bg-slate-900 transition-shadow transition-colors duration-200 ${
+            className={`flex items-center gap-3 p-4 border-2 rounded-2xl bg-white/50 dark:bg-slate-900/50 backdrop-blur-sm transition-shadow transition-colors duration-200 ${
                 isDragging 
                     ? 'border-red-400 dark:border-red-500 shadow-[0_20px_25px_-5px_rgba(0,0,0,0.1),0_8px_10px_-6px_rgba(0,0,0,0.1)] opacity-95 ring-4 ring-red-100 dark:ring-red-900/30' 
                     : 'border-slate-200 dark:border-slate-700 shadow-sm hover:shadow-[0_4px_0_#e2e8f0] dark:hover:shadow-[0_4px_0_#0f172a]'

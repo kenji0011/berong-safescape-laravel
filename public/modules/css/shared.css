@@ -573,7 +573,7 @@
 }
 
 .ss-btn-premium {
-    padding: 0.875rem 2rem;
+    padding: 1rem 1.5rem;
     border-radius: 1.25rem;
     font-weight: 900;
     text-transform: uppercase;
@@ -586,7 +586,7 @@
     text-decoration: none;
     font-size: 0.875rem;
     box-shadow: 0 8px 15px rgba(0, 0, 0, 0.05);
-    min-width: 180px;
+    min-width: 210px;
     cursor: pointer;
 }
 
@@ -596,13 +596,19 @@
 }
 
 .ss-btn-premium:active {
-    transform: translateY(-1px);
+    transform: translateY(2px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
 }
 
 .ss-btn-gold {
     background: #f59e0b;
     color: white !important;
     border-bottom: 5px solid #b45309;
+}
+
+.ss-btn-gold:active {
+    border-bottom-width: 1px;
+    margin-top: 4px;
 }
 
 .ss-btn-gold:hover {
@@ -615,6 +621,11 @@
     border-bottom: 5px solid #047857;
 }
 
+.ss-btn-emerald:active {
+    border-bottom-width: 1px;
+    margin-top: 4px;
+}
+
 .ss-btn-emerald:hover {
     background: #34d399;
 }
@@ -623,7 +634,13 @@
     background: white;
     color: #64748b !important;
     border: 2.5px solid #e2e8f0;
+    border-bottom-width: 5px;
     padding: 0.8rem 2rem;
+}
+
+.ss-btn-outline:active {
+    border-bottom-width: 1px;
+    margin-top: 4px;
 }
 
 .ss-btn-outline:hover {

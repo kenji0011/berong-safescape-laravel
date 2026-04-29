@@ -19,7 +19,11 @@ export default function Image({
     fetchPriority,
     ...props
 }: ImageProps) {
-    const style: React.CSSProperties = fill ? { width: '100%', height: '100%' } : {};
+    const style: React.CSSProperties = {
+        ...(fill ? { width: '100%', height: '100%' } : {}),
+        imageRendering: 'auto',
+        WebkitImageRendering: 'optimize-contrast' as any,
+    };
     const resolvedLoading = loading || (priority ? 'eager' : 'lazy');
     const resolvedDecoding = decoding || 'async';
     const resolvedFetchPriority = fetchPriority || (priority ? 'high' : 'auto');

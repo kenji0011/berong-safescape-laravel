@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react"
 import { ChevronLeft, ChevronRight, Maximize2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import Image from '@/components/Image';
+import Image from '@/Components/Image';
 import type { CarouselImage } from "@/lib/mock-data"
 import { ImageViewerModal } from "@/components/image-viewer-modal"
 
@@ -46,8 +46,9 @@ export function ImageCarousel({ images }: ImageCarouselProps) {
             fill
             className="object-cover"
             priority={index === 0}
+            style={{ imageRendering: 'auto', WebkitImageRendering: 'optimize-contrast' as any }}
           />
-          <div className="absolute inset-0 bg-black/40" />
+          <div className="absolute inset-0 bg-black/20" />
           <div className="absolute bottom-0 left-0 right-0 p-8">
             <h2 className="text-white text-3xl md:text-4xl font-bold text-balance">{image.title}</h2>
           </div>

@@ -337,7 +337,7 @@ const ModuleTwoPage = ({ moduleNum }: { moduleNum: number }) => {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 font-sans flex flex-col transition-colors duration-500">
+    <div className="min-h-screen bg-white dark:bg-slate-950 font-sans flex flex-col transition-colors duration-500">
       <Head title={`Module ${currentModule} | SafeScape`} />
 
       {/* ── Sub Header ── */}
@@ -377,7 +377,7 @@ const ModuleTwoPage = ({ moduleNum }: { moduleNum: number }) => {
       </div>
 
       {/* ── Module Content Area ── */}
-      <div className="flex-1 bg-blue-50 dark:bg-slate-950 bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] dark:bg-[radial-gradient(#1e293b_1px,transparent_1px)] [background-size:16px_16px] flex flex-col w-full relative transition-colors">
+      <div className="flex-1 bg-white dark:bg-slate-950 bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] dark:bg-[radial-gradient(#1e293b_1px,transparent_1px)] [background-size:16px_16px] flex flex-col w-full relative transition-colors">
         
         {/* Skeleton Loader */}
         {iframeLoading && (

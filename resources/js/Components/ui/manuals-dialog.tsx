@@ -108,36 +108,36 @@ export function ManualsDialog({ children }: { children: React.ReactNode }) {
 
           <div className="grid gap-5">
             {manuals.map((manual) => (
-              <Card key={manual.id} className="bg-white dark:bg-slate-800 rounded-[1.5rem] border-2 border-b-[4px] border-slate-200 dark:border-slate-700 hover:-translate-y-1 hover:border-slate-300 dark:hover:border-slate-600 shadow-sm dark:shadow-[0_4px_0_#0f172a] active:translate-y-[2px] active:border-b-2 transition-all overflow-hidden">
-                <CardContent className="p-5">
-                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-5">
+              <Card key={manual.id} className="bg-white dark:bg-slate-800 rounded-2xl border-2 border-b-[4px] border-slate-200 dark:border-slate-700 hover:-translate-y-0.5 hover:border-slate-300 dark:hover:border-slate-600 shadow-sm dark:shadow-[0_4px_0_#0f172a] active:translate-y-[2px] active:border-b-2 transition-all overflow-hidden">
+                <CardContent className="p-4 md:py-3.5 md:px-6">
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                     <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-3 mb-2">
-                        <div className="bg-red-50 dark:bg-red-950/30 p-2 rounded-xl shrink-0">
-                            <FileText className="h-5 w-5 text-red-500 dark:text-red-400" />
+                      <div className="flex items-center gap-3 mb-1">
+                        <div className="bg-red-50 dark:bg-red-950/30 p-1.5 rounded-lg shrink-0">
+                            <FileText className="h-4 w-4 text-red-500 dark:text-red-400" />
                         </div>
-                        <h3 className="font-extrabold text-slate-800 dark:text-white text-[17px] line-clamp-2">{manual.title}</h3>
+                        <h3 className="font-extrabold text-slate-800 dark:text-white text-base line-clamp-1">{manual.title}</h3>
                       </div>
-                      <p className="text-sm text-slate-500 dark:text-slate-400 font-medium mb-3 line-clamp-2 pl-12">{manual.description}</p>
-                      <div className="pl-12">
-                          <span className="inline-flex items-center rounded-full px-3 py-1 font-bold bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 text-[10px] tracking-wider uppercase border border-slate-200 dark:border-slate-600">
+                      <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 font-medium mb-2 line-clamp-1 pl-10 opacity-80">{manual.description}</p>
+                      <div className="pl-10">
+                          <span className="inline-flex items-center rounded-full px-2.5 py-0.5 font-bold bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-300 text-[9px] tracking-wider uppercase border border-slate-200 dark:border-slate-600">
                             {manual.category}
                           </span>
                       </div>
                     </div>
-                    <div className="flex gap-3 sm:ml-0 shrink-0">
+                    <div className="flex gap-2.5 sm:ml-4 shrink-0">
                       <button
                         onClick={() => handleView(manual.filename)}
-                        className="inline-flex items-center justify-center bg-slate-800 dark:bg-slate-950 text-white font-extrabold px-5 pb-2 pt-2.5 rounded-xl text-sm shadow-[0_4px_0_#0f172a] sm:shadow-[0_4px_0_#000] hover:-translate-y-0.5 hover:shadow-[0_6px_0_#0f172a] active:translate-y-1 active:shadow-[0_0px_0_#0f172a] transition-all"
+                        className="inline-flex items-center justify-center bg-slate-800 dark:bg-slate-950 text-white font-extrabold h-9 px-4 rounded-xl text-xs shadow-[0_3px_0_#0f172a] sm:shadow-[0_3px_0_#000] hover:-translate-y-0.5 hover:shadow-[0_4px_0_#0f172a] active:translate-y-1 active:shadow-none transition-all"
                       >
-                        <Eye className="h-4 w-4 mr-2" />
+                        <Eye className="h-3.5 w-3.5 mr-1.5" />
                         View
                       </button>
                       <button
                         onClick={() => handleDownload(manual.filename)}
-                        className="inline-flex items-center justify-center bg-white dark:bg-slate-700 border-2 border-slate-200 dark:border-slate-600 text-slate-600 dark:text-slate-200 font-extrabold px-5 pb-2 pt-2.5 rounded-xl text-sm shadow-[0_4px_0_#e2e8f0] dark:shadow-[0_4px_0_#0f172a] hover:-translate-y-0.5 hover:shadow-[0_6px_0_#e2e8f0] dark:hover:shadow-[0_6px_0_#0f172a] hover:bg-slate-50 dark:hover:bg-slate-600 active:translate-y-1 active:shadow-[0_0px_0_#e2e8f0] transition-all"
+                        className="inline-flex items-center justify-center bg-white dark:bg-slate-700 border-2 border-slate-200 dark:border-slate-600 text-slate-600 dark:text-slate-200 font-extrabold h-9 px-4 rounded-xl text-xs shadow-[0_3px_0_#e2e8f0] dark:shadow-[0_3px_0_#0f172a] hover:-translate-y-0.5 hover:shadow-[0_4px_0_#e2e8f0] dark:hover:shadow-[0_4px_0_#0f172a] hover:bg-slate-50 dark:hover:bg-slate-600 active:translate-y-1 active:shadow-none transition-all"
                       >
-                        <Download className="h-4 w-4 mr-2" />
+                        <Download className="h-3.5 w-3.5 mr-1.5" />
                         Save
                       </button>
                     </div>

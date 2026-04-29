@@ -69,27 +69,51 @@ const teamMembers = [
 ];
 
 // Animated Feature Card Component
-function FeatureCard({ feature, index }: { feature: { icon: any; title: string; description: string; color: string }; index: number }) {
+function FeatureCard({
+    feature,
+    index,
+    reduceMotion
+}: {
+    feature: { icon: any; title: string; description: string; color: string };
+    index: number;
+    reduceMotion: boolean;
+}) {
     const ref = useRef(null);
     const isInView = useInView(ref, { once: true, margin: "-100px" });
 
     return (
         <motion.div
             ref={ref}
-            initial={{ opacity: 0 }}
-            animate={isInView ? { opacity: 1 } : {}}
+            initial={{ opacity: 0, y: 20 }}
+            animate={isInView ? { 
+                opacity: 1, 
+                y: 0
+            } : {}}
             transition={{
-                duration: 0.5,
-                ease: "easeOut",
-                delay: index * 0.1
+                opacity: { duration: 0.5, delay: index * 0.1 },
+                y: { duration: 0.5, delay: index * 0.1 }
             }}
-            className="group bg-white/10 rounded-xl p-5 sm:p-6 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border border-white/20 hover:bg-white/20"
+            whileHover={reduceMotion ? {} : { 
+                scale: 1.05,
+                y: -12,
+                transition: { type: "spring", stiffness: 400, damping: 25 }
+            }}
+            whileTap={reduceMotion ? {} : { 
+                scale: 0.98,
+                y: 4,
+                transition: { type: "spring", stiffness: 400, damping: 25 }
+            }}
+            className="group bg-white dark:bg-slate-800 rounded-2xl sm:rounded-3xl p-5 sm:p-8 shadow-[0_6px_0_#b45309] sm:shadow-[0_8px_0_#b45309] dark:shadow-[0_6px_0_#0f172a] sm:dark:shadow-[0_8px_0_#0f172a] hover:shadow-[0_10px_0_#b45309] sm:hover:shadow-[0_12px_0_#b45309] dark:hover:shadow-[0_10px_0_#000] border-[3px] sm:border-[4px] border-white dark:border-slate-700 relative overflow-hidden h-full cursor-pointer"
         >
-            <div className={`${feature.color} w-12 h-12 sm:w-14 sm:h-14 rounded-xl flex items-center justify-center mb-3 sm:mb-4 group-hover:scale-110 transition-transform duration-300`}>
-                <feature.icon className="w-6 h-6 sm:w-7 sm:h-7 text-white" />
+            {/* Playful Background Blob */}
+            <div className={`absolute -top-10 -right-10 w-24 h-24 ${feature.color.split(' ')[0]} opacity-10 rounded-full group-hover:scale-150 transition-transform duration-700`} />
+            
+            <div className={`${feature.color} w-14 h-14 sm:w-20 sm:h-20 rounded-xl sm:rounded-2xl flex items-center justify-center mb-4 sm:mb-6 group-hover:rotate-6 transition-transform duration-300 shadow-inner border-2 border-white/50`}>
+                <feature.icon className="w-7 h-7 sm:w-10 sm:h-10 text-white drop-shadow-sm" strokeWidth={2.5} />
             </div>
-            <h3 className="text-lg sm:text-xl font-semibold text-white mb-1 sm:mb-2">{feature.title}</h3>
-            <p className="text-white/80 text-sm sm:text-base">{feature.description}</p>
+            
+            <h3 className="text-lg sm:text-2xl font-black text-slate-800 dark:text-white mb-2 sm:mb-3 tracking-tight transition-colors">{feature.title}</h3>
+            <p className="text-xs sm:text-base text-slate-600 dark:text-slate-400 font-bold leading-relaxed transition-colors">{feature.description}</p>
         </motion.div>
     );
 }
@@ -140,15 +164,15 @@ function TeamCard({ member, index }: { member: typeof teamMembers[0]; index: num
             {/* Gradient Header */}
             <div className={`h-32 bg-slate-200 dark:bg-slate-700 relative`}>
                 <div className="absolute inset-0 bg-black/20" />
-                {/* Decorative circles */}
+                {/* Decorative circles - Animated only on desktop */}
                 <motion.div
                     className="absolute -bottom-4 -right-4 w-24 h-24 bg-white/10 rounded-full"
-                    animate={{ scale: [1, 1.1, 1] }}
+                    animate={typeof window !== 'undefined' && window.innerWidth < 640 ? {} : { scale: [1, 1.1, 1] }}
                     transition={{ duration: 3, repeat: Infinity }}
                 />
                 <motion.div
                     className="absolute top-4 left-4 w-12 h-12 bg-white/10 rounded-full"
-                    animate={{ scale: [1, 1.2, 1] }}
+                    animate={typeof window !== 'undefined' && window.innerWidth < 640 ? {} : { scale: [1, 1.2, 1] }}
                     transition={{ duration: 2.5, repeat: Infinity, delay: 0.5 }}
                 />
             </div>
@@ -342,7 +366,7 @@ export default function AboutPage() {
             <Navigation />
             {!reduceMotion && <SplashCursor />}
 
-            <main className="flex-grow">
+            <main className="flex-grow pt-[64px] sm:pt-[72px]">
                 {/* Hero Section with 3D Parallax */}
                 <motion.section
                     ref={heroRef}
@@ -373,8 +397,8 @@ export default function AboutPage() {
                                 <div className="relative w-48 h-48 sm:w-72 sm:h-72 lg:w-96 lg:h-96">
                                     <motion.div
                                         className="absolute inset-0 bg-red-500/20 rounded-full"
-                                        animate={{ scale: [1, 1.1, 1], opacity: [0.2, 0.3, 0.2] }}
-                                        transition={{ duration: 3, repeat: Infinity }}
+                                        animate={typeof window !== 'undefined' && window.innerWidth < 640 ? { scale: 1, opacity: 0.2 } : { scale: [1, 1.1, 1], opacity: [0.2, 0.3, 0.2] }}
+                                        transition={typeof window !== 'undefined' && window.innerWidth < 640 ? {} : { duration: 3, repeat: Infinity }}
                                     />
                                     <motion.div
                                         className="relative w-full h-full"
@@ -382,12 +406,12 @@ export default function AboutPage() {
                                         animate={{
                                             opacity: 1,
                                             scale: 1,
-                                            y: [0, -10, 0]
+                                            y: typeof window !== 'undefined' && window.innerWidth < 640 ? 0 : [0, -10, 0]
                                         }}
                                         transition={{
                                             opacity: { duration: 0.6 },
                                             scale: { duration: 0.6 },
-                                            y: { duration: 3, repeat: Infinity, ease: "easeInOut" }
+                                            y: { duration: 3, repeat: typeof window !== 'undefined' && window.innerWidth < 640 ? 0 : Infinity, ease: "easeInOut" }
                                         }}
                                     >
                                         <Image
@@ -447,7 +471,7 @@ export default function AboutPage() {
                 {/* Platform Overview Section - Card Flip Animation */}
                 <motion.section
                     ref={platformRef}
-                    className="py-10 sm:py-20 bg-red-700 dark:bg-red-950 text-white relative overflow-hidden transition-colors duration-500"
+                    className="py-10 sm:py-14 bg-red-600 dark:bg-red-950 text-white relative overflow-hidden shadow-sm mx-0 transition-colors duration-500"
                     style={{ opacity: platformOpacity, scale: platformScale }}
                 >
                     {/* Background Pattern */}
@@ -458,23 +482,23 @@ export default function AboutPage() {
                     </div>
                     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
                         <motion.div
-                            className="text-center mb-12"
+                            className="text-center mb-10 sm:mb-16"
                             initial={{ opacity: 0, y: 40 }}
                             whileInView={{ opacity: 1, y: 0 }}
                             viewport={{ once: true }}
                             transition={{ duration: 0.7 }}
                         >
-                            <h2 className="text-3xl sm:text-4xl font-bold text-white mb-2 sm:mb-4">
-                                What is <span className="text-yellow-400">SafeScape</span>?
+                            <h2 className="text-3xl sm:text-6xl font-black text-white mb-4 sm:mb-6 drop-shadow-lg uppercase tracking-tight italic">
+                                What is <span className="text-yellow-400 drop-shadow-[0_4px_0_#b45309]">SafeScape</span>?
                             </h2>
-                            <p className="text-white/90 max-w-3xl mx-auto text-sm sm:text-lg px-2 sm:px-0">
+                            <p className="text-white font-bold max-w-2xl mx-auto text-sm sm:text-2xl px-4 leading-relaxed opacity-95">
                                 A comprehensive fire safety education platform designed to empower communities with knowledge and skills.
                             </p>
                         </motion.div>
 
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6" style={{ perspective: 1000 }}>
                             {features.map((feature, index) => (
-                                <FeatureCard key={index} feature={feature} index={index} />
+                                <FeatureCard key={index} feature={feature} index={index} reduceMotion={reduceMotion} />
                             ))}
                         </div>
                     </div>
@@ -489,7 +513,7 @@ export default function AboutPage() {
                     {/* Animated Background decoration */}
                     <motion.div
                         className="absolute top-0 right-0 w-96 h-96 bg-red-500/10 rounded-full"
-                        animate={{
+                        animate={typeof window !== 'undefined' && window.innerWidth < 640 ? {} : {
                             x: [0, 30, 0],
                             y: [0, -20, 0],
                             scale: [1, 1.1, 1]
@@ -498,7 +522,7 @@ export default function AboutPage() {
                     />
                     <motion.div
                         className="absolute bottom-0 left-0 w-96 h-96 bg-yellow-500/10 rounded-full"
-                        animate={{
+                        animate={typeof window !== 'undefined' && window.innerWidth < 640 ? {} : {
                             x: [0, -30, 0],
                             y: [0, 20, 0],
                             scale: [1, 1.2, 1]
@@ -637,11 +661,11 @@ export default function AboutPage() {
                 >
                     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
                         <motion.div
-                            animate={{
+                            animate={typeof window !== 'undefined' && window.innerWidth < 640 ? { scale: 1, rotate: 0 } : {
                                 scale: [1, 1.2, 1],
                                 rotate: [0, 5, -5, 0]
                             }}
-                            transition={{
+                            transition={typeof window !== 'undefined' && window.innerWidth < 640 ? {} : {
                                 duration: 2,
                                 repeat: Infinity,
                                 ease: "easeInOut"
@@ -668,19 +692,19 @@ export default function AboutPage() {
                             Join thousands of Filipinos in learning essential fire safety skills. Start your journey with Berong today!
                         </motion.p>
                         <motion.div
-                            className="flex flex-col sm:flex-row gap-4 justify-center"
+                            className="flex flex-col sm:flex-row gap-6 justify-center"
                             initial={{ opacity: 0, y: 20 }}
                             whileInView={{ opacity: 1, y: 0 }}
                             viewport={{ once: true }}
                             transition={{ delay: 0.4 }}
                         >
                             <Link href="/">
-                                <Button size="lg" className="bg-white text-red-600 hover:bg-gray-100 font-bold px-8 py-6 text-lg">
+                                <Button size="lg" className="bg-yellow-400 hover:bg-yellow-500 text-red-700 font-black px-10 py-7 text-xl rounded-full border-[4px] border-white shadow-[0_6px_0_#b45309] hover:-translate-y-1 active:translate-y-1 active:shadow-none transition-all uppercase tracking-tight italic">
                                     Explore Platform
                                 </Button>
                             </Link>
                             <Link href="/login">
-                                <Button size="lg" variant="outline" className="border-2 border-white text-white bg-transparent hover:bg-white hover:text-red-600 font-bold px-8 py-6 text-lg">
+                                <Button size="lg" className="bg-orange-600 hover:bg-orange-700 text-white font-black px-10 py-7 text-xl rounded-full border-[4px] border-white shadow-[0_6px_0_#9a3412] hover:-translate-y-1 active:translate-y-1 active:shadow-none transition-all uppercase tracking-tight italic">
                                     Create Account
                                 </Button>
                             </Link>

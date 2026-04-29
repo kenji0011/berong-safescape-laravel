@@ -16,10 +16,11 @@ const QuizPage = () => {
     click: new Audio('/sounds/click.mp3'),
     match: new Audio('/sounds/match.mp3'),
     wrong: new Audio('/sounds/wrong.mp3'),
-    win: new Audio('/sounds/win.mp3')
+    win: new Audio('/sounds/win.mp3'),
+    failed: new Audio('/sounds/failed.mp3')
   })
 
-  const playSound = (type: 'click' | 'match' | 'wrong' | 'win') => {
+  const playSound = (type: 'click' | 'match' | 'wrong' | 'win' | 'failed') => {
     const audio = soundEffects[type]
     if (audio) {
       audio.currentTime = 0
@@ -81,30 +82,85 @@ const QuizPage = () => {
       setIsAnswerRevealed(false)
     } else {
       setIsFinished(true)
-      playSound('win')
       
-      // Award Quiz Hero Badge
-      axios.post('/api/badges/award', {
-        badge_id: 'quiz_hero',
-        badge_name: 'Quiz Hero',
-        badge_icon: '🏆'
-      }).catch(err => console.error("Failed to award badge:", err.response?.data || err.message))
+      // Award Quiz Hero Badge ONLY IF perfect score
+      if (score === questions.length) {
+        playSound('win')
+        axios.post('/api/badges/award', {
+          badge_id: 'quiz_hero',
+          badge_name: 'Quiz Hero',
+          badge_icon: '🏆'
+        }).catch(err => console.error("Failed to award badge:", err.response?.data || err.message))
+      } else {
+        playSound('failed')
+      }
     }
   }
 
   if (isFinished) {
+    const isPerfect = score === questions.length
+    
     return (
-      <div className="min-h-screen flex items-center justify-center bg-blue-50 p-4">
-        <div className="bg-white rounded-[2rem] p-12 shadow-sm border-4 border-orange-100 text-center max-w-lg w-full">
-          <div className="text-7xl mb-6">🎉</div>
-          <h2 className="text-4xl font-black text-slate-800 mb-4">Quiz Finished!</h2>
-          <p className="text-2xl font-bold text-slate-600 mb-8">
-            Your Score: <span className="text-orange-500 text-4xl">{score}</span> / {questions.length}
-          </p>
-          <div className="flex justify-center">
+      <div className="min-h-screen flex items-center justify-center bg-blue-50 dark:bg-slate-950 p-4 relative overflow-hidden">
+        {/* Background Decorative Elements */}
+        <div className="absolute top-[-10%] right-[-10%] w-96 h-96 bg-primary opacity-10 blur-[100px] rounded-full"></div>
+        <div className="absolute bottom-[-10%] left-[-10%] w-96 h-96 bg-blue-600 opacity-10 blur-[100px] rounded-full"></div>
+        
+        <div className="bg-white dark:bg-slate-900 rounded-[2.5rem] p-8 sm:p-12 shadow-[0_32px_80px_rgba(0,0,0,0.1)] dark:shadow-[0_32px_80px_rgba(0,0,0,0.3)] border-[6px] border-white dark:border-slate-800 text-center max-w-lg w-full relative z-10 transition-colors">
+          
+          {isPerfect ? (
+            <div className="animate-in zoom-in duration-700">
+              <div className="h-32 w-32 bg-yellow-400 rounded-[2.5rem] flex items-center justify-center text-7xl mx-auto mb-6 shadow-xl border-4 border-white dark:border-slate-800 transform -rotate-6">
+                🏆
+              </div>
+              <h2 className="text-4xl font-black text-slate-900 dark:text-white mb-2 tracking-tighter">MASTERPIECE!</h2>
+              <p className="text-slate-500 dark:text-slate-400 font-bold mb-8">You've earned the <span className="text-yellow-600 dark:text-yellow-400">Quiz Hero</span> badge!</p>
+            </div>
+          ) : (
+            <div className="animate-in zoom-in duration-700">
+              <div className="h-28 w-28 bg-slate-100 dark:bg-slate-800 rounded-[2.5rem] flex items-center justify-center text-6xl mx-auto mb-6 shadow-inner border-2 border-slate-200 dark:border-slate-700">
+                ⭐
+              </div>
+              <h2 className="text-4xl font-black text-slate-900 dark:text-white mb-2 tracking-tighter">GOOD EFFORT!</h2>
+              <p className="text-slate-500 dark:text-slate-400 font-bold mb-8 px-4">
+                Score <span className="text-primary">5/5</span> to unlock the <span className="text-slate-700 dark:text-slate-200">Quiz Hero</span> badge.
+              </p>
+            </div>
+          )}
+
+          <div className="bg-slate-50 dark:bg-slate-800/50 rounded-3xl p-6 mb-10 border border-slate-100 dark:border-slate-700">
+             <span className="text-xs font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest block mb-1">Final Score</span>
+             <div className="flex items-center justify-center gap-3">
+                <span className={cn("text-6xl font-black", isPerfect ? "text-emerald-500" : "text-orange-500")}>{score}</span>
+                <span className="text-3xl font-black text-slate-300 dark:text-slate-600 mt-2">/ {questions.length}</span>
+             </div>
+          </div>
+
+          <div className="flex flex-col gap-4">
+            {!isPerfect && (
+              <button
+                onClick={() => {
+                  setCurrentQuestionIndex(0)
+                  setScore(0)
+                  setSelectedOption(null)
+                  setIsFinished(false)
+                  setIsAnswerRevealed(false)
+                }}
+                className="w-full bg-primary hover:bg-red-500 text-white font-black py-5 rounded-2xl border-b-[6px] border-red-800 active:border-b-0 active:translate-y-[6px] transition-all uppercase tracking-widest shadow-xl flex items-center justify-center gap-3"
+              >
+                Try Again
+                <ArrowLeft className="h-5 w-5 rotate-180" />
+              </button>
+            )}
+            
             <Link
               href="/kids/challenges"
-              className="bg-yellow-400 text-red-600 font-black px-10 py-4 rounded-full shadow-[0_4px_0_#b45309] hover:-translate-y-0.5 active:translate-y-1 active:shadow-none transition-all uppercase tracking-wide flex items-center gap-2"
+              className={cn(
+                "w-full font-black py-5 rounded-2xl transition-all uppercase tracking-widest flex items-center justify-center gap-3",
+                isPerfect 
+                  ? "bg-primary hover:bg-red-500 text-white border-b-[6px] border-red-800 active:border-b-0 active:translate-y-[6px] shadow-xl" 
+                  : "bg-slate-200 dark:bg-slate-800 text-slate-500 dark:text-slate-400 hover:bg-slate-300 dark:hover:bg-slate-700 shadow-md"
+              )}
             >
               Back to Activities
               <CheckCircle className="h-5 w-5" />
@@ -125,9 +181,9 @@ const QuizPage = () => {
         <img 
           src="/challenges-bg.png" 
           alt="" 
-          className="w-full h-full object-cover opacity-30 dark:opacity-10 mix-blend-multiply" 
+          className="w-full h-full object-cover opacity-100 dark:opacity-50 transition-opacity duration-500" 
         />
-        <div className="absolute inset-0 bg-background/80 transition-colors duration-500"></div>
+        <div className="absolute inset-0 bg-white/40 dark:bg-slate-950/60 transition-colors duration-500"></div>
       </div>
 
       <div className="relative z-10 w-full flex-1 flex flex-col py-4 pb-28 sm:pb-4">

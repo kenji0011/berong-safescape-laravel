@@ -1,6 +1,6 @@
 import React from "react"
 import { Link } from '@inertiajs/react'
-import { ArrowLeft, Trophy, Lock, Calendar, Shield, CheckCircle, Zap } from "lucide-react"
+import { ArrowLeft, Trophy, Lock, Calendar, Shield, CheckCircle, Zap, ArrowRight, BadgeCheck } from "lucide-react"
 import DashboardLayout from "@/Layouts/DashboardLayout"
 import { cn } from "@/lib/utils"
 import { useAuth } from "@/lib/auth-context"
@@ -11,16 +11,16 @@ interface BadgeHallProps {
 }
 
 const ALL_BADGES = [
-  { id: 'module_1', moduleNum: 1, name: "Fire Triangle", source: "Module 1", icon: "🔥", hint: "Complete Module 1: Fire is a Tool, Not a Toy and pass the quiz." },
-  { id: 'module_2', moduleNum: 2, name: "Safety Leader", source: "Module 2", icon: "🛡️", hint: "Master the Fire Drill in Module 2 to earn this badge." },
-  { id: 'module_3', moduleNum: 3, name: "Plan Master", source: "Module 3", icon: "📢", hint: "Create your Family Escape Plan in Module 3." },
-  { id: 'module_4', moduleNum: 4, name: "Low & Go!", source: "Module 4", icon: "🏃", hint: "Learn the Smoke Crawling technique in Module 4." },
-  { id: 'module_5', moduleNum: 5, name: "Home Guard", source: "Module 5", icon: "🏘️", hint: "Complete the final Module 5 training session." },
-  { id: 'quiz_hero', name: "Quiz Hero", source: "Fire Quiz", icon: "🏆", hint: "Score 100% on any Fire Safety Quiz." },
-  { id: 'memory_master', name: "Memory Master", source: "Memory Game", icon: "🧠", hint: "Finish the Memory Match game with zero mistakes." },
-  { id: 'smoke_scout', name: "Smoke Scout", source: "Smoke Crawl", icon: "🔦", hint: "Navigate the Smoke Labyrinth safely." },
-  { id: 'safety_scout', name: "Safety Scout", source: "Hot or Not", icon: "🤖", hint: "Correcty identify all hazards in the Hazard House." },
-  { id: 'intel_analyst', name: "Intel Analyst", source: "Videos", icon: "🎬", hint: "Watch all fire safety training videos." }
+  { id: 'module_1', moduleNum: 1, name: "Fire Triangle", source: "Module 1", icon: "🔥", hint: "Complete Module 1: Fire is a Tool, Not a Toy and pass the quiz.", target: "/kids/safescape/1" },
+  { id: 'module_2', moduleNum: 2, name: "Safety Leader", source: "Module 2", icon: "🛡️", hint: "Master the Fire Drill in Module 2 to earn this badge.", target: "/kids/safescape/2" },
+  { id: 'module_3', moduleNum: 3, name: "Plan Master", source: "Module 3", icon: "📢", hint: "Create your Family Escape Plan in Module 3.", target: "/kids/safescape/3" },
+  { id: 'module_4', moduleNum: 4, name: "Low & Go!", source: "Module 4", icon: "🏃", hint: "Learn the Smoke Crawling technique in Module 4.", target: "/kids/safescape/4" },
+  { id: 'module_5', moduleNum: 5, name: "Home Guard", source: "Module 5", icon: "🏘️", hint: "Complete the final Module 5 training session.", target: "/kids/safescape/5" },
+  { id: 'quiz_hero', name: "Quiz Hero", source: "Fire Quiz", icon: "🏆", hint: "Score 100% on any Fire Safety Quiz.", target: "/kids/challenges" },
+  { id: 'memory_master', name: "Memory Master", source: "Memory Game", icon: "🧠", hint: "Finish the Memory Match game with zero mistakes.", target: "/kids/challenges" },
+  { id: 'smoke_scout', name: "Smoke Scout", source: "Smoke Crawl", icon: "🔦", hint: "Navigate the Smoke Labyrinth safely.", target: "/kids/safescape/4" },
+  { id: 'safety_scout', name: "Safety Scout", source: "Hot or Not", icon: "🤖", hint: "Correcty identify all hazards in the Hazard House.", target: "/kids/challenges" },
+  { id: 'intel_analyst', name: "Intel Analyst", source: "Videos", icon: "🎬", hint: "Watch all fire safety training videos.", target: "/kids/videos" }
 ]
 
 const BadgeHallPage = ({ completedModules = [], earnedBadges = [] }: BadgeHallProps) => {
@@ -141,13 +141,13 @@ const BadgeHallPage = ({ completedModules = [], earnedBadges = [] }: BadgeHallPr
 
                   {/* Action Link (If Locked) - Compact on Mobile */}
                   {!state.isEarned && (
-                    <div className="mt-auto pt-2 sm:pt-4 border-t border-slate-800/30">
+                    <div className="mt-auto pt-3 sm:pt-5 border-t border-slate-800/50">
                       <Link 
-                        href="/kids/safescape" 
-                        className="flex items-center justify-between group/link text-orange-500 font-black text-[10px] sm:text-xs uppercase tracking-wider"
+                        href={badge.target || "/kids/safescape"} 
+                        className="w-full bg-orange-600 hover:bg-orange-500 text-white font-black py-2.5 rounded-xl flex items-center justify-center gap-2 text-[10px] sm:text-xs uppercase tracking-widest transition-all shadow-[0_4px_0_rgb(154,52,18)] active:shadow-none active:translate-y-[4px] border-t border-white/20"
                       >
-                        Mission
-                        <Zap className="h-3 w-3 sm:h-4 sm:w-4 group-hover/link:animate-pulse" />
+                        Go!
+                        <ArrowRight className="h-3 w-3 sm:h-4 sm:w-4" />
                       </Link>
                     </div>
                   )}

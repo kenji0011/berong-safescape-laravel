@@ -7,6 +7,7 @@ import { Maximize2, Shield } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Link } from '@inertiajs/react';
 import { ImageViewerModal } from "@/components/image-viewer-modal"
+import Image from '@/Components/Image';
 
 type CarouselImage = {
     id: number;
@@ -44,23 +45,22 @@ export function HeroCarouselClient({ images }: HeroCarouselClientProps) {
                 <CarouselContent>
                     {images.map((image, index) => (
                         <CarouselItem key={image.id}>
-                            <div className="relative isolate w-full h-[40vh] sm:h-[50vh] min-h-[300px] overflow-hidden rounded-[2.5rem] shadow-2xl border border-gray-200 dark:border-slate-800 group-slide [mask-image:radial-gradient(white,black)] [-webkit-mask-image:-webkit-radial-gradient(white,black)] bg-slate-200 dark:bg-slate-800 transition-colors duration-500">
+                            <div className="relative isolate w-full h-[40vh] sm:h-[50vh] min-h-[300px] overflow-hidden rounded-[2.5rem] shadow-2xl border border-gray-200 dark:border-slate-800 group-slide bg-slate-200 dark:bg-slate-800 transition-colors duration-500">
                                 <style dangerouslySetInnerHTML={{ __html: `
                                     .carousel-zoom-image {
                                         transition: opacity 0.7s ease-out, transform 0.7s cubic-bezier(0.33, 1, 0.68, 1) !important;
+                                        image-rendering: -webkit-optimize-contrast;
+                                        image-rendering: high-quality;
                                     }
                                     .group-slide:hover .carousel-zoom-image {
                                         transform: scale(1.1) !important;
                                     }
                                 `}} />
-                                <img
+                                <Image
                                     src={image.imageUrl}
                                     alt={image.altText ?? image.title}
-                                    decoding="async"
-                                    loading={index === 0 ? "eager" : "lazy"}
-                                    {...(index === 0 ? { fetchpriority: "high" } : {})}
-                                    onLoad={(e) => (e.currentTarget.style.opacity = "1")}
-                                    style={{ opacity: 0 }}
+                                    fill
+                                    priority={index === 0}
                                     className="absolute inset-0 w-full h-full object-cover carousel-zoom-image"
                                 />
 

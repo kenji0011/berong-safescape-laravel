@@ -537,21 +537,21 @@ export default function ProfilePage() {
 
         {/* Assessment Scores */}
         <Card className="mt-8 rounded-[2rem] border-2 border-slate-200 dark:border-slate-700 shadow-[0_12px_0_#f1f5f9] dark:shadow-[0_12px_0_#1e293b] bg-white dark:bg-slate-800 p-0 overflow-hidden transition-all duration-300 relative z-10">
-          <CardHeader className="bg-slate-100/50 dark:bg-slate-900 border-b-2 border-slate-100 dark:border-slate-700 pt-8 pb-8 px-8 rounded-t-[1.85rem] transition-colors">
+          <CardHeader className="bg-slate-100/50 dark:bg-slate-900 border-b-2 border-slate-100 dark:border-slate-700 p-5 sm:p-8 rounded-t-[1.85rem] transition-colors">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div>
-                <CardTitle className="flex items-center gap-3 text-2xl font-black text-slate-800 dark:text-white transition-colors">
-                  <div className="bg-orange-100 dark:bg-orange-900/30 p-2 rounded-xl transition-colors">
-                    <Trophy className="h-6 w-6 text-orange-500 dark:text-orange-400" strokeWidth={2.5} />
+                <CardTitle className="flex items-center gap-3 text-xl sm:text-2xl font-black text-slate-800 dark:text-white transition-colors">
+                  <div className="bg-orange-100 dark:bg-orange-900/30 p-1.5 sm:p-2 rounded-xl transition-colors">
+                    <Trophy className="h-5 w-5 sm:h-6 sm:w-6 text-orange-500 dark:text-orange-400" strokeWidth={2.5} />
                   </div>
                   Assessment Scores
                 </CardTitle>
-                <CardDescription className="text-slate-500 dark:text-slate-400 font-bold mt-1 ml-1 transition-colors">Track your fire safety knowledge growth</CardDescription>
+                <CardDescription className="text-slate-500 dark:text-slate-400 font-bold mt-1 ml-1 text-xs sm:text-sm transition-colors">Track your fire safety knowledge growth</CardDescription>
               </div>
-              <div className="flex items-center gap-2 bg-white dark:bg-slate-900 px-4 py-2 rounded-2xl border-2 border-slate-100 dark:border-slate-700 shadow-sm transition-colors">
-                <span className="text-xs font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest transition-colors">Total Progress</span>
+              <div className="flex items-center gap-2 bg-white dark:bg-slate-900 px-3 py-1.5 sm:px-4 sm:py-2 rounded-2xl border-2 border-slate-100 dark:border-slate-700 shadow-sm transition-colors w-fit">
+                <span className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest transition-colors">Total Progress</span>
                 <div className="flex items-center gap-1.5">
-                  <div className="w-24 h-2 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden border border-slate-200 dark:border-slate-700 transition-colors">
+                  <div className="w-16 sm:w-24 h-2 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden border border-slate-200 dark:border-slate-700 transition-colors">
                     <div 
                       className="h-full bg-orange-500 rounded-full transition-all duration-1000" 
                       style={{ width: `${scores ? (getScorePercentage(scores.preTestScore, 15) + getScorePercentage(scores.postTestScore, 15)) / 2 : 0}%` }}
@@ -571,7 +571,7 @@ export default function ProfilePage() {
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                 {/* Pre-Test Card */}
                 <div className={cn(
-                  "relative group overflow-hidden border-2 rounded-[2.5rem] p-8 transition-all duration-500",
+                  "relative group overflow-hidden border-2 rounded-[2rem] sm:rounded-[2.5rem] p-5 sm:p-8 transition-all duration-500",
                   scores.preTestScore !== null 
                     ? "bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 shadow-sm hover:shadow-xl hover:border-blue-200 dark:hover:border-blue-500/50" 
                     : "bg-slate-50/50 dark:bg-slate-900/30 border-dashed border-slate-300 dark:border-slate-700 opacity-80"
@@ -579,18 +579,18 @@ export default function ProfilePage() {
                   {/* Decorative background circle */}
                   <div className="absolute -top-12 -right-12 w-32 h-32 bg-blue-50 dark:bg-blue-900/20 rounded-full opacity-50 group-hover:scale-150 transition-transform duration-700" />
                   
-                  <div className="relative z-10 flex flex-col sm:flex-row items-center gap-8">
-                    <div className="shrink-0">
+                  <div className="relative z-10 flex flex-col sm:flex-row items-center gap-5 sm:gap-8">
+                    <div className="shrink-0 scale-90 sm:scale-100">
                       {scores.preTestScore !== null ? (
                         <ScoreGauge 
                           percentage={getScorePercentage(scores.preTestScore, 15)} 
                           color="#3b82f6" 
-                          size={130}
-                          strokeWidth={12}
+                          size={110}
+                          strokeWidth={10}
                         />
                       ) : (
-                        <div className="w-[130px] h-[130px] rounded-full border-4 border-dashed border-slate-200 dark:border-slate-700 flex items-center justify-center bg-white dark:bg-slate-800 shadow-inner transition-colors">
-                          <BookOpen className="h-10 w-10 text-slate-200 dark:text-slate-700 transition-colors" />
+                        <div className="w-[110px] h-[110px] rounded-full border-4 border-dashed border-slate-200 dark:border-slate-700 flex items-center justify-center bg-white dark:bg-slate-800 shadow-inner transition-colors">
+                          <BookOpen className="h-8 w-8 text-slate-200 dark:text-slate-700 transition-colors" />
                         </div>
                       )}
                     </div>
@@ -648,7 +648,7 @@ export default function ProfilePage() {
 
                 {/* Post-Test Card */}
                 <div className={cn(
-                  "relative group overflow-hidden border-2 rounded-[2.5rem] p-8 transition-all duration-500",
+                  "relative group overflow-hidden border-2 rounded-[2rem] sm:rounded-[2.5rem] p-5 sm:p-8 transition-all duration-500",
                   scores.postTestScore !== null 
                     ? "bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 shadow-sm hover:shadow-xl hover:border-orange-200 dark:hover:border-orange-500/50" 
                     : "bg-slate-50/50 dark:bg-slate-900/30 border-dashed border-slate-300 dark:border-slate-700 opacity-80"
@@ -656,18 +656,18 @@ export default function ProfilePage() {
                   {/* Decorative background circle */}
                   <div className="absolute -top-12 -right-12 w-32 h-32 bg-orange-50 dark:bg-orange-900/20 rounded-full opacity-50 group-hover:scale-150 transition-transform duration-700" />
                   
-                  <div className="relative z-10 flex flex-col sm:flex-row items-center gap-8">
-                    <div className="shrink-0">
+                  <div className="relative z-10 flex flex-col sm:flex-row items-center gap-5 sm:gap-8">
+                    <div className="shrink-0 scale-90 sm:scale-100">
                       {scores.postTestScore !== null ? (
                         <ScoreGauge 
                           percentage={getScorePercentage(scores.postTestScore, 15)} 
                           color="#f97316" 
-                          size={130}
-                          strokeWidth={12}
+                          size={110}
+                          strokeWidth={10}
                         />
                       ) : (
-                        <div className="w-[130px] h-[130px] rounded-full border-4 border-dashed border-slate-200 dark:border-slate-700 flex items-center justify-center bg-white dark:bg-slate-800 shadow-inner transition-colors">
-                          <Trophy className="h-10 w-10 text-slate-200 dark:text-slate-700 transition-colors" />
+                        <div className="w-[110px] h-[110px] rounded-full border-4 border-dashed border-slate-200 dark:border-slate-700 flex items-center justify-center bg-white dark:bg-slate-800 shadow-inner transition-colors">
+                          <Trophy className="h-8 w-8 text-slate-200 dark:text-slate-700 transition-colors" />
                         </div>
                       )}
                     </div>

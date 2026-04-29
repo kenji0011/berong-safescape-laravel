@@ -90,7 +90,7 @@ export function Navigation() {
 
             {/* LEFT SECTION: Logo + Branding */}
             <div className="flex-1 flex justify-start min-w-0">
-              <Link href="/" className="flex items-center gap-1.5 sm:gap-3 hover:opacity-90 transition-opacity cursor-pointer">
+              <Link href="/" className="flex items-center gap-1.5 sm:gap-3 md:hover:opacity-90 transition-opacity cursor-pointer">
                 {/* Logos */}
                 <div className="flex items-center gap-1 sm:gap-2 flex-shrink-0">
                   <img
@@ -128,8 +128,8 @@ export function Navigation() {
               <Link 
                 href="/" 
                 className={isDashboard 
-                  ? "font-extrabold text-sm tracking-wide uppercase px-4 xl:px-5 py-1.5 rounded-full border-[3px] border-white dark:border-slate-200 bg-yellow-400 text-black shadow-[0_4px_0_#b45309] dark:shadow-[0_4px_0_#0f172a] hover:-translate-y-0.5 hover:shadow-[0_6px_0_#b45309] dark:hover:shadow-[0_6px_0_#0f172a] active:translate-y-1 active:shadow-none transition-none"
-                  : "font-extrabold text-sm tracking-wide uppercase text-white hover:text-yellow-200 transition-none drop-shadow-sm py-1.5 px-2 xl:px-3 whitespace-nowrap"
+                  ? "font-extrabold text-sm tracking-wide uppercase px-4 xl:px-5 py-1.5 rounded-full border-[3px] border-white dark:border-slate-200 bg-yellow-400 text-black shadow-[0_4px_0_#b45309] dark:shadow-[0_4px_0_#0f172a] md:hover:-translate-y-0.5 md:hover:shadow-[0_6px_0_#b45309] dark:md:hover:shadow-[0_6px_0_#0f172a] active:translate-y-1 active:shadow-none transition-none"
+                  : "font-extrabold text-sm tracking-wide uppercase text-white md:hover:text-yellow-200 transition-none drop-shadow-sm py-1.5 px-2 xl:px-3 whitespace-nowrap"
                 }
               >
                 DASHBOARD
@@ -139,8 +139,8 @@ export function Navigation() {
                 <Link
                   href="/kids"
                   className={(!isDashboard && url.startsWith('/kids'))
-                    ? "font-extrabold text-sm tracking-wide uppercase px-4 xl:px-5 py-1.5 rounded-full border-[3px] border-white dark:border-slate-200 bg-yellow-400 text-black shadow-[0_4px_0_#b45309] dark:shadow-[0_4px_0_#0f172a] hover:-translate-y-0.5 hover:shadow-[0_6px_0_#b45309] dark:hover:shadow-[0_6px_0_#0f172a] active:translate-y-1 active:shadow-none transition-none flex items-center gap-1.5 whitespace-nowrap outline-none" 
-                    : "font-extrabold text-sm tracking-wide uppercase text-white hover:text-yellow-200 transition-none drop-shadow-sm py-1.5 px-2 xl:px-3 flex items-center gap-1.5 whitespace-nowrap outline-none cursor-pointer"
+                    ? "font-extrabold text-sm tracking-wide uppercase px-4 xl:px-5 py-1.5 rounded-full border-[3px] border-white dark:border-slate-200 bg-yellow-400 text-black shadow-[0_4px_0_#b45309] dark:shadow-[0_4px_0_#0f172a] md:hover:-translate-y-0.5 md:hover:shadow-[0_6px_0_#b45309] dark:md:hover:shadow-[0_6px_0_#0f172a] active:translate-y-1 active:shadow-none transition-none flex items-center gap-1.5 whitespace-nowrap outline-none" 
+                    : "font-extrabold text-sm tracking-wide uppercase text-white md:hover:text-yellow-200 transition-none drop-shadow-sm py-1.5 px-2 xl:px-3 flex items-center gap-1.5 whitespace-nowrap outline-none cursor-pointer"
                   }
                 >
                   KIDS
@@ -149,8 +149,8 @@ export function Navigation() {
                 <DropdownMenu modal={false}>
                   <DropdownMenuTrigger 
                     className={(!isDashboard && url !== '/login' && url !== '/register' && url !== '/about' && url !== '/profile')
-                      ? "font-extrabold text-sm tracking-wide uppercase px-4 xl:px-5 py-1.5 rounded-full border-[3px] border-white dark:border-slate-200 bg-yellow-400 text-black shadow-[0_4px_0_#b45309] dark:shadow-[0_4px_0_#0f172a] hover:-translate-y-0.5 hover:shadow-[0_6px_0_#b45309] dark:hover:shadow-[0_6px_0_#0f172a] active:translate-y-1 active:shadow-none data-[state=open]:translate-y-1 data-[state=open]:shadow-none transition-none flex items-center gap-1.5 group outline-none cursor-pointer" 
-                      : "font-extrabold text-sm tracking-wide uppercase text-white hover:text-yellow-200 transition-none drop-shadow-sm py-1.5 px-2 xl:px-3 flex items-center gap-1.5 whitespace-nowrap outline-none cursor-pointer"
+                      ? "font-extrabold text-sm tracking-wide uppercase px-4 xl:px-5 py-1.5 rounded-full border-[3px] border-white dark:border-slate-200 bg-yellow-400 text-black shadow-[0_4px_0_#b45309] dark:shadow-[0_4px_0_#0f172a] data-[state=closed]:md:hover:-translate-y-0.5 data-[state=closed]:md:hover:shadow-[0_6px_0_#b45309] dark:data-[state=closed]:md:hover:shadow-[0_6px_0_#0f172a] active:translate-y-1 active:shadow-none data-[state=open]:translate-y-1 data-[state=open]:shadow-none dark:data-[state=open]:shadow-none transition-all duration-200 flex items-center gap-1.5 group outline-none cursor-pointer" 
+                      : "font-extrabold text-sm tracking-wide uppercase text-white md:hover:text-yellow-200 data-[state=open]:text-yellow-400 data-[state=open]:translate-y-0.5 transition-all duration-200 drop-shadow-sm py-1.5 px-2 xl:px-3 flex items-center gap-1.5 whitespace-nowrap outline-none cursor-pointer"
                     }
                   >
                     {url.startsWith('/professional') ? 'PROFESSIONAL' :
@@ -224,7 +224,7 @@ export function Navigation() {
               {isAuthenticated ? (
                 <div className="hidden lg:flex items-center gap-3">
                   <div className="relative group flex items-center">
-                    <Link href="/profile" className="flex items-center justify-center p-0 h-10 w-10 sm:h-12 sm:w-12 rounded-full bg-[#facc15] border-[3px] border-white text-white shadow-[0_4px_0_#ca8a04] hover:-translate-y-0.5 hover:shadow-[0_6px_0_#ca8a04] active:translate-y-1 active:shadow-none transition-all duration-200 active:duration-75">
+                    <Link href="/profile" className="flex items-center justify-center p-0 h-10 w-10 sm:h-12 sm:w-12 rounded-full bg-[#facc15] border-[3px] border-white text-white shadow-[0_4px_0_#ca8a04] md:hover:-translate-y-0.5 md:hover:shadow-[0_6px_0_#ca8a04] active:translate-y-1 active:shadow-none transition-all duration-200 active:duration-75">
                       <User className="h-5 w-5 sm:h-6 sm:w-6" strokeWidth={2.5} />
                     </Link>
                     <span className="absolute top-full mt-2 left-1/2 -translate-x-1/2 px-2 py-1 bg-black/90 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-[9999] pointer-events-none">
@@ -234,7 +234,7 @@ export function Navigation() {
 
                   <DropdownMenu modal={false}>
                     <DropdownMenuTrigger
-                      className="flex items-center justify-center p-0 h-10 w-10 sm:h-12 sm:w-12 rounded-full bg-[#e11d48] border-[3px] border-white text-white shadow-[0_4px_0_#9f1239] hover:-translate-y-0.5 hover:shadow-[0_6px_0_#9f1239] active:translate-y-1 active:shadow-none data-[state=open]:translate-y-1 data-[state=open]:shadow-none transition-all duration-200 active:duration-75 outline-none cursor-pointer"
+                      className="flex items-center justify-center p-0 h-10 w-10 sm:h-12 sm:w-12 rounded-full bg-[#e11d48] border-[3px] border-white text-white shadow-[0_4px_0_#9f1239] data-[state=closed]:md:hover:-translate-y-0.5 data-[state=closed]:md:hover:shadow-[0_6px_0_#9f1239] active:translate-y-1 active:shadow-none data-[state=open]:translate-y-1 data-[state=open]:shadow-none dark:data-[state=open]:shadow-none transition-all duration-200 active:duration-75 outline-none cursor-pointer"
                     >
                       <Settings className="h-5 w-5 sm:h-6 sm:w-6" strokeWidth={2.5} />
                     </DropdownMenuTrigger>
@@ -267,7 +267,7 @@ export function Navigation() {
                       >
                         <span className="flex items-center gap-2 text-sm font-medium text-slate-700 dark:text-slate-300">
                           <Zap className="h-4 w-4 text-amber-500" />
-                          Reduce Animations
+                          Performance Mode
                         </span>
                         <div className={`relative w-9 h-5 rounded-full transition-colors duration-200 ${reduceMotion ? 'bg-red-500' : 'bg-slate-300'}`}>
                           <div className={`absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform duration-200 ${reduceMotion ? 'translate-x-4' : 'translate-x-0'}`} />
@@ -288,6 +288,18 @@ export function Navigation() {
                           <button onClick={(e) => { e.preventDefault(); setTextSize('xlarge'); }} className={`flex-1 py-1 rounded text-base font-bold transition-all ${textSize === 'xlarge' ? 'bg-white dark:bg-slate-600 text-slate-800 dark:text-white shadow-sm' : 'text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200'}`}>A</button>
                         </div>
                       </div>
+                      
+                      <div className="h-[1px] bg-slate-100 dark:bg-slate-800 my-1 transition-colors" />
+                      
+                      {/* About Link */}
+                      <Link href="/about" className="block w-full outline-none">
+                        <DropdownMenuItem className="cursor-pointer font-bold rounded-lg py-2.5 px-3 flex items-center justify-between hover:bg-slate-50 dark:hover:bg-slate-800 focus:bg-slate-50 dark:focus:bg-slate-800 transition-colors group">
+                          <span className="flex items-center gap-2 text-sm text-slate-700 dark:text-slate-300">
+                            <Info className="h-4 w-4 text-blue-500 group-hover:text-blue-600 transition-colors" />
+                            About Platform
+                          </span>
+                        </DropdownMenuItem>
+                      </Link>
 
                       <div className="h-[1px] bg-slate-100 dark:bg-slate-800 my-1 transition-colors" />
 
@@ -308,7 +320,7 @@ export function Navigation() {
                 <div className="hidden lg:flex items-center gap-3">
                   <DropdownMenu modal={false}>
                     <DropdownMenuTrigger
-                      className="p-2 flex items-center justify-center rounded-full bg-[#e11d48] border-[3px] border-white text-white shadow-[0_4px_0_#9f1239] hover:-translate-y-0.5 hover:shadow-[0_6px_0_#9f1239] active:translate-y-1 active:shadow-none data-[state=open]:translate-y-1 data-[state=open]:shadow-none transition-all duration-200 active:duration-75 outline-none cursor-pointer"
+                      className="p-2 flex items-center justify-center rounded-full bg-[#e11d48] border-[3px] border-white text-white shadow-[0_4px_0_#9f1239] data-[state=closed]:md:hover:-translate-y-0.5 data-[state=closed]:md:hover:shadow-[0_6px_0_#9f1239] active:translate-y-1 active:shadow-none data-[state=open]:translate-y-1 data-[state=open]:shadow-none dark:data-[state=open]:shadow-none transition-all duration-200 active:duration-75 outline-none cursor-pointer"
                     >
                       <Settings className="h-5 w-5" strokeWidth={2.5} />
                     </DropdownMenuTrigger>
@@ -353,7 +365,7 @@ export function Navigation() {
                       >
                         <span className="flex items-center gap-2 text-sm font-medium text-slate-700 dark:text-slate-300">
                           <Zap className="h-4 w-4 text-amber-500" />
-                          Reduce Animations
+                          Performance Mode
                         </span>
                         <div className={`relative w-9 h-5 rounded-full transition-colors duration-200 ${reduceMotion ? 'bg-red-500' : 'bg-slate-300'}`}>
                           <div className={`absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform duration-200 ${reduceMotion ? 'translate-x-4' : 'translate-x-0'}`} />
@@ -376,7 +388,7 @@ export function Navigation() {
                       </div>
                     </DropdownMenuContent>
                   </DropdownMenu>
-                  <Link href="/login" className="bg-yellow-400 border-[3px] border-white text-red-600 font-extrabold px-6 py-1.5 rounded-full shadow-[0_4px_0_#b45309] hover:-translate-y-0.5 hover:shadow-[0_6px_0_#b45309] active:translate-y-1 active:shadow-none transition-all duration-200 active:duration-75 text-sm tracking-wide">
+                  <Link href="/login" className="bg-yellow-400 border-[3px] border-white text-red-600 font-extrabold px-6 py-1.5 rounded-full shadow-[0_4px_0_#b45309] md:hover:-translate-y-0.5 md:hover:shadow-[0_6px_0_#b45309] active:translate-y-1 active:shadow-none transition-all duration-200 active:duration-75 text-sm tracking-wide">
                     Sign In
                   </Link>
                 </div>
@@ -391,7 +403,7 @@ export function Navigation() {
 
               {/* Mobile Sign In Button - visible when not authenticated */}
               {!isAuthenticated && (
-                <Link href="/login" className="sm:hidden bg-yellow-400 border-[3px] border-white text-red-600 font-extrabold px-4 py-1.5 rounded-full shadow-[0_4px_0_#b45309] hover:-translate-y-0.5 hover:shadow-[0_6px_0_#b45309] active:translate-y-1 active:shadow-none transition-all duration-200 active:duration-75 text-[11px] tracking-wide shrink-0 whitespace-nowrap">
+                <Link href="/login" className="sm:hidden bg-yellow-400 border-[3px] border-white text-red-600 font-extrabold px-4 py-1.5 rounded-full shadow-[0_4px_0_#b45309] md:hover:-translate-y-0.5 md:hover:shadow-[0_6px_0_#b45309] active:translate-y-1 active:shadow-none transition-all duration-200 active:duration-75 text-[11px] tracking-wide shrink-0 whitespace-nowrap">
                   Sign In
                 </Link>
               )}
@@ -405,7 +417,7 @@ export function Navigation() {
                 className={`lg:hidden flex items-center justify-center h-10 w-10 sm:h-12 sm:w-12 rounded-[14px] shrink-0 transition-all duration-200 outline-none bg-yellow-400 border-[3px] border-white text-white ${
                   mobileMenuOpen 
                     ? "translate-y-1 shadow-[0_0px_0_#b45309]" 
-                    : "shadow-[0_4px_0_#b45309] hover:-translate-y-0.5 hover:shadow-[0_6px_0_#b45309] active:translate-y-1 active:shadow-[0_0px_0_#b45309]"
+                    : "shadow-[0_4px_0_#b45309] md:hover:-translate-y-0.5 md:hover:shadow-[0_6px_0_#b45309] active:translate-y-1 active:shadow-[0_0px_0_#b45309]"
                 }`}
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               >
@@ -522,7 +534,7 @@ export function Navigation() {
             >
               <span className="flex items-center gap-3 text-[15px] font-bold text-white">
                 <Zap className="h-5 w-5 text-amber-400 shrink-0" strokeWidth={2.5} />
-                Reduce Animations
+                Performance Mode
               </span>
               <div className={`relative w-10 h-6 rounded-full transition-colors duration-200 ${reduceMotion ? 'bg-red-500' : 'bg-slate-600'}`}>
                 <div className={`absolute top-1 left-1 w-4 h-4 bg-white rounded-full shadow transition-transform duration-200 ${reduceMotion ? 'translate-x-4' : 'translate-x-0'}`} />
@@ -565,7 +577,7 @@ export function Navigation() {
                 <div className="flex items-center justify-between px-6 py-3 pb-2">
                   <div className="flex items-center gap-2.5">
                     <Link href="/profile" onClick={() => setMobileMenuOpen(false)} className="outline-none">
-                      <div className="h-10 w-10 sm:h-12 sm:w-12 rounded-full bg-yellow-400 border-[3px] border-white flex items-center justify-center shadow-[0_3px_0_#b45309] hover:-translate-y-0.5 hover:shadow-[0_4px_0_#b45309] active:translate-y-0.5 active:shadow-[0_0px_0_#b45309] transition-all cursor-pointer shrink-0">
+                      <div className="h-10 w-10 sm:h-12 sm:w-12 rounded-full bg-yellow-400 border-[3px] border-white flex items-center justify-center shadow-[0_3px_0_#b45309] md:hover:-translate-y-0.5 md:hover:shadow-[0_4px_0_#b45309] active:translate-y-0.5 active:shadow-[0_0px_0_#b45309] transition-all cursor-pointer shrink-0">
                         <User className="h-5 w-5 sm:h-6 sm:w-6 text-white" strokeWidth={2.5} />
                       </div>
                     </Link>
@@ -583,7 +595,7 @@ export function Navigation() {
                       setMobileMenuOpen(false)
                       setShowLogoutConfirm(true)
                     }}
-                    className="rounded-full bg-[#e11d48] border-[2px] border-white text-white hover:bg-rose-700 h-9 sm:h-10 px-3 sm:px-4 font-bold text-xs sm:text-sm shadow-[0_3px_0_#9f1239] hover:-translate-y-0.5 hover:shadow-[0_4px_0_#9f1239] active:translate-y-1 active:shadow-[0_0px_0_#9f1239] transition-all shrink-0 outline-none flex items-center justify-center"
+                    className="rounded-full bg-[#e11d48] border-[2px] border-white text-white md:hover:bg-rose-700 h-9 sm:h-10 px-3 sm:px-4 font-bold text-xs sm:text-sm shadow-[0_3px_0_#9f1239] md:hover:-translate-y-0.5 md:hover:shadow-[0_4px_0_#9f1239] active:translate-y-1 active:shadow-[0_0px_0_#9f1239] transition-all shrink-0 outline-none flex items-center justify-center"
                   >
                     <LogOut className="h-3.5 w-3.5 sm:h-4 sm:w-4 mr-1.5 sm:mr-2" strokeWidth={2.5} />
                     Log out

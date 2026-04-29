@@ -2,8 +2,16 @@
 
 import { useAuth } from "@/lib/auth-context"
 import { Link } from '@inertiajs/react'
-import { Flame, Trophy, Lock, Shield, Star, Zap, ChevronRight, BadgeCheck, Gamepad2, BookOpen } from "lucide-react"
+import { Flame, Trophy, Lock, Shield, Star, Zap, ChevronRight, BadgeCheck, Gamepad2, BookOpen, CircleHelp } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { useState } from "react"
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/Components/ui/dialog"
 
 interface KidsWelcomeBannerProps {
   completedModules: number[]
@@ -14,8 +22,8 @@ export function KidsWelcomeBanner({ completedModules = [], earnedBadges = [] }: 
   const { user } = useAuth()
   const firstName = user?.name?.split(' ')[0] || 'Fire Hero'
   
-  // All possible badges for summary
-  const allBadgesSummary = [
+  // All possible badges for summary - Synchronized with BadgeHall.tsx
+  const ALL_BADGES = [
     { id: 'module_1', moduleNum: 1, icon: "🔥" },
     { id: 'module_2', moduleNum: 2, icon: "🛡️" },
     { id: 'module_3', moduleNum: 3, icon: "📢" },
@@ -23,16 +31,20 @@ export function KidsWelcomeBanner({ completedModules = [], earnedBadges = [] }: 
     { id: 'module_5', moduleNum: 5, icon: "🏘️" },
     { id: 'quiz_hero', icon: "🏆" },
     { id: 'memory_master', icon: "🧠" },
+    { id: 'smoke_scout', icon: "🔦" },
+    { id: 'safety_scout', icon: "🤖" },
+    { id: 'intel_analyst', icon: "🎬" }
   ]
 
-  const totalBadges = 10 // Total badges in the Hall of Fame
+  const totalBadges = ALL_BADGES.length
   
   const isBadgeEarned = (badgeId: string, moduleNum?: number) => {
     const earned = earnedBadges.find(b => b.badge_id === badgeId)
     return (moduleNum && completedModules.includes(moduleNum)) || !!earned
   }
 
-  const badgesFound = earnedBadges.length + completedModules.length // Simplified for banner
+  // Count unique earned badges based on the official list
+  const badgesFound = ALL_BADGES.filter(b => isBadgeEarned(b.id, b.moduleNum)).length
   const progressPercent = (badgesFound / totalBadges) * 100
 
   // Avatars Mapping
@@ -50,8 +62,17 @@ export function KidsWelcomeBanner({ completedModules = [], earnedBadges = [] }: 
     return { name: "Recruit", color: "text-slate-300", bg: "bg-slate-400/30", icon: Zap }
   }
 
+  const RANKS = [
+    { name: "Legendary Hero", count: 8, color: "text-yellow-400", bg: "bg-yellow-400/10", icon: Star, desc: "The ultimate protector of the city! You've mastered almost everything." },
+    { name: "Master Hero", count: 5, color: "text-orange-400", bg: "bg-orange-400/10", icon: Trophy, desc: "A true expert in fire safety. You lead by example." },
+    { name: "Safety Elite", count: 3, color: "text-blue-400", bg: "bg-blue-400/10", icon: Shield, desc: "A highly skilled responder. You know exactly what to do." },
+    { name: "Fire Scout", count: 1, color: "text-emerald-400", bg: "bg-emerald-400/10", icon: Flame, desc: "A brave beginner. You've taken your first steps to safety." },
+    { name: "Recruit", count: 0, color: "text-slate-400", bg: "bg-slate-400/10", icon: Zap, desc: "A new hero in training. Start a module to earn your first badge!" }
+  ]
+
   const currentRank = getHeroRank(badgesFound)
   const RankIcon = currentRank.icon
+  const [showRankGuide, setShowRankGuide] = useState(false)
 
   return (
     <div className="relative bg-primary rounded-2xl sm:rounded-[2.5rem] shadow-xl mb-6 sm:mb-8 border-[3px] sm:border-[6px] border-white/90 dark:border-black/20 overflow-hidden transform translate-z-0 transition-colors duration-500">
@@ -75,6 +96,65 @@ export function KidsWelcomeBanner({ completedModules = [], earnedBadges = [] }: 
             </h1>
             <div className="flex items-center justify-center gap-2 text-yellow-50/90 font-black text-sm sm:text-xl tracking-tight">
               You are a <span className="text-yellow-300 underline underline-offset-4 decoration-yellow-400/50">{currentRank.name}</span> <RankIcon className="h-5 w-5 sm:h-6 sm:w-6 fill-yellow-300 text-yellow-300" />
+              
+              <Dialog open={showRankGuide} onOpenChange={setShowRankGuide}>
+                <DialogTrigger asChild>
+                  <button className="ml-1 p-1 hover:bg-white/20 rounded-full transition-colors group">
+                    <CircleHelp className="h-4 w-4 sm:h-5 sm:w-5 text-white/60 group-hover:text-white" />
+                  </button>
+                </DialogTrigger>
+                <DialogContent className="max-w-md bg-slate-50 dark:bg-slate-950 border-[4px] border-primary rounded-[2.5rem] p-0 overflow-hidden">
+                   <div className="bg-primary p-6 sm:p-8 text-center relative">
+                      <div className="absolute top-0 left-0 w-full h-full opacity-10 pointer-events-none">
+                         <Star className="absolute top-4 left-4 h-12 w-12 text-white rotate-12" />
+                         <Trophy className="absolute bottom-4 right-4 h-12 w-12 text-white -rotate-12" />
+                      </div>
+                      <DialogHeader>
+                        <DialogTitle className="text-2xl sm:text-3xl font-black text-white uppercase tracking-tighter mb-2">Hero Rank Guide</DialogTitle>
+                        <p className="text-white/80 font-bold text-sm">Collect badges to level up your Hero Rank!</p>
+                      </DialogHeader>
+                   </div>
+                   
+                   <div className="p-4 sm:p-6 space-y-3">
+                      {RANKS.map((rank, i) => {
+                        const Icon = rank.icon
+                        const isCurrent = currentRank.name === rank.name
+                        
+                        return (
+                          <div key={i} className={cn(
+                            "relative flex items-center gap-4 p-4 rounded-2xl border-2 transition-all",
+                            isCurrent ? "bg-white dark:bg-slate-900 border-primary shadow-lg scale-[1.02]" : "bg-white/50 dark:bg-slate-900/50 border-slate-200 dark:border-slate-800 opacity-70"
+                          )}>
+                             {isCurrent && (
+                               <div className="absolute -top-2.5 -right-2 bg-primary text-white text-[9px] font-black px-2.5 py-1 rounded-full shadow-md border-2 border-white dark:border-slate-900 uppercase tracking-tight">
+                                  Current
+                               </div>
+                             )}
+                             <div className={cn("h-12 w-12 rounded-xl flex items-center justify-center text-xl shrink-0 border-2", rank.bg, rank.color.replace('text-', 'border-'))}>
+                                <Icon className={cn("h-6 w-6", rank.color)} />
+                             </div>
+                             <div className="flex-1">
+                                <div className="flex items-center justify-between">
+                                   <h4 className={cn("font-black text-sm uppercase tracking-tight", rank.color)}>{rank.name}</h4>
+                                   <span className="text-[10px] font-black text-slate-400 uppercase">{rank.count}+ Badges</span>
+                                </div>
+                                <p className="text-[10px] sm:text-xs font-bold text-slate-500 dark:text-slate-400 leading-tight mt-0.5">{rank.desc}</p>
+                             </div>
+                          </div>
+                        )
+                      })}
+                   </div>
+
+                   <div className="p-6 pt-0">
+                      <button 
+                        onClick={() => setShowRankGuide(false)}
+                        className="w-full bg-primary hover:bg-primary/90 text-white font-black py-4 rounded-2xl border-b-[6px] border-red-800 active:border-b-0 active:translate-y-[6px] transition-all uppercase tracking-widest text-sm"
+                      >
+                        Got it, Hero!
+                      </button>
+                   </div>
+                </DialogContent>
+              </Dialog>
             </div>
           </div>
         </div>
@@ -114,19 +194,25 @@ export function KidsWelcomeBanner({ completedModules = [], earnedBadges = [] }: 
               </div>
 
               <div className="flex items-center gap-3 mb-6">
-                {allBadgesSummary.slice(0, 5).map((badge, i) => {
-                  const earned = isBadgeEarned(badge.id, badge.moduleNum)
-                  return (
-                    <div key={i} className={cn(
-                      "h-10 w-10 sm:h-12 sm:w-12 rounded-xl flex items-center justify-center text-xl sm:text-2xl transition-all shadow-lg border-2",
-                      earned 
-                        ? "bg-yellow-400 border-white/30" 
-                        : "bg-black/30 border-white/5 opacity-30"
-                    )}>
-                      {earned ? badge.icon : <Lock className="h-3 w-3 text-white/20" />}
-                    </div>
-                  )
-                })}
+                {(() => {
+                  const earnedList = ALL_BADGES.filter(b => isBadgeEarned(b.id, b.moduleNum));
+                  const lockedList = ALL_BADGES.filter(b => !isBadgeEarned(b.id, b.moduleNum));
+                  const displayBadges = [...earnedList, ...lockedList].slice(0, 5);
+                  
+                  return displayBadges.map((badge, i) => {
+                    const earned = isBadgeEarned(badge.id, badge.moduleNum)
+                    return (
+                      <div key={i} className={cn(
+                        "h-10 w-10 sm:h-12 sm:w-12 rounded-xl flex items-center justify-center text-xl sm:text-2xl transition-all shadow-lg border-2",
+                        earned 
+                          ? "bg-yellow-400 border-white/30" 
+                          : "bg-black/30 border-white/5 opacity-30"
+                      )}>
+                        {earned ? badge.icon : <Lock className="h-3 w-3 text-white/20" />}
+                      </div>
+                    )
+                  });
+                })()}
                 <div className="h-10 w-10 sm:h-12 sm:w-12 rounded-xl flex items-center justify-center bg-white/10 dark:bg-slate-900/50 border border-white/20 dark:border-white/5 text-yellow-300 font-black text-sm transition-colors">
                   +{totalBadges - 5}
                 </div>

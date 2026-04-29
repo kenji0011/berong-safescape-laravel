@@ -213,32 +213,53 @@ const ProfessionalDashboard = ({ initialVideos }: ProfessionalPageClientProps) =
                                 {filteredVideos.map((video) => (
                                     <Card
                                         key={video.id}
-                                        className="flex flex-row sm:flex-col cursor-pointer group bg-white dark:bg-slate-800 rounded-[1.25rem] sm:rounded-[1.5rem] border-2 border-b-[4px] border-slate-200 dark:border-slate-700 dark:shadow-[0_4px_0_#0f172a] overflow-hidden hover:-translate-y-1 active:border-b-[2px] active:translate-y-[2px] transition-all hover:border-slate-300 dark:hover:border-slate-600 shadow-sm hover:shadow-md h-auto items-stretch"
+                                        className="flex flex-row sm:flex-col cursor-pointer group bg-transparent sm:bg-white dark:sm:bg-slate-800 rounded-xl sm:rounded-[1.5rem] border-none sm:border-[3px] sm:border-b-[6px] border-slate-200 dark:border-slate-700 shadow-none sm:shadow-sm sm:hover:-translate-y-1 transition-all h-auto items-stretch py-2 sm:p-0"
                                         onClick={() => handleVideoSelect(video)}
                                     >
-                                        <CardHeader className="p-2 sm:p-0 sm:mb-4 w-[140px] sm:w-full shrink-0 flex items-center justify-center">
-                                            <div className="w-full h-full sm:aspect-video bg-slate-100 dark:bg-slate-900 overflow-hidden relative rounded-xl sm:rounded-none sm:rounded-t-[1.3rem] min-h-[75px]">
+                                        <CardHeader className="p-0 w-[160px] xs:w-[180px] sm:w-full shrink-0 flex items-center justify-center relative">
+                                            <div className="w-full aspect-video bg-slate-100 dark:bg-slate-900 overflow-hidden relative rounded-xl sm:rounded-none sm:rounded-t-[1.3rem] shadow-sm border border-slate-200/50 dark:border-slate-700/50 sm:border-none">
                                                 <img
                                                     src={`https://img.youtube.com/vi/${getYouTubeId(video.youtubeId)}/mqdefault.jpg`}
                                                     alt={video.title}
                                                     className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                                                 />
-                                                <div className="absolute inset-0 bg-black/20 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                                                    <div className="w-8 h-8 sm:w-14 sm:h-14 bg-red-600 rounded-full flex items-center justify-center shadow-lg transform group-hover:scale-110 transition-transform duration-300">
-                                                        <Play className="h-4 w-4 sm:h-6 sm:w-6 text-white ml-0.5 sm:ml-1" fill="currentColor" />
+                                                {/* Play Button Overlay (Desktop only or subtle on mobile) */}
+                                                <div className="absolute inset-0 bg-black/10 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                                    <div className="w-10 h-10 bg-red-600/90 rounded-full flex items-center justify-center shadow-lg">
+                                                        <Play className="h-4 w-4 text-white ml-0.5" fill="currentColor" />
                                                     </div>
+                                                </div>
+                                                {/* Duration Badge - YouTube Style */}
+                                                <div className="absolute bottom-1.5 right-1.5 bg-black/80 text-[10px] font-bold text-white px-1.5 py-0.5 rounded-md backdrop-blur-sm">
+                                                    {video.duration}
                                                 </div>
                                             </div>
                                         </CardHeader>
-                                        <CardContent className="flex flex-col flex-1 py-3 pr-3 pl-1 sm:px-5 sm:pb-5 sm:pt-0 justify-center">
-                                            <CardTitle className="text-sm sm:text-[17px] font-bold text-slate-800 dark:text-white line-clamp-2 mb-1.5 sm:mb-2 group-hover:text-red-600 dark:group-hover:text-red-400 transition-colors leading-tight">{video.title}</CardTitle>
-                                            <p className="hidden sm:block text-sm text-slate-600 dark:text-slate-400 font-medium line-clamp-2 mb-4 leading-relaxed">{video.description}</p>
-                                            <div className="flex items-center justify-between mt-auto">
-                                                <div className="flex items-center gap-1 sm:gap-1.5 text-[11px] sm:text-sm text-slate-600 dark:text-slate-400 font-semibold">
-                                                    <Clock className="h-3 w-3 sm:h-4 sm:w-4" />
-                                                    <span className="truncate">{video.duration || 'Watch Video'}</span>
+                                        <CardContent className="flex flex-col flex-1 py-1 px-3 sm:px-5 sm:pb-5 sm:pt-0 justify-start">
+                                            <div className="flex justify-between items-start mb-1">
+                                                <CardTitle className="text-[15px] sm:text-[17px] font-bold text-slate-900 dark:text-white line-clamp-2 leading-tight group-hover:text-red-600 dark:group-hover:text-red-400 transition-colors pr-4">
+                                                    {video.title}
+                                                </CardTitle>
+                                                <div className="sm:hidden text-slate-400 dark:text-slate-500 pt-1">
+                                                    <svg viewBox="0 0 24 24" className="w-5 h-5 fill-current"><path d="M12 16.5c.83 0 1.5.67 1.5 1.5s-.67 1.5-1.5 1.5-1.5-.67-1.5-1.5.67-1.5 1.5-1.5zM10.5 12c0 .83.67 1.5 1.5 1.5s1.5-.67 1.5-1.5-.67-1.5-1.5-1.5-1.5.67-1.5 1.5zm0-4.5c0 .83.67 1.5 1.5 1.5s1.5-.67 1.5-1.5-.67-1.5-1.5-1.5-1.5.67-1.5 1.5z"/></svg>
                                                 </div>
-                                                <span className="hidden sm:inline-flex items-center rounded-full px-2.5 py-0.5 font-bold bg-red-50 dark:bg-red-900/30 text-red-600 dark:text-red-400 text-[10px] tracking-wider uppercase">
+                                            </div>
+                                            
+                                            <p className="hidden sm:block text-sm text-slate-600 dark:text-slate-400 font-medium line-clamp-2 mb-4 leading-relaxed">{video.description}</p>
+                                            
+                                            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mt-auto gap-1">
+                                                <div className="flex items-center gap-1.5 text-[12px] sm:text-sm text-slate-500 dark:text-slate-400 font-medium">
+                                                    <span className="sm:hidden uppercase font-black text-red-500 text-[10px] tracking-tight mr-1">Professional</span>
+                                                    <span className="hidden sm:inline-flex items-center gap-1">
+                                                        <Clock className="h-3.5 w-3.5 text-red-500" />
+                                                        {video.duration}
+                                                    </span>
+                                                    <span className="sm:hidden opacity-50">•</span>
+                                                    <span className="sm:hidden">Video Training</span>
+                                                </div>
+                                                
+                                                {/* Desktop Professional Badge */}
+                                                <span className="hidden sm:inline-flex items-center rounded-full px-2.5 py-0.5 font-black bg-red-50 dark:bg-red-900/30 text-red-600 dark:text-red-400 text-[10px] tracking-widest uppercase border border-red-200 dark:border-red-800">
                                                     Professional
                                                 </span>
                                             </div>

@@ -102,7 +102,15 @@ Route::get('/about', function () {
     })->name('kids.hot_or_not');
 
     Route::get('/kids/challenges', function () {
-        return Inertia::render('Kids/Challenges');
+        return Inertia::render('Kids/Challenges', [
+            'progress' => Inertia::defer(fn () => [
+                'completedModules' => \App\Models\SafeScapeProgress::where('userId', Auth::id())
+                    ->where('completed', true)
+                    ->pluck('moduleNum')
+                    ->values(),
+                'earnedBadges' => \App\Models\UserBadge::where('userId', Auth::id())->get()
+            ])
+        ]);
     })->name('kids.challenges');
 
     Route::get('/kids/badges', function () {

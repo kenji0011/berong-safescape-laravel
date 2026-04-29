@@ -21,6 +21,7 @@ export interface ContentCardData {
   difficulty?: "easy" | "medium" | "hard"
   duration?: string
   category?: string
+  hideBadge?: boolean
 }
 
 interface ContentCardProps {
@@ -67,14 +68,20 @@ export const ContentCard = React.memo(({ content, onClick }: ContentCardProps) =
         <div className="absolute -top-16 -right-16 w-48 h-48 bg-white/20 rounded-full pointer-events-none transition-transform duration-700 group-hover:scale-150 hidden sm:block"></div>
         <div className="absolute -bottom-16 -left-16 w-48 h-48 bg-black/10 rounded-full pointer-events-none hidden sm:block"></div>
 
-        {/* Quest Type Label (Top Left) */}
+        {/* Top-Left Indicator: Module or Difficulty */}
         <div className="absolute top-3 left-3 z-20">
-           <div className={cn(
-             "text-white font-black text-[7px] sm:text-[10px] tracking-widest uppercase px-2 py-0.5 sm:px-3 sm:py-1 rounded-full border-2 border-white/30 shadow-lg",
-             content.type === "module" ? "bg-yellow-500/80" : "bg-black/30"
-           )}>
-             {content.type === "module" ? "⭐ MODULE" : content.type}
-           </div>
+           {content.type === "module" ? (
+             <div className="bg-yellow-500/80 text-white font-black text-[7px] sm:text-[10px] tracking-widest uppercase px-2 py-0.5 sm:px-3 sm:py-1 rounded-full border-2 border-white/30 shadow-lg">
+               ⭐ MODULE
+             </div>
+           ) : (content.difficulty && content.id !== "activity-portal") ? (
+             <div className={cn(
+               "font-black text-[7px] sm:text-[10px] tracking-widest uppercase px-2 py-1 sm:px-3 sm:py-1 rounded-full border-2 border-white/30 shadow-lg text-white",
+               badgeColors[content.difficulty]
+             )}>
+               {content.difficulty}
+             </div>
+           ) : null}
         </div>
 
         {/* Status badges (Top Right) */}
@@ -137,17 +144,6 @@ export const ContentCard = React.memo(({ content, onClick }: ContentCardProps) =
           )}
         </div>
 
-        {/* Badge Reward Preview (Bottom Right) */}
-        {(content.type === "module" || content.type === "video" || content.type === "activity") && !content.isCompleted && (
-          <div className="absolute bottom-2 right-2 sm:bottom-3 sm:right-3 z-20 group-hover:translate-y-[-2px] transition-transform">
-            <div className="bg-white/90 p-1 sm:p-1.5 rounded-lg sm:rounded-xl border-2 border-yellow-400 shadow-lg flex items-center gap-1 sm:gap-1.5">
-               <div className="bg-yellow-100 h-4 w-4 sm:h-6 sm:w-6 rounded-full flex items-center justify-center text-[10px] sm:text-sm">🎖️</div>
-               <div className="flex flex-col">
-                  <span className="text-[6px] sm:text-[7px] font-black text-slate-800 leading-tight">Badge</span>
-               </div>
-            </div>
-          </div>
-        )}
       </div>
 
       {/* Text Content Section */}
@@ -164,20 +160,36 @@ export const ContentCard = React.memo(({ content, onClick }: ContentCardProps) =
 
         {/* Footer Actions */}
         <div className="mt-auto flex items-center justify-between pt-3 sm:pt-4 border-t-2 border-slate-50 dark:border-slate-700/50">
-          {content.duration ? (
-            <div className="flex items-center gap-1 sm:gap-1.5 text-[8px] sm:text-xs font-black text-slate-400 dark:text-slate-500 uppercase tracking-wide">
-              <Play className="h-2.5 w-2.5 sm:h-4 sm:w-4 fill-slate-400 dark:fill-slate-500" />
-              <span>{content.duration}</span>
-            </div>
-          ) : (
-            <div className="flex items-center gap-1 sm:gap-1.5 text-[8px] sm:text-xs font-black text-slate-400 uppercase tracking-wide">
-               {content.difficulty && (
-                 <span className={cn("px-1.5 py-0.5 rounded sm:rounded-md text-white", badgeColors[content.difficulty])}>
-                    {content.difficulty}
+          <div className="flex items-center gap-2 text-[8px] sm:text-xs font-black uppercase tracking-wide">
+            {(content.type === "module" || content.type === "video" || content.type === "activity") && !content.hideBadge && (
+              <div className={cn(
+                "px-2 py-1 rounded-lg border-2 shadow-sm flex items-center gap-1.5 transition-colors",
+                content.isCompleted 
+                  ? "bg-emerald-500 border-emerald-400 text-white" 
+                  : "bg-slate-50 dark:bg-slate-900 border-slate-100 dark:border-slate-800"
+              )}>
+                 <div className="flex items-center justify-center">
+                   {content.isCompleted ? (
+                     <CheckCircle className="h-2.5 w-2.5 sm:h-3.5 sm:w-3.5 text-white fill-white/20" />
+                   ) : (
+                     <span className="text-[10px] sm:text-sm">🎖️</span>
+                   )}
+                 </div>
+                 <span className={cn(
+                   "text-[8px] sm:text-[10px] font-black uppercase tracking-wider",
+                   content.isCompleted ? "text-white" : "text-slate-500 dark:text-slate-400"
+                 )}>
+                    {content.isCompleted ? "Earned" : "Badge"}
                  </span>
-               )}
-            </div>
-          )}
+              </div>
+            )}
+            {content.duration && (
+              <div className="hidden sm:flex items-center gap-1.5 ml-1 text-slate-400 dark:text-slate-500">
+                <Play className="h-2.5 w-2.5 sm:h-3.5 sm:w-3.5 fill-slate-400 dark:fill-slate-500" />
+                <span>{content.duration}</span>
+              </div>
+            )}
+          </div>
 
           {!content.isLocked ? (
             <div className={cn(

@@ -147,10 +147,26 @@
             </p>
         </section>
 
-        <!-- CARDS PROGRESS -->
-        <div class="text-center bg-white dark:bg-slate-900 rounded-[2rem] sm:rounded-[3rem] p-4 sm:p-6 border-[3px] sm:border-[4px] border-orange-200 dark:border-orange-900/30 shadow-sm max-w-sm mx-auto transition-colors">
-            <p class="text-slate-500 dark:text-slate-500 font-bold text-xs sm:text-sm uppercase tracking-widest mb-1 sm:mb-2 transition-colors">Unlock the Final Check</p>
-            <p class="text-orange-500 font-black text-base sm:text-xl">Cards completed: <span id="cards-done" class="text-xl sm:text-3xl text-orange-600 dark:text-orange-400 ml-1">0</span>/5</p>
+        <!-- CARDS PROGRESS DASHBOARD -->
+        <div class="max-w-md mx-auto fade-in px-2 sm:px-0" style="animation-delay: 0.15s;">
+            <div class="bg-slate-900 dark:bg-slate-900 rounded-2xl sm:rounded-[2rem] p-3 sm:p-6 border-[3px] border-slate-800 dark:border-slate-700 shadow-[0_5px_0_#0f172a] sm:shadow-[0_8px_0_#0f172a] relative overflow-hidden transition-all group">
+                <div class="absolute top-0 right-0 w-24 h-24 sm:w-32 sm:h-32 bg-orange-500/10 blur-[40px] sm:blur-[50px] -mr-12 -mt-12 pointer-events-none"></div>
+                <div class="relative z-10 flex items-center gap-3 sm:gap-5">
+                    <div class="h-10 w-10 sm:h-16 sm:w-16 bg-slate-800 dark:bg-slate-950 rounded-xl sm:rounded-2xl flex items-center justify-center shrink-0 border-2 border-slate-700 shadow-inner group-hover:border-orange-500/50 transition-colors duration-500">
+                        <i id="lock-icon" class="fa-solid fa-lock text-orange-500 text-sm sm:text-2xl animate-pulse"></i>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <p class="text-slate-400 font-black text-[8px] sm:text-xs uppercase tracking-[0.2em] mb-0.5 sm:mb-1 truncate">Mission Requirement</p>
+                        <h3 class="text-white font-black text-xs sm:text-lg uppercase tracking-tight leading-tight truncate">Unlock the Final Check</h3>
+                        <div class="mt-1 sm:mt-2 flex items-center gap-2 sm:gap-3">
+                            <div class="flex-1 h-1.5 sm:h-2 bg-slate-800 rounded-full overflow-hidden border border-slate-700/50">
+                                <div id="progress-bar-inner" class="h-full bg-gradient-to-r from-orange-600 to-orange-400 transition-all duration-1000 shadow-[0_0_15px_rgba(249,115,22,0.3)]" style="width: 0%"></div>
+                            </div>
+                            <span class="text-orange-500 font-black text-xs sm:text-lg tabular-nums shrink-0"><span id="cards-done">0</span><span class="text-slate-600 ml-0.5 sm:ml-1">/</span><span class="text-slate-600">5</span></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <!-- CARD 1: PHYSICS OF SMOKE -->
@@ -570,6 +586,25 @@
         function updateCardsUI() {
             const count = localState.cardsCompleted.filter(c => c).length;
             document.getElementById('cards-done').textContent = count;
+
+            // Update new progress bar
+            const bar = document.getElementById('progress-bar-inner');
+            if (bar) {
+                const percent = (count / 5) * 100;
+                bar.style.width = `${percent}%`;
+            }
+
+            // Update lock icon
+            const lockIcon = document.getElementById('lock-icon');
+            if (lockIcon) {
+                if (count === 5) {
+                    lockIcon.classList.remove('fa-lock', 'text-orange-500', 'animate-pulse');
+                    lockIcon.classList.add('fa-unlock', 'text-green-500');
+                } else {
+                    lockIcon.classList.add('fa-lock', 'text-orange-500', 'animate-pulse');
+                    lockIcon.classList.remove('fa-unlock', 'text-green-500');
+                }
+            }
 
             // Update card completed states
             localState.cardsCompleted.forEach((completed, idx) => {

@@ -3,7 +3,7 @@
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog"
 import { X } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import Image from '@/components/Image';
+import Image from '@/Components/Image';
 
 interface ImageViewerModalProps {
     isOpen: boolean
