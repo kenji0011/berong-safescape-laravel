@@ -526,7 +526,7 @@ export function GridVisualization({
           )}
           {(firePosition || fireMap.length > 0) && (
             <div className="flex items-center gap-2">
-              <div className="w-4 h-4 bg-gradient-to-t from-red-500 to-orange-400 border border-border rounded-full"></div>
+              <div className="w-4 h-4 bg-red-500 border border-border rounded-full"></div>
               <span>Fire</span>
             </div>
           )}

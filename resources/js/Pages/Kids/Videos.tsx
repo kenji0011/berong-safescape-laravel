@@ -135,7 +135,7 @@ const VideosPage = () => {
           alt="" 
           className="w-full h-full object-cover opacity-30 dark:opacity-10 mix-blend-multiply" 
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-blue-50/80 via-white/40 to-blue-50/90 dark:from-slate-950/80 dark:via-slate-900/40 dark:to-slate-950/90"></div>
+        <div className="absolute inset-0 bg-background/80 transition-colors duration-500"></div>
       </div>
 
       {/* Animated Particles */}
@@ -155,7 +155,7 @@ const VideosPage = () => {
           
           {/* Premium Header Section */}
           <div className="relative mb-12 group">
-            <div className="absolute -inset-2 bg-gradient-to-r from-red-500 to-rose-600 rounded-[2.5rem] blur-xl opacity-20 group-hover:opacity-30 transition-opacity duration-500"></div>
+            <div className="absolute -inset-2 bg-primary/20 rounded-[2.5rem] group-hover:opacity-30 transition-opacity duration-500"></div>
             
             <div className="relative bg-white dark:bg-slate-800 rounded-[2rem] p-6 sm:p-8 shadow-xl border-2 border-slate-50 dark:border-slate-700 overflow-hidden transition-colors duration-500">
                {/* Decorative floating elements */}
@@ -183,7 +183,7 @@ const VideosPage = () => {
                         </span>
                      </div>
                      <h1 className="text-3xl sm:text-4xl font-black text-slate-800 dark:text-white tracking-tight mb-2">
-                        Fire Safety <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-600 to-rose-600">Videos</span>
+                        Fire Safety <span className="text-primary">Videos</span>
                      </h1>
                      <p className="text-slate-500 dark:text-slate-400 font-bold text-sm sm:text-base max-w-lg leading-relaxed">
                         Watch any fire safety video to the end to earn your <span className="text-red-600 font-black">Intel Analyst Badge</span>! 🎬
@@ -218,7 +218,7 @@ const VideosPage = () => {
                </div>
 
                {/* Tactical Info Panel */}
-               <div className="px-6 sm:px-10 py-6 bg-slate-800/50 backdrop-blur-md border-t border-slate-700 flex flex-col sm:flex-row gap-4 items-center">
+               <div className="px-6 sm:px-10 py-6 bg-slate-800 border-t border-slate-700 flex flex-col sm:flex-row gap-4 items-center">
                   <div className="flex-1">
                     <p className="text-slate-300 font-bold text-base sm:text-lg leading-relaxed italic">
                       " {activeVideo.description} "
@@ -267,20 +267,20 @@ const VideosPage = () => {
                     {/* Full-bleed Thumbnail */}
                     <div className="relative w-full h-48 sm:h-52 overflow-hidden">
                        <img src={video.thumbnail} alt={video.title} className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
-                       <div className="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-transparent to-transparent opacity-60 group-hover:opacity-40 transition-opacity" />
+                       <div className="absolute inset-0 bg-slate-900/40 group-hover:opacity-40 transition-opacity" />
                        
                        {/* Play Overlay */}
                        <div className={cn(
                          "absolute inset-0 flex items-center justify-center transition-all duration-500",
                          isActive ? "opacity-100" : "opacity-0 group-hover:opacity-100"
                        )}>
-                          <div className="w-16 h-16 rounded-full bg-red-600/90 backdrop-blur-sm border-4 border-white dark:border-slate-800 flex items-center justify-center shadow-2xl transform transition-transform group-hover:scale-110">
+                          <div className="w-16 h-16 rounded-full bg-red-600 border-4 border-white dark:border-slate-800 flex items-center justify-center shadow-2xl transform transition-transform group-hover:scale-110">
                              <Play className="h-6 w-6 text-white fill-current ml-1" />
                           </div>
                        </div>
 
                        {/* Duration Badge */}
-                       <div className="absolute bottom-4 right-4 bg-slate-900/90 backdrop-blur-md px-3 py-1 rounded-full text-[10px] font-black text-white uppercase tracking-widest border border-white/20">
+                       <div className="absolute bottom-4 right-4 bg-slate-900 px-3 py-1 rounded-full text-[10px] font-black text-white uppercase tracking-widest border border-white/20">
                           {video.id === "1" ? "3:45" : video.id === "2" ? "2:15" : "4:30"}
                        </div>
                     </div>
@@ -312,7 +312,7 @@ const VideosPage = () => {
 
           {/* Motivational Footer */}
           <div className="relative group/footer">
-            <div className="absolute -inset-2 bg-gradient-to-r from-yellow-400 to-amber-500 rounded-[3rem] blur-xl opacity-20 group-hover/footer:opacity-30 transition-opacity"></div>
+            <div className="absolute -inset-2 bg-yellow-400/20 rounded-[3rem] group-hover/footer:opacity-30 transition-opacity"></div>
             
             <div className="relative overflow-hidden bg-white dark:bg-slate-800 rounded-[2.5rem] p-8 sm:p-12 border-2 border-amber-50 dark:border-amber-900/20 shadow-2xl text-center transition-colors duration-500">
               <div className="absolute -top-10 -right-10 w-40 h-40 bg-amber-100/50 dark:bg-amber-900/20 rounded-full blur-3xl"></div>

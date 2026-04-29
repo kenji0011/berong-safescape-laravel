@@ -67,25 +67,25 @@ const features = [
         icon: BookOpen,
         title: "E-Learning Modules",
         description: "Interactive courses for professionals, adults, and kids tailored to different learning needs.",
-        color: "bg-gradient-to-br from-blue-500 to-cyan-600 text-white",
+        color: "bg-blue-600 text-white",
     },
     {
         icon: Brain,
         title: "AI-Powered Chatbot",
         description: "Berong AI assistant trained on official BFP protocols to answer your fire safety questions.",
-        color: "bg-gradient-to-br from-purple-500 to-indigo-600 text-white",
+        color: "bg-purple-600 text-white",
     },
     {
         icon: Flame, // Or generic icon, change if needed
         title: "Fire Simulation",
         description: "Advanced fire spread simulation using PPO and UNet models for evacuation planning.",
-        color: "bg-gradient-to-br from-green-500 to-emerald-600 text-white",
+        color: "bg-emerald-600 text-white",
     },
     {
         icon: Gamepad2,
         title: "Educational Games",
         description: "Fun and engaging games that teach fire safety concepts to learners of all ages.",
-        color: "bg-gradient-to-br from-orange-500 to-yellow-500 text-white",
+        color: "bg-orange-500 text-white",
     },
 ];
 
@@ -108,26 +108,26 @@ function FeatureCard({
             initial={{ opacity: 0, y: 20 }}
             animate={isInView ? { 
                 opacity: 1, 
-                y: 0,
-                ...(reduceMotion ? {} : {
-                    y: [0, -8, 0],
-                })
+                y: 0
             } : {}}
             transition={{
                 opacity: { duration: 0.5, delay: index * 0.1 },
-                y: reduceMotion 
-                    ? { duration: 0.5, delay: index * 0.1 } 
-                    : { duration: 4, repeat: Infinity, ease: "easeInOut", delay: index * 0.5 }
+                y: { duration: 0.5, delay: index * 0.1 }
             }}
             whileHover={reduceMotion ? {} : { 
                 scale: 1.05,
                 y: -12,
-                transition: { duration: 0.2 }
+                transition: { type: "spring", stiffness: 400, damping: 25 }
             }}
-            className="group bg-white dark:bg-slate-800 rounded-[2rem] sm:rounded-3xl p-5 sm:p-8 shadow-[0_6px_0_#b45309] sm:shadow-[0_8px_0_#b45309] dark:shadow-[0_6px_0_#0f172a] sm:dark:shadow-[0_8px_0_#0f172a] hover:shadow-[0_10px_0_#b45309] sm:hover:shadow-[0_12px_0_#b45309] dark:hover:shadow-[0_10px_0_#000] active:translate-y-1 sm:active:translate-y-2 active:shadow-[0_0px_0_#b45309] transition-all duration-300 flex flex-col items-center text-center border-[3px] sm:border-[4px] border-white dark:border-slate-700 relative overflow-hidden h-full"
+            whileTap={reduceMotion ? {} : { 
+                scale: 0.98,
+                y: 4,
+                transition: { type: "spring", stiffness: 400, damping: 25 }
+            }}
+            className="group bg-white dark:bg-slate-800 rounded-[2rem] sm:rounded-3xl p-5 sm:p-8 shadow-[0_6px_0_#b45309] sm:shadow-[0_8px_0_#b45309] dark:shadow-[0_6px_0_#0f172a] sm:dark:shadow-[0_8px_0_#0f172a] hover:shadow-[0_10px_0_#b45309] sm:hover:shadow-[0_12px_0_#b45309] dark:hover:shadow-[0_10px_0_#000] border-[3px] sm:border-[4px] border-white dark:border-slate-700 relative overflow-hidden h-full cursor-pointer"
         >
             {/* Playful Background Blob */}
-            <div className={`absolute -top-10 -right-10 w-24 h-24 ${feature.color.split(' ')[0]} opacity-10 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-700`} />
+            <div className={`absolute -top-10 -right-10 w-24 h-24 ${feature.color.split(' ')[0]} opacity-10 rounded-full group-hover:scale-150 transition-transform duration-700`} />
             
             <div className={`${feature.color} w-14 h-14 sm:w-20 sm:h-20 rounded-xl sm:rounded-2xl flex items-center justify-center mb-4 sm:mb-6 group-hover:rotate-6 transition-transform duration-300 shadow-inner border-2 border-white/50`}>
                 <feature.icon className="w-7 h-7 sm:w-10 sm:h-10 text-white drop-shadow-sm" strokeWidth={2.5} />
@@ -156,12 +156,13 @@ function TeamCard({ member, index, reduceMotion }: { key?: React.Key; member: ty
             }}
             whileHover={reduceMotion ? undefined : {
                 scale: 1.02,
-                transition: { duration: 0.3 }
+                y: -5,
+                transition: { type: "spring", stiffness: 400, damping: 25 }
             }}
-            className="group relative bg-white dark:bg-slate-800 rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 border border-slate-200 dark:border-slate-700 h-full flex flex-col"
+            className="group relative bg-white dark:bg-slate-800 rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl border border-slate-200 dark:border-slate-700 h-full flex flex-col cursor-pointer"
         >
             {/* Gradient Header */}
-            <div className={`h-32 bg-gradient-to-r ${member.color} relative`}>
+            <div className={`h-32 bg-slate-200 dark:bg-slate-700 relative`}>
                 <div className="absolute inset-0 bg-black/20" />
                 {/* Decorative circles */}
                 <motion.div
@@ -179,7 +180,7 @@ function TeamCard({ member, index, reduceMotion }: { key?: React.Key; member: ty
             {/* Profile Image */}
             <div className="relative -mt-16 flex justify-center">
                 <div className="relative">
-                    <div className={`absolute inset-0 bg-gradient-to-r ${member.color} rounded-full blur-md opacity-50 group-hover:opacity-75 transition-opacity`} />
+                    <div className={`absolute inset-0 bg-slate-400 rounded-full opacity-50 group-hover:opacity-75 transition-opacity`} />
                     <div className="relative w-32 h-32 rounded-full border-4 border-white dark:border-slate-800 overflow-hidden bg-white dark:bg-slate-900 shadow-xl">
                         <img
                             src={member.image}
@@ -335,7 +336,7 @@ export function LandingAboutSection() {
             {/* Meet Berong Section */}
             <motion.section
                 ref={heroRef}
-                className="relative bg-white/95 dark:bg-slate-900/95 backdrop-blur-sm py-10 sm:py-16 overflow-hidden rounded-[2rem] sm:rounded-[2.5rem] border border-gray-200/80 dark:border-slate-800 shadow-sm mx-2 sm:mx-0 transition-colors duration-500"
+                className="relative bg-white dark:bg-slate-900 py-10 sm:py-16 overflow-hidden rounded-[2rem] sm:rounded-[2.5rem] border border-gray-200/80 dark:border-slate-800 shadow-sm mx-2 sm:mx-0 transition-colors duration-500"
                 style={{ opacity: heroOpacity, scale: heroScale }}
             >
                 {/* Background Pattern */}
@@ -442,7 +443,7 @@ export function LandingAboutSection() {
             {/* Platform Overview Section */}
             <motion.section
                 ref={platformRef}
-                className="py-10 sm:py-14 bg-gradient-to-br from-[#ff4b3e] to-[#ff8c00] dark:from-red-950 dark:to-orange-950 text-white relative overflow-hidden rounded-[2rem] sm:rounded-[2.5rem] shadow-sm mx-2 sm:mx-0 transition-colors duration-500"
+                className="py-10 sm:py-14 bg-red-600 dark:bg-red-950 text-white relative overflow-hidden rounded-[2rem] sm:rounded-[2.5rem] shadow-sm mx-2 sm:mx-0 transition-colors duration-500"
                 style={{ opacity: platformOpacity, scale: platformScale }}
             >
                 {/* Background Pattern */}
@@ -483,7 +484,7 @@ export function LandingAboutSection() {
             >
                 {/* Animated Background decoration */}
                 <motion.div
-                    className="absolute top-0 right-0 w-96 h-96 bg-red-500/10 rounded-full blur-3xl"
+                    className="absolute top-0 right-0 w-96 h-96 bg-red-500/10 rounded-full"
                     animate={reduceMotion ? undefined : {
                         x: [0, 30, 0],
                         y: [0, -20, 0],
@@ -492,7 +493,7 @@ export function LandingAboutSection() {
                     transition={reduceMotion ? undefined : { duration: 8, repeat: Infinity }}
                 />
                 <motion.div
-                    className="absolute bottom-0 left-0 w-96 h-96 bg-yellow-500/10 rounded-full blur-3xl"
+                    className="absolute bottom-0 left-0 w-96 h-96 bg-yellow-500/10 rounded-full"
                     animate={reduceMotion ? undefined : {
                         x: [0, -30, 0],
                         y: [0, 20, 0],

@@ -87,14 +87,14 @@ export default function HotOrNot() {
   const safeBg = useMotionValue(0)
 
   return (
-    <div className="min-h-screen relative flex flex-col font-sans bg-slate-50 text-slate-900 overflow-hidden select-none">
+    <div className="min-h-screen relative flex flex-col font-sans bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 transition-colors duration-500 overflow-hidden select-none">
       {/* Background Zones */}
       <div className="absolute inset-0 flex pointer-events-none overflow-hidden">
          {/* Danger Zone (Left) */}
-         <div className="flex-1 relative flex items-center justify-center border-r border-slate-100 overflow-hidden">
+         <div className="flex-1 relative flex items-center justify-center border-r border-slate-100 dark:border-slate-900/50 overflow-hidden">
             <motion.div 
               style={{ opacity: dangerBg }}
-              className="absolute inset-0 bg-gradient-to-br from-rose-500/20 via-orange-500/10 to-transparent"
+              className="absolute inset-0 bg-rose-500/10"
             />
             <motion.div 
                style={{ opacity: dangerGlow }} 
@@ -104,10 +104,10 @@ export default function HotOrNot() {
             </motion.div>
          </div>
          {/* Safe Zone (Right) */}
-         <div className="flex-1 relative flex items-center justify-center border-l border-slate-100 overflow-hidden">
+         <div className="flex-1 relative flex items-center justify-center border-l border-slate-100 dark:border-slate-900/50 overflow-hidden">
             <motion.div 
               style={{ opacity: safeBg }}
-              className="absolute inset-0 bg-gradient-to-bl from-emerald-500/20 via-blue-500/10 to-transparent"
+              className="absolute inset-0 bg-emerald-500/10"
             />
             <motion.div 
                style={{ opacity: safeGlow }} 
@@ -122,15 +122,15 @@ export default function HotOrNot() {
       <div className="absolute top-4 left-4 right-4 z-20 flex items-center justify-between pointer-events-none">
         <Link 
           href="/kids/challenges" 
-          className="inline-flex items-center gap-2 text-slate-500 font-bold hover:text-blue-600 transition-all text-sm bg-white/60 backdrop-blur-sm px-4 py-2 rounded-full border border-white/60 shadow-sm pointer-events-auto"
+          className="inline-flex items-center gap-2 text-slate-500 dark:text-slate-400 font-bold hover:text-blue-600 dark:hover:text-blue-400 transition-all text-sm bg-white dark:bg-slate-800 px-4 py-2 rounded-full border border-white/60 dark:border-slate-700/50 shadow-sm pointer-events-auto"
         >
           <ArrowLeft className="h-4 w-4" />
           Back to Activities
         </Link>
         
-        <div className="flex items-center gap-2 bg-white/60 backdrop-blur-sm px-4 py-2 rounded-full border border-white/60 shadow-sm pointer-events-auto">
+        <div className="flex items-center gap-2 bg-white dark:bg-slate-800 px-4 py-2 rounded-full border border-white/60 dark:border-slate-700/50 shadow-sm pointer-events-auto">
            <CheckCircle2 className="h-4 w-4 text-emerald-600" />
-           <span className="font-black text-sm text-emerald-600 tabular-nums">{score}</span>
+           <span className="font-black text-sm text-emerald-600 dark:text-emerald-400 tabular-nums">{score}</span>
         </div>
       </div>
 
@@ -139,24 +139,24 @@ export default function HotOrNot() {
         {isLoading ? (
           <HotOrNotSkeleton />
         ) : gameState === 'start' && (
-          <div className="max-w-md w-full bg-white border border-slate-200 p-8 rounded-[3rem] shadow-2xl text-center animate-in zoom-in duration-500">
-             <div className="w-24 h-24 bg-emerald-100 rounded-3xl flex items-center justify-center mx-auto mb-6 text-5xl">
+          <div className="max-w-md w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-8 rounded-[3rem] shadow-2xl text-center animate-in zoom-in duration-500 transition-colors">
+             <div className="w-24 h-24 bg-emerald-100 dark:bg-emerald-500/20 rounded-3xl flex items-center justify-center mx-auto mb-6 text-5xl">
                 🤖
              </div>
-             <h1 className="text-4xl font-black mb-2 italic text-slate-900 tracking-tight uppercase">HOT OR NOT?</h1>
-             <p className="text-slate-500 font-medium mb-8 leading-relaxed">
+             <h1 className="text-4xl font-black mb-2 italic text-slate-900 dark:text-white tracking-tight uppercase">HOT OR NOT?</h1>
+             <p className="text-slate-500 dark:text-slate-400 font-medium mb-8 leading-relaxed">
                 Some things are for kids, and some are for grown-ups only. Can you sort them all safely?
              </p>
              
              <div className="flex gap-4 mb-8">
-                <div className="flex-1 bg-rose-50 p-4 rounded-2xl border border-rose-100 text-center">
+                <div className="flex-1 bg-rose-50 dark:bg-rose-900/10 p-4 rounded-2xl border border-rose-100 dark:border-rose-900/20 text-center">
                    <div className="text-2xl mb-1">👈</div>
-                   <div className="text-[10px] font-black text-rose-600 uppercase">Swipe Left</div>
+                   <div className="text-[10px] font-black text-rose-600 dark:text-rose-400 uppercase">Swipe Left</div>
                    <div className="text-xs font-bold">Hot Tools</div>
                 </div>
-                <div className="flex-1 bg-emerald-50 p-4 rounded-2xl border border-emerald-100 text-center">
+                <div className="flex-1 bg-emerald-50 dark:bg-emerald-900/10 p-4 rounded-2xl border border-emerald-100 dark:border-emerald-900/20 text-center">
                    <div className="text-2xl mb-1">👉</div>
-                   <div className="text-[10px] font-black text-emerald-600 uppercase">Swipe Right</div>
+                   <div className="text-[10px] font-black text-emerald-600 dark:text-emerald-400 uppercase">Swipe Right</div>
                    <div className="text-xs font-bold">Safe Toys</div>
                 </div>
              </div>
@@ -174,21 +174,21 @@ export default function HotOrNot() {
            <div className="relative flex flex-col items-center gap-12 w-full max-w-lg mx-auto">
               {/* Mission Control (Hint + Progress) */}
               <div className="flex flex-col items-center gap-6 w-full max-w-sm px-4">
-                 <div className="flex items-center gap-3 bg-white border-2 border-slate-100 px-6 py-4 rounded-[2rem] shadow-xl w-full">
+                 <div className="flex items-center gap-3 bg-white dark:bg-slate-900 border-2 border-slate-100 dark:border-slate-800 px-6 py-4 rounded-[2rem] shadow-xl w-full">
                     <div className="text-3xl md:text-4xl">🤖</div>
-                    <div className="text-[10px] md:text-xs font-black text-slate-600 uppercase tracking-[0.15em] leading-relaxed">
+                    <div className="text-[10px] md:text-xs font-black text-slate-600 dark:text-slate-300 uppercase tracking-[0.15em] leading-relaxed">
                        "Swipe right for toys, <br className="md:hidden" /> left for hot things!"
                     </div>
                  </div>
 
-                 <div className="w-full bg-white/80 backdrop-blur-sm p-4 rounded-3xl border-2 border-slate-100 shadow-lg">
+                 <div className="w-full bg-white dark:bg-slate-900 p-4 rounded-3xl border-2 border-slate-100 dark:border-slate-800 shadow-lg">
                     <div className="flex justify-between items-center mb-3 px-1">
                        <span className="text-[10px] md:text-xs font-black text-slate-400 uppercase tracking-widest">Mission Progress</span>
                        <span className="text-sm md:text-base font-black text-emerald-600 tabular-nums">{Math.round(progress)}%</span>
                     </div>
-                    <div className="h-3 md:h-4 bg-slate-100 rounded-full overflow-hidden border border-slate-200/50">
+                    <div className="h-3 md:h-4 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden border border-slate-200 dark:border-slate-700">
                        <motion.div 
-                         className="h-full bg-gradient-to-r from-emerald-400 to-emerald-600 shadow-[0_0_15px_rgba(16,185,129,0.3)]"
+                         className="h-full bg-emerald-500 shadow-sm"
                          initial={{ width: 0 }}
                          animate={{ width: `${progress}%` }}
                        />
@@ -215,20 +215,20 @@ export default function HotOrNot() {
         )}
 
         {gameState === 'win' && (
-          <div className="max-w-md w-full bg-white border border-slate-200 p-8 md:p-12 rounded-[3rem] shadow-2xl text-center animate-in zoom-in duration-500">
-             <div className="w-20 h-20 md:w-24 md:h-24 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-6 text-4xl md:text-5xl">🏆</div>
-             <h1 className="text-3xl md:text-4xl font-black text-slate-900 mb-4 uppercase tracking-tight italic">SAFETY SCOUT!</h1>
-             <p className="text-slate-500 mb-8 font-medium leading-relaxed">You're an expert at spotting danger! You found all 10 items and kept everyone safe.</p>
-             <div className="bg-emerald-50 border border-emerald-100 p-6 rounded-3xl mb-8 flex items-center gap-4 text-left">
+          <div className="max-w-md w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-8 md:p-12 rounded-[3rem] shadow-2xl text-center animate-in zoom-in duration-500 transition-colors">
+             <div className="w-20 h-20 md:w-24 md:h-24 bg-yellow-100 dark:bg-yellow-500/20 rounded-full flex items-center justify-center mx-auto mb-6 text-4xl md:text-5xl">🏆</div>
+             <h1 className="text-3xl md:text-4xl font-black text-slate-900 dark:text-white mb-4 uppercase tracking-tight italic">SAFETY SCOUT!</h1>
+             <p className="text-slate-500 dark:text-slate-400 mb-8 font-medium leading-relaxed">You're an expert at spotting danger! You found all 10 items and kept everyone safe.</p>
+             <div className="bg-emerald-50 dark:bg-emerald-900/10 border border-emerald-100 dark:border-emerald-900/20 p-6 rounded-3xl mb-8 flex items-center gap-4 text-left">
                 <div className="text-4xl">🤖</div>
                 <div>
-                   <div className="text-[10px] font-black text-emerald-600 uppercase tracking-[0.2em] mb-1">Badge Unlocked</div>
-                   <div className="text-slate-900 font-black text-lg">Safety Scout</div>
+                   <div className="text-[10px] font-black text-emerald-600 dark:text-emerald-400 uppercase tracking-[0.2em] mb-1">Badge Unlocked</div>
+                   <div className="text-slate-900 dark:text-white font-black text-lg">Safety Scout</div>
                 </div>
              </div>
              <div className="flex flex-col gap-3">
                 <button onClick={initGame} className="w-full bg-blue-600 hover:bg-blue-700 text-white font-black py-5 rounded-2xl shadow-xl transition-all hover:scale-[1.02] active:scale-95 uppercase tracking-widest">Play Again</button>
-                <Link href="/kids/challenges" className="w-full bg-slate-100 hover:bg-slate-200 text-slate-600 font-black py-5 rounded-2xl transition-all uppercase tracking-widest text-center">Back</Link>
+                <Link href="/kids/challenges" className="w-full bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 font-black py-5 rounded-2xl transition-all uppercase tracking-widest text-center">Back</Link>
              </div>
           </div>
         )}
@@ -240,12 +240,12 @@ export default function HotOrNot() {
             initial={{ opacity: 0, y: 100 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 100 }}
-            className="fixed bottom-10 inset-x-6 z-50 bg-white border-4 border-rose-100 p-6 rounded-[2.5rem] shadow-2xl flex items-center gap-4 max-w-lg mx-auto"
+            className="fixed bottom-10 inset-x-6 z-50 bg-white dark:bg-slate-900 border-4 border-rose-100 dark:border-rose-900/20 p-6 rounded-[2.5rem] shadow-2xl flex items-center gap-4 max-w-lg mx-auto"
           >
              <div className="text-4xl animate-bounce">🤖</div>
              <div className="flex-1">
                 <div className="text-rose-600 font-black text-[10px] uppercase tracking-widest mb-1">Safety Tip!</div>
-                <div className="text-slate-700 font-bold text-sm leading-tight">
+                <div className="text-slate-700 dark:text-slate-300 font-bold text-sm leading-tight">
                    {deck[0]?.tip}
                 </div>
              </div>
@@ -323,7 +323,7 @@ function SwipeCard({ item, onSwipe, dangerGlow, safeGlow, dangerBg, safeBg }: an
                onSwipe('right')
             }
          }}
-         className="w-[18rem] md:w-[22rem] h-[26rem] md:h-[30rem] bg-white border-[4px] md:border-[6px] border-slate-50 rounded-[2.5rem] md:rounded-[4rem] shadow-[0_20px_40px_-10px_rgba(0,0,0,0.15)] flex flex-col items-center justify-center p-6 md:p-8 cursor-grab active:cursor-grabbing overflow-hidden group relative"
+         className="w-[18rem] md:w-[22rem] h-[26rem] md:h-[30rem] bg-white dark:bg-slate-900 border-[4px] md:border-[6px] border-slate-50 dark:border-slate-800 rounded-[2.5rem] md:rounded-[4rem] shadow-[0_20px_40px_-10px_rgba(0,0,0,0.15)] flex flex-col items-center justify-center p-6 md:p-8 cursor-grab active:cursor-grabbing overflow-hidden group relative transition-colors duration-500"
          whileTap={{ scale: 0.98 }}
          initial={{ scale: 0.8, opacity: 0, y: 20 }}
          animate={{ scale: 1, opacity: 1, y: 0 }}
@@ -343,7 +343,7 @@ function SwipeCard({ item, onSwipe, dangerGlow, safeGlow, dangerBg, safeBg }: an
             >
                {item.icon}
             </motion.div>
-            <div className="text-2xl md:text-3xl font-black text-slate-800 uppercase tracking-tight">
+            <div className="text-2xl md:text-3xl font-black text-slate-800 dark:text-white uppercase tracking-tight">
                {item.name}
             </div>
          </div>

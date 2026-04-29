@@ -62,14 +62,14 @@ const CourseHubPage = ({ initialModules }: CourseHubProps) => {
     <div className="min-h-screen bg-slate-50 dark:bg-slate-950 font-sans flex flex-col">
       {/* ── Post-Test Available Banner ── */}
       {completedCount === 5 && (user?.postTestScore === null || user?.postTestScore === undefined) && (
-        <div className="bg-gradient-to-r from-emerald-500 via-green-500 to-teal-500 px-4 sm:px-6 py-6 sm:py-8 relative overflow-hidden animate-in slide-in-from-top fade-in duration-500">
+        <div className="bg-emerald-600 px-4 sm:px-6 py-6 sm:py-8 relative overflow-hidden animate-in slide-in-from-top fade-in duration-500">
           <div className="max-w-6xl mx-auto relative z-10 flex flex-col sm:flex-row items-center gap-4 sm:gap-8">
             <div className="flex items-center gap-4 flex-1">
-              <div className="h-14 w-14 sm:h-16 sm:w-16 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center shrink-0 border-2 border-white/30">
+              <div className="h-14 w-14 sm:h-16 sm:w-16 bg-white/20 rounded-2xl flex items-center justify-center shrink-0 border-2 border-white/30">
                 <Trophy className="h-7 w-7 sm:h-8 sm:w-8 text-yellow-200" />
               </div>
               <div>
-                <h3 className="text-lg sm:text-xl font-black text-white tracking-tight">🎉 All Modules Complete!</h3>
+                <h3 className="text-lg sm:text-xl font-black text-white tracking-tight">All Modules Complete!</h3>
                 <p className="text-white/80 text-xs sm:text-sm font-bold mt-0.5">You've finished all 5 fire safety modules. Take the final Post-Test to earn your certificate!</p>
               </div>
             </div>
@@ -87,14 +87,14 @@ const CourseHubPage = ({ initialModules }: CourseHubProps) => {
 
       {/* ── Post-Test Completed Banner ── */}
       {completedCount === 5 && user?.postTestScore !== null && user?.postTestScore !== undefined && (
-        <div className="bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500 px-4 sm:px-6 py-6 sm:py-8 relative overflow-hidden animate-in slide-in-from-top fade-in duration-500">
+        <div className="bg-blue-600 px-4 sm:px-6 py-6 sm:py-8 relative overflow-hidden animate-in slide-in-from-top fade-in duration-500">
           <div className="max-w-6xl mx-auto relative z-10 flex flex-col sm:flex-row items-center gap-4 sm:gap-8">
             <div className="flex items-center gap-4 flex-1">
-              <div className="h-14 w-14 sm:h-16 sm:w-16 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center shrink-0 border-2 border-white/30">
+              <div className="h-14 w-14 sm:h-16 sm:w-16 bg-white/20 rounded-2xl flex items-center justify-center shrink-0 border-2 border-white/30">
                 <CheckCircle className="h-7 w-7 sm:h-8 sm:w-8 text-blue-200" />
               </div>
               <div>
-                <h3 className="text-lg sm:text-xl font-black text-white tracking-tight">🎉 Course Completed!</h3>
+                <h3 className="text-lg sm:text-xl font-black text-white tracking-tight">Course Completed!</h3>
                 <p className="text-white/80 text-xs sm:text-sm font-bold mt-0.5">You've successfully finished your fire safety training. View your official certificate!</p>
               </div>
             </div>
@@ -111,7 +111,7 @@ const CourseHubPage = ({ initialModules }: CourseHubProps) => {
       )}
 
       {/* ── Bright Module Content Area ── */}
-      <div className="flex-1 bg-blue-50 dark:bg-slate-900/40 py-8 sm:py-12 px-4 sm:px-6 lg:px-8 bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] dark:bg-[radial-gradient(#1e293b_1px,transparent_1px)] [background-size:16px_16px]">
+      <div className="flex-1 bg-background py-8 sm:py-12 px-4 sm:px-6 lg:px-8 border-t border-border">
         <div className="max-w-6xl mx-auto">
 
           {/* ── SafeScape Internal Header ── */}
@@ -141,9 +141,9 @@ const CourseHubPage = ({ initialModules }: CourseHubProps) => {
             <div className="absolute bottom-10 left-0 lg:-left-12 text-4xl sm:text-6xl opacity-20 transform -rotate-12 pointer-events-none">🔥</div>
             
             <span className="inline-block px-3 py-1 sm:px-4 sm:py-1.5 bg-orange-100 dark:bg-orange-950/30 text-orange-600 dark:text-orange-400 font-black text-[10px] sm:text-xs uppercase tracking-widest rounded-full border-2 border-orange-200 dark:border-orange-900/30 shadow-sm">
-              🔥 FIRE SAFETY TRAINING COURSE
+              FIRE SAFETY TRAINING COURSE
             </span>
-            <h1 className="text-4xl sm:text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-[#ff4b3e] to-[#ff8c00] leading-tight drop-shadow-sm px-2">
+            <h1 className="text-4xl sm:text-6xl font-black text-primary leading-tight drop-shadow-sm px-2">
               Become a Fire Safety Hero!
             </h1>
             <p className="text-base sm:text-lg font-bold text-slate-500 dark:text-slate-400 max-w-2xl leading-relaxed px-4">
@@ -219,7 +219,7 @@ const CourseHubPage = ({ initialModules }: CourseHubProps) => {
                             module.isLocked ? "opacity-5 grayscale" : "opacity-[0.5] group-hover:opacity-[0.6] group-hover:scale-105"
                           )} 
                         />
-                        <div className="absolute inset-0 bg-gradient-to-b from-white/20 dark:from-slate-800/20 via-white/80 dark:via-slate-800/80 to-white dark:to-slate-800"></div>
+                        <div className="absolute inset-0 bg-white dark:bg-slate-800 opacity-80"></div>
                       </div>
                     )}
 
@@ -230,7 +230,7 @@ const CourseHubPage = ({ initialModules }: CourseHubProps) => {
                          {/* Adaptive Learning Badge */}
                         {module.recommendedAction && !module.isLocked ? (
                           <div className={cn(
-                            "px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-widest border shadow-sm backdrop-blur-md transition-all duration-300",
+                            "px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-widest border shadow-sm transition-all duration-300",
                             module.recommendedAction === 'Priority Review' ? 'bg-red-50 dark:bg-red-950/30 text-red-600 dark:text-red-400 border-red-200 dark:border-red-900/30' : 
                             module.recommendedAction === 'Needs Practice' ? 'bg-orange-50 dark:bg-orange-950/30 text-orange-600 dark:text-orange-400 border-orange-200 dark:border-orange-900/30' : 
                             'bg-emerald-50 dark:bg-emerald-950/30 text-emerald-600 dark:text-emerald-400 border-emerald-200 dark:border-emerald-900/30'
@@ -299,7 +299,7 @@ const CourseHubPage = ({ initialModules }: CourseHubProps) => {
                         <div className="mb-6 h-3 flex items-center">
                           <div className="w-full h-1.5 bg-slate-100 dark:bg-slate-900 rounded-full overflow-hidden border border-slate-200 dark:border-slate-700 shadow-inner">
                             <div
-                              className="h-full bg-gradient-to-r from-orange-500 to-red-500 rounded-full transition-all duration-1000"
+                              className="h-full bg-primary rounded-full transition-all duration-1000"
                               style={{ width: `${module.progress}%` }}
                             />
                           </div>
@@ -353,7 +353,7 @@ const CourseHubPage = ({ initialModules }: CourseHubProps) => {
 
                     {/* Lock overlay */}
                     {module.isLocked && (
-                      <div className="absolute inset-0 z-30 flex flex-col items-center justify-center bg-slate-50/5 dark:bg-slate-950/10 backdrop-blur-[0.5px]">
+                      <div className="absolute inset-0 z-30 flex flex-col items-center justify-center bg-slate-950/20">
                         <div className="bg-white/90 dark:bg-slate-800/90 p-4 rounded-3xl shadow-lg border border-slate-100 dark:border-slate-700 transform rotate-3">
                           <Lock className="h-8 w-8 text-slate-200 dark:text-slate-700" />
                         </div>
@@ -385,7 +385,7 @@ const CourseHubPage = ({ initialModules }: CourseHubProps) => {
                       completedCount < 5 && "grayscale"
                     )} 
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-white dark:from-slate-800 via-transparent to-transparent"></div>
+                  <div className="absolute inset-0 bg-white/40 dark:bg-slate-800/40"></div>
                   
                   <div className="relative z-10">
                     <Trophy className={cn("h-10 w-10 mb-2", completedCount === 5 ? "text-yellow-800 dark:text-yellow-950" : "text-slate-400 dark:text-slate-600")} />
@@ -437,8 +437,8 @@ const CourseHubPage = ({ initialModules }: CourseHubProps) => {
 
           {/* ── Motivational Footer ── */}
           <div className="mt-20 border-[4px] border-blue-200 dark:border-slate-800 bg-white dark:bg-slate-800 rounded-[2rem] p-8 sm:p-12 text-center shadow-sm relative overflow-hidden">
-            <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-yellow-100/50 dark:from-yellow-900/10 to-transparent rounded-full -z-0"></div>
-            <div className="absolute bottom-0 left-0 w-64 h-64 bg-gradient-to-tr from-blue-100/50 dark:from-blue-900/10 to-transparent rounded-full -z-0"></div>
+            <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full -z-0"></div>
+            <div className="absolute bottom-0 left-0 w-64 h-64 bg-primary/5 rounded-full -z-0"></div>
             <div className="relative z-10">
               <div className="text-5xl mb-4 animate-bounce">🔥</div>
               <h3 className="text-2xl sm:text-3xl font-black text-slate-800 dark:text-white mb-2">Keep Up the Great Work!</h3>

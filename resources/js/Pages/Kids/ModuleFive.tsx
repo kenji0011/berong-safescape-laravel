@@ -393,14 +393,14 @@ const ModuleFivePage = ({ moduleNum }: { moduleNum: number }) => {
 
       {/* ── Module 5 Completion Banner ── */}
       {moduleCompleted && (user?.postTestScore === null || user?.postTestScore === undefined) && (
-        <div className="bg-gradient-to-r from-emerald-500 via-green-500 to-teal-500 px-4 sm:px-6 py-6 sm:py-8 relative overflow-hidden animate-in slide-in-from-top fade-in duration-500">
+        <div className="bg-emerald-500 px-4 sm:px-6 py-6 sm:py-8 relative overflow-hidden animate-in slide-in-from-top fade-in duration-500">
           <div className="max-w-4xl mx-auto relative z-10 flex flex-col sm:flex-row items-center gap-4 sm:gap-8">
             <div className="flex items-center gap-4 flex-1">
-              <div className="h-14 w-14 sm:h-16 sm:w-16 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center shrink-0 border-2 border-white/30">
+              <div className="h-14 w-14 sm:h-16 sm:w-16 bg-white/20 rounded-2xl flex items-center justify-center shrink-0 border-2 border-white/30">
                 <Trophy className="h-7 w-7 sm:h-8 sm:w-8 text-yellow-200" />
               </div>
               <div>
-                <h3 className="text-lg sm:text-xl font-black text-white tracking-tight">🎉 All Modules Complete!</h3>
+                <h3 className="text-lg sm:text-xl font-black text-white tracking-tight">All Modules Complete!</h3>
                 <p className="text-white/80 text-xs sm:text-sm font-bold mt-0.5">You've finished all 5 fire safety modules. Take the final Post-Test to earn your certificate!</p>
               </div>
             </div>
@@ -416,14 +416,14 @@ const ModuleFivePage = ({ moduleNum }: { moduleNum: number }) => {
         </div>
       )}
       {moduleCompleted && user?.postTestScore !== null && user?.postTestScore !== undefined && (
-        <div className="bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500 px-4 sm:px-6 py-6 sm:py-8 relative overflow-hidden animate-in slide-in-from-top fade-in duration-500">
+        <div className="bg-primary px-4 sm:px-6 py-6 sm:py-8 relative overflow-hidden animate-in slide-in-from-top fade-in duration-500">
           <div className="max-w-4xl mx-auto relative z-10 flex flex-col sm:flex-row items-center gap-4 sm:gap-8">
             <div className="flex items-center gap-4 flex-1">
-              <div className="h-14 w-14 sm:h-16 sm:w-16 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center shrink-0 border-2 border-white/30">
+              <div className="h-14 w-14 sm:h-16 sm:w-16 bg-white/20 rounded-2xl flex items-center justify-center shrink-0 border-2 border-white/30">
                 <CheckCircle className="h-7 w-7 sm:h-8 sm:w-8 text-blue-200" />
               </div>
               <div>
-                <h3 className="text-lg sm:text-xl font-black text-white tracking-tight">🎉 Course Completed!</h3>
+                <h3 className="text-lg sm:text-xl font-black text-white tracking-tight">Course Completed!</h3>
                 <p className="text-white/80 text-xs sm:text-sm font-bold mt-0.5">You've successfully finished your fire safety training. View your official certificate!</p>
               </div>
             </div>

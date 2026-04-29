@@ -83,7 +83,7 @@ function FeatureCard({ feature, index }: { feature: { icon: any; title: string; 
                 ease: "easeOut",
                 delay: index * 0.1
             }}
-            className="group bg-white/10 backdrop-blur-sm rounded-xl p-5 sm:p-6 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border border-white/20 hover:bg-white/20"
+            className="group bg-white/10 rounded-xl p-5 sm:p-6 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border border-white/20 hover:bg-white/20"
         >
             <div className={`${feature.color} w-12 h-12 sm:w-14 sm:h-14 rounded-xl flex items-center justify-center mb-3 sm:mb-4 group-hover:scale-110 transition-transform duration-300`}>
                 <feature.icon className="w-6 h-6 sm:w-7 sm:h-7 text-white" />
@@ -138,7 +138,7 @@ function TeamCard({ member, index }: { member: typeof teamMembers[0]; index: num
             className="group relative bg-white dark:bg-slate-800 rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 border border-slate-200 dark:border-slate-700 transition-colors"
         >
             {/* Gradient Header */}
-            <div className={`h-32 bg-gradient-to-r ${member.color} relative`}>
+            <div className={`h-32 bg-slate-200 dark:bg-slate-700 relative`}>
                 <div className="absolute inset-0 bg-black/20" />
                 {/* Decorative circles */}
                 <motion.div
@@ -156,7 +156,7 @@ function TeamCard({ member, index }: { member: typeof teamMembers[0]; index: num
             {/* Profile Image */}
             <div className="relative -mt-16 flex justify-center">
                 <div className="relative">
-                    <div className={`absolute inset-0 bg-gradient-to-r ${member.color} rounded-full blur-md opacity-50 group-hover:opacity-75 transition-opacity`} />
+                    <div className={`absolute inset-0 bg-slate-400 rounded-full opacity-50 group-hover:opacity-75 transition-opacity`} />
                     <div className="relative w-32 h-32 rounded-full border-4 border-white dark:border-slate-800 overflow-hidden bg-white dark:bg-slate-900 shadow-xl">
                         <Image
                             src={member.image}
@@ -239,7 +239,7 @@ function PartnershipCard({ children, delay = 0 }: { children: React.ReactNode; d
                 scale: 1.02,
                 transition: { duration: 0.3 }
             }}
-            className="bg-white/5 backdrop-blur-sm rounded-2xl p-5 sm:p-8 border border-white/10 hover:border-white/20 transition-all duration-300"
+            className="bg-white/5 rounded-2xl p-5 sm:p-8 border border-white/10 hover:border-white/20 transition-all duration-300"
         >
             {children}
         </motion.div>
@@ -372,7 +372,7 @@ export default function AboutPage() {
                             >
                                 <div className="relative w-48 h-48 sm:w-72 sm:h-72 lg:w-96 lg:h-96">
                                     <motion.div
-                                        className="absolute inset-0 bg-red-500/20 rounded-full blur-3xl"
+                                        className="absolute inset-0 bg-red-500/20 rounded-full"
                                         animate={{ scale: [1, 1.1, 1], opacity: [0.2, 0.3, 0.2] }}
                                         transition={{ duration: 3, repeat: Infinity }}
                                     />
@@ -447,7 +447,7 @@ export default function AboutPage() {
                 {/* Platform Overview Section - Card Flip Animation */}
                 <motion.section
                     ref={platformRef}
-                    className="py-10 sm:py-20 bg-gradient-to-br from-red-700 via-red-600 to-orange-500 dark:from-red-950 dark:to-orange-950 text-white relative overflow-hidden transition-colors duration-500"
+                    className="py-10 sm:py-20 bg-red-700 dark:bg-red-950 text-white relative overflow-hidden transition-colors duration-500"
                     style={{ opacity: platformOpacity, scale: platformScale }}
                 >
                     {/* Background Pattern */}
@@ -483,12 +483,12 @@ export default function AboutPage() {
                 {/* Partnership Section - 3D Perspective Depth */}
                 <motion.section
                     ref={partnershipRef}
-                    className="py-16 sm:py-20 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-white relative overflow-hidden"
+                    className="py-16 sm:py-20 bg-gray-900 text-white relative overflow-hidden"
                     style={{ opacity: partnershipOpacity, scale: partnershipScale }}
                 >
                     {/* Animated Background decoration */}
                     <motion.div
-                        className="absolute top-0 right-0 w-96 h-96 bg-red-500/10 rounded-full blur-3xl"
+                        className="absolute top-0 right-0 w-96 h-96 bg-red-500/10 rounded-full"
                         animate={{
                             x: [0, 30, 0],
                             y: [0, -20, 0],
@@ -497,7 +497,7 @@ export default function AboutPage() {
                         transition={{ duration: 8, repeat: Infinity }}
                     />
                     <motion.div
-                        className="absolute bottom-0 left-0 w-96 h-96 bg-yellow-500/10 rounded-full blur-3xl"
+                        className="absolute bottom-0 left-0 w-96 h-96 bg-yellow-500/10 rounded-full"
                         animate={{
                             x: [0, -30, 0],
                             y: [0, 20, 0],
@@ -632,7 +632,7 @@ export default function AboutPage() {
                 {/* Call to Action - Zoom and Fade */}
                 <motion.section
                     ref={ctaRef}
-                    className="py-16 sm:py-20 bg-gradient-to-r from-red-600 to-orange-500 dark:from-red-950 dark:to-orange-950 text-white transition-colors duration-500"
+                    className="py-16 sm:py-20 bg-red-600 dark:bg-red-950 text-white transition-colors duration-500"
                     style={{ scale: ctaScale, opacity: ctaOpacity }}
                 >
                     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">

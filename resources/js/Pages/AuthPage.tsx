@@ -219,15 +219,12 @@ function AuthContent() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-orange-50/50 via-white to-orange-100/50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 flex flex-col items-center justify-center p-4 sm:p-6 relative overflow-hidden transition-colors duration-500">
-      {/* Decorative background blobs */}
-      <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-orange-400/15 dark:bg-orange-500/5 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-red-400/10 dark:bg-red-500/5 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute top-1/2 left-1/4 w-[300px] h-[300px] bg-orange-300/10 dark:bg-orange-400/5 rounded-full blur-3xl pointer-events-none" />
+    <div className="min-h-screen bg-background flex flex-col items-center justify-center p-4 sm:p-6 relative overflow-hidden transition-colors duration-500">
+
 
       {/* Registration Wizard Modal - Full screen overlay */}
       {showRegistrationWizard && (
-        <div className="fixed inset-0 z-50 bg-background/95 backdrop-blur-sm flex items-start justify-center overflow-y-auto py-6 sm:py-8">
+        <div className="fixed inset-0 z-50 bg-background flex items-start justify-center overflow-y-auto py-6 sm:py-8">
           <div className="w-full max-w-3xl mx-2 sm:mx-4">
             <RegistrationWizard />
           </div>
@@ -260,9 +257,7 @@ function AuthContent() {
         {/* Right Side — Login Card */}
         <div className="w-full max-w-md flex-shrink-0">
         <Card className="border-[2px] sm:border-[3px] border-[#fb923c] dark:border-orange-500/50 rounded-[1.75rem] sm:rounded-[2.5rem] shadow-2xl bg-white dark:bg-slate-900 overflow-hidden relative pb-2 sm:pb-4 mx-auto w-full transition-colors duration-500">
-          {/* Decorative shapes */}
-          <div className="absolute top-0 right-0 w-32 h-32 sm:w-48 sm:h-48 bg-orange-50 dark:bg-orange-500/5 rounded-bl-[100px] sm:rounded-bl-[120px] pointer-events-none transition-colors" />
-          <div className="absolute bottom-0 left-0 w-24 h-24 sm:w-32 sm:h-32 bg-blue-50/40 dark:bg-blue-500/5 rounded-tr-[80px] sm:rounded-tr-[100px] pointer-events-none transition-colors" />
+
 
           <CardHeader className="pt-6 sm:pt-8 pb-1 sm:pb-2 relative z-10 px-5 sm:px-6">
             <div className="flex flex-col items-center mb-1 sm:mb-2">
@@ -512,7 +507,7 @@ function AuthContent() {
 
 function AuthLoading() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-orange-50/50 via-white to-orange-100/50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 flex items-center justify-center p-4 transition-colors duration-500">
+    <div className="min-h-screen bg-background flex items-center justify-center p-4 transition-colors duration-500">
       <div className="flex flex-col items-center gap-4">
         <Loader2 className="h-8 w-8 animate-spin text-orange-500" />
         <p className="text-slate-500 dark:text-slate-400 font-medium">Loading platform...</p>

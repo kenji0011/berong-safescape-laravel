@@ -38,11 +38,11 @@ const BlogArticleClient = ({ blog }: BlogArticleProps) => {
             {/* Expanded Image Modal Lightbox */}
             {isImageExpanded && blog.imageUrl && (
                 <div 
-                    className="fixed inset-0 z-[100] bg-slate-900/95 backdrop-blur-md flex items-center justify-center p-4 sm:p-8 cursor-zoom-out animate-in fade-in duration-200"
+                    className="fixed inset-0 z-[100] bg-slate-900/95 flex items-center justify-center p-4 sm:p-8 cursor-zoom-out animate-in fade-in duration-200"
                     onClick={() => setIsImageExpanded(false)}
                 >
                     <button 
-                        className="absolute top-6 right-6 text-white/70 hover:text-white hover:bg-white/20 bg-white/10 p-3 rounded-full backdrop-blur-md transition-all active:scale-95 border border-white/20"
+                        className="absolute top-6 right-6 text-white/70 hover:text-white hover:bg-white/20 bg-white/10 p-3 rounded-full transition-all active:scale-95 border border-white/20"
                         onClick={(e) => { e.stopPropagation(); setIsImageExpanded(false); }}
                         title="Close"
                     >
@@ -66,7 +66,7 @@ const BlogArticleClient = ({ blog }: BlogArticleProps) => {
             />
 
             {/* Frosting overlay to ensure text readability */}
-            <div className="fixed inset-0 bg-white/70 dark:bg-slate-950/80 backdrop-blur-[2px] -z-10 pointer-events-none transition-colors duration-500"></div>
+            <div className="fixed inset-0 bg-background/90 -z-10 pointer-events-none transition-colors duration-500"></div>
 
             <main className="max-w-4xl mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-12 relative z-10">
                 {/* Navigation Bar */}
@@ -84,7 +84,7 @@ const BlogArticleClient = ({ blog }: BlogArticleProps) => {
                 <article className="bg-white dark:bg-slate-800 rounded-[1.5rem] sm:rounded-[3rem] shadow-[0_8px_30px_rgba(0,0,0,0.06)] dark:shadow-[0_8px_30px_rgba(0,0,0,0.2)] border-2 border-slate-100 dark:border-slate-700 overflow-hidden transition-colors">
                     
                     {/* Header Section */}
-                    <div className="p-4 sm:p-8 md:p-10 pb-4 sm:pb-8 bg-gradient-to-b from-slate-50/80 to-white dark:from-slate-800/80 dark:to-slate-800 transition-colors">
+                    <div className="p-4 sm:p-8 md:p-10 pb-4 sm:pb-8 bg-white dark:bg-slate-800 transition-colors">
                         <span className="inline-block px-2.5 py-0.5 sm:px-3 sm:py-1 bg-orange-100 dark:bg-orange-950/30 text-orange-600 dark:text-orange-400 font-black text-[9px] sm:text-[10px] uppercase tracking-widest rounded-full border-2 border-orange-200 dark:border-orange-900/30 mb-3 sm:mb-4 shadow-sm transition-colors">
                             Fire Safety Education
                         </span>
@@ -124,7 +124,7 @@ const BlogArticleClient = ({ blog }: BlogArticleProps) => {
                                 
                                 {/* Overlay hint */}
                                 <div className="absolute inset-0 bg-slate-900/0 group-hover:bg-slate-900/10 transition-colors duration-300 flex items-center justify-center">
-                                    <div className="opacity-0 group-hover:opacity-100 translate-y-4 group-hover:translate-y-0 transition-all duration-300 bg-white/90 dark:bg-slate-800/90 backdrop-blur-sm text-slate-800 dark:text-white font-bold px-3 py-1.5 sm:px-4 sm:py-2 rounded-full flex items-center gap-1.5 sm:gap-2 shadow-lg text-xs sm:text-sm">
+                                    <div className="opacity-0 group-hover:opacity-100 translate-y-4 group-hover:translate-y-0 transition-all duration-300 bg-white dark:bg-slate-800 text-slate-800 dark:text-white font-bold px-3 py-1.5 sm:px-4 sm:py-2 rounded-full flex items-center gap-1.5 sm:gap-2 shadow-lg text-xs sm:text-sm">
                                         <Maximize2 className="h-3 w-3 sm:h-4 sm:w-4" />
                                         Click to expand
                                     </div>
@@ -150,7 +150,7 @@ const BlogArticleClient = ({ blog }: BlogArticleProps) => {
                 </article>
 
                 {/* Emergency Protocol */}
-                <div className="mt-6 sm:mt-8 overflow-hidden rounded-[1.5rem] sm:rounded-[2rem] bg-[#fff5f5]/95 dark:bg-red-950/20 backdrop-blur-sm border-2 border-red-100 dark:border-red-900/30 p-4 sm:p-8 shadow-sm transition-colors">
+                <div className="mt-6 sm:mt-8 overflow-hidden rounded-[1.5rem] sm:rounded-[2rem] bg-red-50 dark:bg-red-950/20 border-2 border-red-100 dark:border-red-900/30 p-4 sm:p-8 shadow-sm transition-colors">
                     <div className="flex flex-col sm:flex-row gap-4 sm:gap-5 items-start sm:items-center">
                         <div className="h-12 w-12 sm:h-16 sm:w-16 rounded-full bg-white dark:bg-red-900/40 flex items-center justify-center shrink-0 shadow-sm border border-red-50 dark:border-red-800 transition-colors">
                             <Flame className="h-5 w-5 sm:h-7 sm:w-7 text-red-600 dark:text-red-400" />

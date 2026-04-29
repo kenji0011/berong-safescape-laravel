@@ -37,20 +37,20 @@ const BadgeHallPage = ({ completedModules = [], earnedBadges = [] }: BadgeHallPr
   return (
     <div className="min-h-screen bg-slate-950 font-sans flex flex-col text-white">
       {/* ── High-Impact Hero Header: Optimized for Mobile Readability ── */}
-      <div className="relative pt-8 sm:pt-12 pb-12 sm:pb-20 px-4 sm:px-10 bg-gradient-to-br from-rose-600 via-red-500 to-orange-500 overflow-hidden shrink-0">
+      <div className="relative pt-8 sm:pt-12 pb-12 sm:pb-20 px-4 sm:px-10 bg-primary overflow-hidden shrink-0">
         <div className="absolute inset-0 opacity-20 bg-[radial-gradient(#fff_1px,transparent_1px)] [background-size:24px_24px]"></div>
         
         <div className="max-w-7xl mx-auto relative z-10">
           <Link
             href="/kids"
-            className="inline-flex items-center gap-2 px-4 py-2 bg-white/10 backdrop-blur-md rounded-2xl text-white font-black text-xs sm:text-sm hover:bg-white/20 border-2 border-white/20 transition-all mb-8 group"
+            className="inline-flex items-center gap-2 px-4 py-2 bg-white/10 rounded-2xl text-white font-black text-xs sm:text-sm hover:bg-white/20 border-2 border-white/20 transition-all mb-8 group"
           >
             <ArrowLeft className="h-4 w-4 sm:h-5 sm:w-5 group-hover:-translate-x-1 transition-transform" />
             Back to Home
           </Link>
 
           <div className="flex flex-row items-center gap-6 sm:gap-12">
-            <div className="h-24 w-24 sm:h-44 sm:w-44 bg-white/20 backdrop-blur-md rounded-[2rem] sm:rounded-[3rem] flex items-center justify-center text-5xl sm:text-8xl shadow-2xl border-2 sm:border-4 border-white/30 shrink-0 transform -rotate-3">
+            <div className="h-24 w-24 sm:h-44 sm:w-44 bg-white/20 rounded-[2rem] sm:rounded-[3rem] flex items-center justify-center text-5xl sm:text-8xl shadow-2xl border-2 sm:border-4 border-white/30 shrink-0 transform -rotate-3">
                {earnedCount >= 5 ? '🏆' : '🎖️'}
             </div>
             
@@ -92,7 +92,7 @@ const BadgeHallPage = ({ completedModules = [], earnedBadges = [] }: BadgeHallPr
                     <div className={cn(
                       "h-12 w-12 sm:h-20 sm:w-20 rounded-xl sm:rounded-3xl flex items-center justify-center text-3xl sm:text-6xl shadow-lg relative transform group-hover:scale-110 transition-transform duration-500",
                       state.isEarned 
-                        ? "bg-gradient-to-br from-yellow-300 via-orange-400 to-red-500 border-2 sm:border-[4px] border-white/20" 
+                        ? "bg-yellow-400 border-2 sm:border-[4px] border-white/20" 
                         : "bg-slate-900 border border-slate-800"
                     )}>
                       {state.isEarned ? badge.icon : <Lock className="h-5 w-5 sm:h-8 sm:w-8 text-slate-700" />}
@@ -160,8 +160,8 @@ const BadgeHallPage = ({ completedModules = [], earnedBadges = [] }: BadgeHallPr
           </div>
 
           {/* Compact Motivational Footer for Mobile */}
-          <div className="mt-12 sm:mt-20 p-6 sm:p-12 bg-gradient-to-r from-blue-600 to-indigo-700 rounded-[2.5rem] sm:rounded-[3rem] border-4 border-white/10 text-center shadow-2xl relative overflow-hidden">
-            <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full blur-3xl -z-0"></div>
+          <div className="mt-12 sm:mt-20 p-6 sm:p-12 bg-blue-600 rounded-[2.5rem] sm:rounded-[3rem] border-4 border-white/10 text-center shadow-2xl relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full -z-0"></div>
             <div className="relative z-10">
               <Shield className="h-10 w-10 sm:h-16 sm:w-16 text-yellow-300 mx-auto mb-4 sm:mb-6" />
               <h2 className="text-xl sm:text-5xl font-black uppercase mb-2 sm:mb-4">You're Doing Great!</h2>

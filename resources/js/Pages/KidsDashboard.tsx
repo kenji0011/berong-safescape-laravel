@@ -37,7 +37,7 @@ const KidsDashboardPage = ({ modules, progress }: KidsPageProps) => {
   const buildContent = (completedIds: number[]): ContentCardData[] => [
     {
       id: "safescape-course",
-      title: "🔥 SafeScape Fire Safety Course",
+      title: "SafeScape Fire Safety Course",
       description: "Complete 5 exciting modules to become a Fire Safety Hero! Learn about the Fire Triangle, escape plans, and more!",
       type: "module",
       emoji: "🛡️",
@@ -48,7 +48,7 @@ const KidsDashboardPage = ({ modules, progress }: KidsPageProps) => {
     },
     {
       id: "video-game",
-      title: "🎮 Fire Safety Adventure",
+      title: "Fire Safety Adventure",
       description: "The ultimate 3D fire safety game is under development. Prepare for an epic mission!",
       type: "game",
       emoji: "🕹️",
@@ -59,7 +59,7 @@ const KidsDashboardPage = ({ modules, progress }: KidsPageProps) => {
     },
     {
       id: "escape-room-game",
-      title: "🕵️ Fire Escape Room",
+      title: "Fire Escape Room",
       description: "Test your speed and logic in our upcoming virtual escape room challenge. Can you find the way out?",
       type: "game",
       emoji: "🔦",
@@ -70,7 +70,7 @@ const KidsDashboardPage = ({ modules, progress }: KidsPageProps) => {
     },
     {
       id: "video-portal",
-      title: "🎬 Fire Safety Videos",
+      title: "Fire Safety Videos",
       description: "Watch exciting videos and learn how to be a Fire Safety Hero! New videos added every week.",
       type: "video",
       emoji: "📺",
@@ -80,7 +80,7 @@ const KidsDashboardPage = ({ modules, progress }: KidsPageProps) => {
     },
     {
       id: "activity-portal",
-      title: "✨ Mini Games",
+      title: "Mini Games",
       description: "Play fun quizzes and memory games! Earn extra points and show off your knowledge.",
       type: "activity",
       emoji: "🏆",
@@ -90,7 +90,7 @@ const KidsDashboardPage = ({ modules, progress }: KidsPageProps) => {
     },
     {
       id: "more-content",
-      title: "✨ More Missions Coming!",
+      title: "More Missions Coming!",
       description: "We're busy building new adventures for our Fire Safety Heroes! Keep practicing your skills.",
       type: "activity",
       emoji: "🚀",
@@ -112,7 +112,7 @@ const KidsDashboardPage = ({ modules, progress }: KidsPageProps) => {
   }
 
   return (
-    <div className="min-h-screen relative bg-blue-50 dark:bg-slate-950 transition-colors duration-500">
+    <div className="min-h-screen relative bg-background transition-colors duration-500">
       {/* Optimized Background - Using fixed div instead of bg-fixed to prevent scroll repaints */}
       <div 
         className="fixed inset-0 z-0 bg-cover bg-center pointer-events-none transform-gpu"
@@ -122,14 +122,14 @@ const KidsDashboardPage = ({ modules, progress }: KidsPageProps) => {
           WebkitBackfaceVisibility: 'hidden'
         }}
       >
-        <div className="absolute inset-0 bg-white/10 dark:bg-black/60 backdrop-blur-[2px]"></div>
+        <div className="absolute inset-0 bg-background/60"></div>
       </div>
 
       {!isMobile && !reduceMotion && (
         <Particles 
           className="!fixed !inset-0 z-0" 
           quantity={60} 
-          color={["#ef4444", "#f97316", "#fbbf24"]} 
+          color={["#ef4444"]} 
           size={2.5} 
           staticity={40} 
           ease={70} 

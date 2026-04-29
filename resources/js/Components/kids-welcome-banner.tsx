@@ -54,19 +54,19 @@ export function KidsWelcomeBanner({ completedModules = [], earnedBadges = [] }: 
   const RankIcon = currentRank.icon
 
   return (
-    <div className="relative bg-gradient-to-br from-rose-600 via-red-500 to-orange-500 rounded-2xl sm:rounded-[2.5rem] shadow-[0_15px_40px_rgba(244,63,94,0.3)] mb-6 sm:mb-8 border-[3px] sm:border-[6px] border-white/90 overflow-hidden transform translate-z-0">
+    <div className="relative bg-primary rounded-2xl sm:rounded-[2.5rem] shadow-xl mb-6 sm:mb-8 border-[3px] sm:border-[6px] border-white/90 dark:border-black/20 overflow-hidden transform translate-z-0 transition-colors duration-500">
       
-      {/* Decorative Gradients */}
-      <div className="absolute inset-0 pointer-events-none overflow-hidden">
-        <div className="absolute top-0 right-0 w-96 h-96 bg-yellow-400/20 rounded-full blur-[60px] sm:blur-[100px]"></div>
-        <div className="absolute bottom-0 left-0 w-80 h-80 bg-pink-500/20 rounded-full blur-[60px] sm:blur-[100px]"></div>
+      {/* Decorative Elements - Simplified */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden opacity-10">
+        <div className="absolute top-0 right-0 w-96 h-96 bg-white dark:bg-slate-800 rounded-full"></div>
+        <div className="absolute bottom-0 left-0 w-80 h-80 bg-white dark:bg-slate-800 rounded-full"></div>
       </div>
 
       <div className="relative z-10 px-4 sm:px-10 pt-6 sm:pt-8 lg:pt-10 pb-4 sm:pb-6 lg:pb-4 flex flex-col items-center">
         
         {/* ── Header: Now includes Avatar on Mobile ── */}
         <div className="text-center mb-6 lg:mb-8 flex flex-col items-center gap-3">
-          <div className="sm:hidden h-16 w-16 rounded-full bg-white shadow-xl flex items-center justify-center text-3xl border-2 border-white transform rotate-3">
+          <div className="sm:hidden h-16 w-16 rounded-full bg-white dark:bg-red-950 shadow-xl flex items-center justify-center text-3xl border-2 border-white dark:border-black/20 transform rotate-3 transition-colors">
             {userAvatar}
           </div>
           <div>
@@ -83,8 +83,8 @@ export function KidsWelcomeBanner({ completedModules = [], earnedBadges = [] }: 
         <div className="w-full max-w-5xl grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 mb-4 sm:mb-6">
            
            {/* Card 1: Identity & Rank - HIDDEN ON MOBILE */}
-           <div className="hidden lg:flex bg-white/10 backdrop-blur-xl rounded-[2rem] p-6 border border-white/20 items-center gap-6 shadow-2xl">
-              <div className="h-20 w-20 sm:h-24 sm:w-24 rounded-full bg-white shadow-inner flex items-center justify-center text-4xl sm:text-5xl border-4 border-white transform hover:scale-110 transition-transform duration-500">
+           <div className="hidden lg:flex bg-white/10 dark:bg-slate-950/40 rounded-[2rem] p-6 border border-white/20 dark:border-white/5 items-center gap-6 shadow-2xl transition-colors">
+              <div className="h-20 w-20 sm:h-24 sm:w-24 rounded-full bg-white dark:bg-red-950 shadow-inner flex items-center justify-center text-4xl sm:text-5xl border-4 border-white dark:border-black/20 transform hover:scale-110 transition-all duration-500">
                 {userAvatar}
               </div>
               <div className="flex-1">
@@ -100,7 +100,7 @@ export function KidsWelcomeBanner({ completedModules = [], earnedBadges = [] }: 
            {/* Card 2: Badges Summary Link */}
            <Link 
              href="/kids/badges"
-             className="bg-white/10 backdrop-blur-xl rounded-[2rem] p-6 border border-white/20 flex flex-col shadow-2xl hover:bg-white/15 transition-all group"
+             className="bg-white/10 dark:bg-slate-950/40 backdrop-blur-xl rounded-[2rem] p-6 border border-white/20 dark:border-white/5 flex flex-col shadow-2xl hover:bg-white/15 dark:hover:bg-slate-950/60 transition-all group"
            >
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-2">
@@ -120,14 +120,14 @@ export function KidsWelcomeBanner({ completedModules = [], earnedBadges = [] }: 
                     <div key={i} className={cn(
                       "h-10 w-10 sm:h-12 sm:w-12 rounded-xl flex items-center justify-center text-xl sm:text-2xl transition-all shadow-lg border-2",
                       earned 
-                        ? "bg-gradient-to-br from-yellow-300 to-orange-400 border-white/30" 
+                        ? "bg-yellow-400 border-white/30" 
                         : "bg-black/30 border-white/5 opacity-30"
                     )}>
                       {earned ? badge.icon : <Lock className="h-3 w-3 text-white/20" />}
                     </div>
                   )
                 })}
-                <div className="h-10 w-10 sm:h-12 sm:w-12 rounded-xl flex items-center justify-center bg-white/10 border border-white/20 text-yellow-300 font-black text-sm">
+                <div className="h-10 w-10 sm:h-12 sm:w-12 rounded-xl flex items-center justify-center bg-white/10 dark:bg-slate-900/50 border border-white/20 dark:border-white/5 text-yellow-300 font-black text-sm transition-colors">
                   +{totalBadges - 5}
                 </div>
               </div>
@@ -137,9 +137,9 @@ export function KidsWelcomeBanner({ completedModules = [], earnedBadges = [] }: 
                     <span className="text-[9px] font-black text-white/50 uppercase tracking-widest">Global Ranking Progress</span>
                     <span className="text-xs font-black text-yellow-300">{progressPercent.toFixed(0)}%</span>
                 </div>
-                <div className="h-3 w-full bg-black/40 rounded-full border border-white/10 overflow-hidden p-0.5">
+                <div className="h-3 w-full bg-black/40 dark:bg-black/60 rounded-full border border-white/10 dark:border-white/5 overflow-hidden p-0.5 transition-colors">
                     <div 
-                      className="h-full bg-gradient-to-r from-yellow-300 via-orange-400 to-white rounded-full transition-all duration-1000 shadow-[0_0_15px_rgba(255,255,255,0.3)]" 
+                      className="h-full bg-yellow-400 rounded-full transition-all duration-1000 shadow-[0_0_10px_rgba(250,204,21,0.4)]" 
                       style={{ width: `${progressPercent}%` }}
                     ></div>
                 </div>

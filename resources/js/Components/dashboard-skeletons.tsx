@@ -4,14 +4,14 @@ import { cn } from "@/lib/utils"
 
 export function KidsWelcomeBannerSkeleton() {
   return (
-    <div className="relative overflow-hidden bg-slate-200 rounded-[1.5rem] sm:rounded-[2rem] mb-6 sm:mb-8 border-4 border-white text-center animate-pulse">
+    <div className="relative overflow-hidden bg-slate-200 dark:bg-slate-800 rounded-[1.5rem] sm:rounded-[2rem] mb-6 sm:mb-8 border-4 border-white dark:border-slate-700 text-center animate-pulse transition-colors">
       <div className="relative z-10 px-4 sm:px-6 py-6 sm:py-8 flex flex-col items-center">
         <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-8 mb-6">
           {/* Avatar Skeleton */}
           <Skeleton className="h-14 w-14 sm:h-20 sm:w-20 rounded-full" />
           
           {/* Badge Stats Skeleton */}
-          <div className="bg-white/50 backdrop-blur-md border-2 border-white/30 rounded-2xl p-2.5 sm:p-4 flex flex-col items-center sm:items-start gap-2 shadow-inner w-40 sm:w-56">
+          <div className="bg-white/50 dark:bg-slate-900/50 backdrop-blur-md border-2 border-white/30 dark:border-white/10 rounded-2xl p-2.5 sm:p-4 flex flex-col items-center sm:items-start gap-2 shadow-inner w-40 sm:w-56">
             <Skeleton className="h-3 w-20" />
             <div className="flex gap-1 mt-1">
               {[1, 2, 3, 4, 5].map((i) => (
@@ -39,7 +39,7 @@ export function KidsWelcomeBannerSkeleton() {
 
 export function ContentCardSkeleton() {
   return (
-    <div className="flex flex-col h-full w-full rounded-3xl sm:rounded-[2.5rem] overflow-hidden bg-white border border-slate-100 shadow-sm animate-pulse">
+    <div className="flex flex-col h-full w-full rounded-3xl sm:rounded-[2.5rem] overflow-hidden bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 shadow-sm animate-pulse transition-colors">
       {/* Visual Header Skeleton */}
       <Skeleton className="h-40 sm:h-52 w-full" />
       
@@ -50,7 +50,7 @@ export function ContentCardSkeleton() {
         <Skeleton className="h-4 w-5/6 mb-4 sm:mb-6" />
         
         {/* Footer Skeleton */}
-        <div className="mt-auto flex items-center justify-between pt-4 border-t-2 border-slate-50">
+        <div className="mt-auto flex items-center justify-between pt-4 border-t-2 border-slate-50 dark:border-slate-800">
           <Skeleton className="h-4 w-20" />
           <Skeleton className="h-10 w-24 rounded-xl sm:rounded-2xl" />
         </div>
@@ -71,7 +71,7 @@ export function ContentGridSkeleton({ count = 5 }: { count?: number }) {
 
 export function HeroCarouselSkeleton() {
   return (
-    <div className="w-full h-[300px] sm:h-[450px] md:h-[500px] rounded-[2rem] sm:rounded-[3rem] bg-slate-200 animate-pulse relative overflow-hidden border-[4px] border-white shadow-xl">
+    <div className="w-full h-[300px] sm:h-[450px] md:h-[500px] rounded-[2rem] sm:rounded-[3rem] bg-slate-200 dark:bg-slate-800 animate-pulse relative overflow-hidden border-[4px] border-white dark:border-slate-700 shadow-xl transition-colors">
       <div className="absolute inset-0 flex flex-col justify-center px-8 sm:px-16 md:px-24">
         <Skeleton className="h-10 sm:h-16 w-3/4 mb-4 rounded-xl" />
         <Skeleton className="h-6 sm:h-8 w-1/2 mb-8 rounded-lg" />
@@ -146,7 +146,7 @@ export function FeaturedCardsSkeleton() {
       {/* Mobile skeleton */}
       <div className="md:hidden space-y-4">
         {[1, 2, 3].map((i) => (
-          <div key={i} className="w-full bg-white rounded-3xl p-4 shadow-[0_6px_0_#cbd5e1] animate-pulse flex items-center gap-4">
+          <div key={i} className="w-full bg-white dark:bg-slate-900 rounded-3xl p-4 shadow-[0_6px_0_#cbd5e1] dark:shadow-[0_6px_0_#1e293b] animate-pulse flex items-center gap-4 transition-colors">
              <Skeleton className="h-16 w-16 rounded-2xl shrink-0" />
              <div className="flex-1 space-y-2">
                <Skeleton className="h-5 w-1/2" />
@@ -159,15 +159,15 @@ export function FeaturedCardsSkeleton() {
       {/* Desktop skeleton */}
       <div className="hidden md:grid grid-cols-3 gap-8 max-w-6xl mx-auto">
         {[1, 2, 3].map((i) => (
-          <div key={i} className="bg-white rounded-3xl overflow-hidden shadow-[0_8px_0_#cbd5e1] animate-pulse h-[380px]">
-            <Skeleton className="h-[200px] w-full" />
+          <div key={i} className="bg-white dark:bg-slate-900 rounded-3xl overflow-hidden shadow-[0_8px_0_#cbd5e1] dark:shadow-[0_8px_0_#1e293b] animate-pulse h-[380px] transition-colors">
+            <Skeleton className="h-[200px] w-full bg-slate-200 dark:bg-slate-800" />
             <div className="p-6 space-y-4">
                <div className="flex justify-between items-start">
-                  <Skeleton className="h-7 w-1/2" />
-                  <div className="h-12 w-12 rounded-2xl bg-slate-200 -mt-10 z-10" />
+                  <Skeleton className="h-7 w-1/2 bg-slate-200 dark:bg-slate-800" />
+                  <div className="h-12 w-12 rounded-2xl bg-slate-200 dark:bg-slate-700 -mt-10 z-10" />
                </div>
-               <Skeleton className="h-4 w-full" />
-               <Skeleton className="h-10 w-full rounded-full mt-auto" />
+               <Skeleton className="h-4 w-full bg-slate-200 dark:bg-slate-800" />
+               <Skeleton className="h-10 w-full rounded-full mt-auto bg-slate-200 dark:bg-slate-800" />
             </div>
           </div>
         ))}
@@ -180,7 +180,7 @@ export function HotOrNotSkeleton() {
   return (
     <div className="min-h-[80vh] w-full flex flex-col items-center pt-6 md:pt-10 animate-pulse px-4">
       {/* Robot Hint Skeleton */}
-      <div className="w-full max-w-sm bg-white border-2 border-slate-100 px-6 py-4 rounded-[2rem] shadow-sm flex items-center gap-4 mb-6">
+      <div className="w-full max-w-sm bg-white dark:bg-slate-900 border-2 border-slate-100 dark:border-slate-800 px-6 py-4 rounded-[2rem] shadow-sm flex items-center gap-4 mb-6">
         <Skeleton className="h-10 w-10 md:h-12 md:w-12 rounded-full" />
         <div className="space-y-2 flex-1">
           <Skeleton className="h-3 w-3/4" />
@@ -189,7 +189,7 @@ export function HotOrNotSkeleton() {
       </div>
 
       {/* Progress Bar Skeleton */}
-      <div className="w-full max-w-sm bg-white/80 p-4 rounded-3xl border-2 border-slate-100 shadow-sm mb-12">
+      <div className="w-full max-w-sm bg-white/80 dark:bg-slate-900/80 p-4 rounded-3xl border-2 border-slate-100 dark:border-slate-800 shadow-sm mb-12">
         <div className="flex justify-between mb-3">
           <Skeleton className="h-2 w-20" />
           <Skeleton className="h-2 w-8" />
@@ -198,7 +198,7 @@ export function HotOrNotSkeleton() {
       </div>
 
       {/* Main Card Skeleton */}
-      <div className="w-[18rem] md:w-[22rem] h-[26rem] md:h-[30rem] bg-white border-[4px] md:border-[6px] border-slate-50 rounded-[2.5rem] md:rounded-[4rem] shadow-xl flex flex-col items-center justify-center p-8">
+      <div className="w-[18rem] md:w-[22rem] h-[26rem] md:h-[30rem] bg-white dark:bg-slate-900 border-[4px] md:border-[6px] border-slate-50 dark:border-slate-800 rounded-[2.5rem] md:rounded-[4rem] shadow-xl flex flex-col items-center justify-center p-8">
         <Skeleton className="h-40 w-40 md:h-56 md:w-56 rounded-3xl mb-8" />
         <Skeleton className="h-8 w-3/4 rounded-xl" />
       </div>

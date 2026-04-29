@@ -76,7 +76,7 @@ export function Navigation() {
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false)
 
   return (
-    <nav className="bg-gradient-to-r from-[#ff3b3b] to-[#ff7b00] fixed inset-x-0 top-0 z-[80] shadow-md">
+    <nav className="bg-primary fixed inset-x-0 top-0 z-[80] shadow-md dark:shadow-none dark:border-b dark:border-black/20 transition-colors duration-500 h-[64px] sm:h-[72px] flex items-center">
       {/* Background Image Layer - 10% opacity */}
       <div
         className="absolute inset-0 opacity-5 bg-cover bg-center"
@@ -84,7 +84,7 @@ export function Navigation() {
       />
 
       {/* Content Layer - Full opacity */}
-      <div className="relative z-10">
+      <div className="relative z-10 w-full">
         <div className="max-w-7xl mx-auto px-3 sm:px-4 py-2.5 sm:py-3">
           <div className="flex items-center justify-between w-full gap-2 sm:gap-4 relative">
 
@@ -597,7 +597,7 @@ export function Navigation() {
       {/* Logout Confirmation Dialog */}
       <Dialog open={showLogoutConfirm} onOpenChange={setShowLogoutConfirm}>
         <DialogContent aria-describedby={undefined} className="max-w-[90vw] sm:max-w-md bg-white dark:bg-slate-900 border-none rounded-[2rem] p-0 overflow-hidden shadow-2xl transition-colors duration-500">
-          <div className="bg-gradient-to-r from-[#ff3b3b] to-[#ff7b00] p-6 text-center border-b-[6px] border-white/20">
+          <div className="bg-primary p-6 text-center border-b-[6px] border-white/20">
             <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center mx-auto mb-4 text-4xl shadow-xl transform rotate-3">
               🤖
             </div>

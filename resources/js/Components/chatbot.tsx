@@ -161,7 +161,9 @@ export function Chatbot() {
         // Re-enter from the left side
         const screenWidth = window.innerWidth
         const chatheadWidth = chatheadRef.current?.offsetWidth || 160
-        const leftOffset = screenWidth < 640 ? 8 : 18  // mobile: 8px, desktop: 18px
+        const leftOffset = screenWidth < 640 
+          ? (useMiniButton ? 24 : 0) 
+          : (useMiniButton ? 32 : 0)
         const targetX = -(screenWidth - chatheadWidth) + leftOffset  // adjust berong sides
         
         if (!isMounted.current) {
@@ -199,7 +201,9 @@ export function Chatbot() {
 
     if (isCloserToLeft) {
       // Snap to left edge
-      const leftOffset = screenWidth < 640 ? 0 : 18  // mobile: 0px, desktop: 18px
+      const leftOffset = screenWidth < 640 
+        ? (useMiniButton ? 24 : 0) 
+        : (useMiniButton ? 32 : 0)
       const targetX = -(screenWidth - chatheadWidth) + leftOffset  // adjust berong sides
       animate(dragX, targetX, { type: "spring", stiffness: 400, damping: 30 })
       setIsOnLeft(true)
@@ -457,12 +461,12 @@ export function Chatbot() {
   return (
     <>
       {/* Chatbot Toggle - Berong Character or Mini Button */}
-      <div ref={constraintsRef} className="fixed inset-x-0 top-24 bottom-0 z-[60] pointer-events-none">
-        {/* Full Mascot Mode */}
-        <AnimatePresence initial={false}>
-          {!isOpen && !useMiniButton && (
+      <div ref={constraintsRef} className="fixed inset-x-0 top-24 bottom-6 z-[60] pointer-events-none">
+        <AnimatePresence>
+          {!isOpen ? (
             <motion.div
-              className="pointer-events-auto fixed right-0 bottom-0"
+              key="chatbot-toggle"
+              className={`pointer-events-auto fixed ${useMiniButton ? 'right-6 bottom-6 sm:bottom-6' : 'right-0 bottom-0'}`}
               onMouseEnter={handleMouseEnter}
               onMouseLeave={handleMouseLeave}
               drag
@@ -473,13 +477,13 @@ export function Chatbot() {
               onDrag={handleDrag}
               onDragEnd={handleDragEnd}
               ref={chatheadRef}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
+              initial={{ opacity: 0, scale: 0.8, y: 15 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.9, transition: { duration: 0.1 } }}
               whileHover={{ scale: isDragging ? 1 : 1.05 }}
               whileTap={{ scale: 0.95 }}
               whileDrag={{ scale: 1.1, cursor: "grabbing" }}
-              transition={{ type: "spring", stiffness: 400, damping: 25 }}
+              transition={{ type: "spring", stiffness: 600, damping: 35 }}
               onClick={() => {
                 if (!isDragging) setIsOpen(true)
               }}
@@ -491,159 +495,91 @@ export function Chatbot() {
                 touchAction: "none"
               }}
             >
-              {/* Drag handle hint */}
-              <div className="absolute top-2 left-2 bg-black/20 backdrop-blur-sm rounded-full px-2 py-0.5 text-[10px] text-white/80 opacity-0 hover:opacity-100 transition-opacity">
-                ✥ Drag me
-              </div>
+              {useMiniButton ? (
+                /* Mini Button Rendering */
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.5 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.5 }}
+                  transition={{ type: "spring", stiffness: 500, damping: 30 }}
+                  className="relative"
+                >
+                  <div className="relative h-14 w-14 sm:h-16 sm:w-16 rounded-full bg-orange-600 border-[3px] border-white shadow-lg cursor-pointer flex items-center justify-center overflow-hidden group">
+                    <Image
+                      src="/RD Logo.png"
+                      alt="Berong - BFP Assistant"
+                      width={56}
+                      height={56}
+                      className="h-10 w-10 sm:h-12 sm:w-12 object-contain select-none drop-shadow-md group-hover:scale-110 transition-transform duration-200"
+                      draggable={false}
+                    />
+                    <div className="absolute inset-0 rounded-full border-2 border-white/30 animate-ping opacity-30 pointer-events-none" />
+                  </div>
+                </motion.div>
+              ) : (
+                /* Full Mascot Rendering */
+                <>
+                  {/* Drag handle hint */}
+                  <div className="absolute top-2 left-2 bg-black/20 rounded-full px-2 py-0.5 text-[10px] text-white/80 opacity-0 hover:opacity-100 transition-opacity">
+                    ✥ Drag me
+                  </div>
 
-              {/* Speech Bubble CTA */}
-              <AnimatePresence>
-                {showCTA && (
-                  <motion.div
-                    initial={{ opacity: 0, scale: 0.5, y: 20 }}
-                    animate={{ opacity: 1, scale: 1, y: [0, -8, 0] }}
-                    exit={{ opacity: 0, scale: 0.5, y: 20, transition: { delay: 0, duration: 0.2 } }}
-                    transition={{ 
-                      delay: 1.5,
-                      y: { duration: 2.5, repeat: Infinity, ease: "easeInOut" },
-                      default: { type: "spring", stiffness: 200 }
-                    }}
-                    className={`absolute bottom-full mb-4 z-50 pointer-events-auto ${isOnLeft ? 'left-4' : 'right-0'}`}
-                  >
-                    <div className="relative bg-white border-[4px] border-[#ff6b00] rounded-[2rem] px-5 sm:px-6 py-2 sm:py-3 shadow-[0_10px_25px_-5px_rgba(0,0,0,0.3)]">
-                      <div className="text-[#e60000] font-black text-xs sm:text-sm md:text-base leading-[1.2] text-center tracking-wide whitespace-nowrap">
-                        LET&apos;S LEARN ABOUT<br />FIRE SAFETY!
-                      </div>
-                      <div className={`absolute -bottom-[11px] w-4 h-4 sm:w-5 sm:h-5 bg-white border-b-[4px] border-r-[4px] border-[#ff6b00] transform rotate-45 rounded-br-[3px] ${isOnLeft ? 'left-6 sm:left-10' : 'right-6 sm:right-10'}`}></div>
-                    </div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
+                  {/* Speech Bubble CTA */}
+                  <AnimatePresence>
+                    {showCTA && (
+                      <motion.div
+                        initial={{ opacity: 0, scale: 0.5, y: 20 }}
+                        animate={{ opacity: 1, scale: 1, y: [0, -8, 0] }}
+                        exit={{ opacity: 0, scale: 0.5, y: 20, transition: { delay: 0, duration: 0.2 } }}
+                        transition={{ 
+                          delay: 1.5,
+                          y: { duration: 2.5, repeat: Infinity, ease: "easeInOut" },
+                          default: { type: "spring", stiffness: 200 }
+                        }}
+                        className={`absolute bottom-full mb-4 z-50 pointer-events-auto ${isOnLeft ? 'left-4' : 'right-0'}`}
+                      >
+                        <div className="relative bg-white border-[4px] border-[#ff6b00] rounded-[2rem] px-5 sm:px-6 py-2 sm:py-3 shadow-[0_10px_25px_-5px_rgba(0,0,0,0.3)]">
+                          <div className="text-[#e60000] font-black text-xs sm:text-sm md:text-base leading-[1.2] text-center tracking-wide whitespace-nowrap">
+                            LET&apos;S LEARN ABOUT<br />FIRE SAFETY!
+                          </div>
+                          <div className={`absolute -bottom-[11px] w-4 h-4 sm:w-5 sm:h-5 bg-white border-b-[4px] border-r-[4px] border-[#ff6b00] transform rotate-45 rounded-br-[3px] ${isOnLeft ? 'left-6 sm:left-10' : 'right-6 sm:right-10'}`}></div>
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
 
-              <Image
-                src="/RD Logo.png"
-                alt="Berong - BFP Assistant"
-                width={180}
-                height={180}
-                className="chatbot-berong-image drop-shadow-2xl select-none w-24 sm:w-28 md:w-36 lg:w-40 h-auto transition-all duration-300"
-                style={{ transform: isOnLeft ? 'scaleX(-1)' : 'none' }}
-                draggable={false}
-                priority
-              />
+                  <Image
+                    src="/RD Logo.png"
+                    alt="Berong - BFP Assistant"
+                    width={180}
+                    height={180}
+                    className="chatbot-berong-image drop-shadow-2xl select-none w-24 sm:w-28 md:w-36 lg:w-40 h-auto transition-all duration-300"
+                    style={{ transform: isOnLeft ? 'scaleX(-1)' : 'none' }}
+                    draggable={false}
+                    priority
+                  />
+                </>
+              )}
             </motion.div>
-          )}
-        </AnimatePresence>
-
-        {/* Mini Circle Button Mode (AssistiveTouch-style) */}
-        <AnimatePresence initial={false}>
-          {!isOpen && useMiniButton && (
+          ) : (
             <motion.div
-              ref={miniRef}
-              className="pointer-events-auto fixed right-4 bottom-12"
-              drag
-              dragConstraints={constraintsRef}
-              dragElastic={0.1}
-              dragMomentum={false}
-              onDragStart={() => setIsDragging(true)}
-              onDragEnd={() => {
-                // Snap to nearest edge
-                const el = miniRef.current
-                if (!el) { setIsDragging(false); return }
-
-                const btnSize = el.offsetWidth
-                const screenW = window.innerWidth
-                const screenH = window.innerHeight
-                // The button's default position is right-4 bottom-9 (right:16px, bottom:36px)
-                // So its default left = screenW - 16 - btnSize
-                const defaultLeft = screenW - 16 - btnSize
-                const currentLeft = defaultLeft + miniDragX.get()
-                const centerX = currentLeft + btnSize / 2
-                const isLeft = centerX < screenW / 2
- 
-                // Clamp Y so it stays on screen
-                const defaultTop = screenH - 36 - btnSize
-                const currentTop = defaultTop + miniDragY.get()
-                const clampedTop = Math.max(8, Math.min(screenH - btnSize - 8, currentTop))
-                const clampedY = clampedTop - defaultTop
-                animate(miniDragY, clampedY, { type: 'spring', stiffness: 400, damping: 30 })
-
-                if (isLeft) {
-                  // Snap to left: target left margin (24px desktop, 12px mobile)
-                  const targetX = (screenW < 640 ? 12 : 30) - defaultLeft
-                  animate(miniDragX, targetX, { type: 'spring', stiffness: 400, damping: 30 })
-                  setMiniIsOnLeft(true)
-                } else {
-                  // Snap to right: target left = screenW - 16 - btnSize = defaultLeft => x=0
-                  animate(miniDragX, 0, { type: 'spring', stiffness: 400, damping: 30 })
-                  setMiniIsOnLeft(false)
-                }
-
-                setTimeout(() => setIsDragging(false), 50)
-              }}
-              initial={{ opacity: 0, scale: 0.5 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.5 }}
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.9 }}
-              transition={{ duration: 0.2, ease: 'easeOut' }}
-              onClick={() => {
-                if (!isDragging) setIsOpen(true)
-              }}
+              key="chatbot-window"
+              initial={{ opacity: 0, y: 30, scale: 0.8 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.8, transition: { duration: 0.1 } }}
+              transition={{ type: "spring", stiffness: 600, damping: 35 }}
+              className={`chatbot-window-container fixed bottom-20 z-50 ${(useMiniButton ? miniIsOnLeft : isOnLeft) ? 'left-8' : 'right-6'}`}
               style={{
-                x: miniDragX,
-                y: miniDragY,
-                touchAction: 'none',
+                transformOrigin: (useMiniButton ? miniIsOnLeft : isOnLeft) ? 'bottom left' : 'bottom right',
+                willChange: 'transform, opacity',
+                pointerEvents: 'auto',
+                transform: 'translate3d(0,0,0)',
+                backfaceVisibility: 'hidden'
               }}
             >
-              <div className="relative h-14 w-14 sm:h-16 sm:w-16 rounded-full bg-gradient-to-br from-[#ff6b00] to-[#ff8c00] border-[3px] border-white shadow-[0_4px_20px_rgba(255,107,0,0.4)] cursor-pointer flex items-center justify-center overflow-hidden group">
-                <Image
-                  src="/RD Logo.png"
-                  alt="Berong - BFP Assistant"
-                  width={56}
-                  height={56}
-                  className="h-10 w-10 sm:h-12 sm:w-12 object-contain select-none drop-shadow-md group-hover:scale-110 transition-transform duration-200"
-                  draggable={false}
-                />
-                {/* Subtle pulse ring */}
-                <div className="absolute inset-0 rounded-full border-2 border-white/30 animate-ping opacity-30 pointer-events-none" />
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </div>
-
-      {/* Chatbot Window - Positioned based on which side Berong is on */}
-      <AnimatePresence>
-        {isOpen && (
-          <motion.div
-            initial={{
-              opacity: 0,
-              y: 30,
-              scale: 0.9,
-            }}
-            animate={{
-              opacity: 1,
-              y: 0,
-              scale: 1,
-            }}
-            exit={{
-              opacity: 0,
-              y: 20,
-              scale: 0.95,
-            }}
-            transition={{
-              duration: 0.25,
-              ease: [0.25, 0.46, 0.45, 0.94],
-            }}
-            className={`chatbot-window-container fixed bottom-24 z-50 ${(useMiniButton ? miniIsOnLeft : isOnLeft) ? 'left-6' : 'right-6'}`}
-            style={{
-              transformOrigin: (useMiniButton ? miniIsOnLeft : isOnLeft) ? 'bottom left' : 'bottom right',
-              willChange: 'transform, opacity',
-            }}
-          >
               <Card className="chatbot-window w-[480px] max-w-[90vw] h-[70vh] min-h-[450px] max-h-[620px] flex flex-col shadow-2xl p-0 gap-0 overflow-hidden border-[3px] border-[#ff6b00] rounded-2xl dark:bg-slate-900 dark:border-[#ff8c00]">
               {/* Header — Orange */}
-              <div className="flex items-center justify-between px-4 py-3 bg-gradient-to-r from-[#ff6b00] to-[#ff8c00] text-white rounded-t-xl shrink-0">
+              <div className="flex items-center justify-between px-4 py-3 bg-orange-600 text-white rounded-t-xl shrink-0">
                 <div className="flex items-center gap-3">
                   <Image
                     src="/RD Logo.png"
@@ -690,7 +626,7 @@ export function Chatbot() {
                   <div className="animate-pulse text-xs text-muted-foreground dark:text-slate-500">Loading suggestions...</div>
                 </div>
               ) : Object.keys(quickQuestions).length > 0 && showQuickQuestions ? (
-                <div className="py-2 px-3 bg-gray-50/80 dark:bg-slate-950/80 border-b dark:border-slate-800 backdrop-blur-sm shrink-0">
+                <div className="py-2 px-3 bg-gray-50 dark:bg-slate-950 border-b dark:border-slate-800 shrink-0">
                   {/* Header with Icon */}
                   <div className="flex items-center gap-2 mb-2">
                     <div className="h-1.5 w-1.5 rounded-full bg-green-500 animate-pulse" />
@@ -828,6 +764,7 @@ export function Chatbot() {
           </motion.div>
         )}
       </AnimatePresence>
-    </>
-  )
+    </div>
+  </>
+)
 }

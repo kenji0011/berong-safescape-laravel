@@ -89,14 +89,14 @@ const ProfessionalDashboard = ({ initialVideos }: ProfessionalPageClientProps) =
     return (
         <div className="min-h-screen relative transition-colors duration-500">
             {/* Background Overlay - Dynamic based on theme */}
-            <div className="fixed inset-0 bg-slate-50/70 dark:bg-slate-950/80 z-0 transition-colors duration-500" />
+
 
             <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4 sm:pt-6 pb-8 w-full relative z-10">
                 {/* Welcome Banner */}
                 <ProfessionalWelcomeBanner />
 
                 {/* Access Notice */}
-                <div className="mb-6 sm:mb-8 bg-red-50/50 dark:bg-red-950/20 backdrop-blur-sm border-[3px] border-dashed border-red-200 dark:border-red-900/30 rounded-2xl sm:rounded-[1.25rem] p-3 sm:p-4 flex items-center gap-2.5 sm:gap-3 shadow-sm animate-in fade-in slide-in-from-bottom-4 duration-500">
+                <div className="mb-6 sm:mb-8 bg-red-50 dark:bg-red-950/20 border-[3px] border-dashed border-red-200 dark:border-red-900/30 rounded-2xl sm:rounded-[1.25rem] p-3 sm:p-4 flex items-center gap-2.5 sm:gap-3 shadow-sm animate-in fade-in slide-in-from-bottom-4 duration-500">
                     <div className="h-8 w-8 sm:h-10 sm:w-10 rounded-full bg-white dark:bg-slate-800 border-[2px] sm:border-[3px] border-red-100 dark:border-red-900 flex items-center justify-center shrink-0 shadow-sm">
                         <Shield className="h-4 w-4 sm:h-5 sm:w-5 text-red-500" />
                     </div>
@@ -110,7 +110,7 @@ const ProfessionalDashboard = ({ initialVideos }: ProfessionalPageClientProps) =
                 <div className="space-y-3 sm:space-y-0 sm:grid sm:grid-cols-2 sm:gap-5 mb-8 sm:mb-10">
                     <Link href="#training-videos-section" onClick={(e) => { e.preventDefault(); document.getElementById('training-videos-section')?.scrollIntoView({ behavior: 'smooth' }) }} className="block group h-full outline-none">
                         <div className="relative overflow-hidden bg-white dark:bg-slate-800 border-[3px] sm:border-[4px] border-white dark:border-slate-700 rounded-2xl sm:rounded-[1.5rem] shadow-[0_6px_0_#cbd5e1] dark:shadow-[0_6px_0_#0f172a] sm:shadow-[0_8px_0_#cbd5e1] sm:hover:shadow-[0_12px_0_#cbd5e1] dark:hover:shadow-[0_12px_0_#0f172a] hover:-translate-y-1 sm:hover:-translate-y-1.5 active:translate-y-[6px] sm:active:translate-y-[8px] active:shadow-none transition-all duration-300 flex flex-col h-full">
-                            <div className="absolute inset-0 bg-gradient-to-br from-red-50 to-rose-50/50 dark:from-red-900/10 dark:to-rose-900/10 opacity-0 group-hover:opacity-100 transition-opacity z-0 pointer-events-none"></div>
+                            <div className="absolute inset-0 bg-red-50/50 dark:bg-red-900/10 opacity-0 group-hover:opacity-100 transition-opacity z-0 pointer-events-none"></div>
                             <img
                                 src="/Training Vidoes Modal.png"
                                 alt="Training Background"
@@ -131,7 +131,7 @@ const ProfessionalDashboard = ({ initialVideos }: ProfessionalPageClientProps) =
 
                     <Link href="#manuals-section" onClick={(e) => { e.preventDefault(); document.getElementById('manuals-section')?.scrollIntoView({ behavior: 'smooth' }) }} className="block group h-full outline-none">
                         <div className="relative overflow-hidden bg-white dark:bg-slate-800 border-[3px] sm:border-[4px] border-white dark:border-slate-700 rounded-2xl sm:rounded-[1.5rem] shadow-[0_6px_0_#cbd5e1] dark:shadow-[0_6px_0_#0f172a] sm:shadow-[0_8px_0_#cbd5e1] sm:hover:shadow-[0_12px_0_#cbd5e1] dark:hover:shadow-[0_12px_0_#0f172a] hover:-translate-y-1 sm:hover:-translate-y-1.5 active:translate-y-[6px] sm:active:translate-y-[8px] active:shadow-none transition-all duration-300 flex flex-col h-full">
-                            <div className="absolute inset-0 bg-gradient-to-br from-blue-50 to-cyan-50/50 dark:from-blue-900/10 dark:to-cyan-900/10 opacity-0 group-hover:opacity-100 transition-opacity z-0 pointer-events-none"></div>
+                            <div className="absolute inset-0 bg-blue-50/50 dark:bg-blue-900/10 opacity-0 group-hover:opacity-100 transition-opacity z-0 pointer-events-none"></div>
                             <img
                                 src="/BFP Manuals Modal.png"
                                 alt="Manuals Background"

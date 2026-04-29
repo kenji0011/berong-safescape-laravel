@@ -312,7 +312,7 @@ export default function ProfilePage() {
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-[80px] sm:pt-[96px] pb-8 relative z-10">
         {/* Background Overlay - Dynamic based on theme */}
-        <div className="fixed inset-0 bg-slate-50/70 dark:bg-slate-950/80 z-0 transition-colors duration-500 pointer-events-none" />
+        <div className="fixed inset-0 bg-background transition-colors duration-500 pointer-events-none" />
 
         {/* Header */}
         <div className="mb-6 sm:mb-8 bg-white dark:bg-slate-800 p-6 rounded-[2rem] border-[3px] border-slate-200 dark:border-slate-700 shadow-[0_8px_0_#cbd5e1] dark:shadow-[0_8px_0_#1e293b] flex items-center justify-between transition-colors relative z-10">
@@ -847,10 +847,10 @@ export default function ProfilePage() {
       {/* Hero Selection Modal */}
       <Dialog open={showAvatarModal} onOpenChange={setShowAvatarModal}>
         <DialogContent className="sm:max-w-2xl rounded-[2.5rem] border-[4px] border-slate-100 dark:border-slate-800 p-0 overflow-hidden shadow-2xl transition-colors">
-          <div className="bg-gradient-to-br from-yellow-400 to-orange-500 p-5 sm:p-8 text-white">
+          <div className="bg-yellow-500 p-5 sm:p-8 text-white">
             <DialogHeader>
               <DialogTitle className="text-xl sm:text-3xl font-black flex items-center gap-2 sm:gap-3">
-                <div className="bg-white/20 p-1.5 sm:p-2 rounded-xl sm:rounded-2xl backdrop-blur-md">
+                <div className="bg-white/20 p-1.5 sm:p-2 rounded-xl sm:rounded-2xl">
                   <Trophy className="h-5 w-5 sm:h-8 sm:w-8 text-white" strokeWidth={3} />
                 </div>
                 CHOOSE YOUR HERO
@@ -905,7 +905,7 @@ export default function ProfilePage() {
               ))}
             </div>
 
-            <div className="flex gap-2 sm:gap-4 sticky bottom-0 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm p-2 rounded-2xl border-t border-slate-100 dark:border-slate-700 mt-2 sm:mt-0 transition-colors">
+            <div className="flex gap-2 sm:gap-4 sticky bottom-0 bg-white dark:bg-slate-800 p-2 rounded-2xl border-t border-slate-100 dark:border-slate-700 mt-2 sm:mt-0 transition-colors">
               <Button
                 variant="outline"
                 onClick={() => setShowAvatarModal(false)}

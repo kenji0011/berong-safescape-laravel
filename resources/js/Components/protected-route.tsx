@@ -33,14 +33,14 @@ export function ProtectedRoute({
       }
     } else if (!isLoading && !isAuthenticated) {
       // If not authenticated, redirect to auth page
-      router.push('/auth');
+      router.get('/auth');
     }
   }, [user, isAuthenticated, isLoading, requiredPermission, router]);
 
   if (isLoading) {
     // Show loading state while checking authentication
     return (
-      <div className="fixed inset-0 z-[99999] flex items-center justify-center bg-gradient-to-br from-red-700 via-red-600 to-orange-600">
+      <div className="fixed inset-0 z-[99999] flex items-center justify-center bg-red-700">
         <div className="flex flex-col items-center">
           <div className="relative">
             {/* Spinning ring */}
@@ -79,7 +79,7 @@ export function ProtectedRoute({
           setShowPermissionDialog(false);
           // Optionally redirect after closing the dialog
           if (fallbackPath) {
-            router.push(fallbackPath);
+            router.get(fallbackPath);
           }
         }}
         message={`You don't have permission to access this section. Please contact an administrator to request ${requiredPermission.replace('access', '').toLowerCase()} access.`}

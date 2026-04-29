@@ -20,16 +20,16 @@ export function LoginLoader() {
                         <motion.div 
                             animate={{ 
                                 scale: [1, 1.2, 1],
-                                opacity: [0.3, 0.6, 0.3]
+                                opacity: [0.1, 0.2, 0.1]
                             }}
                             transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-                            className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,#ef4444_0%,transparent:70%)]"
+                            className="absolute inset-0 bg-[#ef4444]/20"
                         />
                         <div 
                             className="absolute inset-0 opacity-20 bg-cover bg-center"
                             style={{ backgroundImage: "url('/web-background-image.jpg')" }}
                         />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-black opacity-60" />
+                        <div className="absolute inset-0 bg-black/60" />
                     </div>
 
                     {/* Loader content */}
@@ -52,7 +52,7 @@ export function LoginLoader() {
                             <motion.div 
                                 animate={{ scale: [1, 1.2, 1], opacity: [0.5, 0.8, 0.5] }}
                                 transition={{ duration: 2, repeat: Infinity }}
-                                className="absolute -inset-2 bg-orange-500/20 blur-xl rounded-full"
+                                className="absolute -inset-2 bg-orange-500/20 rounded-full"
                             />
                             
                             <motion.div
@@ -92,7 +92,7 @@ export function LoginLoader() {
                             <motion.div 
                                 animate={{ x: [-200, 200] }}
                                 transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
-                                className="w-1/2 h-full bg-gradient-to-r from-transparent via-orange-500 to-transparent"
+                                className="w-1/2 h-full bg-orange-500"
                             />
                         </div>
                     </motion.div>

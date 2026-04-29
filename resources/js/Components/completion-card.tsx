@@ -49,9 +49,9 @@ export function CompletionCard({
           <div className={cn(
             "relative overflow-hidden rounded-[2.5rem] border-[4px] p-8 sm:p-12 text-center shadow-2xl transition-all",
             isCertification 
-              ? "bg-gradient-to-br from-yellow-400 via-orange-400 to-rose-500 border-yellow-200 text-white" 
+              ? "bg-yellow-400 border-yellow-200 text-white" 
               : isQuiz
-              ? "bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 border-purple-200 text-white"
+              ? "bg-indigo-600 border-purple-200 text-white"
               : "bg-white border-green-200 text-slate-800"
           )}>
             {/* Decorative Background Elements */}
@@ -62,7 +62,7 @@ export function CompletionCard({
                   scale: [1, 1.2, 1]
                 }}
                 transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-                className="absolute -top-24 -right-24 w-64 h-64 bg-white/10 rounded-full blur-3xl" 
+                className="absolute -top-24 -right-24 w-64 h-64 bg-white/10 rounded-full" 
               />
               <motion.div 
                 animate={{ 
@@ -70,7 +70,7 @@ export function CompletionCard({
                   scale: [1, 1.3, 1]
                 }}
                 transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
-                className="absolute -bottom-24 -left-24 w-64 h-64 bg-white/10 rounded-full blur-3xl" 
+                className="absolute -bottom-24 -left-24 w-64 h-64 bg-white/10 rounded-full" 
               />
             </div>
 
@@ -83,7 +83,7 @@ export function CompletionCard({
             >
               <div className={cn(
                 "h-24 w-24 rounded-full flex items-center justify-center shadow-xl border-[4px] border-white relative",
-                isCertification || isQuiz ? "bg-white/20 backdrop-blur-md" : "bg-green-500"
+                isCertification || isQuiz ? "bg-white/20" : "bg-green-500"
               )}>
                 {isCertification || isQuiz ? (
                   <Trophy className="h-12 w-12 text-white drop-shadow-lg" />
@@ -140,7 +140,7 @@ export function CompletionCard({
                   initial={{ scale: 0.8, opacity: 0 }}
                   animate={{ scale: 1, opacity: 1 }}
                   transition={{ delay: 0.5, type: "spring" }}
-                  className="inline-flex items-center gap-3 bg-white/20 backdrop-blur-md px-6 py-3 rounded-2xl border border-white/30 shadow-inner mt-4"
+                  className="inline-flex items-center gap-3 bg-white/20 px-6 py-3 rounded-2xl border border-white/30 shadow-inner mt-4"
                 >
                   <Sparkles className="h-5 w-5 text-yellow-300" />
                   <span className="text-xl font-black">

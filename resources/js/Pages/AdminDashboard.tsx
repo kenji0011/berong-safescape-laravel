@@ -947,7 +947,7 @@ function AdminDashboard({
   return (
     <div className="min-h-screen relative transition-colors duration-500">
       {/* Background Overlay - Dynamic based on theme */}
-      <div className="fixed inset-0 bg-slate-50/70 dark:bg-slate-950/80 z-0 transition-colors duration-500" />
+      <div className="fixed inset-0 bg-slate-50/40 dark:bg-slate-950/50 z-0 transition-colors duration-500" />
 
       {/* Loading Overlay for content submissions */}
       <LoadingOverlay isLoading={isSubmitting} message={submittingMessage} />

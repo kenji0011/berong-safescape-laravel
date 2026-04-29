@@ -29,7 +29,7 @@ export function ImageViewerModal({
             >
                 <DialogTitle className="sr-only">{imageTitle}</DialogTitle>
                 <div className="relative w-full h-full flex flex-col items-center justify-center p-2 sm:p-4">
-                    <div className="relative w-full h-[80vh] sm:h-[90vh] bg-black/60 backdrop-blur-xl rounded-2xl overflow-hidden border border-white/10 shadow-2xl flex items-center justify-center">
+                    <div className="relative w-full h-[80vh] sm:h-[90vh] bg-black/80 rounded-2xl overflow-hidden border border-white/10 shadow-2xl flex items-center justify-center">
                         <Image
                             src={imageUrl}
                             alt={imageAlt}
@@ -42,14 +42,14 @@ export function ImageViewerModal({
                             onClick={onClose}
                             variant="ghost"
                             size="icon"
-                            className="absolute top-4 right-4 bg-white/10 hover:bg-white/20 text-white z-20 rounded-full w-10 h-10 backdrop-blur-md border border-white/20 transition-all hover:scale-110 active:scale-90"
+                            className="absolute top-4 right-4 bg-white/10 hover:bg-white/20 text-white z-20 rounded-full w-10 h-10 border border-white/20 transition-all hover:scale-110 active:scale-90"
                             aria-label="Close image viewer"
                         >
                             <X className="h-6 w-6" />
                         </Button>
 
                         {imageTitle && (
-                            <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent p-6 sm:p-10 pointer-events-none">
+                            <div className="absolute bottom-0 left-0 right-0 bg-black/60 p-6 sm:p-10 pointer-events-none">
                                 <h3 className="text-white text-xl sm:text-3xl font-black tracking-tight drop-shadow-lg">{imageTitle}</h3>
                             </div>
                         )}

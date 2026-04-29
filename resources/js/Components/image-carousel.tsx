@@ -47,7 +47,7 @@ export function ImageCarousel({ images }: ImageCarouselProps) {
             className="object-cover"
             priority={index === 0}
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+          <div className="absolute inset-0 bg-black/40" />
           <div className="absolute bottom-0 left-0 right-0 p-8">
             <h2 className="text-white text-3xl md:text-4xl font-bold text-balance">{image.title}</h2>
           </div>

@@ -225,7 +225,7 @@ const ModuleOnePage = () => {
 
   // ─────────────────────────────────────────────
   return (
-    <div className="min-h-screen bg-blue-50 dark:bg-slate-950 bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] dark:bg-[radial-gradient(#1e293b_1px,transparent_1px)] [background-size:16px_16px] font-sans flex flex-col transition-colors duration-500">
+    <div className="min-h-screen bg-background font-sans flex flex-col transition-colors duration-500">
 
       {/* ── Sub Header ── */}
       <div className="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 py-3 px-4 sm:px-6 lg:px-8 shadow-sm z-20 relative transition-colors">
@@ -271,7 +271,7 @@ const ModuleOnePage = () => {
         
         {/* Skeleton Loader (Simulated for visual consistency with other modules) */}
         {moduleLoading && (
-          <div className="absolute inset-0 z-10 bg-blue-50 dark:bg-slate-950 bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] dark:bg-[radial-gradient(#1e293b_1px,transparent_1px)] [background-size:16px_16px] flex flex-col items-center justify-start pt-32 px-4 pointer-events-none transition-colors">
+          <div className="absolute inset-0 z-10 bg-background flex flex-col items-center justify-start pt-32 px-4 pointer-events-none transition-colors">
             <div className="w-16 h-16 sm:w-20 sm:h-20 bg-white dark:bg-slate-900 rounded-2xl shadow-sm border-[3px] border-blue-200 dark:border-slate-800 flex items-center justify-center mb-6 animate-bounce transition-colors">
               <Flame className="h-8 w-8 sm:h-10 sm:w-10 text-[#ff4b3e] animate-pulse" />
             </div>
@@ -297,7 +297,7 @@ const ModuleOnePage = () => {
 
           {/* ── Intro ── */}
           <div className="text-center max-w-3xl mx-auto space-y-3 sm:space-y-4">
-            <h1 className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-[#ff4b3e] to-[#ff8c00] leading-tight drop-shadow-sm">
+            <h1 className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-primary leading-tight drop-shadow-sm">
               Fire is a Tool, Not a Toy
             </h1>
             <p className="text-sm sm:text-base md:text-lg text-slate-600 dark:text-slate-400 font-bold leading-relaxed max-w-2xl mx-auto transition-colors">
@@ -341,7 +341,7 @@ const ModuleOnePage = () => {
               </div>
             )}
             {!videoStarted && (
-              <div className="absolute inset-0 rounded-[2rem] bg-white/60 dark:bg-slate-900/60 backdrop-blur-[2px] flex items-center justify-center z-10 transition-colors">
+              <div className="absolute inset-0 rounded-[2rem] bg-background/80 flex items-center justify-center z-10 transition-colors">
                 <p className="text-slate-500 dark:text-slate-300 font-bold text-lg bg-white dark:bg-slate-800 px-6 py-3 rounded-full border-2 border-slate-200 dark:border-slate-700 shadow-sm transition-colors">
                   🎬 Watch the video first to unlock
                 </p>
@@ -425,7 +425,7 @@ const ModuleOnePage = () => {
               </div>
             )}
             {!section1Done && (
-              <div className="absolute inset-0 rounded-[2rem] bg-white/60 dark:bg-slate-900/60 backdrop-blur-[2px] flex items-center justify-center z-10 transition-colors">
+              <div className="absolute inset-0 rounded-[2rem] bg-background/80 flex items-center justify-center z-10 transition-colors">
                 <p className="text-slate-500 dark:text-slate-300 font-bold text-lg bg-white dark:bg-slate-800 px-6 py-3 rounded-full border-2 border-slate-200 dark:border-slate-700 shadow-sm transition-colors">
                   ✅ Complete Section 1.1 first
                 </p>
@@ -493,7 +493,7 @@ const ModuleOnePage = () => {
               </div>
             )}
             {!section2Done && (
-              <div className="absolute inset-0 rounded-[2rem] bg-white/60 dark:bg-slate-900/60 backdrop-blur-[2px] flex items-center justify-center z-10 transition-colors">
+              <div className="absolute inset-0 rounded-[2rem] bg-background/80 flex items-center justify-center z-10 transition-colors">
                 <p className="text-slate-500 dark:text-slate-300 font-bold text-lg bg-white dark:bg-slate-800 px-6 py-3 rounded-full border-2 border-slate-200 dark:border-slate-700 shadow-sm transition-colors">
                   ✅ Complete Section 1.2 first
                 </p>
@@ -561,7 +561,7 @@ const ModuleOnePage = () => {
                     <div
                       className="absolute bottom-6 sm:bottom-8 w-14 h-14 sm:w-20 sm:h-20 rounded-full opacity-100 scale-125"
                       style={{
-                        background: "radial-gradient(circle, #fbbf24 0%, #f97316 50%, #ef4444 100%)",
+                        backgroundColor: "#ef4444",
                         filter: "blur(6px)",
                         animation: "pulse 1s ease-in-out infinite",
                       }}

@@ -407,7 +407,7 @@ export function RegistrationWizard() {
 
     return (
       <Card className="w-full max-w-lg mx-auto border-none shadow-[0_8px_30px_rgba(0,0,0,0.12)] rounded-3xl overflow-hidden bg-white dark:bg-slate-900 transition-colors duration-500">
-        <div className="bg-gradient-to-r from-red-600 via-orange-500 to-orange-400 p-6 text-center rounded-t-3xl">
+        <div className="bg-red-600 p-6 text-center rounded-t-3xl">
           <div className="mx-auto w-20 h-20 bg-white rounded-full flex items-center justify-center mb-4 shadow-lg">
             <Check className="w-10 h-10 text-green-500" />
           </div>
@@ -444,7 +444,7 @@ export function RegistrationWizard() {
   return (
     <Card className="w-full max-w-3xl mx-auto border-none shadow-[0_8px_30px_rgba(0,0,0,0.12)] rounded-3xl overflow-hidden bg-white dark:bg-slate-900 transition-colors duration-500">
       {/* Colorful Gradient Header */}
-      <div className="bg-red-600 px-4 sm:px-6 pt-4 sm:pt-5 pb-5 sm:pb-6 rounded-t-3xl">
+      <div className="bg-primary px-4 sm:px-6 pt-4 sm:pt-5 pb-5 sm:pb-6 rounded-t-3xl">
         <div className="flex items-center gap-2 mb-2 sm:mb-3">
           <div className="w-8 h-8 sm:w-10 sm:h-10 bg-white rounded-full flex items-center justify-center shadow">
             <Shield className="h-4 w-4 sm:h-5 sm:w-5 text-orange-500" />

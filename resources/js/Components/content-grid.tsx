@@ -140,7 +140,7 @@ export function ContentGrid({
                 isMap && i % 2 !== 0 ? "md:translate-y-20" : ""
               )}
             >
-              <div className="bg-white rounded-2xl sm:rounded-[2.5rem] overflow-hidden shadow-sm border border-slate-100 flex flex-col h-[280px] sm:h-[450px]">
+              <div className="bg-white dark:bg-slate-900 rounded-2xl sm:rounded-[2.5rem] overflow-hidden shadow-sm border border-slate-100 dark:border-slate-800 flex flex-col h-[280px] sm:h-[450px] transition-colors duration-500">
                 <Skeleton className="h-32 sm:h-52 w-full rounded-none" />
                 <div className="p-4 sm:p-6 flex-1 flex flex-col gap-4">
                   <Skeleton className="h-6 w-3/4 rounded-lg" />

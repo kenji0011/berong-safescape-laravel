@@ -35,7 +35,7 @@ const mockFeaturedCards: FeaturedCardItem[] = [
     link: '/professional',
     requiredPermission: 'accessProfessional',
     icon: <Briefcase className="h-6 w-6 sm:h-7 sm:w-7" strokeWidth={2.5} />,
-    color: 'from-blue-500 to-blue-700',
+    color: 'bg-blue-600',
   },
   {
     id: 2,
@@ -46,7 +46,7 @@ const mockFeaturedCards: FeaturedCardItem[] = [
     link: '/adult',
     requiredPermission: 'accessAdult',
     icon: <Users className="h-6 w-6 sm:h-7 sm:w-7" strokeWidth={2.5} />,
-    color: 'from-orange-500 to-red-600',
+    color: 'bg-orange-600',
   },
   {
     id: 3,
@@ -57,7 +57,7 @@ const mockFeaturedCards: FeaturedCardItem[] = [
     link: '/kids',
     requiredPermission: 'accessKids',
     icon: <Baby className="h-6 w-6 sm:h-7 sm:w-7" strokeWidth={2.5} />,
-    color: 'from-green-500 to-emerald-600',
+    color: 'bg-emerald-600',
   },
 ];
 
@@ -124,7 +124,7 @@ export function FeaturedCards({ serverUser }: { serverUser?: ServerUser | null }
               <div className="w-full bg-white dark:bg-slate-800 rounded-3xl p-4 transition-all duration-300 overflow-hidden relative shadow-[0_6px_0_#cbd5e1] dark:shadow-[0_6px_0_#0f172a] group-hover:-translate-y-1 group-hover:shadow-[0_10px_0_#cbd5e1] dark:group-hover:shadow-[0_10px_0_#0f172a] group-active:translate-y-[6px] group-active:shadow-[0_0px_0_#cbd5e1] dark:group-active:shadow-none">
                 <div className="flex items-center gap-4">
                   {/* Icon Section */}
-                  <div className={`bg-gradient-to-br ${card.color} h-16 w-16 rounded-2xl flex items-center justify-center text-white shadow-[0_4px_0_rgba(0,0,0,0.15)] shrink-0 group-hover:scale-105 transition-transform`}>
+                  <div className={`${card.color} h-16 w-16 rounded-2xl flex items-center justify-center text-white shadow-[0_4px_0_rgba(0,0,0,0.15)] shrink-0 group-hover:scale-105 transition-transform`}>
                     {card.icon}
                   </div>
                   {/* Content */}
@@ -173,10 +173,10 @@ export function FeaturedCards({ serverUser }: { serverUser?: ServerUser | null }
                   </div>
                   
                   {/* Content Area */}
-                  <div className="p-6 flex-1 flex flex-col relative bg-yellow-50 dark:bg-slate-800/50 bg-opacity-50 transition-colors duration-500">
+                  <div className="p-6 flex-1 flex flex-col relative bg-slate-50 dark:bg-slate-800/50 transition-colors duration-500">
                     
                     {/* Floating Icon overlapping image and content */}
-                    <div className={`absolute -top-10 right-6 h-16 w-16 bg-gradient-to-br ${card.color} rounded-2xl flex items-center justify-center text-white shadow-[0_4px_0_rgba(0,0,0,0.15)] group-hover:-translate-y-1 transition-transform z-10`}>
+                    <div className={`absolute -top-10 right-6 h-16 w-16 ${card.color} rounded-2xl flex items-center justify-center text-white shadow-[0_4px_0_rgba(0,0,0,0.15)] group-hover:-translate-y-1 transition-transform z-10`}>
                       {card.icon}
                     </div>
 

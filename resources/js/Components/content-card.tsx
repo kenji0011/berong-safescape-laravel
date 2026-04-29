@@ -2,6 +2,7 @@
 
 import React, { useState } from "react"
 import { Link } from '@inertiajs/react'
+import { motion } from "framer-motion"
 import { Play, Lock, CheckCircle, ArrowRight } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Skeleton } from "./ui/skeleton"
@@ -33,11 +34,11 @@ export const ContentCard = React.memo(({ content, onClick }: ContentCardProps) =
 
   // Premium Gradients
   const typeGradients: Record<string, string> = {
-    game: "from-[#14B8A6] to-[#0D9488]", // Teal 
-    video: "from-[#EC4899] to-[#F43F5E]", // Pink/Rose
-    activity: "from-[#fcd34d] via-[#fbbf24] to-[#f59e0b]", // Bright Vibrant Gold/Amber
-    module: "from-[#4F46E5] to-[#7C3AED]", // Indigo/Violet
-    exam: "from-[#EF4444] to-[#B91C1C]", // Red
+    game: "bg-[#14B8A6]", // Teal 
+    video: "bg-[#EC4899]", // Pink/Rose
+    activity: "bg-[#f59e0b]", // Bright Vibrant Gold/Amber
+    module: "bg-[#4F46E5]", // Indigo/Violet
+    exam: "bg-[#EF4444]", // Red
   }
 
   const typeIcons: Record<string, string> = {
@@ -58,18 +59,18 @@ export const ContentCard = React.memo(({ content, onClick }: ContentCardProps) =
     <>
       {/* Visual Header Section */}
       <div className={cn(
-        "relative h-32 sm:h-52 w-full flex items-center justify-center bg-gradient-to-br overflow-hidden z-0 shrink-0 transition-all duration-500",
-        typeGradients[content.type] || "from-slate-400 to-slate-600"
+        "relative h-32 sm:h-52 w-full flex items-center justify-center overflow-hidden z-0 shrink-0 transition-all duration-500",
+        typeGradients[content.type] || "bg-slate-400"
       )}>
         {/* Subtle Glassmorphism Patterns / Lighting - Optimized for mobile performance */}
-        <div className="absolute inset-0 bg-white/10 opacity-30 mix-blend-overlay pointer-events-none"></div>
-        <div className="absolute -top-16 -right-16 w-48 h-48 bg-white/20 blur-[40px] rounded-full pointer-events-none transition-transform duration-700 group-hover:scale-150 hidden sm:block"></div>
-        <div className="absolute -bottom-16 -left-16 w-48 h-48 bg-black/10 blur-[40px] rounded-full pointer-events-none hidden sm:block"></div>
+        <div className="absolute inset-0 bg-white/10 opacity-30 pointer-events-none"></div>
+        <div className="absolute -top-16 -right-16 w-48 h-48 bg-white/20 rounded-full pointer-events-none transition-transform duration-700 group-hover:scale-150 hidden sm:block"></div>
+        <div className="absolute -bottom-16 -left-16 w-48 h-48 bg-black/10 rounded-full pointer-events-none hidden sm:block"></div>
 
         {/* Quest Type Label (Top Left) */}
         <div className="absolute top-3 left-3 z-20">
            <div className={cn(
-             "text-white font-black text-[7px] sm:text-[10px] tracking-widest uppercase px-2 py-0.5 sm:px-3 sm:py-1 rounded-full border-2 border-white/30 shadow-lg sm:backdrop-blur-md",
+             "text-white font-black text-[7px] sm:text-[10px] tracking-widest uppercase px-2 py-0.5 sm:px-3 sm:py-1 rounded-full border-2 border-white/30 shadow-lg",
              content.type === "module" ? "bg-yellow-500/80" : "bg-black/30"
            )}>
              {content.type === "module" ? "⭐ MODULE" : content.type}
@@ -79,7 +80,7 @@ export const ContentCard = React.memo(({ content, onClick }: ContentCardProps) =
         {/* Status badges (Top Right) */}
         <div className="absolute top-3 right-3 flex flex-col gap-1.5 z-20">
           {content.isNew && (
-            <div className="bg-gradient-to-r from-rose-500 to-pink-500 text-white font-black text-[7px] sm:text-[10px] tracking-widest uppercase px-2 py-1 sm:px-3 sm:py-1.5 rounded-full shadow-[0_4px_12px_rgba(244,63,94,0.4)] sm:animate-bounce border-2 border-white/40 flex items-center gap-1 sm:gap-1.5 ring-2 ring-rose-500/20">
+            <div className="bg-rose-500 text-white font-black text-[7px] sm:text-[10px] tracking-widest uppercase px-2 py-1 sm:px-3 sm:py-1.5 rounded-full shadow-[0_4px_12px_rgba(244,63,94,0.4)] sm:animate-bounce border-2 border-white/40 flex items-center gap-1 sm:gap-1.5 ring-2 ring-rose-500/20">
               <span className="relative flex h-1.5 w-1.5 sm:h-2 sm:w-2">
                 <span className="hidden sm:animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75"></span>
                 <span className="relative inline-flex rounded-full h-1.5 w-1.5 sm:h-2 sm:w-2 bg-white"></span>
@@ -96,7 +97,7 @@ export const ContentCard = React.memo(({ content, onClick }: ContentCardProps) =
 
         {/* Lock overlay */}
         {content.isLocked && (
-          <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-[3px] flex items-center justify-center z-30">
+          <div className="absolute inset-0 bg-slate-900/60 flex items-center justify-center z-30">
             <div className="bg-white/10 p-4 rounded-full border-2 border-white/20">
               <Lock className="h-10 w-10 text-white drop-shadow-2xl" />
             </div>
@@ -139,7 +140,7 @@ export const ContentCard = React.memo(({ content, onClick }: ContentCardProps) =
         {/* Badge Reward Preview (Bottom Right) */}
         {(content.type === "module" || content.type === "video" || content.type === "activity") && !content.isCompleted && (
           <div className="absolute bottom-2 right-2 sm:bottom-3 sm:right-3 z-20 group-hover:translate-y-[-2px] transition-transform">
-            <div className="bg-white/90 sm:backdrop-blur-sm p-1 sm:p-1.5 rounded-lg sm:rounded-xl border-2 border-yellow-400 shadow-lg flex items-center gap-1 sm:gap-1.5">
+            <div className="bg-white/90 p-1 sm:p-1.5 rounded-lg sm:rounded-xl border-2 border-yellow-400 shadow-lg flex items-center gap-1 sm:gap-1.5">
                <div className="bg-yellow-100 h-4 w-4 sm:h-6 sm:w-6 rounded-full flex items-center justify-center text-[10px] sm:text-sm">🎖️</div>
                <div className="flex flex-col">
                   <span className="text-[6px] sm:text-[7px] font-black text-slate-800 leading-tight">Badge</span>
@@ -150,7 +151,7 @@ export const ContentCard = React.memo(({ content, onClick }: ContentCardProps) =
       </div>
 
       {/* Text Content Section */}
-      <div className="p-3 sm:p-6 flex-1 flex flex-col bg-white dark:bg-slate-800/90 dark:backdrop-blur-sm z-10 relative">
+      <div className="p-3 sm:p-6 flex-1 flex flex-col bg-white dark:bg-slate-800/90 z-10 relative">
         <h3 className="font-black text-[13px] sm:text-xl text-slate-800 dark:text-white leading-tight mb-1 sm:mb-2 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors line-clamp-2 tracking-tight">
           {content.title}
         </h3>
@@ -200,31 +201,40 @@ export const ContentCard = React.memo(({ content, onClick }: ContentCardProps) =
 
   if (content.isLocked || content.href === "#") {
     return (
-      <div
+      <motion.div
         onClick={(e) => { e.preventDefault(); if (onClick) onClick(); }}
+        whileHover={{ scale: 1.01 }}
         className={cn(
-          "group relative flex flex-col h-full w-full rounded-2xl sm:rounded-[2.5rem] overflow-hidden bg-white dark:bg-slate-800 transition-all duration-500 ease-out",
+          "group relative flex flex-col h-full w-full rounded-2xl sm:rounded-[2.5rem] overflow-hidden bg-white dark:bg-slate-800",
           "opacity-60 cursor-not-allowed filter grayscale-[0.3]",
           content.type === "module" && "ring-4 ring-yellow-400 shadow-[0_0_20px_rgba(250,204,21,0.3)]"
         )}
       >
         {innerContent}
-      </div>
+      </motion.div>
     )
   }
 
+  const MotionLink = motion(Link);
+
   return (
-    <Link
+    <MotionLink
       href={content.href}
       onClick={() => { if (onClick) onClick() }}
+      whileHover={{ 
+        y: -10,
+        scale: 1.02,
+        transition: { type: "spring", stiffness: 400, damping: 25 }
+      }}
+      whileTap={{ scale: 0.98 }}
       className={cn(
-         "group relative flex flex-col h-full w-full rounded-2xl sm:rounded-[2.5rem] overflow-hidden bg-white dark:bg-slate-800 transition-all duration-500 ease-out",
-         "hover:shadow-[0_20px_40px_rgba(0,0,0,0.12)] hover:-translate-y-2 cursor-pointer shadow-[0_8px_30px_rgba(0,0,0,0.06)] border border-slate-100 dark:border-slate-700/50",
-         content.type === "module" && "ring-4 ring-yellow-400 shadow-[0_10px_30px_rgba(250,204,21,0.2)] hover:shadow-[0_20px_40px_rgba(250,204,21,0.4)]"
+         "group relative flex flex-col h-full w-full rounded-2xl sm:rounded-[2.5rem] overflow-hidden bg-white dark:bg-slate-800",
+         "cursor-pointer shadow-[0_8px_30px_rgba(0,0,0,0.06)] border border-slate-100 dark:border-slate-700/50",
+         content.type === "module" && "ring-4 ring-yellow-400 shadow-[0_10px_30px_rgba(250,204,21,0.2)]"
       )}
     >
       {innerContent}
-    </Link>
+    </MotionLink>
   )
 })
 

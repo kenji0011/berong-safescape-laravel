@@ -190,7 +190,7 @@ export default function Assessment({ type }: AssessmentProps) {
             <div className="min-h-screen bg-slate-50 dark:bg-slate-950 py-12 px-4 selection:bg-orange-500 selection:text-white transition-colors duration-500">
                 <Head title={`${title} Results - SafeScape`} />
                 <Card className="w-full max-w-3xl mx-auto border-[4px] border-slate-200 dark:border-slate-800 shadow-[0_8px_0_#e2e8f0] dark:shadow-[0_8px_0_#0f172a] rounded-[2rem] overflow-hidden p-0 bg-white dark:bg-slate-900">
-                    <div className="bg-gradient-to-br from-[#ff4b3e] via-[#ff6b35] to-[#ff8c00] p-4 sm:p-6 text-center border-b-[4px] sm:border-b-[5px] border-orange-600 relative overflow-hidden">
+                    <div className="bg-red-600 p-4 sm:p-6 text-center border-b-[4px] sm:border-b-[5px] border-orange-600 relative overflow-hidden">
                         {/* Decorative background pattern - hidden on very small screens */}
                         <div className="absolute inset-0 opacity-10 hidden sm:flex flex-wrap gap-4 pointer-events-none p-4">
                             {[...Array(12)].map((_, i) => (
@@ -217,7 +217,7 @@ export default function Assessment({ type }: AssessmentProps) {
                             {/* Score Box - 2/5 width */}
                             <div className="md:col-span-2 text-center p-5 sm:p-6 bg-white dark:bg-slate-800 rounded-3xl border-[3px] sm:border-[4px] border-slate-100 dark:border-slate-700 shadow-[0_6px_0_#f1f5f9] dark:shadow-[0_6px_0_#0f172a] flex flex-col justify-center relative overflow-hidden transition-colors">
                                 {/* Subtle decorative bg */}
-                                <div className="absolute top-0 right-0 w-24 h-24 bg-slate-50 dark:bg-slate-700 rounded-full blur-3xl -mr-12 -mt-12"></div>
+                                <div className="absolute top-0 right-0 w-24 h-24 bg-slate-50 dark:bg-slate-700 rounded-full -mr-12 -mt-12"></div>
                                 
                                 <p className="text-[10px] sm:text-[11px] text-slate-400 dark:text-slate-500 font-black tracking-widest uppercase mb-1 sm:mb-2 relative z-10">Final Score</p>
                                 <div className="text-5xl sm:text-6xl font-black mb-1 sm:mb-2 drop-shadow-sm flex items-center justify-center gap-1 relative z-10" style={{ color: rating.color }}>
@@ -320,7 +320,7 @@ export default function Assessment({ type }: AssessmentProps) {
     }
 
     return (
-        <div className="min-h-screen bg-blue-50 dark:bg-slate-950 bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] dark:bg-[radial-gradient(#1e293b_1px,transparent_1px)] [background-size:16px_16px] py-8 px-4 sm:px-6 lg:px-8 transition-colors duration-500 selection:bg-orange-500 selection:text-white">
+        <div className="min-h-screen bg-background py-8 px-4 sm:px-6 lg:px-8 transition-colors duration-500 selection:bg-orange-500 selection:text-white">
             <Head title={`${title} - SafeScape`} />
             
             <div className="max-w-3xl mx-auto mb-6 flex items-center gap-4">

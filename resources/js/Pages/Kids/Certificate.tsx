@@ -60,16 +60,13 @@ const CertificatePage = () => {
   }
 
   return (
-    <div className="min-h-screen relative flex flex-col font-sans bg-gradient-to-br from-[#FFFBEB] via-[#FEF3C7] to-[#FDE68A] dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 selection:bg-amber-300 selection:text-amber-900 transition-colors duration-500">
+    <div className="min-h-screen relative flex flex-col font-sans bg-background selection:bg-amber-300 selection:text-amber-900 transition-colors duration-500">
       <Head title="Your Certificate | SafeScape" />
       
-      {/* Decorative Background */}
+      {/* Decorative Background - Simplified */}
       <div className="absolute top-0 right-0 w-full h-full overflow-hidden pointer-events-none z-0">
-        <div className="absolute top-10 -right-20 w-96 h-96 rounded-full bg-amber-400/20 dark:bg-amber-600/10 blur-3xl opacity-70 animate-pulse" />
-        <div className="absolute bottom-10 -left-20 w-80 h-80 rounded-full bg-orange-400/20 dark:bg-orange-600/10 blur-3xl opacity-70" />
-        
-        {/* Dark mode specific grid */}
-        <div className="hidden dark:block absolute inset-0 bg-[radial-gradient(#1e293b_1px,transparent_1px)] [background-size:24px_24px] opacity-30"></div>
+        <div className="absolute top-10 -right-20 w-96 h-96 rounded-full bg-amber-400/10" />
+        <div className="absolute bottom-10 -left-20 w-80 h-80 rounded-full bg-orange-400/10" />
       </div>
 
       <div className="relative z-10 w-full flex-1 flex flex-col py-4">
@@ -77,7 +74,7 @@ const CertificatePage = () => {
         <div className="absolute top-4 left-4 z-20">
           <Link 
             href="/kids/safescape" 
-            className="inline-flex items-center gap-2 text-amber-700 dark:text-amber-400 font-bold hover:text-orange-600 dark:hover:text-orange-400 transition-all text-sm bg-white/60 dark:bg-slate-800/60 backdrop-blur-sm px-4 py-2 rounded-full border border-white/60 dark:border-slate-700/60 shadow-sm"
+            className="inline-flex items-center gap-2 text-amber-700 dark:text-amber-400 font-bold hover:text-orange-600 dark:hover:text-orange-400 transition-all text-sm bg-white dark:bg-slate-800 px-4 py-2 rounded-full border border-white/60 dark:border-slate-700/60 shadow-sm"
           >
             <ArrowLeft className="h-4 w-4" />
             Back to Modules
@@ -87,14 +84,14 @@ const CertificatePage = () => {
         <div className="max-w-4xl mx-auto w-full px-4 sm:px-6 flex-1 flex flex-col items-center justify-start sm:justify-center pt-20 sm:pt-0 pb-8">
           
           <div className="text-center mb-8">
-            <h1 className="text-4xl sm:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-amber-600 to-orange-600 dark:from-amber-400 dark:to-orange-500 tracking-tight drop-shadow-sm flex items-center justify-center gap-3">
+            <h1 className="text-4xl sm:text-5xl font-black text-amber-600 dark:text-amber-400 tracking-tight drop-shadow-sm flex items-center justify-center gap-3">
               <Award className="h-10 w-10 text-amber-500" />
               Congratulations, Hero!
             </h1>
             <p className="text-amber-900/60 dark:text-slate-400 font-bold mt-2 text-lg">You've successfully completed your Fire Safety Training!</p>
           </div>
 
-          <div className="w-full bg-white/90 dark:bg-slate-900/80 backdrop-blur-2xl border border-white/60 dark:border-slate-800 rounded-3xl sm:rounded-[2.5rem] p-3 sm:p-8 shadow-[0_25px_60px_rgba(245,158,11,0.15)] dark:shadow-[0_25px_60px_rgba(0,0,0,0.5)] flex flex-col items-center transition-all duration-500">
+          <div className="w-full bg-white dark:bg-slate-900 border border-white/60 dark:border-slate-800 rounded-3xl sm:rounded-[2.5rem] p-3 sm:p-8 shadow-[0_25px_60px_rgba(245,158,11,0.15)] dark:shadow-[0_25px_60px_rgba(0,0,0,0.5)] flex flex-col items-center transition-all duration-500">
             
             <div 
               ref={certificateRef} 
@@ -144,7 +141,7 @@ const CertificatePage = () => {
                 disabled={downloading}
                 className={cn(
                   "px-8 sm:px-12 py-4 rounded-full font-black text-lg transition-all duration-300 shadow-xl flex items-center justify-center gap-3",
-                  downloading ? "bg-amber-400 text-amber-900 cursor-wait opacity-80" : "bg-gradient-to-r from-amber-500 to-orange-500 text-white hover:shadow-[0_15px_40px_rgba(245,158,11,0.4)] dark:hover:shadow-[0_15px_40px_rgba(0,0,0,0.6)] hover:-translate-y-1 active:translate-y-0"
+                  downloading ? "bg-amber-400 text-amber-900 cursor-wait opacity-80" : "bg-amber-500 text-white hover:shadow-lg hover:-translate-y-1 active:translate-y-0"
                 )}
               >
                 {downloading ? (
