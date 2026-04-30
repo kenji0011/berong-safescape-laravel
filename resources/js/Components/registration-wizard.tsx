@@ -180,7 +180,7 @@ export function RegistrationWizard({ onBackToLogin }: RegistrationWizardProps) {
         if (!data.lastName.trim()) errors.lastName = "Last Name is required"
         if (!data.firstName.trim()) errors.firstName = "First Name is required"
         if (!data.age) errors.age = "Age is required"
-        else if (parseInt(data.age) < 1 || parseInt(data.age) > 120) errors.age = "Please enter a valid age"
+        else if (parseInt(data.age) < 1 || parseInt(data.age) > 99) errors.age = "Please enter a valid age (1-99)"
         if (!data.gender) errors.gender = "Please select your gender"
         break
 
@@ -559,9 +559,12 @@ export function RegistrationWizard({ onBackToLogin }: RegistrationWizardProps) {
                 type="number"
                 placeholder="Enter your age"
                 min="1"
-                max="120"
+                max="99"
                 value={data.age}
-                onChange={(e) => updateField("age", e.target.value)}
+                onChange={(e) => {
+                  const val = e.target.value.replace(/\D/g, '').slice(0, 2);
+                  updateField("age", val);
+                }}
                 onKeyDown={(e) => {
                   if (['.', 'e', 'E', '+', '-'].includes(e.key)) {
                     e.preventDefault();

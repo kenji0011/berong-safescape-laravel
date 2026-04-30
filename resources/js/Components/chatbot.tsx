@@ -726,19 +726,21 @@ export function Chatbot() {
                         setShowQuickQuestions(false);
                       }
                     }}
-                    onKeyPress={(e) => e.key === "Enter" && handleSend()}
-                    placeholder="Ask about fire safety..."
-                    className="flex-1 border-gray-300 dark:border-slate-800 bg-gray-50 dark:bg-slate-950 rounded-xl focus:ring-orange-400 dark:focus:ring-orange-500 focus:border-orange-400 dark:focus:border-orange-500 text-slate-800 dark:text-slate-200 placeholder:text-slate-400 dark:placeholder:text-slate-600 transition-colors"
+                    onKeyPress={(e) => e.key === "Enter" && !isTyping && handleSend()}
+                    placeholder={isTyping ? "Berong is thinking..." : "Ask about fire safety..."}
+                    disabled={isTyping}
+                    className="flex-1 border-gray-300 dark:border-slate-800 bg-gray-50 dark:bg-slate-950 rounded-xl focus:ring-orange-400 dark:focus:ring-orange-500 focus:border-orange-400 dark:focus:border-orange-500 text-slate-800 dark:text-slate-200 placeholder:text-slate-400 dark:placeholder:text-slate-600 transition-colors disabled:opacity-70 disabled:cursor-not-allowed"
                   />
                   <button
                     type="button"
-                    onClick={startListening}
+                    onClick={isTyping ? undefined : startListening}
+                    disabled={isTyping}
                     className={`h-10 w-10 flex items-center justify-center transition-all ${
                       isListening 
                         ? 'text-red-500 bg-red-100 dark:bg-red-950/30 rounded-full animate-pulse shadow-[0_0_15px_rgba(239,68,68,0.5)]' 
-                        : 'text-gray-400 dark:text-slate-500 hover:text-orange-500 dark:hover:text-orange-400'
+                        : 'text-gray-400 dark:text-slate-500 hover:text-orange-500 dark:hover:text-orange-400 disabled:opacity-30 disabled:cursor-not-allowed'
                     }`}
-                    title={isListening ? "Listening..." : "Voice input"}
+                    title={isTyping ? "Generation in progress..." : (isListening ? "Listening..." : "Voice input")}
                   >
                     <Mic className="h-5 w-5" strokeWidth={isListening ? 2.5 : 2} />
                   </button>

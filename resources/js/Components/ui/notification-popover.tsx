@@ -1,11 +1,11 @@
 'use client';
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import axios from 'axios';
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { router } from '@inertiajs/react';
 import { Badge } from "@/components/ui/badge";
-import { Bell, Check, MoreHorizontal, Trash2, ArrowRight } from "lucide-react";
+import { Bell, Check, MoreHorizontal, Trash2, ArrowRight, Trophy, X } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useAuth } from "@/lib/auth-context";
 import { motion, AnimatePresence } from 'motion/react';
@@ -27,6 +27,9 @@ export function NotificationPopover() {
   const [loading, setLoading] = useState(false);
   const [error] = useState<string | null>(null);
   const [openDropdownId, setOpenDropdownId] = useState<number | null>(null);
+  const [previewNotification, setPreviewNotification] = useState<Notification | null>(null);
+  const prevNotificationsRef = useRef<Notification[]>([]);
+  const previewTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const fetchNotifications = async () => {
     if (!user) return;
@@ -40,6 +43,30 @@ export function NotificationPopover() {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    // Detect new unread notifications for preview
+    if (notifications.length > 0) {
+      const prevIds = prevNotificationsRef.current.map(n => n.id);
+      const newUnread = notifications.find(n => !n.isRead && !prevIds.includes(n.id));
+
+      if (newUnread) {
+        setPreviewNotification(newUnread);
+        if (previewTimerRef.current) clearTimeout(previewTimerRef.current);
+        previewTimerRef.current = setTimeout(() => {
+          setPreviewNotification(null);
+        }, 8000); // Show for 8 seconds
+      }
+      prevNotificationsRef.current = notifications;
+    }
+  }, [notifications]);
+
+  // Polling for new notifications every 30 seconds
+  useEffect(() => {
+    if (!user) return;
+    const interval = setInterval(fetchNotifications, 30000);
+    return () => clearInterval(interval);
+  }, [user]);
 
   useEffect(() => {
     fetchNotifications();
@@ -123,6 +150,7 @@ export function NotificationPopover() {
       case "success": return <Bell className="h-4 w-4 text-green-500" />;
       case "blog": return <Bell className="h-4 w-4 text-primary" />;
       case "video": return <Bell className="h-4 w-4 text-secondary" />;
+      case "achievement": return <Trophy className="h-4 w-4 text-yellow-600" />;
       default: return <Bell className="h-4 w-4 text-primary" />;
     }
   };
@@ -134,6 +162,7 @@ export function NotificationPopover() {
       case "success": return "bg-green-500";
       case "blog": return "bg-primary";
       case "video": return "bg-secondary";
+      case "achievement": return "bg-yellow-400";
       default: return "bg-primary";
     }
   };
@@ -150,6 +179,47 @@ export function NotificationPopover() {
           )}
         </button>
       </PopoverTrigger>
+
+      {/* Notification Preview Card - Appears below bell when new notification arrives */}
+      <AnimatePresence>
+        {previewNotification && (
+          <motion.div
+            initial={{ opacity: 0, y: -10, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.95 }}
+            className="absolute top-full mt-4 right-0 w-72 bg-white dark:bg-slate-900 rounded-2xl border-[3px] border-blue-400 dark:border-blue-500 shadow-2xl z-[100] p-4 cursor-pointer overflow-hidden group"
+            onClick={() => {
+              handleGo(previewNotification);
+              setPreviewNotification(null);
+            }}
+          >
+            <div className="absolute inset-0 bg-blue-50/50 dark:bg-blue-900/10 opacity-0 group-hover:opacity-100 transition-opacity" />
+            <div className="relative z-10">
+              <div className="flex items-center gap-2 mb-2">
+                <div className={`h-6 w-6 rounded-full flex items-center justify-center ${getNotificationBadge(previewNotification.type)}`}>
+                  {getNotificationIcon(previewNotification.type)}
+                </div>
+                <span className="text-[10px] font-black text-blue-600 dark:text-blue-400 uppercase tracking-widest">New Notification</span>
+                <button 
+                  onClick={(e) => { e.stopPropagation(); setPreviewNotification(null); }}
+                  className="ml-auto text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
+                >
+                  <X className="h-3 w-3" />
+                </button>
+              </div>
+              <h5 className="text-sm font-black text-slate-800 dark:text-white line-clamp-1 mb-1">{previewNotification.title}</h5>
+              <p className="text-xs font-bold text-slate-500 dark:text-slate-400 line-clamp-2">{previewNotification.message}</p>
+              
+              <div className="mt-3 flex items-center justify-end">
+                <div className="text-[10px] font-black text-blue-600 flex items-center gap-1">
+                  View Now <ArrowRight className="h-3 w-3" />
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       <PopoverContent className="z-[90] w-[calc(100vw-2rem)] sm:w-96 p-0 rounded-[1.25rem] border-2 border-slate-200/60 dark:border-slate-800 shadow-2xl overflow-hidden bg-white dark:bg-slate-900 transition-colors" align="end" sideOffset={12} collisionPadding={16}>
         <div className="flex items-center justify-between p-4 lg:px-5 border-b border-slate-100 dark:border-slate-800 bg-slate-50/80 dark:bg-slate-950/80 backdrop-blur-sm transition-colors">
           <h3 className="font-extrabold text-slate-800 dark:text-white text-lg tracking-tight transition-colors">Notifications</h3>

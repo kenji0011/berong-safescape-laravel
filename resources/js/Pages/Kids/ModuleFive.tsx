@@ -4,6 +4,7 @@ import DashboardLayout from "@/Layouts/DashboardLayout"
 import { ArrowLeft, BookOpen, ChevronRight, Flame, Trophy, ClipboardCheck, PartyPopper, CheckCircle } from "lucide-react"
 import axios from "axios"
 import { cn } from "@/lib/utils"
+import { ModuleNavigation } from "@/Components/module-navigation"
 import { useAuth } from "@/lib/auth-context"
 
 const ModuleFivePage = ({ moduleNum }: { moduleNum: number }) => {
@@ -368,22 +369,7 @@ const ModuleFivePage = ({ moduleNum }: { moduleNum: number }) => {
           </div>
           <div className="flex items-center gap-2 sm:gap-6">
             {/* Module dots */}
-            <div className="flex items-center gap-1 sm:gap-2">
-              {[1, 2, 3, 4, 5].map((n) => (
-                <React.Fragment key={n}>
-                  <Link
-                    href={`/kids/safescape/${n}`}
-                    className={cn(
-                      "h-8 w-8 sm:h-10 sm:w-10 rounded-full flex items-center justify-center text-xs sm:text-sm font-black transition-all shrink-0 border-[3px] focus:outline-none",
-                      n === currentModule
-                        ? "bg-[#ff4b3e] text-white border-white dark:border-slate-200 shadow-[0_4px_0_#991b1b] -translate-y-0.5 pointer-events-none"
-                        : "bg-white dark:bg-slate-800 text-slate-400 dark:text-slate-500 border-slate-200 dark:border-slate-700 shadow-[0_3px_0_#cbd5e1] dark:shadow-[0_3px_0_#0f172a] hover:-translate-y-0.5 hover:shadow-[0_4px_0_#cbd5e1] dark:hover:shadow-[0_4px_0_#0f172a] hover:text-slate-600 dark:hover:text-slate-300 active:translate-y-1 active:shadow-none transition-all"
-                    )}
-                  >{n}</Link>
-                  {n < 5 && <div className="h-0.5 w-2 sm:w-6 bg-slate-200 dark:bg-slate-700 rounded shrink-0 transition-colors" />}
-                </React.Fragment>
-              ))}
-            </div>
+            <ModuleNavigation currentModule={currentModule} completedModules={fullProgress?.completedModules || []} />
             {/* Progress */}
             <div className="text-sm font-bold text-slate-500 dark:text-slate-400 bg-slate-50 dark:bg-slate-900/50 px-4 py-2 rounded-xl border border-slate-200 dark:border-slate-800 whitespace-nowrap hidden lg:block transition-colors">
               Status: <span className={cn("font-black ml-1", moduleCompleted ? "text-green-500" : "text-[#ff4b3e]")}>{moduleCompleted ? "Completed ✓" : "In Progress"}</span>

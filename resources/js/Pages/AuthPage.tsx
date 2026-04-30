@@ -76,8 +76,8 @@ function AuthContent() {
       }
       if (!registerData.age) {
         errors.age = "Age is required"
-      } else if (Number.parseInt(registerData.age) < 1 || Number.parseInt(registerData.age) > 120) {
-        errors.age = "Please enter a valid age"
+      } else if (Number.parseInt(registerData.age) < 1 || Number.parseInt(registerData.age) > 99) {
+        errors.age = "Please enter a valid age (1-99)"
       }
     }
 

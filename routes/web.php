@@ -69,6 +69,17 @@ Route::get('/about', function () {
     })->name('kids.course');
 
     Route::get('/kids/safescape/{moduleNum}', function ($moduleNum) {
+        $moduleNum = (int) $moduleNum;
+        if ($moduleNum > 1) {
+            $previousCompleted = \App\Models\SafeScapeProgress::where('userId', Auth::id())
+                ->where('moduleNum', $moduleNum - 1)
+                ->where('completed', true)
+                ->exists();
+            if (!$previousCompleted) {
+                return redirect()->route('kids.module', ['moduleNum' => 1])->with('error', 'Please complete the previous module first.');
+            }
+        }
+
         $pageMap = [
             1 => 'Kids/ModuleOne',
             2 => 'Kids/ModuleTwo',
@@ -76,9 +87,9 @@ Route::get('/about', function () {
             4 => 'Kids/ModuleFour',
             5 => 'Kids/ModuleFive',
         ];
-        $page = $pageMap[(int) $moduleNum] ?? null;
+        $page = $pageMap[$moduleNum] ?? null;
         if (!$page) abort(404);
-        return Inertia::render($page, ['moduleNum' => (int) $moduleNum]);
+        return Inertia::render($page, ['moduleNum' => $moduleNum]);
     })->name('kids.module');
 
     Route::get('/kids/videos', function () {

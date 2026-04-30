@@ -80,7 +80,7 @@ class AuthApiController extends Controller
             'password' => 'required|string|min:8',
             'firstName' => 'required|string|max:255',
             'lastName' => 'required|string|max:255',
-            'age' => 'required|integer|min:1|max:120',
+            'age' => 'required|integer|min:1|max:99',
             'gender' => 'required|string',
             'barangay' => 'required|string',
         ]);
