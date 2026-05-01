@@ -22,11 +22,11 @@ class FeedbackController extends Controller
 
         $feedback = UserFeedback::create([
             'userId' => $request->user()->id,
-            'featureName' => $request->input('featureName'),
+            'featureName' => strip_tags($request->input('featureName')),
             'featureType' => $request->input('featureType'),
             'rating' => $request->input('rating'),
-            'comments' => $request->input('comments'),
-            'sessionId' => $request->input('sessionId'),
+            'comments' => strip_tags($request->input('comments')),
+            'sessionId' => strip_tags($request->input('sessionId')),
         ]);
 
         return response()->json(['success' => true, 'feedback' => $feedback], 201);

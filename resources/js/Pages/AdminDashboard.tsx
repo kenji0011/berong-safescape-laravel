@@ -1,142 +1,48 @@
 "use client";
 
-import axios from 'axios';
+import { apiFetch, getApiErrorMessage } from "@/lib/api-fetch";
+import { useAdminFeedback } from "@/hooks/use-admin-feedback";
 
-const apiFetch = async (url: string, options: RequestInit = {}) => {
-  const method = options.method || 'GET';
-  const headers = options.headers instanceof Headers
-    ? Object.fromEntries(options.headers.entries())
-    : Array.isArray(options.headers)
-      ? Object.fromEntries(options.headers)
-      : options.headers;
-  let data = undefined;
-  if (options.body) {
-    try {
-      if (typeof options.body === 'string') data = JSON.parse(options.body);
-      else data = options.body;
-    } catch {
-      data = options.body;
-    }
-  }
-
-  try {
-    const res = await axios({
-      url,
-      method,
-      data,
-      headers,
-      withCredentials: true,
-      withXSRFToken: true,
-      validateStatus: () => true,
-    });
-
-    return {
-      ok: res.status >= 200 && res.status < 300,
-      json: async () => res.data,
-      status: res.status,
-    } as any;
-  } catch (err: any) {
-    if (err.response) {
-      return { ok: false, json: async () => err.response.data, status: err.response.status } as any;
-    }
-
-    return {
-      ok: false,
-      json: async () => ({ error: err?.message || 'Unable to reach the server' }),
-      status: 0,
-    } as any;
-  }
-};
-
-import { useEffect, useState } from "react"
+import React, { useEffect, useState, lazy, Suspense } from "react"
 import { router, usePage } from '@inertiajs/react';
 import { useAuth } from "@/lib/auth-context"
 import { Navigation } from "@/components/navigation"
 import DashboardLayout from "@/Layouts/DashboardLayout";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Alert, AlertDescription } from "@/components/ui/alert"
-import { Shield, ImageIcon, FileText, Video, Users, Plus, Trash2, AlertCircle, CheckCircle, HelpCircle, BookOpen, Search, BarChart3, Check } from "lucide-react"
-import type { CarouselImage, BlogPost } from "@/lib/mock-data"
-import { ImageUpload } from "@/components/ui/image-upload"
+import { Shield, BarChart3, ImageIcon, FileText, Video, Users, HelpCircle, BookOpen, Loader2 } from "lucide-react"
+import type { CarouselImage, BlogPost } from "@/types/admin"
 import { ConfirmationDialog } from "@/components/ui/confirmation-dialog"
 import {
   AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
   AlertDialogContent,
   AlertDialogDescription,
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog"
-import { SortableCarouselList } from "@/components/sortable-carousel-list"
-import { SortableContentList } from "@/components/sortable-content-list"
 import { LoadingOverlay } from "@/components/ui/loading-overlay"
+import { Card, CardTitle, CardHeader, CardDescription, CardContent } from "@/components/ui/card"
+import { Label } from "@/components/ui/label"
+import { Input } from "@/components/ui/input"
+import { Button } from "@/components/ui/button"
 
-const getPermissionsForRole = (role?: string) => ({
-  accessKids: role === "admin" || role === "kid" || role === "professional",
-  accessAdult: role === "admin" || role === "adult" || role === "professional",
-  accessProfessional: role === "admin" || role === "professional",
-  isAdmin: role === "admin",
-})
+// Lazy load admin tabs
+const AdminCarouselTab = lazy(() => import("./Admin/AdminCarouselTab").then(m => ({ default: m.AdminCarouselTab })))
+const AdminBlogsTab = lazy(() => import("./Admin/AdminBlogsTab").then(m => ({ default: m.AdminBlogsTab })))
+const AdminVideosTab = lazy(() => import("./Admin/AdminVideosTab").then(m => ({ default: m.AdminVideosTab })))
+const AdminUsersTab = lazy(() => import("./Admin/AdminUsersTab").then(m => ({ default: m.AdminUsersTab })))
+const AdminQuestionsTab = lazy(() => import("./Admin/AdminQuestionsTab").then(m => ({ default: m.AdminQuestionsTab })))
+const AdminFireCodesTab = lazy(() => import("./Admin/AdminFireCodesTab").then(m => ({ default: m.AdminFireCodesTab })))
 
-const getApiErrorMessage = (payload: any, fallback: string) => {
-  if (!payload) return fallback
-  if (typeof payload === "string") return payload
-  if (typeof payload?.error === "string" && payload.error.trim()) return payload.error
-  if (typeof payload?.message === "string" && payload.message.trim()) return payload.message
+const TabLoading = () => (
+  <div className="flex flex-col items-center justify-center py-24 bg-white/50 dark:bg-slate-900/50 backdrop-blur-sm rounded-[2rem] border-2 border-dashed border-slate-200 dark:border-slate-700 animate-pulse">
+    <Loader2 className="h-10 w-10 text-[#d60000] animate-spin mb-4" />
+    <p className="text-slate-500 dark:text-slate-400 font-bold">Synchronizing Terminal Data...</p>
+  </div>
+)
 
-  if (payload?.errors && typeof payload.errors === "object") {
-    const firstError = Object.values(payload.errors).flat().find((value) => typeof value === "string")
-    if (typeof firstError === "string" && firstError.trim()) return firstError
-  }
-
-  return fallback
-}
-
-const normalizeCarouselImage = (image: any): CarouselImage => ({
-  id: image?.id,
-  title: image?.title ?? "",
-  altText: image?.altText ?? image?.alt_text ?? image?.alt ?? "",
-  url: image?.url ?? image?.imageUrl ?? image?.image_url ?? "",
-})
-
-const normalizeBlogPost = (post: any): BlogPost => ({
-  id: post?.id,
-  title: post?.title ?? "",
-  excerpt: post?.excerpt ?? "",
-  content: post?.content ?? "",
-  imageUrl: post?.imageUrl ?? post?.image_url ?? "",
-  category: post?.category ?? "adult",
-  createdAt: post?.createdAt ?? post?.created_at ?? new Date().toISOString(),
-  author: typeof post?.author === "string" ? post.author : post?.author?.name ?? "Unknown",
-})
-
-const normalizeVideo = (video: any) => ({
-  ...video,
-  youtubeId: video?.youtubeId ?? video?.youtube_id ?? "",
-  isActive: video?.isActive ?? video?.is_active ?? false,
-})
-
-const normalizeUser = (user: any) => ({
-  ...user,
-  email: user?.email ?? "",
-  isActive: user?.isActive ?? user?.is_active ?? true,
-  createdAt: user?.createdAt ?? user?.created_at ?? "",
-  permissions: user?.permissions ?? getPermissionsForRole(user?.role),
-})
-
-const normalizeFireCodeSection = (section: any) => ({
-  ...section,
-  sectionNum: section?.sectionNum ?? section?.section_num ?? "",
-  updatedAt: section?.updatedAt ?? section?.updated_at ?? null,
-})
+import { useAdminData } from "@/hooks/use-admin-data"
+import { normalizeCarouselImage, normalizeBlogPost, normalizeVideo } from "@/lib/admin-utils"
 
 function AdminDashboard({
   initialCarouselImages,
@@ -147,24 +53,34 @@ function AdminDashboard({
   initialFireCodeSections,
 }: any) {
   
-  const { user, isAuthenticated, isLoading } = useAuth()
-  const [loading, setLoading] = useState(!initialCarouselImages)
+  const { user, isAuthenticated, isLoading: authLoading } = useAuth()
+  const { success, error, setSuccess, setError } = useAdminFeedback()
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submittingMessage, setSubmittingMessage] = useState("")
-  const [success, setSuccess] = useState("")
-  const [error, setError] = useState("")
 
-  // Carousel Management
-  const [carouselImages, setCarouselImages] = useState<CarouselImage[]>(
-    initialCarouselImages ? initialCarouselImages.map(normalizeCarouselImage) : []
-  )
+  // Centralized Data Hook
+  const {
+    carouselImages, setCarouselImages, loadCarouselImages,
+    blogPosts, setBlogPosts, loadBlogPosts,
+    videos, setVideos, loadVideos,
+    users, setUsers, loadUsers,
+    quickQuestions, setQuickQuestions, loadQuickQuestions,
+    fireCodeSections, setFireCodeSections, loadFireCodeSections,
+    refreshAll,
+    loading: dataLoading
+  } = useAdminData({
+    initialCarouselImages,
+    initialBlogPosts,
+    initialVideos,
+    initialUsers,
+    initialQuickQuestions,
+    initialFireCodeSections,
+  })
+
+  // Local UI State for forms
   const [newCarousel, setNewCarousel] = useState({ title: "", alt: "", url: "" })
   const [carouselUploadKey, setCarouselUploadKey] = useState(0)
 
-  // Blog Management
-  const [blogPosts, setBlogPosts] = useState<BlogPost[]>(
-    initialBlogPosts ? initialBlogPosts.map(normalizeBlogPost) : []
-  )
   const [newBlog, setNewBlog] = useState({
     title: "",
     excerpt: "",
@@ -174,10 +90,6 @@ function AdminDashboard({
   })
   const [blogUploadKey, setBlogUploadKey] = useState(0)
 
-  // Video Management
-  const [videos, setVideos] = useState<any[]>(
-    initialVideos ? initialVideos.map(normalizeVideo) : []
-  )
   const [newVideo, setNewVideo] = useState({
     title: "",
     description: "",
@@ -187,23 +99,13 @@ function AdminDashboard({
     isActive: true
   })
 
-  // User Management
-  // Extract data array if it's paginated (Laravel paginate wrapper)
-  const resolvedUsers = initialUsers 
-    ? (Array.isArray(initialUsers) ? initialUsers : initialUsers.data ?? []) 
-    : []
-  const [users, setUsers] = useState<any[]>(resolvedUsers.map(normalizeUser))
   const [userSearchQuery, setUserSearchQuery] = useState("")
-
-  // Filter users based on search query
   const filteredUsers = users.filter((user) =>
     (user.name && user.name.toLowerCase().includes(userSearchQuery.toLowerCase())) ||
     (user.email && user.email.toLowerCase().includes(userSearchQuery.toLowerCase())) ||
     (user.role && user.role.toLowerCase().includes(userSearchQuery.toLowerCase()))
   )
 
-  // Quick Questions Management
-  const [quickQuestions, setQuickQuestions] = useState<any[]>(initialQuickQuestions || [])
   const [newQuickQuestion, setNewQuickQuestion] = useState({
     category: "emergency",
     questionText: "",
@@ -211,10 +113,6 @@ function AdminDashboard({
     isActive: true
   })
 
-  // Fire Codes Management
-  const [fireCodeSections, setFireCodeSections] = useState<any[]>(
-    initialFireCodeSections ? initialFireCodeSections.map(normalizeFireCodeSection) : []
-  )
   const [newFireCode, setNewFireCode] = useState({
     title: "",
     sectionNum: "",
@@ -233,7 +131,6 @@ function AdminDashboard({
     variant: 'default' as 'default' | 'destructive',
   });
 
-  // Confirmation Dialog Functions
   const openConfirmationDialog = (title: string, description: string, action: string, onConfirm: () => void, item: any = null, variant: 'default' | 'destructive' = 'default') => {
     setConfirmationDialog({
       isOpen: true,
@@ -242,7 +139,7 @@ function AdminDashboard({
       action,
       item,
       onConfirm,
-      variant, // Add variant here
+      variant,
     } as any);
   };
 
@@ -254,7 +151,7 @@ function AdminDashboard({
   };
 
   useEffect(() => {
-    if (isLoading) return
+    if (authLoading) return
 
     if (!isAuthenticated) {
       router.visit("/login")
@@ -266,111 +163,11 @@ function AdminDashboard({
       return
     }
 
-    // Only load from database if Inertia props aren't provided
+    // Only fetch if initial data is missing
     if (!initialCarouselImages) {
-      loadCarouselImages()
-      loadBlogPosts()
-      loadVideos()
-      loadUsers()
-      loadQuickQuestions()
-      loadFireCodeSections()
-      setLoading(false)
-    } else {
-      setLoading(false)
+      refreshAll()
     }
-  }, [isAuthenticated, user, router, isLoading, initialCarouselImages])
-
-  const loadCarouselImages = async () => {
-    try {
-      const response = await apiFetch('/api/content/carousel', { cache: 'no-store' })
-      if (response.ok) {
-        const payload = await response.json()
-        const images = Array.isArray(payload) ? payload : payload?.images ?? []
-        setCarouselImages(images.map(normalizeCarouselImage))
-      } else {
-        console.error('Failed to load carousel images')
-      }
-    } catch (error) {
-      console.error('Error loading carousel images:', error)
-    }
-  }
-
-  const loadBlogPosts = async () => {
-    try {
-      const response = await apiFetch('/api/content/blogs', { cache: 'no-store' })
-      if (response.ok) {
-        const payload = await response.json()
-        const blogs = Array.isArray(payload) ? payload : payload?.posts ?? payload?.blogs ?? []
-        setBlogPosts(blogs.map(normalizeBlogPost))
-      } else {
-        console.error('Failed to load blog posts')
-      }
-    } catch (error) {
-      console.error('Error loading blog posts:', error)
-    }
-  }
-
-  const loadVideos = async () => {
-    try {
-      const response = await apiFetch('/api/admin/videos', { cache: 'no-store' })
-      if (response.ok) {
-        const payload = await response.json()
-        const videos = Array.isArray(payload) ? payload : payload?.videos ?? []
-        setVideos(videos.map(normalizeVideo))
-      } else {
-        console.error('Failed to load videos')
-      }
-    } catch (error) {
-      console.error('Error loading videos:', error)
-    }
-  }
-
-  const loadUsers = async () => {
-    try {
-      const response = await apiFetch('/api/admin/users', { cache: 'no-store' })
-      if (response.ok) {
-        const payload = await response.json()
-        const usersData = Array.isArray(payload)
-          ? payload
-          : payload?.users?.data ?? payload?.users ?? []
-        setUsers(usersData.map(normalizeUser))
-      } else {
-        console.error('Failed to load users')
-      }
-    } catch (error) {
-      console.error('Error loading users:', error)
-    }
-  }
-
-  const loadQuickQuestions = async () => {
-    try {
-      const response = await apiFetch('/api/admin/quick-questions', { cache: 'no-store' })
-      if (response.ok) {
-        const payload = await response.json()
-        const questions = Array.isArray(payload) ? payload : payload?.questions ?? []
-        setQuickQuestions(questions)
-      } else {
-        console.error('Failed to load quick questions')
-      }
-    } catch (error) {
-      console.error('Error loading quick questions:', error)
-    }
-  }
-
-  const loadFireCodeSections = async () => {
-    try {
-      const response = await apiFetch('/api/admin/fire-codes', { cache: 'no-store' })
-      if (response.ok) {
-        const payload = await response.json()
-        const sections = Array.isArray(payload) ? payload : payload?.sections ?? []
-        setFireCodeSections(sections.map(normalizeFireCodeSection))
-      } else {
-        console.error('Failed to load fire code sections')
-      }
-    } catch (error) {
-      console.error('Error loading fire code sections:', error)
-    }
-  }
+  }, [isAuthenticated, user, authLoading, initialCarouselImages, refreshAll])
 
   const handleAddQuickQuestion = () => {
     if (!newQuickQuestion.questionText || !newQuickQuestion.responseText || !newQuickQuestion.category) {
@@ -390,17 +187,14 @@ function AdminDashboard({
 
           const response = await apiFetch('/api/admin/quick-questions', {
             method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(newQuickQuestion),
           })
 
           if (response.ok) {
-            await loadQuickQuestions() // Reload the list
+            await loadQuickQuestions()
             setNewQuickQuestion({ category: "emergency", questionText: "", responseText: "", isActive: true })
             setSuccess("Quick question added successfully")
-            setTimeout(() => setSuccess(""), 3000)
           } else {
             const errorData = await response.json()
             setError(errorData.error || "Failed to add quick question")
@@ -422,14 +216,10 @@ function AdminDashboard({
       "delete-quick-question",
       async () => {
         try {
-          const response = await apiFetch(`/api/admin/quick-questions/${id}`, {
-            method: 'DELETE',
-          })
-
+          const response = await apiFetch(`/api/admin/quick-questions/${id}`, { method: 'DELETE' })
           if (response.ok) {
-            await loadQuickQuestions() // Reload the list
+            await loadQuickQuestions()
             setSuccess("Quick question deleted")
-            setTimeout(() => setSuccess(""), 3000)
           } else {
             setError("Failed to delete quick question")
           }
@@ -463,18 +253,15 @@ function AdminDashboard({
 
           const response = await apiFetch('/api/admin/carousel', {
             method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(newCarousel),
           })
 
           if (response.ok) {
-            await loadCarouselImages() // Reload the list
+            await loadCarouselImages()
             setNewCarousel({ title: "", alt: "", url: "" })
-            setCarouselUploadKey(prev => prev + 1) // Reset upload component
+            setCarouselUploadKey(prev => prev + 1)
             setSuccess("Carousel image added successfully")
-            setTimeout(() => setSuccess(""), 3000)
           } else {
             const errorData = await response.json()
             setError(getApiErrorMessage(errorData, "Failed to add carousel image"))
@@ -502,14 +289,10 @@ function AdminDashboard({
       "delete-carousel-image",
       async () => {
         try {
-          const response = await apiFetch(`/api/admin/carousel/${numericId}`, {
-            method: 'DELETE',
-          })
-
+          const response = await apiFetch(`/api/admin/carousel/${numericId}`, { method: 'DELETE' })
           if (response.ok) {
-            await loadCarouselImages() // Reload the list
+            await loadCarouselImages()
             setSuccess("Carousel image deleted")
-            setTimeout(() => setSuccess(""), 3000)
           } else {
             setError("Failed to delete carousel image")
           }
@@ -525,7 +308,6 @@ function AdminDashboard({
     );
   }
 
-  // Handle carousel reordering
   const handleReorderCarousel = async (newOrder: CarouselImage[]) => {
     try {
       const imageIds = newOrder.map((img) => img.id)
@@ -535,26 +317,20 @@ function AdminDashboard({
         body: JSON.stringify({ imageIds }),
       })
 
-      if (!response.ok) {
-        throw new Error('Failed to reorder')
-      }
+      if (!response.ok) throw new Error('Failed to reorder')
 
       const payload = await response.json()
       const updated = Array.isArray(payload) ? payload : payload?.images ?? []
       setCarouselImages(updated.map(normalizeCarouselImage))
-
       setSuccess('Carousel order updated')
-      setTimeout(() => setSuccess(''), 3000)
     } catch (error) {
       console.error('Error reordering:', error)
       setError('Failed to update order')
-      // Reload to revert
       await loadCarouselImages()
-      throw error // Re-throw to trigger component revert
+      throw error
     }
   }
 
-  // Handle blog reordering
   const handleReorderBlogs = async (newOrder: BlogPost[]) => {
     try {
       const blogIds = newOrder.map((blog) => blog.id)
@@ -564,16 +340,12 @@ function AdminDashboard({
         body: JSON.stringify({ blogIds }),
       })
 
-      if (!response.ok) {
-        throw new Error('Failed to reorder')
-      }
+      if (!response.ok) throw new Error('Failed to reorder')
 
       const payload = await response.json()
       const updated = Array.isArray(payload) ? payload : []
       setBlogPosts(updated.length > 0 ? updated.map(normalizeBlogPost) : newOrder)
-
       setSuccess('Blog order updated')
-      setTimeout(() => setSuccess(''), 3000)
     } catch (error) {
       console.error('Error reordering blogs:', error)
       setError('Failed to update blog order')
@@ -582,7 +354,6 @@ function AdminDashboard({
     }
   }
 
-  // Handle video reordering
   const handleReorderVideos = async (newOrder: any[]) => {
     try {
       const videoIds = newOrder.map((video) => video.id)
@@ -592,16 +363,12 @@ function AdminDashboard({
         body: JSON.stringify({ videoIds }),
       })
 
-      if (!response.ok) {
-        throw new Error('Failed to reorder')
-      }
+      if (!response.ok) throw new Error('Failed to reorder')
 
       const payload = await response.json()
       const updated = Array.isArray(payload) ? payload : []
       setVideos(updated.length > 0 ? updated.map(normalizeVideo) : newOrder)
-
       setSuccess('Video order updated')
-      setTimeout(() => setSuccess(''), 3000)
     } catch (error) {
       console.error('Error reordering videos:', error)
       setError('Failed to update video order')
@@ -628,21 +395,18 @@ function AdminDashboard({
 
           const blogData = {
             ...newBlog,
-            authorId: user?.id || 1, // Default to first user if no current user
+            authorId: user?.id || 1,
           }
 
           const response = await apiFetch('/api/admin/blogs', {
             method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(blogData),
           })
 
           if (response.ok) {
-            await loadBlogPosts() // Reload the list
+            await loadBlogPosts()
             
-            // --- INJECT MOCK NOTIFICATION ---
             if (typeof window !== 'undefined') {
               const saved = localStorage.getItem('safescape_mock_notifications');
               const notifs = saved ? JSON.parse(saved) : [];
@@ -658,12 +422,10 @@ function AdminDashboard({
               localStorage.setItem('safescape_mock_notifications', JSON.stringify(notifs));
               window.dispatchEvent(new Event('safescape_notifications_updated'));
             }
-            // --------------------------------
 
             setNewBlog({ title: "", excerpt: "", content: "", imageUrl: "", category: "adult" })
-            setBlogUploadKey(prev => prev + 1) // Reset upload component
+            setBlogUploadKey(prev => prev + 1)
             setSuccess("Blog post added successfully")
-            setTimeout(() => setSuccess(""), 3000)
           } else {
             const errorData = await response.json()
             setError(errorData.error || "Failed to add blog post")
@@ -685,14 +447,10 @@ function AdminDashboard({
       "delete-blog-post",
       async () => {
         try {
-          const response = await apiFetch(`/api/admin/blogs/${id}`, {
-            method: 'DELETE',
-          })
-
+          const response = await apiFetch(`/api/admin/blogs/${id}`, { method: 'DELETE' })
           if (response.ok) {
-            await loadBlogPosts() // Reload the list
+            await loadBlogPosts()
             setSuccess("Blog post deleted")
-            setTimeout(() => setSuccess(""), 3000)
           } else {
             setError("Failed to delete blog post")
           }
@@ -726,16 +484,13 @@ function AdminDashboard({
 
           const response = await apiFetch('/api/admin/videos', {
             method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(newVideo),
           });
 
           if (response.ok) {
-            await loadVideos(); // Reload the list
+            await loadVideos();
             
-            // --- INJECT MOCK NOTIFICATION ---
             if (typeof window !== 'undefined') {
               const saved = localStorage.getItem('safescape_mock_notifications');
               const notifs = saved ? JSON.parse(saved) : [];
@@ -751,11 +506,9 @@ function AdminDashboard({
               localStorage.setItem('safescape_mock_notifications', JSON.stringify(notifs));
               window.dispatchEvent(new Event('safescape_notifications_updated'));
             }
-            // --------------------------------
 
             setNewVideo({ title: "", description: "", youtubeId: "", category: "professional", duration: "", isActive: true });
             setSuccess("Video added successfully");
-            setTimeout(() => setSuccess(""), 3000);
           } else {
             const errorData = await response.json();
             setError(errorData.error || "Failed to add video");
@@ -783,14 +536,10 @@ function AdminDashboard({
       "delete-video",
       async () => {
         try {
-          const response = await apiFetch(`/api/admin/videos/${numericId}`, {
-            method: 'DELETE',
-          });
-
+          const response = await apiFetch(`/api/admin/videos/${numericId}`, { method: 'DELETE' });
           if (response.ok) {
-            await loadVideos(); // Reload the list
+            await loadVideos();
             setSuccess("Video deleted");
-            setTimeout(() => setSuccess(""), 3000);
           } else {
             setError("Failed to delete video");
           }
@@ -806,7 +555,6 @@ function AdminDashboard({
     );
   }
 
-  // Password verification for role changes
   const [roleChangeDialog, setRoleChangeDialog] = useState({
     isOpen: false,
     userId: "",
@@ -842,9 +590,7 @@ function AdminDashboard({
     try {
       const response = await apiFetch(`/api/admin/users/${roleChangeDialog.userId}/permissions`, {
         method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           permission: roleChangeDialog.permission,
           action: roleChangeDialog.action,
@@ -855,7 +601,6 @@ function AdminDashboard({
       if (response.ok) {
         await loadUsers()
         setSuccess("User permissions updated")
-        setTimeout(() => setSuccess(""), 3000)
         closeRoleChangeDialog()
       } else {
         const data = await response.json()
@@ -887,17 +632,14 @@ function AdminDashboard({
 
           const response = await apiFetch('/api/admin/fire-codes', {
             method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(newFireCode),
           })
 
           if (response.ok) {
-            await loadFireCodeSections() // Reload the list
+            await loadFireCodeSections()
             setNewFireCode({ title: "", sectionNum: "", content: "", parentSectionId: "" })
             setSuccess("Fire code section added successfully")
-            setTimeout(() => setSuccess(""), 3000)
           } else {
             const errorData = await response.json()
             setError(errorData.error || "Failed to add fire code section")
@@ -919,14 +661,10 @@ function AdminDashboard({
       "delete-fire-code",
       async () => {
         try {
-          const response = await apiFetch(`/api/admin/fire-codes/${id}`, {
-            method: 'DELETE',
-          })
-
+          const response = await apiFetch(`/api/admin/fire-codes/${id}`, { method: 'DELETE' })
           if (response.ok) {
-            await loadFireCodeSections() // Reload the list
+            await loadFireCodeSections()
             setSuccess("Fire code section deleted")
-            setTimeout(() => setSuccess(""), 3000)
           } else {
             setError("Failed to delete fire code section")
           }
@@ -942,24 +680,33 @@ function AdminDashboard({
     );
   }
 
-  if (loading) {
+  if (dataLoading) {
     return (
-      <div className="flex items-center justify-center h-96">
-        <p className="text-muted-foreground font-bold">Initializing Admin Interface...</p>
+      <div className="flex items-col items-center justify-center h-96 gap-4">
+        <Loader2 className="h-10 w-10 text-[#d60000] animate-spin" />
+        <p className="text-muted-foreground font-bold">Synchronizing Terminal Data...</p>
       </div>
     )
   }
 
+  const commonProps = {
+    success,
+    error,
+    setSuccess,
+    setError,
+    setIsSubmitting,
+    setSubmittingMessage,
+    openConfirmationDialog,
+    closeConfirmationDialog,
+  }
+
   return (
     <div className="min-h-screen relative transition-colors duration-500">
-      {/* Background Overlay - Dynamic based on theme */}
       <div className="fixed inset-0 bg-slate-50/40 dark:bg-slate-950/50 z-0 transition-colors duration-500" />
 
-      {/* Loading Overlay for content submissions */}
       <LoadingOverlay isLoading={isSubmitting} message={submittingMessage} />
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 relative z-10">
-        {/* Header */}
         <div className="mb-4 sm:mb-8 bg-white/90 dark:bg-slate-800/50 backdrop-blur-md p-4 sm:p-6 rounded-2xl sm:rounded-[2rem] border-[3px] border-slate-200 dark:border-slate-700 shadow-[0_6px_0_#cbd5e1] dark:shadow-[0_8px_0_#0f172a] sm:shadow-[0_8px_0_#cbd5e1] flex items-center justify-between gap-3 transition-colors">
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 sm:gap-3 mb-0.5 sm:mb-1">
@@ -980,68 +727,25 @@ function AdminDashboard({
           </button>
         </div>
 
-        {/* Alerts moved to individual tabs */}
-
-        {/* Admin Tabs */}
         <Tabs defaultValue="carousel" className="space-y-6">
-          {/* Mobile: Icons only, evenly spaced */}
           <TabsList className="flex w-full sm:grid sm:grid-cols-6 bg-slate-200/70 dark:bg-slate-800/50 backdrop-blur-md p-2 rounded-[1.5rem] gap-2 shadow-inner h-auto border-2 border-slate-200 dark:border-slate-700 transition-colors">
-            <TabsTrigger
-              value="carousel"
-              className="flex-1 font-bold text-slate-500 dark:text-slate-400 data-[state=active]:!bg-[#d60000] data-[state=active]:!text-white transition-all rounded-xl py-3 px-2 sm:px-4 data-[state=active]:shadow-[0_4px_0_#991b1b] hover:bg-white/50 dark:hover:bg-slate-700/50 hover:text-slate-700 dark:hover:text-slate-200"
-            >
-              <ImageIcon className="h-5 w-5 sm:h-4 sm:w-4 sm:mr-2" strokeWidth={2.5} />
-              <span className="hidden sm:inline text-sm">Carousel</span>
-            </TabsTrigger>
-            <TabsTrigger
-              value="blogs"
-              className="flex-1 font-bold text-slate-500 dark:text-slate-400 data-[state=active]:!bg-[#d60000] data-[state=active]:!text-white transition-all rounded-xl py-3 px-2 sm:px-4 data-[state=active]:shadow-[0_4px_0_#991b1b] hover:bg-white/50 dark:hover:bg-slate-700/50 hover:text-slate-700 dark:hover:text-slate-200"
-            >
-              <FileText className="h-5 w-5 sm:h-4 sm:w-4 sm:mr-2" strokeWidth={2.5} />
-              <span className="hidden sm:inline text-sm">Blogs</span>
-            </TabsTrigger>
-            <TabsTrigger
-              value="videos"
-              className="flex-1 font-bold text-slate-500 dark:text-slate-400 data-[state=active]:!bg-[#d60000] data-[state=active]:!text-white transition-all rounded-xl py-3 px-2 sm:px-4 data-[state=active]:shadow-[0_4px_0_#991b1b] hover:bg-white/50 dark:hover:bg-slate-700/50 hover:text-slate-700 dark:hover:text-slate-200"
-            >
-              <Video className="h-5 w-5 sm:h-4 sm:w-4 sm:mr-2" strokeWidth={2.5} />
-              <span className="hidden sm:inline text-sm">Videos</span>
-            </TabsTrigger>
-            <TabsTrigger
-              value="users"
-              className="flex-1 font-bold text-slate-500 dark:text-slate-400 data-[state=active]:!bg-[#d60000] data-[state=active]:!text-white transition-all rounded-xl py-3 px-2 sm:px-4 data-[state=active]:shadow-[0_4px_0_#991b1b] hover:bg-white/50 dark:hover:bg-slate-700/50 hover:text-slate-700 dark:hover:text-slate-200"
-            >
-              <Users className="h-5 w-5 sm:h-4 sm:w-4 sm:mr-2" strokeWidth={2.5} />
-              <span className="hidden sm:inline text-sm">Users</span>
-            </TabsTrigger>
-            <TabsTrigger
-              value="quick-questions"
-              className="flex-1 font-bold text-slate-500 dark:text-slate-400 data-[state=active]:!bg-[#d60000] data-[state=active]:!text-white transition-all rounded-xl py-3 px-2 sm:px-4 data-[state=active]:shadow-[0_4px_0_#991b1b] hover:bg-white/50 dark:hover:bg-slate-700/50 hover:text-slate-700 dark:hover:text-slate-200"
-            >
-              <HelpCircle className="h-5 w-5 sm:h-4 sm:w-4 sm:mr-2" strokeWidth={2.5} />
-              <span className="hidden sm:inline text-sm">Q&A</span>
-            </TabsTrigger>
-            <TabsTrigger
-              value="fire-codes"
-              className="flex-1 font-bold text-slate-500 dark:text-slate-400 data-[state=active]:!bg-[#d60000] data-[state=active]:!text-white transition-all rounded-xl py-3 px-2 sm:px-4 data-[state=active]:shadow-[0_4px_0_#991b1b] hover:bg-white/50 dark:hover:bg-slate-700/50 hover:text-slate-700 dark:hover:text-slate-200"
-            >
-              <BookOpen className="h-5 w-5 sm:h-4 sm:w-4 sm:mr-2" strokeWidth={2.5} />
-              <span className="hidden sm:inline text-sm">Fire Codes</span>
-            </TabsTrigger>
+            <TabsTrigger value="carousel" className="flex-1 font-bold text-slate-500 dark:text-slate-400 data-[state=active]:!bg-[#d60000] data-[state=active]:!text-white transition-all rounded-xl py-3 px-2 sm:px-4 data-[state=active]:shadow-[0_4px_0_#991b1b] hover:bg-white/50 dark:hover:bg-slate-700/50 hover:text-slate-700 dark:hover:text-slate-200"><ImageIcon className="h-5 w-5 sm:h-4 sm:w-4 sm:mr-2" strokeWidth={2.5} /><span className="hidden sm:inline text-sm">Carousel</span></TabsTrigger>
+            <TabsTrigger value="blogs" className="flex-1 font-bold text-slate-500 dark:text-slate-400 data-[state=active]:!bg-[#d60000] data-[state=active]:!text-white transition-all rounded-xl py-3 px-2 sm:px-4 data-[state=active]:shadow-[0_4px_0_#991b1b] hover:bg-white/50 dark:hover:bg-slate-700/50 hover:text-slate-700 dark:hover:text-slate-200"><FileText className="h-5 w-5 sm:h-4 sm:w-4 sm:mr-2" strokeWidth={2.5} /><span className="hidden sm:inline text-sm">Blogs</span></TabsTrigger>
+            <TabsTrigger value="videos" className="flex-1 font-bold text-slate-500 dark:text-slate-400 data-[state=active]:!bg-[#d60000] data-[state=active]:!text-white transition-all rounded-xl py-3 px-2 sm:px-4 data-[state=active]:shadow-[0_4px_0_#991b1b] hover:bg-white/50 dark:hover:bg-slate-700/50 hover:text-slate-700 dark:hover:text-slate-200"><Video className="h-5 w-5 sm:h-4 sm:w-4 sm:mr-2" strokeWidth={2.5} /><span className="hidden sm:inline text-sm">Videos</span></TabsTrigger>
+            <TabsTrigger value="users" className="flex-1 font-bold text-slate-500 dark:text-slate-400 data-[state=active]:!bg-[#d60000] data-[state=active]:!text-white transition-all rounded-xl py-3 px-2 sm:px-4 data-[state=active]:shadow-[0_4px_0_#991b1b] hover:bg-white/50 dark:hover:bg-slate-700/50 hover:text-slate-700 dark:hover:text-slate-200"><Users className="h-5 w-5 sm:h-4 sm:w-4 sm:mr-2" strokeWidth={2.5} /><span className="hidden sm:inline text-sm">Users</span></TabsTrigger>
+            <TabsTrigger value="quick-questions" className="flex-1 font-bold text-slate-500 dark:text-slate-400 data-[state=active]:!bg-[#d60000] data-[state=active]:!text-white transition-all rounded-xl py-3 px-2 sm:px-4 data-[state=active]:shadow-[0_4px_0_#991b1b] hover:bg-white/50 dark:hover:bg-slate-700/50 hover:text-slate-700 dark:hover:text-slate-200"><HelpCircle className="h-5 w-5 sm:h-4 sm:w-4 sm:mr-2" strokeWidth={2.5} /><span className="hidden sm:inline text-sm">Q&A</span></TabsTrigger>
+            <TabsTrigger value="fire-codes" className="flex-1 font-bold text-slate-500 dark:text-slate-400 data-[state=active]:!bg-[#d60000] data-[state=active]:!text-white transition-all rounded-xl py-3 px-2 sm:px-4 data-[state=active]:shadow-[0_4px_0_#991b1b] hover:bg-white/50 dark:hover:bg-slate-700/50 hover:text-slate-700 dark:hover:text-slate-200"><BookOpen className="h-5 w-5 sm:h-4 sm:w-4 sm:mr-2" strokeWidth={2.5} /><span className="hidden sm:inline text-sm">Fire Codes</span></TabsTrigger>
           </TabsList>
 
           <ConfirmationDialog
             isOpen={confirmationDialog.isOpen}
             onClose={closeConfirmationDialog}
-            onConfirm={() => {
-              confirmationDialog.onConfirm();
-            }}
+            onConfirm={confirmationDialog.onConfirm}
             title={confirmationDialog.title}
             description={confirmationDialog.description}
-            variant={(confirmationDialog as any).variant || 'default'}
+            variant={confirmationDialog.variant}
           />
 
-          {/* Password Verification Dialog for Role Changes */}
           <AlertDialog open={roleChangeDialog.isOpen} onOpenChange={(open) => { if (!open && !roleChangeLoading) closeRoleChangeDialog() }}>
             <AlertDialogContent>
               <AlertDialogHeader>
@@ -1062,696 +766,92 @@ function AdminDashboard({
                     setRoleChangePassword(e.target.value)
                     setRoleChangeError("")
                   }}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter') handleConfirmRoleChange()
-                  }}
+                  onKeyDown={(e) => { if (e.key === 'Enter') handleConfirmRoleChange() }}
                   autoFocus
                 />
-                {roleChangeError && (
-                  <p className="text-sm text-destructive mt-2">{roleChangeError}</p>
-                )}
+                {roleChangeError && <p className="text-sm text-destructive mt-2">{roleChangeError}</p>}
               </div>
               <AlertDialogFooter>
-                <Button variant="outline" onClick={closeRoleChangeDialog} disabled={roleChangeLoading}>
-                  Cancel
-                </Button>
-                <Button
-                  onClick={handleConfirmRoleChange}
-                  disabled={roleChangeLoading || !roleChangePassword}
-                >
+                <Button variant="outline" onClick={closeRoleChangeDialog} disabled={roleChangeLoading}>Cancel</Button>
+                <Button onClick={handleConfirmRoleChange} disabled={roleChangeLoading || !roleChangePassword}>
                   {roleChangeLoading ? 'Verifying...' : 'Confirm Change'}
                 </Button>
               </AlertDialogFooter>
             </AlertDialogContent>
           </AlertDialog>
 
-          {/* Carousel Management */}
-          <TabsContent value="carousel" className="space-y-6">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <ImageUpload
-                key={carouselUploadKey}
-                title="Upload Carousel Image"
-                description="Upload an image to generate a URL for the carousel"
-                onUploadComplete={(url) => setNewCarousel({ ...newCarousel, url })}
+          <Suspense fallback={<TabLoading />}>
+            <TabsContent value="carousel">
+              <AdminCarouselTab
+                {...commonProps}
+                carouselImages={carouselImages}
+                newCarousel={newCarousel}
+                setNewCarousel={setNewCarousel}
+                carouselUploadKey={carouselUploadKey}
+                handleAddCarousel={handleAddCarousel}
+                handleDeleteCarousel={handleDeleteCarousel}
+                handleReorderCarousel={handleReorderCarousel}
               />
+            </TabsContent>
 
-              <Card className="rounded-[1.5rem] border-[3px] border-slate-200 dark:border-slate-700 shadow-sm hover:shadow-[0_4px_0_#e2e8f0] dark:hover:shadow-[0_4px_0_#0f172a] overflow-hidden bg-slate-50 dark:bg-slate-800/50 backdrop-blur-md transition-all h-full flex flex-col">
-                <CardHeader>
-                  <CardTitle className="text-xl font-bold text-slate-800 dark:text-white">Add New Carousel Image</CardTitle>
-                  <CardDescription className="text-slate-500 dark:text-slate-400 font-medium">Add images to the dashboard carousel</CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-4 flex-1 flex flex-col justify-between">
-                  <div>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      <div className="space-y-2">
-                        <Label htmlFor="carousel-title" className="font-bold text-slate-700 dark:text-slate-300">Title</Label>
-                        <Input
-                          id="carousel-title"
-                          placeholder="Image title"
-                          value={newCarousel.title}
-                          onChange={(e) => setNewCarousel({ ...newCarousel, title: e.target.value })}
-                          className="border-2 border-slate-200 dark:border-slate-700 dark:bg-slate-900 dark:text-white focus-visible:ring-red-500 rounded-xl"
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="carousel-alt" className="font-bold text-slate-700 dark:text-slate-300">Alt Text</Label>
-                        <Input
-                          id="carousel-alt"
-                          placeholder="Image description"
-                          value={newCarousel.alt}
-                          onChange={(e) => setNewCarousel({ ...newCarousel, alt: e.target.value })}
-                          className="border-2 border-slate-200 dark:border-slate-700 dark:bg-slate-900 dark:text-white focus-visible:ring-red-500 rounded-xl"
-                        />
-                      </div>
-                    </div>
-                  </div>
-                  {/* Image URL is now set automatically from the upload component - hidden from user */}
-                  <div className="flex flex-wrap items-center gap-4 mt-6">
-                    <button
-                      type="button"
-                      onClick={handleAddCarousel}
-                      className="inline-flex items-center justify-center bg-[#d60000] text-white font-extrabold px-6 pb-2.5 pt-3 rounded-xl text-sm shadow-[0_4px_0_#991b1b] hover:-translate-y-0.5 hover:shadow-[0_6px_0_#991b1b] active:translate-y-1 active:shadow-[0_0px_0_#991b1b] transition-all"
-                    >
-                      <Plus className="h-5 w-5 mr-2" strokeWidth={2.5} />
-                      Add Image
-                    </button>
-                    {success && <div className="text-sm font-bold text-green-700 dark:text-green-400 flex items-center gap-2 bg-green-50 dark:bg-green-900/30 border-2 border-green-200 dark:border-green-900/50 px-4 py-2 rounded-xl animate-in fade-in zoom-in-95 duration-300"><CheckCircle className="h-4 w-4"/> {success}</div>}
-                    {error && <div className="text-sm font-bold text-red-700 dark:text-red-400 flex items-center gap-2 bg-red-50 dark:bg-red-900/30 border-2 border-red-200 dark:border-red-900/50 px-4 py-2 rounded-xl animate-in fade-in zoom-in-95 duration-300"><AlertCircle className="h-4 w-4"/> {error}</div>}
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-
-            <SortableCarouselList
-              images={carouselImages}
-              onReorder={handleReorderCarousel}
-              onDelete={handleDeleteCarousel}
-            />
-          </TabsContent>
-
-          {/* Blog Management */}
-          <TabsContent value="blogs" className="space-y-6">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <ImageUpload
-                key={blogUploadKey}
-                title="Upload Blog Image"
-                description="Upload an image to generate a URL for the blog post"
-                onUploadComplete={(url) => setNewBlog({ ...newBlog, imageUrl: url })}
+            <TabsContent value="blogs">
+              <AdminBlogsTab
+                {...commonProps}
+                blogPosts={blogPosts}
+                newBlog={newBlog}
+                setNewBlog={setNewBlog}
+                blogUploadKey={blogUploadKey}
+                handleAddBlog={handleAddBlog}
+                handleDeleteBlog={handleDeleteBlog}
+                handleReorderBlogs={handleReorderBlogs}
               />
+            </TabsContent>
 
-              <Card className="rounded-[1.5rem] border-[3px] border-slate-200 dark:border-slate-700 shadow-sm hover:shadow-[0_4px_0_#e2e8f0] dark:hover:shadow-[0_4px_0_#0f172a] overflow-hidden bg-slate-50 dark:bg-slate-800/50 backdrop-blur-md transition-all h-full flex flex-col">
-                <CardHeader>
-                  <CardTitle className="text-xl font-bold text-slate-800 dark:text-white">Add New Blog Post</CardTitle>
-                  <CardDescription className="text-slate-500 dark:text-slate-400 font-medium">Create educational content for adult and professional sections</CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-4 flex-1 flex flex-col justify-between">
-                  <div className="space-y-4">
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      <div className="space-y-2">
-                        <Label htmlFor="blog-title" className="font-bold text-slate-700 dark:text-slate-300">Title</Label>
-                        <Input
-                          id="blog-title"
-                          placeholder="Blog post title"
-                          value={newBlog.title}
-                          onChange={(e) => setNewBlog({ ...newBlog, title: e.target.value })}
-                          className="border-2 border-slate-200 dark:border-slate-700 dark:bg-slate-900 dark:text-white focus-visible:ring-red-500 rounded-xl"
-                        />
-                      </div>
-                    </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="blog-category" className="font-bold text-slate-700 dark:text-slate-300">Category</Label>
-                        <Select
-                          value={newBlog.category}
-                          onValueChange={(val) => setNewBlog({ ...newBlog, category: val as "adult" | "professional" })}
-                        >
-                          <SelectTrigger id="blog-category" className="w-full h-10 border-2 border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-900 font-bold text-slate-700 dark:text-white focus:ring-red-500 shadow-sm transition-all hover:border-slate-300">
-                            <SelectValue placeholder="Select category" />
-                          </SelectTrigger>
-                          <SelectContent className="rounded-xl border-2 border-slate-200 dark:border-slate-700 dark:bg-slate-800 shadow-xl p-1">
-                            <SelectItem value="adult" className="rounded-lg font-bold text-slate-700 dark:text-slate-300 focus:bg-slate-50 dark:focus:bg-slate-700 focus:text-red-600 dark:focus:text-red-400 transition-colors cursor-pointer py-2.5">
-                              Adult
-                            </SelectItem>
-                            <SelectItem value="professional" className="rounded-lg font-bold text-slate-700 dark:text-slate-300 focus:bg-slate-50 dark:focus:bg-slate-700 focus:text-red-600 dark:focus:text-red-400 transition-colors cursor-pointer py-2.5">
-                              Professional
-                            </SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                    {/* Image URL is now set automatically from the upload component - hidden from user */}
-                    <div className="space-y-2">
-                      <Label htmlFor="blog-excerpt" className="font-bold text-slate-700 dark:text-slate-300">Excerpt</Label>
-                      <Textarea
-                        id="blog-excerpt"
-                        placeholder="Brief description"
-                        value={newBlog.excerpt}
-                        onChange={(e) => setNewBlog({ ...newBlog, excerpt: e.target.value })}
-                        rows={2}
-                        className="border-2 border-slate-200 dark:border-slate-700 dark:bg-slate-900 dark:text-white focus-visible:ring-red-500 rounded-xl"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="blog-content" className="font-bold text-slate-700 dark:text-slate-300">Content</Label>
-                      <Textarea
-                        id="blog-content"
-                        placeholder="Full blog content"
-                        value={newBlog.content}
-                        onChange={(e) => setNewBlog({ ...newBlog, content: e.target.value })}
-                        rows={6}
-                        className="border-2 border-slate-200 dark:border-slate-700 dark:bg-slate-900 dark:text-white focus-visible:ring-red-500 rounded-xl"
-                      />
-                    </div>
-                  </div>
-                  <div className="flex flex-wrap items-center gap-4 mt-6">
-                    <button
-                      type="button"
-                      onClick={handleAddBlog}
-                      className="inline-flex items-center justify-center bg-[#d60000] text-white font-extrabold px-6 pb-2.5 pt-3 rounded-xl text-sm shadow-[0_4px_0_#991b1b] hover:-translate-y-0.5 hover:shadow-[0_6px_0_#991b1b] active:translate-y-1 active:shadow-[0_0px_0_#991b1b] transition-all"
-                    >
-                      <Plus className="h-5 w-5 mr-2" strokeWidth={2.5} />
-                      Add Blog Post
-                    </button>
-                    {success && <div className="text-sm font-bold text-green-700 dark:text-green-400 flex items-center gap-2 bg-green-50 dark:bg-green-900/30 border-2 border-green-200 dark:border-green-900/50 px-4 py-2 rounded-xl animate-in fade-in zoom-in-95 duration-300"><CheckCircle className="h-4 w-4"/> {success}</div>}
-                    {error && <div className="text-sm font-bold text-red-700 dark:text-red-400 flex items-center gap-2 bg-red-50 dark:bg-red-900/30 border-2 border-red-200 dark:border-red-900/50 px-4 py-2 rounded-xl animate-in fade-in zoom-in-95 duration-300"><AlertCircle className="h-4 w-4"/> {error}</div>}
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
+            <TabsContent value="videos">
+              <AdminVideosTab
+                {...commonProps}
+                videos={videos}
+                newVideo={newVideo}
+                setNewVideo={setNewVideo}
+                handleAddVideo={handleAddVideo}
+                handleDeleteVideo={handleDeleteVideo}
+                handleReorderVideos={handleReorderVideos}
+              />
+            </TabsContent>
 
-            <SortableContentList
-              items={blogPosts}
-              title="Current Blog Posts"
-              description={`${blogPosts.length} blog posts`}
-              onReorder={handleReorderBlogs}
-              onDelete={handleDeleteBlog}
-              renderContent={(post) => (
-                <>
-                  <div className="flex flex-wrap items-start sm:items-center gap-2 mb-2">
-                    <h4 className="font-bold text-slate-800 dark:text-white w-full sm:w-auto">{post.title}</h4>
-                    <span className="text-xs font-bold px-2 py-1 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 capitalize shrink-0">
-                      {post.category}
-                    </span>
-                  </div>
-                  <p className="text-sm text-muted-foreground dark:text-slate-400">{post.excerpt}</p>
-                  <p className="text-xs text-muted-foreground dark:text-slate-500 mt-2">
-                    By {typeof post.author === 'string' ? post.author : post.author?.name} • {new Date(post.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}
-                  </p>
-                </>
-              )}
-            />
-          </TabsContent>
+            <TabsContent value="users">
+              <AdminUsersTab
+                {...commonProps}
+                users={users}
+                filteredUsers={filteredUsers}
+                userSearchQuery={userSearchQuery}
+                setUserSearchQuery={setUserSearchQuery}
+                promptRoleChange={promptRoleChange}
+              />
+            </TabsContent>
 
-          {/* Video Management */}
-          <TabsContent value="videos" className="space-y-6">
-            <Card className="rounded-[1.5rem] border-[3px] border-slate-200 dark:border-slate-700 shadow-sm hover:shadow-[0_4px_0_#e2e8f0] dark:hover:shadow-[0_4px_0_#0f172a] overflow-hidden bg-slate-50 dark:bg-slate-800/50 backdrop-blur-md transition-all mb-6">
-              <CardHeader>
-                <CardTitle className="text-xl font-bold text-slate-800 dark:text-white">Add New Video</CardTitle>
-                <CardDescription className="text-slate-500 dark:text-slate-400 font-medium">Add educational videos for different sections</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="video-title" className="font-bold text-slate-700 dark:text-slate-300">Title</Label>
-                  <Input
-                    id="video-title"
-                    placeholder="Video title"
-                    value={newVideo.title}
-                    onChange={(e) => setNewVideo({ ...newVideo, title: e.target.value })}
-                    className="border-2 border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 dark:text-white focus-visible:ring-red-500 rounded-xl"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="video-description" className="font-bold text-slate-700 dark:text-slate-300">Description</Label>
-                  <Textarea
-                    id="video-description"
-                    placeholder="Video description"
-                    value={newVideo.description}
-                    onChange={(e) => setNewVideo({ ...newVideo, description: e.target.value })}
-                    rows={2}
-                    className="border-2 border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 dark:text-white focus-visible:ring-red-500 rounded-xl"
-                  />
-                </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="video-youtube-id" className="font-bold text-slate-700 dark:text-slate-300">YouTube URL or ID</Label>
-                    <Input
-                      id="video-youtube-id"
-                      placeholder="Paste full URL or video ID"
-                      value={newVideo.youtubeId}
-                      onChange={(e) => setNewVideo({ ...newVideo, youtubeId: e.target.value })}
-                      className="border-2 border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 dark:text-white focus-visible:ring-red-500 rounded-xl"
-                    />
-                  </div>
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="video-duration" className="font-bold text-slate-700 dark:text-slate-300">Duration</Label>
-                  <Input
-                    id="video-duration"
-                    placeholder="Duration (e.g., 15:30)"
-                    value={newVideo.duration}
-                    onChange={(e) => setNewVideo({ ...newVideo, duration: e.target.value })}
-                    className="border-2 border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 dark:text-white focus-visible:ring-red-500 rounded-xl"
-                  />
-                </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="video-category" className="font-bold text-slate-700 dark:text-slate-300">Category</Label>
-                    <Select
-                      value={newVideo.category}
-                      onValueChange={(val) => setNewVideo({ ...newVideo, category: val as "professional" | "adult" | "kids" })}
-                    >
-                      <SelectTrigger id="video-category" className="w-full h-10 border-2 border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-900 font-bold text-slate-700 dark:text-white focus:ring-red-500 shadow-sm transition-all hover:border-slate-300">
-                        <SelectValue placeholder="Select category" />
-                      </SelectTrigger>
-                      <SelectContent className="rounded-xl border-2 border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 shadow-xl p-1">
-                        <SelectItem value="professional" className="rounded-lg font-bold text-slate-700 dark:text-slate-200 focus:bg-slate-50 dark:focus:bg-slate-700 focus:text-red-600 transition-colors cursor-pointer py-2.5">
-                          Professional
-                        </SelectItem>
-                        <SelectItem value="adult" className="rounded-lg font-bold text-slate-700 dark:text-slate-200 focus:bg-slate-50 dark:focus:bg-slate-700 focus:text-red-600 transition-colors cursor-pointer py-2.5">
-                          Adult
-                        </SelectItem>
-                        <SelectItem value="kids" className="rounded-lg font-bold text-slate-700 dark:text-slate-200 focus:bg-slate-50 dark:focus:bg-slate-700 focus:text-red-600 transition-colors cursor-pointer py-2.5">
-                          Kids
-                        </SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div className="space-y-2 flex flex-col justify-end">
-                    <Label htmlFor="video-active" className="font-bold text-slate-700 dark:text-slate-300">Status</Label>
-                    <Select
-                      value={newVideo.isActive ? "active" : "inactive"}
-                      onValueChange={(val) => setNewVideo({ ...newVideo, isActive: val === "active" })}
-                    >
-                      <SelectTrigger id="video-active" className="w-full h-10 border-2 border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-900 font-bold text-slate-700 dark:text-white focus:ring-red-500 shadow-sm transition-all hover:border-slate-300">
-                        <SelectValue placeholder="Select status" />
-                      </SelectTrigger>
-                      <SelectContent className="rounded-xl border-2 border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 shadow-xl p-1">
-                        <SelectItem value="active" className="rounded-lg font-bold text-slate-700 dark:text-slate-200 focus:bg-slate-50 dark:focus:bg-slate-700 focus:text-red-600 transition-colors cursor-pointer py-2.5">
-                          <div className="flex items-center gap-2">
-                            <div className="h-2 w-2 rounded-full bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.4)]" />
-                            Active
-                          </div>
-                        </SelectItem>
-                        <SelectItem value="inactive" className="rounded-lg font-bold text-slate-700 dark:text-slate-200 focus:bg-slate-50 dark:focus:bg-slate-700 focus:text-red-600 transition-colors cursor-pointer py-2.5">
-                          <div className="flex items-center gap-2">
-                            <div className="h-2 w-2 rounded-full bg-slate-400" />
-                            Inactive
-                          </div>
-                        </SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-                <div className="flex flex-wrap items-center gap-4 mt-2">
-                  <button
-                    type="button"
-                    onClick={handleAddVideo}
-                    className="w-full md:w-auto inline-flex items-center justify-center bg-[#d60000] text-white font-extrabold px-5 pb-2 pt-2.5 rounded-xl text-sm shadow-[0_4px_0_#991b1b] hover:-translate-y-0.5 hover:shadow-[0_6px_0_#991b1b] active:translate-y-1 active:shadow-[0_0px_0_#991b1b] transition-all"
-                  >
-                    <Plus className="h-4 w-4 mr-2" />
-                    Add Video
-                  </button>
-                  {success && <div className="text-sm font-bold text-green-700 dark:text-green-400 flex items-center gap-2 bg-green-50 dark:bg-green-900/30 border-2 border-green-200 dark:border-green-900/50 px-4 py-2 rounded-xl animate-in fade-in zoom-in-95 duration-300"><CheckCircle className="h-4 w-4"/> {success}</div>}
-                  {error && <div className="text-sm font-bold text-red-700 dark:text-red-400 flex items-center gap-2 bg-red-50 dark:bg-red-900/30 border-2 border-red-200 dark:border-red-900/50 px-4 py-2 rounded-xl animate-in fade-in zoom-in-95 duration-300"><AlertCircle className="h-4 w-4"/> {error}</div>}
-                </div>
-              </CardContent>
-            </Card>
+            <TabsContent value="quick-questions">
+              <AdminQuestionsTab
+                {...commonProps}
+                quickQuestions={quickQuestions}
+                newQuickQuestion={newQuickQuestion}
+                setNewQuickQuestion={setNewQuickQuestion}
+                handleAddQuickQuestion={handleAddQuickQuestion}
+                handleDeleteQuickQuestion={handleDeleteQuickQuestion}
+              />
+            </TabsContent>
 
-            <SortableContentList
-              items={videos}
-              title="Current Videos"
-              description={`${videos.length} videos in database`}
-              onReorder={handleReorderVideos}
-              onDelete={handleDeleteVideo}
-              renderContent={(video) => (
-                <>
-                  <div className="flex flex-wrap items-start sm:items-center gap-2 mb-2">
-                    <h4 className="font-bold text-slate-800 dark:text-white w-full sm:w-auto">{video.title}</h4>
-                    <span className={`text-xs font-bold px-2 py-1 rounded-md shrink-0 ${video.isActive ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400' : 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400'}`}>
-                      {video.isActive ? 'Active' : 'Inactive'}
-                    </span>
-                    <span className="text-xs font-bold px-2 py-1 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 capitalize shrink-0">
-                      {video.category}
-                    </span>
-                  </div>
-                  <p className="text-sm text-muted-foreground dark:text-slate-400">{video.description}</p>
-                  <p className="text-xs text-muted-foreground dark:text-slate-500 mt-2">
-                    YouTube ID: {video.youtubeId} • Duration: {video.duration}
-                  </p>
-                </>
-              )}
-            />
-          </TabsContent>
-
-          {/* User Management */}
-          <TabsContent value="users" className="space-y-6">
-            <Card className="rounded-[2rem] border-[3px] border-slate-200 dark:border-slate-700 shadow-[0_8px_0_#cbd5e1] dark:shadow-[0_8px_0_#0f172a] overflow-hidden bg-slate-50 dark:bg-slate-800/50 backdrop-blur-md transition-all mb-6">
-              <CardHeader className="px-6 pt-6 pb-2">
-                <div className="flex items-center gap-3">
-                  <div className="bg-white/50 dark:bg-slate-900/50 backdrop-blur-sm border-2 border-slate-200 dark:border-slate-700 p-2 rounded-xl shadow-sm">
-                    <Users className="h-6 w-6 text-[#d60000]" strokeWidth={2.5} />
-                  </div>
-                  <div>
-                    <CardTitle className="text-2xl font-black text-slate-800 dark:text-white tracking-tight">User Management</CardTitle>
-                    <CardDescription className="text-slate-500 dark:text-slate-400 font-medium mt-1">Manage user permissions and access levels</CardDescription>
-                  </div>
-                </div>
-              </CardHeader>
-              <CardContent className="px-6 pb-6 pt-4">
-                <div className="mb-6 relative">
-                  <Input
-                    type="text"
-                    placeholder="Search users by name, email, or role..."
-                    value={userSearchQuery}
-                    onChange={(e) => setUserSearchQuery(e.target.value)}
-                    className="pl-12 border-[3px] border-slate-200 dark:border-slate-700 focus-visible:ring-red-500 rounded-2xl h-14 text-base shadow-inner bg-white/50 dark:bg-slate-900/50 backdrop-blur-sm dark:text-white font-medium transition-colors"
-                    autoComplete="off"
-                  />
-                  <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 h-6 w-6 text-slate-400" strokeWidth={2.5} />
-                </div>
-                <div className="space-y-4">
-                  {filteredUsers.length === 0 ? (
-                    <p className="text-slate-500 font-medium text-center py-8">No users found</p>
-                  ) : (
-                    filteredUsers.map((u) => (
-                      <div key={u.id} className="p-5 border-2 border-slate-200 dark:border-slate-700 bg-white/50 dark:bg-slate-900/50 backdrop-blur-sm rounded-2xl shadow-sm hover:shadow-[0_4px_0_#e2e8f0] dark:hover:shadow-[0_4px_0_#0f172a] hover:-translate-y-0.5 transition-all">
-                        <div className="flex items-center justify-between mb-4 pb-4 border-b-2 border-slate-100 dark:border-slate-800">
-                          <div>
-                            <h4 className="font-bold text-lg text-slate-800 dark:text-white">{u.name}</h4>
-                            <p className="text-sm text-slate-500 dark:text-slate-400 font-medium">{u.email}</p>
-                            <div className="flex items-center gap-2 mt-2">
-                              <span className="text-xs font-bold text-slate-600 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-2 py-1 rounded-lg">Age: {u.age}</span>
-                              <span className="text-xs font-bold text-slate-600 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-2 py-1 rounded-lg capitalize">Role: {u.role}</span>
-                            </div>
-                          </div>
-                        </div>
-                        <div className="flex flex-wrap gap-2 sm:gap-3">
-                          <button
-                            type="button"
-                            onClick={() => promptRoleChange(u.id, "accessKids", u.name, u.permissions.accessKids ? "remove" : "add")}
-                            className={`inline-flex items-center justify-center font-extrabold px-4 pb-2 pt-2.5 rounded-xl text-xs sm:text-sm transition-all ${
-                              u.permissions.accessKids
-                                ? "bg-slate-600 dark:bg-slate-700 text-white shadow-[0_4px_0_#334155] dark:shadow-[0_4px_0_#0f172a] hover:-translate-y-0.5 hover:shadow-[0_6px_0_#334155] hover:bg-red-600 dark:hover:bg-red-700 hover:shadow-[0_4px_0_#991b1b] active:translate-y-1 active:shadow-[0_0px_0_#991b1b]"
-                                : "bg-white dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 shadow-[0_4px_0_#e2e8f0] dark:shadow-[0_4px_0_#0f172a] hover:-translate-y-0.5 hover:shadow-[0_6px_0_#e2e8f0] dark:hover:shadow-[0_6px_0_#0f172a] hover:bg-slate-50 dark:hover:bg-slate-700 hover:text-slate-700 dark:hover:text-slate-200 active:translate-y-1 active:shadow-[0_0px_0_#e2e8f0]"
-                            }`}
-                          >
-                            Kids Access {u.permissions.accessKids && <Trash2 className="h-4 w-4 ml-2 inline opacity-0 group-hover:opacity-100 transition-opacity" strokeWidth={2.5} style={{ opacity: 0.7 }} />}
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() => promptRoleChange(u.id, "accessAdult", u.name, u.permissions.accessAdult ? "remove" : "add")}
-                            className={`inline-flex items-center justify-center font-extrabold px-4 pb-2 pt-2.5 rounded-xl text-xs sm:text-sm transition-all ${
-                              u.permissions.accessAdult
-                                ? "bg-teal-700 dark:bg-teal-800 text-white shadow-[0_4px_0_#0f766e] dark:shadow-[0_4px_0_#0f172a] hover:-translate-y-0.5 hover:shadow-[0_6px_0_#0f766e] hover:bg-red-600 dark:hover:bg-red-700 hover:shadow-[0_4px_0_#991b1b] active:translate-y-1 active:shadow-[0_0px_0_#991b1b]"
-                                : "bg-white dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 shadow-[0_4px_0_#e2e8f0] dark:shadow-[0_4px_0_#0f172a] hover:-translate-y-0.5 hover:shadow-[0_6px_0_#e2e8f0] dark:hover:shadow-[0_6px_0_#0f172a] hover:bg-slate-50 dark:hover:bg-slate-700 hover:text-slate-700 dark:hover:text-slate-200 active:translate-y-1 active:shadow-[0_0px_0_#e2e8f0]"
-                            }`}
-                          >
-                            Adult Access {u.permissions.accessAdult && <Trash2 className="h-4 w-4 ml-2 inline opacity-0 group-hover:opacity-100 transition-opacity" strokeWidth={2.5} style={{ opacity: 0.7 }} />}
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() => promptRoleChange(u.id, "accessProfessional", u.name, u.permissions.accessProfessional ? "remove" : "add")}
-                            className={`inline-flex items-center justify-center font-extrabold px-4 pb-2 pt-2.5 rounded-xl text-xs sm:text-sm transition-all ${
-                              u.permissions.accessProfessional
-                                ? "bg-[#d60000] text-white shadow-[0_4px_0_#991b1b] hover:-translate-y-0.5 hover:shadow-[0_6px_0_#991b1b] hover:bg-red-600 dark:hover:bg-red-700 active:translate-y-1 active:shadow-[0_0px_0_#991b1b]"
-                                : "bg-white dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 shadow-[0_4px_0_#e2e8f0] dark:shadow-[0_4px_0_#0f172a] hover:-translate-y-0.5 hover:shadow-[0_6px_0_#e2e8f0] dark:hover:shadow-[0_6px_0_#0f172a] hover:bg-slate-50 dark:hover:bg-slate-700 hover:text-slate-700 dark:hover:text-slate-200 active:translate-y-1 active:shadow-[0_0px_0_#e2e8f0]"
-                            }`}
-                          >
-                            Professional Access {u.permissions.accessProfessional && <Trash2 className="h-4 w-4 ml-2 inline opacity-0 group-hover:opacity-100 transition-opacity" strokeWidth={2.5} style={{ opacity: 0.7 }} />}
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() => promptRoleChange(u.id, "isAdmin", u.name, u.permissions.isAdmin ? "remove" : "add")}
-                            className={`inline-flex items-center justify-center font-extrabold px-4 pb-2 pt-2.5 rounded-xl text-xs sm:text-sm transition-all ${
-                              u.permissions.isAdmin
-                                ? "bg-slate-900 dark:bg-black text-white shadow-[0_4px_0_#0f172a] hover:-translate-y-0.5 hover:shadow-[0_6px_0_#0f172a] hover:bg-red-600 dark:hover:bg-red-700 hover:shadow-[0_4px_0_#991b1b] active:translate-y-1 active:shadow-[0_0px_0_#991b1b]"
-                                : "bg-white dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 shadow-[0_4px_0_#e2e8f0] dark:shadow-[0_4px_0_#0f172a] hover:-translate-y-0.5 hover:shadow-[0_6px_0_#e2e8f0] hover:bg-slate-50 dark:hover:bg-slate-700 hover:text-slate-700 dark:hover:text-slate-200 active:translate-y-1 active:shadow-[0_0px_0_#e2e8f0]"
-                            }`}
-                          >
-                            Admin {u.permissions.isAdmin && <Trash2 className="h-4 w-4 ml-2 inline opacity-0 group-hover:opacity-100 transition-opacity" strokeWidth={2.5} style={{ opacity: 0.7 }} />}
-                          </button>
-                        </div>
-                      </div>
-                    ))
-                  )}
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          {/* Quick Questions Management */}
-          <TabsContent value="quick-questions" className="space-y-6">
-            <Card className="rounded-[1.5rem] border-[3px] border-slate-200 dark:border-slate-700 shadow-sm hover:shadow-[0_4px_0_#e2e8f0] dark:hover:shadow-[0_4px_0_#0f172a] overflow-hidden bg-slate-50 dark:bg-slate-800/50 backdrop-blur-md transition-all mb-6">
-              <CardHeader>
-                <CardTitle className="text-xl font-bold text-slate-800 dark:text-white">Add New Quick Question</CardTitle>
-                <CardDescription className="text-slate-500 dark:text-slate-400 font-medium">Create frequently asked questions for the chatbot</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="grid md:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="qq-category" className="font-bold text-slate-700 dark:text-slate-300">Category</Label>
-                    <Select
-                      value={newQuickQuestion.category}
-                      onValueChange={(value) => setNewQuickQuestion({ ...newQuickQuestion, category: value })}
-                    >
-                      <SelectTrigger id="qq-category" className="w-full h-10 border-2 border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-900 font-bold text-slate-700 dark:text-white focus:ring-red-500 shadow-sm transition-all hover:border-slate-300">
-                        <SelectValue placeholder="Select category" />
-                      </SelectTrigger>
-                      <SelectContent className="rounded-xl border-2 border-slate-200 dark:border-slate-700 dark:bg-slate-800 shadow-xl p-1">
-                        <SelectItem value="emergency" className="rounded-lg font-bold text-slate-700 dark:text-slate-300 focus:bg-slate-50 dark:focus:bg-slate-700 focus:text-red-600 dark:focus:text-red-400 transition-colors cursor-pointer py-2.5">
-                          Emergency Procedures
-                        </SelectItem>
-                        <SelectItem value="prevention" className="rounded-lg font-bold text-slate-700 dark:text-slate-300 focus:bg-slate-50 dark:focus:bg-slate-700 focus:text-red-600 dark:focus:text-red-400 transition-colors cursor-pointer py-2.5">
-                          Fire Prevention
-                        </SelectItem>
-                        <SelectItem value="equipment" className="rounded-lg font-bold text-slate-700 dark:text-slate-300 focus:bg-slate-50 dark:focus:bg-slate-700 focus:text-red-600 dark:focus:text-red-400 transition-colors cursor-pointer py-2.5">
-                          Safety Equipment
-                        </SelectItem>
-                        <SelectItem value="general" className="rounded-lg font-bold text-slate-700 dark:text-slate-300 focus:bg-slate-50 dark:focus:bg-slate-700 focus:text-red-600 dark:focus:text-red-400 transition-colors cursor-pointer py-2.5">
-                          General Information
-                        </SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="qq-active" className="font-bold text-slate-700 dark:text-slate-300">Status</Label>
-                    <Select
-                      value={newQuickQuestion.isActive ? "active" : "inactive"}
-                      onValueChange={(value) => setNewQuickQuestion({ ...newQuickQuestion, isActive: value === "active" })}
-                    >
-                      <SelectTrigger id="qq-active" className="w-full h-10 border-2 border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-900 font-bold text-slate-700 dark:text-white focus:ring-red-500 shadow-sm transition-all hover:border-slate-300">
-                        <SelectValue placeholder="Select status" />
-                      </SelectTrigger>
-                      <SelectContent className="rounded-xl border-2 border-slate-200 dark:border-slate-700 dark:bg-slate-800 shadow-xl p-1">
-                        <SelectItem value="active" className="rounded-lg font-bold text-slate-700 dark:text-slate-300 focus:bg-slate-50 dark:focus:bg-slate-700 focus:text-red-600 dark:focus:text-red-400 transition-colors cursor-pointer py-2.5">
-                          <div className="flex items-center gap-2">
-                            <div className="h-2 w-2 rounded-full bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.4)]" />
-                            Active
-                          </div>
-                        </SelectItem>
-                        <SelectItem value="inactive" className="rounded-lg font-bold text-slate-700 dark:text-slate-300 focus:bg-slate-50 dark:focus:bg-slate-700 focus:text-red-600 dark:focus:text-red-400 transition-colors cursor-pointer py-2.5">
-                          <div className="flex items-center gap-2">
-                            <div className="h-2 w-2 rounded-full bg-slate-400" />
-                            Inactive
-                          </div>
-                        </SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="qq-question" className="font-bold text-slate-700 dark:text-slate-300">Question</Label>
-                  <Input
-                    id="qq-question"
-                    placeholder="Enter the question"
-                    value={newQuickQuestion.questionText}
-                    onChange={(e) => setNewQuickQuestion({ ...newQuickQuestion, questionText: e.target.value })}
-                    className="border-2 border-slate-200 dark:border-slate-700 dark:bg-slate-900 dark:text-white focus-visible:ring-red-500 rounded-xl"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="qq-response" className="font-bold text-slate-700 dark:text-slate-300">Response</Label>
-                  <Textarea
-                    id="qq-response"
-                    placeholder="Enter the response"
-                    value={newQuickQuestion.responseText}
-                    onChange={(e) => setNewQuickQuestion({ ...newQuickQuestion, responseText: e.target.value })}
-                    rows={4}
-                    className="border-2 border-slate-200 dark:border-slate-700 dark:bg-slate-900 dark:text-white focus-visible:ring-red-500 rounded-xl"
-                  />
-                </div>
-                <div className="flex flex-wrap items-center gap-4 mt-2">
-                  <button
-                    type="button"
-                    onClick={handleAddQuickQuestion}
-                    className="inline-flex items-center justify-center bg-[#d60000] text-white font-extrabold px-5 pb-2 pt-2.5 rounded-xl text-sm shadow-[0_4px_0_#991b1b] hover:-translate-y-0.5 hover:shadow-[0_6px_0_#991b1b] active:translate-y-1 active:shadow-[0_0px_0_#991b1b] transition-all"
-                  >
-                    <Plus className="h-4 w-4 mr-2" />
-                    Add Quick Question
-                  </button>
-                  {success && <div className="text-sm font-bold text-green-700 dark:text-green-400 flex items-center gap-2 bg-green-50 dark:bg-green-900/30 border-2 border-green-200 dark:border-green-900/50 px-4 py-2 rounded-xl animate-in fade-in zoom-in-95 duration-300"><CheckCircle className="h-4 w-4"/> {success}</div>}
-                  {error && <div className="text-sm font-bold text-red-700 dark:text-red-400 flex items-center gap-2 bg-red-50 dark:bg-red-900/30 border-2 border-red-200 dark:border-red-900/50 px-4 py-2 rounded-xl animate-in fade-in zoom-in-95 duration-300"><AlertCircle className="h-4 w-4"/> {error}</div>}
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card className="rounded-[2rem] border-[3px] border-slate-200 dark:border-slate-700 shadow-[0_8px_0_#cbd5e1] dark:shadow-[0_8px_0_#0f172a] overflow-hidden bg-slate-50 dark:bg-slate-800/50 backdrop-blur-md transition-all mb-6">
-              <CardHeader className="px-6 pt-6 pb-2">
-                <div className="flex items-center gap-3">
-                  <div className="bg-white/50 dark:bg-slate-900/50 backdrop-blur-sm border-2 border-slate-200 dark:border-slate-700 p-2 rounded-xl shadow-sm">
-                    <HelpCircle className="h-6 w-6 text-[#d60000]" strokeWidth={2.5} />
-                  </div>
-                  <div>
-                    <CardTitle className="text-2xl font-black text-slate-800 dark:text-white tracking-tight">Current Quick Questions</CardTitle>
-                    <CardDescription className="text-slate-500 dark:text-slate-400 font-medium mt-1">{quickQuestions.length} questions in database</CardDescription>
-                  </div>
-                </div>
-              </CardHeader>
-              <CardContent className="px-6 pb-6 pt-4">
-                <div className="space-y-4">
-                  {quickQuestions.length === 0 ? (
-                    <p className="text-slate-500 font-medium text-center py-8">No quick questions yet</p>
-                  ) : (
-                    quickQuestions.map((question) => (
-                      <div key={question.id} className="flex items-start justify-between gap-2 sm:gap-3 p-3 sm:p-4 border-2 border-slate-200 dark:border-slate-700 rounded-2xl bg-white/50 dark:bg-slate-900/50 backdrop-blur-sm shadow-sm hover:shadow-[0_4px_0_#e2e8f0] dark:hover:shadow-[0_4px_0_#0f172a] hover:-translate-y-0.5 transition-all">
-                        <div className="flex-1 min-w-0">
-                          <div className="flex flex-wrap items-start sm:items-center gap-2 mb-2">
-                            <h4 className="font-bold text-slate-800 dark:text-white w-full sm:w-auto">{question.questionText}</h4>
-                            <span className={`text-xs px-2 py-1 rounded-md font-bold shrink-0 ${question.isActive ? 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-400' : 'bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-400'}`}>
-                              {question.isActive ? 'Active' : 'Inactive'}
-                            </span>
-                            <span className="text-xs px-2 py-1 rounded-md font-bold bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 capitalize shrink-0">
-                              {question.category}
-                            </span>
-                          </div>
-                          <p className="text-sm text-slate-500 dark:text-slate-400 mt-2">{question.responseText}</p>
-                        </div>
-                        <button
-                          type="button"
-                          onClick={() => handleDeleteQuickQuestion(question.id)}
-                          className="ml-2 sm:ml-4 flex items-center justify-center bg-[#d60000] text-white font-extrabold h-9 w-9 sm:h-10 sm:w-10 pb-1 rounded-xl text-sm shadow-[0_4px_0_#991b1b] hover:-translate-y-0.5 hover:shadow-[0_6px_0_#991b1b] active:translate-y-1 active:shadow-[0_0px_0_#991b1b] transition-all shrink-0"
-                          aria-label="Delete question"
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </button>
-                      </div>
-                    ))
-                  )}
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          {/* Fire Codes Management */}
-          <TabsContent value="fire-codes" className="space-y-6">
-            <Card className="rounded-[1.5rem] border-[3px] border-slate-200 dark:border-slate-700 shadow-sm hover:shadow-[0_4px_0_#e2e8f0] dark:hover:shadow-[0_4px_0_#0f172a] overflow-hidden bg-slate-50 dark:bg-slate-800/50 backdrop-blur-md transition-all mb-6">
-              <CardHeader>
-                <CardTitle className="text-xl font-bold text-slate-800 dark:text-white">Add New Fire Code Section</CardTitle>
-                <CardDescription className="text-slate-500 dark:text-slate-400 font-medium">Add sections to the Fire Code & Regulations</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="fc-title" className="font-bold text-slate-700 dark:text-slate-300">Title</Label>
-                  <Input
-                    id="fc-title"
-                    placeholder="Section title"
-                    value={newFireCode.title}
-                    onChange={(e) => setNewFireCode({ ...newFireCode, title: e.target.value })}
-                    className="border-2 border-slate-200 dark:border-slate-700 dark:bg-slate-900 dark:text-white focus-visible:ring-red-500 rounded-xl"
-                  />
-                </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="fc-section-num" className="font-bold text-slate-700 dark:text-slate-300">Section Number</Label>
-                    <Input
-                      id="fc-section-num"
-                      placeholder="e.g., 1.1, 2.3.1, etc."
-                      value={newFireCode.sectionNum}
-                      onChange={(e) => setNewFireCode({ ...newFireCode, sectionNum: e.target.value })}
-                      className="border-2 border-slate-200 dark:border-slate-700 dark:bg-slate-900 dark:text-white focus-visible:ring-red-500 rounded-xl"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="fc-parent-section" className="font-bold text-slate-700 dark:text-slate-300">Parent Section (Optional)</Label>
-                    <Input
-                      id="fc-parent-section"
-                      placeholder="Parent section ID"
-                      value={newFireCode.parentSectionId}
-                      onChange={(e) => setNewFireCode({ ...newFireCode, parentSectionId: e.target.value })}
-                      className="border-2 border-slate-200 dark:border-slate-700 dark:bg-slate-900 dark:text-white focus-visible:ring-red-500 rounded-xl"
-                    />
-                  </div>
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="fc-content" className="font-bold text-slate-700 dark:text-slate-300">Content</Label>
-                  <Textarea
-                    id="fc-content"
-                    placeholder="Section content"
-                    rows={6}
-                    value={newFireCode.content}
-                    onChange={(e) => setNewFireCode({ ...newFireCode, content: e.target.value })}
-                    className="border-2 border-slate-200 dark:border-slate-700 dark:bg-slate-900 dark:text-white focus-visible:ring-red-500 rounded-xl"
-                  />
-                </div>
-                <div className="flex flex-wrap items-center gap-4 mt-2">
-                  <button
-                    type="button"
-                    onClick={handleAddFireCode}
-                    className="inline-flex items-center justify-center bg-[#d60000] text-white font-extrabold px-5 pb-2 pt-2.5 rounded-xl text-sm shadow-[0_4px_0_#991b1b] hover:-translate-y-0.5 hover:shadow-[0_6px_0_#991b1b] active:translate-y-1 active:shadow-[0_0px_0_#991b1b] transition-all"
-                  >
-                    <Plus className="h-4 w-4 mr-2" />
-                    Add Fire Code Section
-                  </button>
-                  {success && <div className="text-sm font-bold text-green-700 dark:text-green-400 flex items-center gap-2 bg-green-50 dark:bg-green-900/30 border-2 border-green-200 dark:border-green-900/50 px-4 py-2 rounded-xl animate-in fade-in zoom-in-95 duration-300"><CheckCircle className="h-4 w-4"/> {success}</div>}
-                  {error && <div className="text-sm font-bold text-red-700 dark:text-red-400 flex items-center gap-2 bg-red-50 dark:bg-red-900/30 border-2 border-red-200 dark:border-red-900/50 px-4 py-2 rounded-xl animate-in fade-in zoom-in-95 duration-300"><AlertCircle className="h-4 w-4"/> {error}</div>}
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card className="rounded-[2rem] border-[3px] border-slate-200 dark:border-slate-700 shadow-[0_8px_0_#cbd5e1] dark:shadow-[0_8px_0_#0f172a] overflow-hidden bg-slate-50 dark:bg-slate-800/50 backdrop-blur-md transition-all mb-6">
-              <CardHeader className="px-6 pt-6 pb-2">
-                <div className="flex items-center gap-3">
-                  <div className="bg-white/50 dark:bg-slate-900/50 backdrop-blur-sm border-2 border-slate-200 dark:border-slate-700 p-2 rounded-xl shadow-sm">
-                    <BookOpen className="h-6 w-6 text-[#d60000]" strokeWidth={2.5} />
-                  </div>
-                  <div>
-                    <CardTitle className="text-2xl font-black text-slate-800 dark:text-white tracking-tight">Current Fire Code Sections</CardTitle>
-                    <CardDescription className="text-slate-500 dark:text-slate-400 font-medium mt-1">Fire Code & Regulations sections in the database</CardDescription>
-                  </div>
-                </div>
-              </CardHeader>
-              <CardContent className="px-6 pb-6 pt-4">
-                <div className="space-y-4">
-                  {fireCodeSections.length === 0 ? (
-                    <p className="text-slate-500 font-medium text-center py-8">No fire code sections yet</p>
-                  ) : (
-                    fireCodeSections.map((section) => (
-                      <div key={section.id} className="flex items-start justify-between gap-2 sm:gap-3 p-3 sm:p-4 border-2 border-slate-200 dark:border-slate-700 rounded-2xl bg-white/50 dark:bg-slate-900/50 backdrop-blur-sm shadow-sm hover:shadow-[0_4px_0_#e2e8f0] dark:hover:shadow-[0_4px_0_#0f172a] hover:-translate-y-0.5 transition-all">
-                        <div className="flex-1 min-w-0">
-                          <div className="flex flex-wrap items-start sm:items-center gap-2 mb-2">
-                            <h4 className="font-bold text-slate-800 dark:text-white w-full sm:w-auto">{section.title}</h4>
-                            <span className="text-xs font-bold px-2 py-1 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 shrink-0">
-                              {section.sectionNum}
-                            </span>
-                          </div>
-                          <p className="text-sm text-slate-500 dark:text-slate-400 line-clamp-2">{section.content}</p>
-                          <p className="text-xs text-slate-400 dark:text-slate-500 mt-2 font-medium">
-                            Last updated: {new Date(section.updatedAt).toLocaleDateString()}
-                          </p>
-                        </div>
-                        <button
-                          type="button"
-                          onClick={() => handleDeleteFireCode(section.id)}
-                          className="ml-2 sm:ml-4 flex items-center justify-center bg-[#d60000] text-white font-extrabold h-9 w-9 sm:h-10 sm:w-10 pb-1 rounded-xl text-sm shadow-[0_4px_0_#991b1b] hover:-translate-y-0.5 hover:shadow-[0_6px_0_#991b1b] active:translate-y-1 active:shadow-[0_0px_0_#991b1b] transition-all shrink-0"
-                          aria-label="Delete section"
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </button>
-                      </div>
-                    ))
-                  )}
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
+            <TabsContent value="fire-codes">
+              <AdminFireCodesTab
+                {...commonProps}
+                fireCodeSections={fireCodeSections}
+                newFireCode={newFireCode}
+                setNewFireCode={setNewFireCode}
+                handleAddFireCode={handleAddFireCode}
+                handleDeleteFireCode={handleDeleteFireCode}
+              />
+            </TabsContent>
+          </Suspense>
         </Tabs>
       </main>
     </div>

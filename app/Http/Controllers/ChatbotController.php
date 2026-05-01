@@ -25,8 +25,9 @@ class ChatbotController extends Controller
 
         if (empty($apiKey)) {
             return response()->json([
-                'response' => "I'm sorry, my AI features are currently disabled because the API key is missing. Please contact the administrator."
-            ], 500);
+                'response' => "I'm sorry, my AI features are currently disabled because the API key is missing. Please contact the administrator.",
+                'error' => true
+            ]);
         }
 
         // 1. Perform Local RAG (Retrieve relevant CSV rows)
@@ -58,58 +59,77 @@ class ChatbotController extends Controller
 
         $prompt .= "User's Current Question: " . $userMessage;
 
-        try {
-            // Fail fast (15s) if Google is overloaded
-            $response = Http::timeout(15)->withoutVerifying()->withHeaders([
-                'Content-Type' => 'application/json',
-            ])->post("https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-lite-latest:generateContent?key={$apiKey}", [
-                'system_instruction' => [
-                    'parts' => [
-                        ['text' => $systemPrompt]
-                    ]
-                ],
-                'contents' => [
-                    [
-                        'role' => 'user',
-                        'parts' => [
-                            ['text' => $prompt]
-                        ]
-                    ]
-                ],
-                'generationConfig' => [
-                    'temperature' => 0.5,
-                    'maxOutputTokens' => 1000,
-                ]
-            ]);
+        $maxRetries = 2;
+        $lastException = null;
 
-            if ($response->successful()) {
-                $data = $response->json();
-                
-                // Extract the text from Gemini's response structure
-                if (isset($data['candidates'][0]['content']['parts'][0]['text'])) {
-                    $aiText = $data['candidates'][0]['content']['parts'][0]['text'];
-                    return response()->json(['response' => $aiText]);
+        for ($attempt = 1; $attempt <= $maxRetries; $attempt++) {
+            try {
+                $response = Http::timeout(30)->withoutVerifying()->withHeaders([
+                    'Content-Type' => 'application/json',
+                ])->post("https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-lite-latest:generateContent?key={$apiKey}", [
+                    'system_instruction' => [
+                        'parts' => [
+                            ['text' => $systemPrompt]
+                        ]
+                    ],
+                    'contents' => [
+                        [
+                            'role' => 'user',
+                            'parts' => [
+                                ['text' => $prompt]
+                            ]
+                        ]
+                    ],
+                    'generationConfig' => [
+                        'temperature' => 0.5,
+                        'maxOutputTokens' => 1000,
+                    ]
+                ]);
+
+                if ($response->successful()) {
+                    $data = $response->json();
+
+                    if (isset($data['candidates'][0]['content']['parts'][0]['text'])) {
+                        $aiText = $data['candidates'][0]['content']['parts'][0]['text'];
+                        return response()->json(['response' => $aiText]);
+                    }
+                }
+
+                // If we get a 503 (overloaded), retry after a brief pause
+                if ($response->status() === 503 && $attempt < $maxRetries) {
+                    Log::warning("Gemini API 503 on attempt {$attempt}, retrying...");
+                    usleep(500000); // 0.5s pause
+                    continue;
+                }
+
+                Log::error("Gemini API Error (attempt {$attempt}): " . $response->body());
+
+                $errorMessage = "I apologize, but I'm having trouble connecting to my knowledge base right now. For immediate emergencies, please dial 911 or your local BFP hotline immediately.";
+
+                if ($response->status() === 503) {
+                    $errorMessage = "I'm sorry, my AI processing servers are currently overloaded. Please wait a few moments and try your question again.";
+                }
+
+                return response()->json([
+                    'response' => $errorMessage,
+                    'error' => true
+                ]);
+
+            } catch (\Exception $e) {
+                $lastException = $e;
+                if ($attempt < $maxRetries) {
+                    Log::warning("ChatbotController retry {$attempt}: " . $e->getMessage());
+                    usleep(500000);
+                    continue;
                 }
             }
-
-            Log::error('Gemini API Error: ' . $response->body());
-            
-            $errorMessage = "I apologize, but I'm having trouble connecting to my knowledge base right now. For immediate emergencies, please dial 911 or your local BFP hotline immediately.";
-            
-            if ($response->status() === 503) {
-                $errorMessage = "I'm sorry, my AI processing servers are currently overloaded due to exceptionally high global demand. Please wait a few moments and try your question again.";
-            }
-
-            return response()->json([
-                'response' => $errorMessage
-            ], 500);
-
-        } catch (\Exception $e) {
-            Log::error('ChatbotController Exception: ' . $e->getMessage());
-            return response()->json([
-                'response' => "I apologize, I encountered an internal error. Please try again later."
-            ], 500);
         }
+
+        Log::error('ChatbotController failed after retries: ' . ($lastException ? $lastException->getMessage() : 'unknown'));
+        return response()->json([
+            'response' => "I apologize, I encountered a temporary connection issue. Please try again in a moment.",
+            'error' => true
+        ]);
     }
 
     /**

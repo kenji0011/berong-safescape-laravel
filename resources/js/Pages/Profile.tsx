@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react"
 import { router, usePage } from '@inertiajs/react';
 import axios from 'axios';
+import { motion, AnimatePresence } from "framer-motion"
 import { useAuth } from "@/lib/auth-context"
 import { Navigation } from "@/components/navigation"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -13,7 +14,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import {
   User, Key, CheckCircle, AlertCircle, Eye, EyeOff, Loader2,
-  Trophy, BookOpen, ArrowUpRight, Minus, Lock
+  Trophy, BookOpen, ArrowUpRight, Minus, Lock, Check, Shield
 } from "lucide-react"
 import { ScoreGauge } from "@/components/score-gauge"
 import { cn } from "@/lib/utils"
@@ -85,6 +86,7 @@ export default function ProfilePage() {
   // Scores
   const [scores, setScores] = useState<UserScores | null>(null)
   const [scoresLoading, setScoresLoading] = useState(true)
+  const [showPasswordRequirements, setShowPasswordRequirements] = useState(false)
 
   useEffect(() => {
     if (isLoading) return
@@ -109,6 +111,21 @@ export default function ProfilePage() {
     fetchScores()
   }, [isAuthenticated, user, router, isLoading])
 
+  // Auto-hide notifications
+  useEffect(() => {
+    if (error) {
+      const timer = setTimeout(() => setError(""), 5000)
+      return () => clearTimeout(timer)
+    }
+  }, [error])
+
+  useEffect(() => {
+    if (success) {
+      const timer = setTimeout(() => setSuccess(""), 5000)
+      return () => clearTimeout(timer)
+    }
+  }, [success])
+
   const fetchScores = async () => {
     try {
       setScoresLoading(true)
@@ -132,8 +149,8 @@ export default function ProfilePage() {
     }
 
     // Email validation
-    if (profile.email.trim()) {
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    if (profile.email && profile.email.trim()) {
+      const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
       if (!emailRegex.test(profile.email.trim())) {
         setError("Please enter a valid email address")
         return
@@ -172,7 +189,6 @@ export default function ProfilePage() {
         setSuccess("Profile updated successfully!")
         // Refresh user data in auth context
         if (refreshUser) await refreshUser()
-        setTimeout(() => setSuccess(""), 4000)
       } else {
         setConfirmError(result.error || "Failed to update profile")
       }
@@ -196,8 +212,35 @@ export default function ProfilePage() {
       return
     }
 
+    const COMMON_PASSWORDS = ['password123', 'password', '123456', 'qwerty', 'abc123', 'letmein', 'admin', 'welcome', 'monkey', 'password1', 'iloveyou', 'sunshine', 'princess', 'football', 'shadow', 'master', 'trustno1', 'dragon'];
+    
     if (password.new.length < 8) {
       setError("New password must be at least 8 characters")
+      return
+    }
+
+    if (!/[A-Z]/.test(password.new)) {
+      setError("New password must contain at least one uppercase letter")
+      return
+    }
+
+    if (!/[a-z]/.test(password.new)) {
+      setError("New password must contain at least one lowercase letter")
+      return
+    }
+
+    if (!/[0-9]/.test(password.new)) {
+      setError("New password must contain at least one number")
+      return
+    }
+
+    if (!/[^A-Za-z0-9]/.test(password.new)) {
+      setError("New password must contain at least one special character (!@#$%^&*)")
+      return
+    }
+
+    if (COMMON_PASSWORDS.includes(password.new.toLowerCase())) {
+      setError("This password is too common. Please choose a stronger one.")
       return
     }
 
@@ -223,7 +266,6 @@ export default function ProfilePage() {
         setShowNewPassword(false)
         setShowConfirmPassword(false)
         setSuccess("Password changed successfully!")
-        setTimeout(() => setSuccess(""), 4000)
       } else {
         setError(result.error || "Failed to change password")
       }
@@ -348,20 +390,44 @@ export default function ProfilePage() {
           )}
         </div>
 
-        {/* Alerts */}
-        {success && (
-          <Alert className="mb-6 border-green-500 bg-green-50 rounded-2xl">
-            <CheckCircle className="h-4 w-4 text-green-600" />
-            <AlertDescription className="text-green-800 font-medium">{success}</AlertDescription>
-          </Alert>
-        )}
+        {/* Floating Feedback Notifications (Toasts) */}
+        <div className="fixed bottom-8 left-1/2 -translate-x-1/2 z-[200] flex flex-col gap-3 w-[calc(100%-2rem)] max-w-md pointer-events-none">
+          <AnimatePresence>
+            {success && (
+              <motion.div
+                initial={{ opacity: 0, y: 50, scale: 0.9 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: 20, scale: 0.9, transition: { duration: 0.2 } }}
+                className="bg-green-500 text-white p-4 rounded-2xl shadow-2xl flex items-center gap-3 pointer-events-auto border-2 border-white dark:border-slate-800"
+              >
+                <div className="bg-white/20 p-1.5 rounded-lg">
+                  <CheckCircle className="h-5 w-5" />
+                </div>
+                <p className="font-black text-sm uppercase tracking-wider">{success}</p>
+              </motion.div>
+            )}
 
-        {error && (
-          <Alert variant="destructive" className="mb-6 rounded-2xl">
-            <AlertCircle className="h-4 w-4" />
-            <AlertDescription className="font-medium">{error}</AlertDescription>
-          </Alert>
-        )}
+            {error && (
+              <motion.div
+                initial={{ opacity: 0, y: 50, scale: 0.9 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: 20, scale: 0.9, transition: { duration: 0.2 } }}
+                className="bg-red-500 text-white p-4 rounded-2xl shadow-2xl flex items-center gap-3 pointer-events-auto border-2 border-white dark:border-slate-800"
+              >
+                <div className="bg-white/20 p-1.5 rounded-lg">
+                  <AlertCircle className="h-5 w-5" />
+                </div>
+                <p className="font-black text-sm uppercase tracking-wider">{error}</p>
+                <button 
+                  onClick={() => setError("")}
+                  className="ml-auto hover:bg-white/10 p-1 rounded-md transition-colors"
+                >
+                  <Minus className="h-4 w-4" />
+                </button>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
 
         <div className="space-y-6 sm:space-y-0 sm:grid sm:grid-cols-2 sm:gap-8 relative z-10">
           {/* Profile Information */}
@@ -476,6 +542,11 @@ export default function ProfilePage() {
                         setError("")
                         setPassword({ ...password, new: e.target.value })
                       }}
+                      onFocus={() => setShowPasswordRequirements(true)}
+                      onBlur={() => {
+                        // Delay hide so user can see it briefly after finishing
+                        setTimeout(() => setShowPasswordRequirements(false), 200)
+                      }}
                       className="rounded-2xl border-2 border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-4 py-6 pr-12 focus-visible:border-red-500 dark:focus-visible:border-red-500 focus-visible:ring-offset-0 focus-visible:ring-0 transition-colors font-medium text-slate-700 dark:text-slate-200"
                     />
                     <button
@@ -486,8 +557,44 @@ export default function ProfilePage() {
                     >
                       {showNewPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
                     </button>
+
+                    {/* Floating Password Requirements Popup */}
+                    <AnimatePresence>
+                      {showPasswordRequirements && (
+                        <motion.div 
+                          initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                          animate={{ opacity: 1, y: 0, scale: 1 }}
+                          exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                          className="absolute bottom-full mb-3 left-0 right-0 z-[100] bg-white dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-700 rounded-[2rem] p-5 shadow-2xl shadow-slate-200/50 dark:shadow-slate-950/50 transition-colors"
+                        >
+                          <p className="text-[10px] font-black text-slate-700 dark:text-slate-300 mb-4 uppercase tracking-wider flex items-center gap-2">
+                            <Shield className="h-3 w-3 text-orange-500" />
+                            Password Strength
+                          </p>
+                          <div className="grid grid-cols-1 gap-y-2.5">
+                            {[
+                              { label: "At least 8 characters", met: password.new.length >= 8 },
+                              { label: "One uppercase letter", met: /[A-Z]/.test(password.new) },
+                              { label: "One lowercase letter", met: /[a-z]/.test(password.new) },
+                              { label: "One number (0-9)", met: /[0-9]/.test(password.new) },
+                              { label: "One special character (!@#...)", met: /[^A-Za-z0-9]/.test(password.new) },
+                            ].map((req, i) => (
+                              <div key={i} className="flex items-center gap-3">
+                                <div className={`h-5 w-5 rounded-full flex items-center justify-center transition-all duration-300 ${req.met ? "bg-green-500 scale-110" : "bg-slate-100 dark:bg-slate-800"}`}>
+                                  <Check className={`h-3 w-3 text-white transition-opacity ${req.met ? "opacity-100" : "opacity-0"}`} strokeWidth={4} />
+                                </div>
+                                <span className={`text-xs font-bold transition-colors ${req.met ? "text-green-700 dark:text-green-400" : "text-slate-500 dark:text-slate-400"}`}>
+                                  {req.label}
+                                </span>
+                              </div>
+                            ))}
+                          </div>
+                          {/* Triangle tail */}
+                          <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-4 h-4 bg-white dark:bg-slate-900 border-r-2 border-b-2 border-slate-200 dark:border-slate-700 rotate-45" />
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
                   </div>
-                  <p className="text-xs text-slate-500 dark:text-slate-400 ml-1 font-medium transition-colors">Must be at least 8 characters</p>
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="confirm-password" className="font-bold text-slate-700 dark:text-slate-300 ml-1 transition-colors">Confirm New Password</Label>

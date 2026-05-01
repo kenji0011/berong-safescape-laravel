@@ -49,6 +49,12 @@ class AssessmentController extends Controller
      */
     public function submitPreTest(Request $request)
     {
+        $request->validate([
+            'answers' => 'required|array',
+            'answers.*.questionId' => 'required|integer',
+            'answers.*.selectedAnswer' => 'required|string|max:1000',
+        ]);
+
         /** @var User $user */
         $user = Auth::user();
         $answers = $request->input('answers', []);
@@ -90,6 +96,12 @@ class AssessmentController extends Controller
      */
     public function submitPostTest(Request $request)
     {
+        $request->validate([
+            'answers' => 'required|array',
+            'answers.*.questionId' => 'required|integer',
+            'answers.*.selectedAnswer' => 'required|string|max:1000',
+        ]);
+
         /** @var User $user */
         $user = Auth::user();
         $answers = $request->input('answers', []);

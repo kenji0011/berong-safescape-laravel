@@ -99,7 +99,6 @@ export function Chatbot() {
     recognition.onresult = (event: any) => {
       const transcript = event.results[0][0].transcript
       setInputValue(prev => prev + (prev.length > 0 ? ' ' : '') + transcript)
-      setShowQuickQuestions(false)
     }
 
     recognition.onerror = (event: any) => {
@@ -254,10 +253,12 @@ export function Chatbot() {
     }
   }
 
-  // Auto-scroll to bottom when messages change
+  // Auto-scroll to bottom when messages change or typing indicator appears
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
-  }, [messages])
+    requestAnimationFrame(() => {
+      messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
+    })
+  }, [messages, isTyping])
 
   // Load quick questions when the component mounts
   useEffect(() => {
@@ -720,12 +721,7 @@ export function Chatbot() {
                 <div className="flex items-center gap-2">
                   <Input
                     value={inputValue}
-                    onChange={(e) => {
-                      setInputValue(e.target.value);
-                      if (e.target.value.trim() !== '') {
-                        setShowQuickQuestions(false);
-                      }
-                    }}
+                    onChange={(e) => setInputValue(e.target.value)}
                     onKeyPress={(e) => e.key === "Enter" && !isTyping && handleSend()}
                     placeholder={isTyping ? "Berong is thinking..." : "Ask about fire safety..."}
                     disabled={isTyping}

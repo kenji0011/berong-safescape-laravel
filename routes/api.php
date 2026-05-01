@@ -27,10 +27,10 @@ use App\Http\Controllers\NotificationController;
 // ==========================================
 
 // Auth API — used by registration wizard
-Route::prefix('auth')->group(function () {
+Route::middleware('throttle:api')->prefix('auth')->group(function () {
     Route::get('/check-username', [AuthApiController::class, 'checkUsername']);
     Route::post('/validate-credentials', [AuthApiController::class, 'validateCredentials']);
-    Route::post('/register', [AuthApiController::class, 'register']);
+    Route::middleware('throttle:auth')->post('/register', [AuthApiController::class, 'register']);
 });
 
 // Public content — home page carousel, assessment questions for pre-test
@@ -58,7 +58,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     // ==========================================
     // Chatbot AI Domain
     // ==========================================
-    Route::post('/chatbot/ai-response', [\App\Http\Controllers\ChatbotController::class, 'respond']);
+    Route::middleware('throttle:ai')->post('/chatbot/ai-response', [\App\Http\Controllers\ChatbotController::class, 'respond']);
 
     // ==========================================
     // 1. Content Domain (Blog, Videos, FAQs, Carousel)

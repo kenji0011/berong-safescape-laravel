@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { FileText, Download, BookOpen, Eye } from "lucide-react";
@@ -97,15 +97,14 @@ export function ManualsDialog({ children }: { children: React.ReactNode }) {
             </div>
             <div>
               <DialogTitle className="text-2xl font-extrabold text-slate-800 dark:text-white transition-colors">BFP Standard Operating Procedures</DialogTitle>
+              <DialogDescription className="text-slate-500 dark:text-slate-400 font-medium">
+                Access official fire safety manuals and standard operating procedures.
+              </DialogDescription>
             </div>
           </div>
         </DialogHeader>
 
         <div className="space-y-6 pt-2">
-          <p className="text-slate-600 dark:text-slate-400 font-medium leading-relaxed">
-            Access comprehensive manuals covering firefighting operations, emergency response protocols, and safety procedures.
-          </p>
-
           <div className="grid gap-5">
             {manuals.map((manual) => (
               <Card key={manual.id} className="bg-white dark:bg-slate-800 rounded-2xl border-2 border-b-[4px] border-slate-200 dark:border-slate-700 hover:-translate-y-0.5 hover:border-slate-300 dark:hover:border-slate-600 shadow-sm dark:shadow-[0_4px_0_#0f172a] active:translate-y-[2px] active:border-b-2 transition-all overflow-hidden">
