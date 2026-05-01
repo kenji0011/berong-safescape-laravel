@@ -1,0 +1,46 @@
+import type { CarouselImage, BlogPost, User, Video, FireCodeSection } from "@/types/admin"
+
+export const getPermissionsForRole = (role?: string) => ({
+  accessKids: role === "admin" || role === "kid" || role === "professional",
+  accessAdult: role === "admin" || role === "adult" || role === "professional",
+  accessProfessional: role === "admin" || role === "professional",
+  isAdmin: role === "admin",
+})
+
+export const normalizeCarouselImage = (image: any): CarouselImage => ({
+  id: image?.id,
+  title: image?.title ?? "",
+  altText: image?.altText ?? image?.alt_text ?? image?.alt ?? "",
+  url: image?.url ?? image?.imageUrl ?? image?.image_url ?? "",
+})
+
+export const normalizeBlogPost = (post: any): BlogPost => ({
+  id: post?.id,
+  title: post?.title ?? "",
+  excerpt: post?.excerpt ?? "",
+  content: post?.content ?? "",
+  imageUrl: post?.imageUrl ?? post?.image_url ?? "",
+  category: post?.category ?? "adult",
+  createdAt: post?.createdAt ?? post?.created_at ?? new Date().toISOString(),
+  author: typeof post?.author === "string" ? post.author : post?.author?.name ?? "Unknown",
+})
+
+export const normalizeVideo = (video: any): Video => ({
+  ...video,
+  youtubeId: video?.youtubeId ?? video?.youtube_id ?? "",
+  isActive: video?.isActive ?? video?.is_active ?? false,
+})
+
+export const normalizeUser = (user: any): User => ({
+  ...user,
+  email: user?.email ?? "",
+  isActive: user?.isActive ?? user?.is_active ?? true,
+  createdAt: user?.createdAt ?? user?.created_at ?? "",
+  permissions: user?.permissions ?? getPermissionsForRole(user?.role),
+})
+
+export const normalizeFireCodeSection = (section: any): FireCodeSection => ({
+  ...section,
+  sectionNum: section?.sectionNum ?? section?.section_num ?? "",
+  updatedAt: section?.updatedAt ?? section?.updated_at ?? null,
+})

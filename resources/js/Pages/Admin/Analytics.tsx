@@ -205,35 +205,56 @@ export default function AnalyticsDashboard({
                     Santa Cruz, Laguna • Fire Safety Data
                   </p>
                 </div>
+                
+                {/* Mobile Top-Right Actions (Icon Only) */}
+                <div className="flex sm:hidden items-center gap-2 shrink-0 mt-1">
+                  <Button
+                    variant="outline"
+                    className="h-10 w-10 p-0 rounded-full border-2 border-slate-200 dark:border-slate-700 border-b-[4px] dark:border-b-[4px] active:border-b-2 active:translate-y-[2px] shadow-sm bg-white dark:bg-slate-800 hover:bg-slate-50"
+                    onClick={() => fetchAllData(true)}
+                    disabled={refreshing}
+                  >
+                    <RefreshCw className={`h-6 w-6 text-slate-700 dark:text-white ${refreshing ? "animate-spin" : ""}`} strokeWidth={3} />
+                  </Button>
+                  <Button 
+                    onClick={handleExport}
+                    className="h-10 w-10 p-0 rounded-full border-2 border-red-700 dark:border-red-900 border-b-[4px] dark:border-b-[4px] active:border-b-2 active:translate-y-[2px] shadow-sm bg-red-600 hover:bg-red-500 text-white"
+                  >
+                    <Download className="h-6 w-6" strokeWidth={3} />
+                  </Button>
+                </div>
               </div>
               
               {/* Middle Row: Actions + Tab Selector */}
-              <div className="flex flex-wrap items-center gap-2">
-                <Button
-                  variant="outline"
-                  className="rounded-full border-2 border-slate-200 dark:border-slate-700 border-b-[4px] dark:border-b-[4px] active:border-b-2 active:translate-y-[2px] shadow-sm font-bold text-slate-700 dark:text-white bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 transition-all h-10 px-4 sm:px-6"
-                  onClick={() => fetchAllData(true)}
-                  disabled={refreshing}
-                >
-                  <RefreshCw className={`h-4 w-4 mr-2 ${refreshing ? "animate-spin" : ""}`} strokeWidth={3} />
-                  Refresh
-                </Button>
-                <Button 
-                  onClick={handleExport}
-                  className="rounded-full border-2 border-red-700 dark:border-red-900 border-b-[4px] dark:border-b-[4px] active:border-b-2 active:translate-y-[2px] shadow-sm font-bold bg-red-600 hover:bg-red-500 text-white transition-all h-10 px-4 sm:px-6"
-                >
-                  <Download className="h-4 w-4 mr-2" strokeWidth={3} />
-                  Export CSV
-                </Button>
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-2 w-full">
+                {/* Actions group (Desktop only) */}
+                <div className="hidden sm:flex items-center gap-2">
+                  <Button
+                    variant="outline"
+                    className="rounded-full border-2 border-slate-200 dark:border-slate-700 border-b-[4px] dark:border-b-[4px] active:border-b-2 active:translate-y-[2px] shadow-sm font-bold text-slate-700 dark:text-white bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 transition-all h-10 px-6 text-sm"
+                    onClick={() => fetchAllData(true)}
+                    disabled={refreshing}
+                  >
+                    <RefreshCw className={`h-4 w-4 mr-2 ${refreshing ? "animate-spin" : ""}`} strokeWidth={3} />
+                    Refresh
+                  </Button>
+                  <Button 
+                    onClick={handleExport}
+                    className="rounded-full border-2 border-red-700 dark:border-red-900 border-b-[4px] dark:border-b-[4px] active:border-b-2 active:translate-y-[2px] shadow-sm font-bold bg-red-600 hover:bg-red-500 text-white transition-all h-10 px-6 text-sm"
+                  >
+                    <Download className="h-4 w-4 mr-2" strokeWidth={3} />
+                    Export CSV
+                  </Button>
+                </div>
 
-                {/* Tab Selector Pill — inline with actions */}
-                <div className="flex bg-[#1c1d22] rounded-[2rem] p-1.5 sm:p-2 shadow-[inset_0_2px_4px_rgba(0,0,0,0.3)] border-b-[4px] sm:border-b-[6px] border-[#0a0a0c] w-fit max-w-[95%] sm:max-w-full gap-1 overflow-hidden sm:ml-auto">
+                {/* Tab Selector Pill — centered on mobile, right aligned on desktop */}
+                <div className="flex bg-[#1c1d22] rounded-[2rem] p-1.5 sm:p-2 shadow-[inset_0_2px_4px_rgba(0,0,0,0.3)] border-b-[4px] sm:border-b-[6px] border-[#0a0a0c] w-fit mx-auto sm:ml-auto sm:mr-0 gap-1 overflow-hidden">
                 {/* Left Side: Overview Button */}
                 <button 
                   onClick={() => setActiveTab('overview')}
                   className={activeTab === 'overview'
-                    ? "bg-yellow-400 border-2 sm:border-[3px] border-white rounded-[1.5rem] shadow-[0_3px_0_0_#ca8a04] sm:shadow-[0_4px_0_0_#ca8a04] px-3 sm:px-6 py-2.5 flex items-center justify-center select-none z-50 transition-transform active:translate-y-[3px] sm:active:translate-y-[4px] active:shadow-none sm:active:shadow-none outline-none focus:outline-none focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-offset-0 min-w-[90px]"
-                    : "border-2 sm:border-[3px] border-transparent flex items-center px-3 sm:px-6 py-2.5 active:opacity-70 transition-transform outline-none focus:outline-none focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-offset-0 select-none justify-center group hover:bg-white/10 rounded-[1.5rem] cursor-pointer min-w-[90px]"
+                    ? "bg-yellow-400 border-2 sm:border-[3px] border-white rounded-[1.5rem] shadow-[0_3px_0_0_#ca8a04] sm:shadow-[0_4px_0_0_#ca8a04] px-5 sm:px-6 py-2.5 flex items-center justify-center select-none z-50 transition-transform active:translate-y-[3px] sm:active:translate-y-[4px] active:shadow-none sm:active:shadow-none outline-none focus:outline-none focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-offset-0 min-w-[100px] shrink-0"
+                    : "border-2 sm:border-[3px] border-transparent flex items-center px-5 sm:px-6 py-2.5 active:opacity-70 transition-transform outline-none focus:outline-none focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-offset-0 select-none justify-center group hover:bg-white/10 rounded-[1.5rem] cursor-pointer min-w-[100px] shrink-0"
                   }
                 >
                    <span className={`font-black tracking-widest uppercase text-[10px] sm:text-xs pt-0.5 whitespace-nowrap drop-shadow-sm ${activeTab === 'overview' ? 'text-slate-900 drop-shadow-none' : 'text-slate-300 group-hover:text-white'}`}>
@@ -246,8 +267,8 @@ export default function AnalyticsDashboard({
                   <DropdownMenuTrigger asChild>
                     <button 
                       className={activeTab !== 'overview'
-                        ? "bg-yellow-400 border-2 sm:border-[3px] border-white rounded-[1.5rem] shadow-[0_3px_0_0_#ca8a04] sm:shadow-[0_4px_0_0_#ca8a04] px-2 sm:px-5 py-2.5 flex items-center justify-center gap-1 select-none z-50 transition-transform active:translate-y-[3px] sm:active:translate-y-[4px] active:shadow-none sm:active:shadow-none data-[state=open]:translate-y-[3px] sm:data-[state=open]:translate-y-[4px] data-[state=open]:shadow-none sm:data-[state=open]:shadow-none outline-none focus:outline-none focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-offset-0 group flex-1 min-w-[120px]"
-                        : "border-2 sm:border-[3px] border-transparent flex items-center gap-1 px-2 sm:px-5 py-2.5 active:opacity-70 transition-transform outline-none focus:outline-none focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-offset-0 select-none group justify-center hover:bg-white/10 rounded-[1.5rem] cursor-pointer flex-1 min-w-[100px]"
+                        ? "bg-yellow-400 border-2 sm:border-[3px] border-white rounded-[1.5rem] shadow-[0_3px_0_0_#ca8a04] sm:shadow-[0_4px_0_0_#ca8a04] px-4 sm:px-5 py-2.5 flex items-center justify-center gap-1 select-none z-50 transition-transform active:translate-y-[3px] sm:active:translate-y-[4px] active:shadow-none sm:active:shadow-none data-[state=open]:translate-y-[3px] sm:data-[state=open]:translate-y-[4px] data-[state=open]:shadow-none sm:data-[state=open]:shadow-none outline-none focus:outline-none focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-offset-0 group min-w-[110px]"
+                        : "border-2 sm:border-[3px] border-transparent flex items-center gap-1 px-4 sm:px-5 py-2.5 active:opacity-70 transition-transform outline-none focus:outline-none focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-offset-0 select-none group justify-center hover:bg-white/10 rounded-[1.5rem] cursor-pointer min-w-[110px]"
                       }
                     >
                        <span className={`font-black tracking-widest uppercase text-[10px] sm:text-xs pt-0.5 truncate drop-shadow-sm ${activeTab !== 'overview' ? 'text-slate-900 drop-shadow-none' : 'text-slate-300 group-hover:text-white'}`}>
@@ -286,7 +307,7 @@ export default function AnalyticsDashboard({
         </div>
 
         {/* Spacer to prevent content from hiding behind the fixed header */}
-        <div className="h-[200px] sm:h-[200px]" aria-hidden="true" />
+        <div className="h-[140px] sm:h-[200px]" aria-hidden="true" />
         
         <div className="w-full max-w-7xl mx-auto px-4 py-6">
           {error && (

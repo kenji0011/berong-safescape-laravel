@@ -109,7 +109,7 @@ const ProfessionalDashboard = ({ initialVideos }: ProfessionalPageClientProps) =
                 {/* Quick Links - Horizontal on mobile, grid on desktop */}
                 <div className="space-y-3 sm:space-y-0 sm:grid sm:grid-cols-2 sm:gap-5 mb-8 sm:mb-10">
                     <Link href="#training-videos-section" onClick={(e) => { e.preventDefault(); document.getElementById('training-videos-section')?.scrollIntoView({ behavior: 'smooth' }) }} className="block group h-full outline-none">
-                        <div className="relative overflow-hidden bg-white dark:bg-slate-800 border-[3px] sm:border-[4px] border-white dark:border-slate-700 rounded-2xl sm:rounded-[1.5rem] shadow-[0_6px_0_#cbd5e1] dark:shadow-[0_6px_0_#0f172a] sm:shadow-[0_8px_0_#cbd5e1] sm:hover:shadow-[0_12px_0_#cbd5e1] dark:hover:shadow-[0_12px_0_#0f172a] hover:-translate-y-1 sm:hover:-translate-y-1.5 active:translate-y-[6px] sm:active:translate-y-[8px] active:shadow-none transition-all duration-300 flex flex-col h-full">
+                        <div className="relative overflow-hidden bg-white dark:bg-slate-800 border-[3px] sm:border-[4px] border-white dark:border-slate-700 rounded-2xl sm:rounded-[1.5rem] shadow-[0_6px_0_#cbd5e1] dark:shadow-[0_6px_0_#0f172a] sm:shadow-[0_8px_0_#cbd5e1] active:translate-y-[6px] sm:active:translate-y-[8px] active:shadow-none transition-all duration-300 flex flex-col h-full">
                             <div className="absolute inset-0 bg-red-50/50 dark:bg-red-900/10 opacity-0 group-hover:opacity-100 transition-opacity z-0 pointer-events-none"></div>
                             <img
                                 src="/Training Vidoes Modal.png"
@@ -130,7 +130,7 @@ const ProfessionalDashboard = ({ initialVideos }: ProfessionalPageClientProps) =
                     </Link>
 
                     <Link href="#manuals-section" onClick={(e) => { e.preventDefault(); document.getElementById('manuals-section')?.scrollIntoView({ behavior: 'smooth' }) }} className="block group h-full outline-none">
-                        <div className="relative overflow-hidden bg-white dark:bg-slate-800 border-[3px] sm:border-[4px] border-white dark:border-slate-700 rounded-2xl sm:rounded-[1.5rem] shadow-[0_6px_0_#cbd5e1] dark:shadow-[0_6px_0_#0f172a] sm:shadow-[0_8px_0_#cbd5e1] sm:hover:shadow-[0_12px_0_#cbd5e1] dark:hover:shadow-[0_12px_0_#0f172a] hover:-translate-y-1 sm:hover:-translate-y-1.5 active:translate-y-[6px] sm:active:translate-y-[8px] active:shadow-none transition-all duration-300 flex flex-col h-full">
+                        <div className="relative overflow-hidden bg-white dark:bg-slate-800 border-[3px] sm:border-[4px] border-white dark:border-slate-700 rounded-2xl sm:rounded-[1.5rem] shadow-[0_6px_0_#cbd5e1] dark:shadow-[0_6px_0_#0f172a] sm:shadow-[0_8px_0_#cbd5e1] active:translate-y-[6px] sm:active:translate-y-[8px] active:shadow-none transition-all duration-300 flex flex-col h-full">
                             <div className="absolute inset-0 bg-blue-50/50 dark:bg-blue-900/10 opacity-0 group-hover:opacity-100 transition-opacity z-0 pointer-events-none"></div>
                             <img
                                 src="/BFP Manuals Modal.png"

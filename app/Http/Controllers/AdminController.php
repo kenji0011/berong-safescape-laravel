@@ -146,9 +146,21 @@ class AdminController extends Controller
      */
     public function createPost(Request $request)
     {
-        $imageUrl = $request->input('imageUrl') ?? $request->input('image_url');
+        $request->validate([
+            'title' => 'required|string|max:255',
+            'excerpt' => 'nullable|string|max:1000',
+            'content' => 'required|string',
+            'category' => 'required|string|max:50',
+            'imageUrl' => 'nullable|string|max:2048',
+            'image_url' => 'nullable|string|max:2048',
+        ]);
+
+        $imageUrl = strip_tags($request->input('imageUrl') ?? $request->input('image_url'));
         $post = BlogPost::create([
-            ...$request->only('title', 'excerpt', 'content', 'category'),
+            'title' => strip_tags($request->input('title')),
+            'excerpt' => strip_tags($request->input('excerpt')),
+            'content' => $request->input('content'), // Keep HTML for rich text editor, rely on frontend sanitization
+            'category' => strip_tags($request->input('category')),
             'imageUrl' => $imageUrl,
             'authorId' => $request->user()->id,
         ]);
@@ -166,8 +178,23 @@ class AdminController extends Controller
 
     public function updatePost(Request $request, $id)
     {
+        $request->validate([
+            'title' => 'sometimes|required|string|max:255',
+            'excerpt' => 'nullable|string|max:1000',
+            'content' => 'sometimes|required|string',
+            'category' => 'sometimes|required|string|max:50',
+            'isPublished' => 'nullable|boolean',
+            'is_published' => 'nullable|boolean',
+            'imageUrl' => 'nullable|string|max:2048',
+            'image_url' => 'nullable|string|max:2048',
+        ]);
+
         $post = BlogPost::findOrFail($id);
         $updates = $request->only('title', 'excerpt', 'content', 'category');
+        if (isset($updates['title'])) $updates['title'] = strip_tags($updates['title']);
+        if (isset($updates['excerpt'])) $updates['excerpt'] = strip_tags($updates['excerpt']);
+        if (isset($updates['category'])) $updates['category'] = strip_tags($updates['category']);
+
         if ($request->has('isPublished') || $request->has('is_published')) {
             $updates['isPublished'] = $request->boolean($request->has('isPublished') ? 'isPublished' : 'is_published');
         }
@@ -187,9 +214,21 @@ class AdminController extends Controller
 
     public function createVideo(Request $request)
     {
-        $youtubeId = $request->input('youtubeId') ?? $request->input('youtube_id');
+        $request->validate([
+            'title' => 'required|string|max:255',
+            'description' => 'nullable|string|max:2000',
+            'category' => 'required|string|max:50',
+            'duration' => 'nullable|string|max:50',
+            'youtubeId' => 'nullable|string|max:100',
+            'youtube_id' => 'nullable|string|max:100',
+        ]);
+
+        $youtubeId = strip_tags($request->input('youtubeId') ?? $request->input('youtube_id'));
         $video = Video::create([
-            ...$request->only('title', 'description', 'category', 'duration'),
+            'title' => strip_tags($request->input('title')),
+            'description' => strip_tags($request->input('description')),
+            'category' => strip_tags($request->input('category')),
+            'duration' => strip_tags($request->input('duration')),
             'youtubeId' => $youtubeId,
         ]);
 
@@ -206,8 +245,23 @@ class AdminController extends Controller
 
     public function updateVideo(Request $request, $id)
     {
+        $request->validate([
+            'title' => 'sometimes|required|string|max:255',
+            'description' => 'nullable|string|max:2000',
+            'category' => 'sometimes|required|string|max:50',
+            'duration' => 'nullable|string|max:50',
+            'isActive' => 'nullable|boolean',
+            'is_active' => 'nullable|boolean',
+            'youtubeId' => 'nullable|string|max:100',
+            'youtube_id' => 'nullable|string|max:100',
+        ]);
+
         $video = Video::findOrFail($id);
         $updates = $request->only('title', 'description', 'category', 'duration');
+        if (isset($updates['title'])) $updates['title'] = strip_tags($updates['title']);
+        if (isset($updates['description'])) $updates['description'] = strip_tags($updates['description']);
+        if (isset($updates['category'])) $updates['category'] = strip_tags($updates['category']);
+        if (isset($updates['duration'])) $updates['duration'] = strip_tags($updates['duration']);
         if ($request->has('isActive') || $request->has('is_active')) {
             $updates['isActive'] = $request->boolean($request->has('isActive') ? 'isActive' : 'is_active');
         }
@@ -227,6 +281,18 @@ class AdminController extends Controller
 
     public function createQuestion(Request $request)
     {
+        $request->validate([
+            'question' => 'required|string|max:1000',
+            'options' => 'required|array',
+            'correctAnswer' => 'required|string|max:255',
+            'explanation' => 'nullable|string|max:1000',
+            'category' => 'required|string|max:255',
+            'difficulty' => 'required|string|in:easy,medium,hard',
+            'forRoles' => 'nullable|array',
+            'type' => 'required|string|max:50',
+            'order' => 'nullable|integer',
+        ]);
+
         $question = AssessmentQuestion::create($request->only(
             'question', 'options', 'correctAnswer', 'explanation',
             'category', 'difficulty', 'forRoles', 'type', 'order'
@@ -236,6 +302,19 @@ class AdminController extends Controller
 
     public function updateQuestion(Request $request, $id)
     {
+        $request->validate([
+            'question' => 'sometimes|required|string|max:1000',
+            'options' => 'sometimes|required|array',
+            'correctAnswer' => 'sometimes|required|string|max:255',
+            'explanation' => 'nullable|string|max:1000',
+            'category' => 'sometimes|required|string|max:255',
+            'difficulty' => 'sometimes|required|string|in:easy,medium,hard',
+            'isActive' => 'nullable|boolean',
+            'forRoles' => 'nullable|array',
+            'type' => 'sometimes|required|string|max:50',
+            'order' => 'nullable|integer',
+        ]);
+
         $question = AssessmentQuestion::findOrFail($id);
         $question->update($request->only(
             'question', 'options', 'correctAnswer', 'explanation',
@@ -373,7 +452,7 @@ class AdminController extends Controller
     public function uploadImage(Request $request)
     {
         $request->validate([
-            'file' => 'required|image|max:15360', // 15MB max
+            'file' => 'required|image|mimes:jpeg,png,jpg,gif,webp|max:15360', // 15MB max, block SVG and scripts
         ]);
 
         if ($request->hasFile('file')) {

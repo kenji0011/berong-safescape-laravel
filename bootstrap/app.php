@@ -26,5 +26,23 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
-        //
+        $exceptions->report(function (\Illuminate\Http\Exceptions\ThrottleRequestsException $e) {
+            \Illuminate\Support\Facades\Log::warning('Unusual Traffic Pattern Detected (Rate Limit Exceeded)', [
+                'ip' => request()->ip(),
+                'url' => request()->fullUrl(),
+                'user_id' => request()->user() ? request()->user()->id : null
+            ]);
+        });
+
+        $exceptions->report(function (\Throwable $e) {
+            if (request()->is('api/*') && $e->getCode() >= 500) {
+                \Illuminate\Support\Facades\Log::error('API Error: ' . $e->getMessage(), [
+                    'url' => request()->fullUrl(),
+                    'method' => request()->method(),
+                    'ip' => request()->ip(),
+                    'user_id' => request()->user() ? request()->user()->id : null,
+                    'input' => request()->except(['password', 'password_confirmation', 'currentPassword', 'newPassword'])
+                ]);
+            }
+        });
     })->create();

@@ -37,8 +37,12 @@ export function NotificationPopover() {
     try {
       const res = await axios.get('/api/notifications');
       setNotifications(res.data);
-    } catch (err) {
-      console.error(err);
+    } catch (err: any) {
+      if (err.response && err.response.status === 401) {
+        // Silently ignore 401 Unauthorized errors (expected when logged out)
+        return;
+      }
+      console.error('Failed to fetch notifications:', err);
     } finally {
       setLoading(false);
     }
@@ -187,32 +191,45 @@ export function NotificationPopover() {
             initial={{ opacity: 0, y: -10, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, scale: 0.95 }}
-            className="absolute top-full mt-4 right-0 w-72 bg-white dark:bg-slate-900 rounded-2xl border-[3px] border-blue-400 dark:border-blue-500 shadow-2xl z-[100] p-4 cursor-pointer overflow-hidden group"
+            className="absolute top-full mt-4 right-0 w-80 bg-white dark:bg-slate-900 rounded-2xl border-[3px] border-blue-500 dark:border-blue-600 shadow-[0_10px_40px_-10px_rgba(59,130,246,0.5)] dark:shadow-[0_10px_40px_-10px_rgba(37,99,235,0.5)] z-[100] cursor-pointer group"
             onClick={() => {
               handleGo(previewNotification);
               setPreviewNotification(null);
             }}
           >
-            <div className="absolute inset-0 bg-blue-50/50 dark:bg-blue-900/10 opacity-0 group-hover:opacity-100 transition-opacity" />
-            <div className="relative z-10">
-              <div className="flex items-center gap-2 mb-2">
-                <div className={`h-6 w-6 rounded-full flex items-center justify-center ${getNotificationBadge(previewNotification.type)}`}>
-                  {getNotificationIcon(previewNotification.type)}
+            {/* Arrow pointing up to the bell */}
+            <div className="absolute -top-[10px] right-3 sm:right-4 w-4 h-4 bg-white dark:bg-slate-900 border-t-[3px] border-l-[3px] border-blue-500 dark:border-blue-600 rotate-45 rounded-tl-[2px] z-0" />
+            
+            <div className="relative z-10 p-4 rounded-[13px] overflow-hidden">
+              <div className="absolute inset-0 bg-blue-50/50 dark:bg-blue-900/10 opacity-0 group-hover:opacity-100 transition-opacity" />
+              <div className="relative z-10">
+                <div className="flex items-center gap-3 mb-3">
+                  <div className={`h-8 w-8 rounded-full flex items-center justify-center shadow-inner ${getNotificationBadge(previewNotification.type)}`}>
+                    {getNotificationIcon(previewNotification.type)}
+                  </div>
+                  <div className="flex flex-col">
+                    <span className="text-[10px] font-black text-blue-600 dark:text-blue-400 uppercase tracking-widest leading-none mb-1">New Notification</span>
+                    <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wider leading-none">{formatDate(previewNotification.createdAt)}</span>
+                  </div>
+                  <button 
+                    onClick={(e) => { e.stopPropagation(); setPreviewNotification(null); }}
+                    className="ml-auto text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 h-6 w-6 flex items-center justify-center rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                  >
+                    <X className="h-4 w-4" />
+                  </button>
                 </div>
-                <span className="text-[10px] font-black text-blue-600 dark:text-blue-400 uppercase tracking-widest">New Notification</span>
-                <button 
-                  onClick={(e) => { e.stopPropagation(); setPreviewNotification(null); }}
-                  className="ml-auto text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
-                >
-                  <X className="h-3 w-3" />
-                </button>
-              </div>
-              <h5 className="text-sm font-black text-slate-800 dark:text-white line-clamp-1 mb-1">{previewNotification.title}</h5>
-              <p className="text-xs font-bold text-slate-500 dark:text-slate-400 line-clamp-2">{previewNotification.message}</p>
-              
-              <div className="mt-3 flex items-center justify-end">
-                <div className="text-[10px] font-black text-blue-600 flex items-center gap-1">
-                  View Now <ArrowRight className="h-3 w-3" />
+                <h5 className="text-base font-black text-slate-800 dark:text-white line-clamp-1 mb-1">{previewNotification.title}</h5>
+                <p className="text-sm font-medium text-slate-500 dark:text-slate-400 line-clamp-2 leading-snug">{previewNotification.message}</p>
+                
+                <div className="mt-4 flex items-center justify-between border-t border-slate-100 dark:border-slate-800 pt-3">
+                  <div className="flex items-center gap-1.5">
+                    <div className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse" />
+                    <div className="w-1.5 h-1.5 rounded-full bg-blue-400 animate-pulse delay-75" />
+                    <div className="w-1.5 h-1.5 rounded-full bg-blue-300 animate-pulse delay-150" />
+                  </div>
+                  <div className="text-xs font-black text-blue-600 dark:text-blue-400 flex items-center gap-1 group-hover:translate-x-1 transition-transform">
+                    View Details <ArrowRight className="h-3.5 w-3.5" />
+                  </div>
                 </div>
               </div>
             </div>
@@ -240,15 +257,13 @@ export function NotificationPopover() {
               <div className="p-6 text-center text-sm text-slate-500 dark:text-slate-400 font-medium">No notifications yet</div>
             ) : (
               <div className="space-y-2 pb-32">
-                <AnimatePresence initial={false} mode="popLayout">
-                  {notifications.map((notification) => (
+                <AnimatePresence initial={false}>
+                  {notifications.slice(0, 50).map((notification) => (
                     <motion.div
                       key={notification.id}
-                      layout
-                      initial={{ opacity: 0, x: -20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      exit={{ opacity: 0, x: -50, scale: 0.95 }}
-                      transition={{ type: "spring", damping: 25, stiffness: 300 }}
+                      initial={{ opacity: 1, height: "auto", paddingTop: "0.875rem", paddingBottom: "0.875rem" }}
+                      exit={{ opacity: 0, height: 0, paddingTop: 0, paddingBottom: 0, borderTopWidth: 0, borderBottomWidth: 0, overflow: "hidden", scale: 0.95 }}
+                      transition={{ duration: 0.2 }}
                       className={`p-3.5 rounded-xl transition-all group relative border-2 ${openDropdownId === notification.id ? "z-[50]" : "z-10"} ${!notification.isRead
                         ? "bg-blue-50/50 dark:bg-blue-900/20 border-blue-200/50 dark:border-blue-800/30 hover:bg-blue-50/80 dark:hover:bg-blue-900/30 hover:-translate-y-0.5 hover:shadow-sm"
                         : "bg-white dark:bg-slate-800/40 border-transparent dark:border-slate-700/50 hover:border-slate-100 dark:hover:border-slate-600 hover:bg-slate-50/80 dark:hover:bg-slate-800/80 hover:-translate-y-0.5 hover:shadow-sm"

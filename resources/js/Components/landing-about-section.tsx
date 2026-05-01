@@ -147,8 +147,8 @@ function TeamCard({ member, index, reduceMotion }: { key?: React.Key; member: ty
     return (
         <motion.div
             ref={ref}
-            initial={{ opacity: 0 }}
-            animate={isInView ? { opacity: 1 } : {}}
+            initial={{ opacity: 0, y: 30 }}
+            animate={isInView ? { opacity: 1, y: 0 } : {}}
             transition={{
                 duration: 0.5,
                 ease: "easeOut",
@@ -156,13 +156,14 @@ function TeamCard({ member, index, reduceMotion }: { key?: React.Key; member: ty
             }}
             whileHover={reduceMotion ? undefined : {
                 scale: 1.02,
-                y: -5,
-                transition: { type: "spring", stiffness: 400, damping: 25 }
+                y: -6,
+                transition: { duration: 0.2, ease: "easeOut" }
             }}
-            className="group relative bg-white dark:bg-slate-800 rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl border border-slate-200 dark:border-slate-700 h-full flex flex-col cursor-pointer"
+            className="group relative bg-white dark:bg-slate-800 rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-shadow duration-300 border border-slate-200 dark:border-slate-700 h-full flex flex-col cursor-pointer transform-gpu will-change-transform"
+            style={{ backfaceVisibility: "hidden" }}
         >
             {/* Gradient Header */}
-            <div className={`h-32 bg-slate-200 dark:bg-slate-700 relative`}>
+            <div className={`h-32 bg-gradient-to-r ${member.color} relative`}>
                 <div className="absolute inset-0 bg-black/20" />
                 {/* Decorative circles */}
                 <motion.div
@@ -260,9 +261,10 @@ function PartnershipCard({ children, delay = 0, reduceMotion = false }: { childr
             }}
             whileHover={reduceMotion ? undefined : {
                 scale: 1.02,
-                transition: { duration: 0.3 }
+                transition: { duration: 0.15, ease: "easeOut" }
             }}
-            className="bg-[#1e293b] rounded-2xl p-5 sm:p-8 border border-slate-700 hover:border-slate-500 transition-all duration-300 h-full flex flex-col"
+            className="bg-[#1e293b] rounded-2xl p-5 sm:p-8 border border-slate-700 hover:border-slate-500 transition-colors duration-300 h-full flex flex-col transform-gpu will-change-transform"
+            style={{ backfaceVisibility: "hidden" }}
         >
             {children}
         </motion.div>

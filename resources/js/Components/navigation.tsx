@@ -3,11 +3,11 @@
 import { Link, usePage } from '@inertiajs/react';
 import { useState, useEffect } from "react"
 import { useAuth } from "@/lib/auth-context"
-import { useSettings } from "@/lib/settings-context"
 import { Button } from "@/components/ui/button"
-import { LogOut, User, Menu, X, Home, Users, Briefcase, Baby, Shield, Info, Settings, ChevronDown, Zap, Type, ArrowRight, Clock, Moon, Sun } from "lucide-react"
+import { LogOut, User, Menu, X, Home, Users, Briefcase, Baby, Shield, Info, Settings, ChevronDown, ArrowRight, Clock } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { NotificationPopover } from "@/components/ui/notification-popover"
+import { SettingsPanel } from "@/components/settings-panel"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -69,7 +69,6 @@ function TimeDisplay({ mobile = false }: { mobile?: boolean }) {
 
 export function Navigation() {
   const { user, logout, isAuthenticated } = useAuth()
-  const { reduceMotion, toggleReduceMotion, textSize, setTextSize, isDarkMode, toggleDarkMode } = useSettings()
   const { url } = usePage();
   const isDashboard = url === '/';
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
@@ -224,7 +223,7 @@ export function Navigation() {
               {isAuthenticated ? (
                 <div className="hidden lg:flex items-center gap-3">
                   <div className="relative group flex items-center">
-                    <Link href="/profile" className="flex items-center justify-center p-0 h-10 w-10 sm:h-12 sm:w-12 rounded-full bg-[#facc15] border-[3px] border-white text-white shadow-[0_4px_0_#ca8a04] md:hover:-translate-y-0.5 md:hover:shadow-[0_6px_0_#ca8a04] active:translate-y-1 active:shadow-none transition-all duration-200 active:duration-75">
+                    <Link href="/profile" className="flex items-center justify-center p-0 h-10 w-10 sm:h-12 sm:w-12 rounded-full bg-[#facc15] border-[3px] border-white text-white shadow-[0_4px_0_#ca8a04] hover:-translate-y-0.5 hover:shadow-[0_6px_0_#ca8a04] active:translate-y-1 active:shadow-none transition-all duration-200 active:duration-75 outline-none cursor-pointer">
                       <User className="h-5 w-5 sm:h-6 sm:w-6" strokeWidth={2.5} />
                     </Link>
                     <span className="absolute top-full mt-2 left-1/2 -translate-x-1/2 px-2 py-1 bg-black/90 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-[9999] pointer-events-none">
@@ -244,50 +243,7 @@ export function Navigation() {
                         <p className="text-sm font-semibold text-slate-800 dark:text-white transition-colors">Settings</p>
                       </div>
 
-                      {/* Dark Mode Toggle */}
-                      <div
-                        onClick={(e) => { e.preventDefault(); toggleDarkMode(); }}
-                        className="flex items-center justify-between rounded-lg cursor-pointer py-2.5 px-3 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
-                      >
-                        <span className="flex items-center gap-2 text-sm font-medium text-slate-700 dark:text-slate-300">
-                          {isDarkMode ? <Sun className="h-4 w-4 text-yellow-500" /> : <Moon className="h-4 w-4 text-indigo-500" />}
-                          Dark Mode
-                        </span>
-                        <div className={`relative w-9 h-5 rounded-full transition-colors duration-200 ${isDarkMode ? 'bg-indigo-600' : 'bg-slate-300'}`}>
-                          <div className={`absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform duration-200 ${isDarkMode ? 'translate-x-4' : 'translate-x-0'}`} />
-                        </div>
-                      </div>
-
-                      <div className="h-[1px] bg-slate-100 dark:bg-slate-800 my-1 transition-colors" />
-
-                      {/* Reduce Animations Toggle */}
-                      <div
-                        onClick={(e) => { e.preventDefault(); toggleReduceMotion(); }}
-                        className="flex items-center justify-between rounded-lg cursor-pointer py-2.5 px-3 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
-                      >
-                        <span className="flex items-center gap-2 text-sm font-medium text-slate-700 dark:text-slate-300">
-                          <Zap className="h-4 w-4 text-amber-500" />
-                          Performance Mode
-                        </span>
-                        <div className={`relative w-9 h-5 rounded-full transition-colors duration-200 ${reduceMotion ? 'bg-red-500' : 'bg-slate-300'}`}>
-                          <div className={`absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform duration-200 ${reduceMotion ? 'translate-x-4' : 'translate-x-0'}`} />
-                        </div>
-                      </div>
-
-                      <div className="h-[1px] bg-slate-100 dark:bg-slate-800 my-1 transition-colors" />
-
-                      {/* Text Size Control */}
-                      <div className="py-2.5 px-3">
-                        <span className="flex items-center gap-2 text-sm font-medium text-slate-700 dark:text-slate-300 mb-2 transition-colors">
-                          <Type className="h-4 w-4 text-blue-500" />
-                          Text Size
-                        </span>
-                        <div className="flex bg-slate-100 dark:bg-slate-800 rounded-md p-1 border border-slate-200 dark:border-slate-700 transition-colors">
-                          <button onClick={(e) => { e.preventDefault(); setTextSize('normal'); }} className={`flex-1 py-1 rounded text-xs font-bold transition-all ${textSize === 'normal' ? 'bg-white dark:bg-slate-600 text-slate-800 dark:text-white shadow-sm' : 'text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200'}`}>A</button>
-                          <button onClick={(e) => { e.preventDefault(); setTextSize('large'); }} className={`flex-1 py-1 rounded text-sm font-bold transition-all ${textSize === 'large' ? 'bg-white dark:bg-slate-600 text-slate-800 dark:text-white shadow-sm' : 'text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200'}`}>A</button>
-                          <button onClick={(e) => { e.preventDefault(); setTextSize('xlarge'); }} className={`flex-1 py-1 rounded text-base font-bold transition-all ${textSize === 'xlarge' ? 'bg-white dark:bg-slate-600 text-slate-800 dark:text-white shadow-sm' : 'text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200'}`}>A</button>
-                        </div>
-                      </div>
+                      <SettingsPanel variant="dropdown" />
                       
                       <div className="h-[1px] bg-slate-100 dark:bg-slate-800 my-1 transition-colors" />
                       
@@ -330,19 +286,7 @@ export function Navigation() {
                         <p className="text-sm font-semibold text-slate-800 dark:text-white transition-colors">Settings</p>
                       </div>
 
-                      {/* Dark Mode Toggle */}
-                      <div
-                        onClick={(e) => { e.preventDefault(); toggleDarkMode(); }}
-                        className="flex items-center justify-between rounded-lg cursor-pointer py-2.5 px-3 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
-                      >
-                        <span className="flex items-center gap-2 text-sm font-medium text-slate-700 dark:text-slate-300">
-                          {isDarkMode ? <Sun className="h-4 w-4 text-yellow-500" /> : <Moon className="h-4 w-4 text-indigo-500" />}
-                          Dark Mode
-                        </span>
-                        <div className={`relative w-9 h-5 rounded-full transition-colors duration-200 ${isDarkMode ? 'bg-indigo-600' : 'bg-slate-300'}`}>
-                          <div className={`absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform duration-200 ${isDarkMode ? 'translate-x-4' : 'translate-x-0'}`} />
-                        </div>
-                      </div>
+                      <SettingsPanel variant="dropdown" />
 
                       <div className="h-[1px] bg-slate-100 dark:bg-slate-800 my-1 transition-colors" />
 
@@ -355,37 +299,6 @@ export function Navigation() {
                           </span>
                         </DropdownMenuItem>
                       </Link>
-
-                      <div className="h-[1px] bg-slate-100 dark:bg-slate-800 my-1 transition-colors" />
-
-                      {/* Reduce Animations Toggle */}
-                      <div
-                        onClick={(e) => { e.preventDefault(); toggleReduceMotion(); }}
-                        className="flex items-center justify-between rounded-lg cursor-pointer py-2.5 px-3 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
-                      >
-                        <span className="flex items-center gap-2 text-sm font-medium text-slate-700 dark:text-slate-300">
-                          <Zap className="h-4 w-4 text-amber-500" />
-                          Performance Mode
-                        </span>
-                        <div className={`relative w-9 h-5 rounded-full transition-colors duration-200 ${reduceMotion ? 'bg-red-500' : 'bg-slate-300'}`}>
-                          <div className={`absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform duration-200 ${reduceMotion ? 'translate-x-4' : 'translate-x-0'}`} />
-                        </div>
-                      </div>
-
-                      <div className="h-[1px] bg-slate-100 dark:bg-slate-800 my-1 transition-colors" />
-
-                      {/* Text Size Control */}
-                      <div className="py-2.5 px-3">
-                        <span className="flex items-center gap-2 text-sm font-medium text-slate-700 dark:text-slate-300 mb-2 transition-colors">
-                          <Type className="h-4 w-4 text-blue-500" />
-                          Text Size
-                        </span>
-                        <div className="flex bg-slate-100 dark:bg-slate-800 rounded-md p-1 border border-slate-200 dark:border-slate-700 transition-colors">
-                          <button onClick={(e) => { e.preventDefault(); setTextSize('normal'); }} className={`flex-1 py-1 rounded text-xs font-bold transition-all ${textSize === 'normal' ? 'bg-white dark:bg-slate-600 text-slate-800 dark:text-white shadow-sm' : 'text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200'}`}>A</button>
-                          <button onClick={(e) => { e.preventDefault(); setTextSize('large'); }} className={`flex-1 py-1 rounded text-sm font-bold transition-all ${textSize === 'large' ? 'bg-white dark:bg-slate-600 text-slate-800 dark:text-white shadow-sm' : 'text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200'}`}>A</button>
-                          <button onClick={(e) => { e.preventDefault(); setTextSize('xlarge'); }} className={`flex-1 py-1 rounded text-base font-bold transition-all ${textSize === 'xlarge' ? 'bg-white dark:bg-slate-600 text-slate-800 dark:text-white shadow-sm' : 'text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200'}`}>A</button>
-                        </div>
-                      </div>
                     </DropdownMenuContent>
                   </DropdownMenu>
                   <Link href="/login" className="bg-yellow-400 border-[3px] border-white text-red-600 font-extrabold px-6 py-1.5 rounded-full shadow-[0_4px_0_#b45309] md:hover:-translate-y-0.5 md:hover:shadow-[0_6px_0_#b45309] active:translate-y-1 active:shadow-none transition-all duration-200 active:duration-75 text-sm tracking-wide">
@@ -396,7 +309,7 @@ export function Navigation() {
 
               {/* Notification bell for small mobile only (below sm) */}
               {isAuthenticated && (
-                <div className="sm:hidden">
+                <div className="sm:hidden relative flex items-center justify-center">
                   <NotificationPopover />
                 </div>
               )}
@@ -513,61 +426,7 @@ export function Navigation() {
               <TimeDisplay mobile />
             </div>
 
-            {/* Dark Mode Toggle (Mobile) */}
-            <div
-              onClick={toggleDarkMode}
-              className="flex items-center justify-between px-6 py-3 cursor-pointer hover:bg-white/5 transition-colors"
-            >
-              <span className="flex items-center gap-3 text-[15px] font-bold text-white">
-                {isDarkMode ? <Sun className="h-5 w-5 text-yellow-400 shrink-0" strokeWidth={2.5} /> : <Moon className="h-5 w-5 text-indigo-400 shrink-0" strokeWidth={2.5} />}
-                Dark Mode
-              </span>
-              <div className={`relative w-10 h-6 rounded-full transition-colors duration-200 ${isDarkMode ? 'bg-indigo-500' : 'bg-slate-600'}`}>
-                <div className={`absolute top-1 left-1 w-4 h-4 bg-white rounded-full shadow transition-transform duration-200 ${isDarkMode ? 'translate-x-4' : 'translate-x-0'}`} />
-              </div>
-            </div>
-
-            {/* Reduce Animations Toggle (Mobile) */}
-            <div
-              onClick={toggleReduceMotion}
-              className="flex items-center justify-between px-6 py-3 cursor-pointer hover:bg-white/5 transition-colors"
-            >
-              <span className="flex items-center gap-3 text-[15px] font-bold text-white">
-                <Zap className="h-5 w-5 text-amber-400 shrink-0" strokeWidth={2.5} />
-                Performance Mode
-              </span>
-              <div className={`relative w-10 h-6 rounded-full transition-colors duration-200 ${reduceMotion ? 'bg-red-500' : 'bg-slate-600'}`}>
-                <div className={`absolute top-1 left-1 w-4 h-4 bg-white rounded-full shadow transition-transform duration-200 ${reduceMotion ? 'translate-x-4' : 'translate-x-0'}`} />
-              </div>
-            </div>
-
-            {/* Font Size Control (Mobile) */}
-            <div className="px-6 py-3">
-              <div className="flex items-center gap-3 mb-3">
-                <Type className="h-5 w-5 text-blue-400 shrink-0" strokeWidth={2.5} />
-                <span className="text-[15px] font-bold text-white">Text Size</span>
-              </div>
-              <div className="flex bg-[#1e293b] rounded-lg p-1 border border-slate-700/50">
-                <button
-                  onClick={() => setTextSize('normal')}
-                  className={`flex-1 py-2 rounded-md text-sm font-bold transition-all ${textSize === 'normal' ? 'bg-yellow-400 text-black shadow-sm' : 'text-slate-300 hover:text-white'}`}
-                >
-                  Aa
-                </button>
-                <button
-                  onClick={() => setTextSize('large')}
-                  className={`flex-1 py-2 rounded-md text-base font-bold transition-all ${textSize === 'large' ? 'bg-yellow-400 text-black shadow-sm' : 'text-slate-300 hover:text-white'}`}
-                >
-                  Aa
-                </button>
-                <button
-                  onClick={() => setTextSize('xlarge')}
-                  className={`flex-1 py-2 rounded-md text-lg font-bold transition-all ${textSize === 'xlarge' ? 'bg-yellow-400 text-black shadow-sm' : 'text-slate-300 hover:text-white'}`}
-                >
-                  Aa
-                </button>
-              </div>
-            </div>
+            <SettingsPanel variant="mobile" />
 
             {/* Mobile User Info */}
             {isAuthenticated && (

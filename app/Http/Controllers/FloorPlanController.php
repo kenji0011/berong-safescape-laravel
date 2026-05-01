@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\FloorPlan;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class FloorPlanController extends Controller
 {
@@ -11,7 +13,8 @@ class FloorPlanController extends Controller
      */
     public function index()
     {
-        //
+        $floorPlans = FloorPlan::where('userId', Auth::id())->get();
+        return response()->json($floorPlans);
     }
 
     /**
@@ -19,7 +22,7 @@ class FloorPlanController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        // TODO: Validate and create, ensuring userId is set to Auth::id()
     }
 
     /**
@@ -27,7 +30,8 @@ class FloorPlanController extends Controller
      */
     public function show(string $id)
     {
-        //
+        $floorPlan = FloorPlan::where('id', $id)->where('userId', Auth::id())->firstOrFail();
+        return response()->json($floorPlan);
     }
 
     /**
@@ -35,7 +39,9 @@ class FloorPlanController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $floorPlan = FloorPlan::where('id', $id)->where('userId', Auth::id())->firstOrFail();
+        // TODO: Implement update logic
+        return response()->json($floorPlan);
     }
 
     /**
@@ -43,6 +49,38 @@ class FloorPlanController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $floorPlan = FloorPlan::where('id', $id)->where('userId', Auth::id())->firstOrFail();
+        $floorPlan->delete();
+        return response()->json(['success' => true]);
+    }
+
+    /**
+     * Clone an existing floor plan.
+     */
+    public function clone(string $id)
+    {
+        $floorPlan = FloorPlan::where('id', $id)->where('userId', Auth::id())->firstOrFail();
+        // TODO: Implement clone logic
+        return response()->json(['success' => true]);
+    }
+
+    /**
+     * Run simulation on floor plan.
+     */
+    public function runSimulation(string $id)
+    {
+        $floorPlan = FloorPlan::where('id', $id)->where('userId', Auth::id())->firstOrFail();
+        // TODO: Implement simulation run logic
+        return response()->json(['success' => true]);
+    }
+
+    /**
+     * Get simulation status.
+     */
+    public function simulationStatus(string $id)
+    {
+        $floorPlan = FloorPlan::where('id', $id)->where('userId', Auth::id())->firstOrFail();
+        // TODO: Implement simulation status logic
+        return response()->json(['success' => true]);
     }
 }

@@ -103,7 +103,11 @@ export function LandingAssessmentSection({ serverUser }: LandingAssessmentProps 
             setLoading(true)
             const response = await axios.get("/api/assessments/post-test-eligibility")
             setEligibility(response.data)
-        } catch (err) {
+        } catch (err: any) {
+            if (err.response && err.response.status === 401) {
+                // Silently ignore 401 Unauthorized errors
+                return;
+            }
             console.error("Failed to check eligibility", err)
         } finally {
             setLoading(false)

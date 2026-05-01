@@ -8,6 +8,7 @@ import { useState } from "react"
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -111,7 +112,9 @@ export function KidsWelcomeBanner({ completedModules = [], earnedBadges = [] }: 
                       </div>
                       <DialogHeader>
                         <DialogTitle className="text-2xl sm:text-3xl font-black text-white uppercase tracking-tighter mb-2">Hero Rank Guide</DialogTitle>
-                        <p className="text-white/80 font-bold text-sm">Collect badges to level up your Hero Rank!</p>
+                        <DialogDescription className="text-white/80 font-bold text-sm">
+                          Collect badges to level up your Hero Rank!
+                        </DialogDescription>
                       </DialogHeader>
                    </div>
                    

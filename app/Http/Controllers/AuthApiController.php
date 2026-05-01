@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rules\Password;
 
 class AuthApiController extends Controller
 {
@@ -51,6 +52,8 @@ class AuthApiController extends Controller
         $email = $request->input('email');
         if (!$email) {
             $errors['email'] = 'Email is required';
+        } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            $errors['email'] = 'Invalid email format';
         } elseif (User::where('email', $email)->exists()) {
             $errors['email'] = 'Email is already registered';
         }
@@ -76,8 +79,8 @@ class AuthApiController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'username' => 'required|string|min:3|max:20|unique:users',
-            'email' => 'required|email|unique:users',
-            'password' => 'required|string|min:8',
+            'email' => 'required|email:rfc,dns|unique:users',
+            'password' => ['required', 'string', Password::min(8)->mixedCase()->numbers()->symbols()],
             'firstName' => 'required|string|max:255',
             'lastName' => 'required|string|max:255',
             'age' => 'required|integer|min:1|max:99',
@@ -156,6 +159,9 @@ class AuthApiController extends Controller
         if ($schoolModel) {
             $schoolModel->recalculateAnalytics();
         }
+
+        // Fire registered event to trigger email verification
+        event(new \Illuminate\Auth\Events\Registered($user));
 
         // Log in the user
         Auth::login($user);
@@ -312,7 +318,7 @@ class AuthApiController extends Controller
 
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
-            'email' => 'nullable|email|max:255|unique:users,email,' . $user->id,
+            'email' => 'nullable|email:rfc,dns|max:255|unique:users,email,' . $user->id,
             'avatar' => 'nullable|string|max:50',
             'password' => 'required|string', // To confirm changes
         ]);
@@ -326,11 +332,19 @@ class AuthApiController extends Controller
         }
 
         $user->name = $request->name;
-        $user->email = $request->email;
+        
+        if ($user->email !== $request->email) {
+            $user->email = $request->email;
+            $user->save();
+        } else {
+            $user->email = $request->email;
+            $user->save();
+        }
+
         if ($request->has('avatar')) {
             $user->avatar = $request->avatar;
+            $user->save();
         }
-        $user->save();
 
         return response()->json([
             'success' => true,
@@ -382,7 +396,7 @@ class AuthApiController extends Controller
 
         $validator = Validator::make($request->all(), [
             'currentPassword' => 'required|string',
-            'newPassword' => 'required|string|min:8',
+            'newPassword' => ['required', 'string', Password::min(8)->mixedCase()->numbers()->symbols()],
             'confirmPassword' => 'required|same:newPassword',
         ]);
 
