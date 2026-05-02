@@ -81,14 +81,13 @@ export function HeroCarouselClient({ images }: HeroCarouselClientProps) {
                                 {/* Transparent Clickable Overlay Button */}
                                 <button
                                     onClick={() => handleImageClick(image)}
-                                    className="absolute inset-0 z-10 w-full h-full cursor-pointer bg-transparent hover:bg-white/5 transition-colors outline-none focus:ring-2 focus:ring-primary focus:ring-inset rounded-[2.5rem]"
+                                    className="absolute inset-0 z-10 w-full h-full cursor-zoom-in bg-transparent transition-colors outline-none focus:ring-2 focus:ring-primary focus:ring-inset rounded-[2.5rem] flex items-center justify-center group/overlay"
                                     aria-label={`View full screen image: ${image.title}`}
                                 >
-                                    {/* Maximize Icon (Top Right) */}
-                                    <div className="absolute top-3 right-3 sm:top-4 sm:right-4 opacity-100 sm:opacity-0 sm:group-hover/slide:opacity-100 transition-opacity duration-300">
-                                        <div className="bg-black/45 backdrop-blur-sm rounded-full p-1.5 sm:p-2 text-white shadow-sm">
-                                            <Maximize2 className="h-4 w-4 sm:h-5 sm:w-5" />
-                                        </div>
+                                    {/* Center Overlay Hint */}
+                                    <div className="opacity-0 group-hover/overlay:opacity-100 translate-y-4 group-hover/overlay:translate-y-0 transition-all duration-300 bg-slate-900/90 backdrop-blur-md text-white font-bold px-4 py-2 sm:px-6 sm:py-3 rounded-full flex items-center gap-2 shadow-2xl border border-slate-700/50 text-xs sm:text-sm">
+                                        <Maximize2 className="h-4 w-4 sm:h-5 sm:w-5" strokeWidth={2.5} />
+                                        Click to expand
                                     </div>
                                 </button>
                             </div>

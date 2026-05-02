@@ -127,7 +127,7 @@ export function Navigation() {
               <Link 
                 href="/" 
                 className={isDashboard 
-                  ? "font-extrabold text-sm tracking-wide uppercase px-4 xl:px-5 py-1.5 rounded-full border-[3px] border-white dark:border-slate-200 bg-yellow-400 text-black shadow-[0_4px_0_#b45309] dark:shadow-[0_4px_0_#0f172a] md:hover:-translate-y-0.5 md:hover:shadow-[0_6px_0_#b45309] dark:md:hover:shadow-[0_6px_0_#0f172a] active:translate-y-1 active:shadow-none transition-none"
+                  ? "font-extrabold text-sm tracking-wide uppercase px-4 xl:px-5 py-1.5 rounded-full border-[3px] border-white dark:border-slate-200 bg-yellow-400 text-black shadow-[0_4px_0_#b45309] md:hover:-translate-y-0.5 md:hover:shadow-[0_6px_0_#b45309] active:translate-y-1 active:shadow-none transition-none"
                   : "font-extrabold text-sm tracking-wide uppercase text-white md:hover:text-yellow-200 transition-none drop-shadow-sm py-1.5 px-2 xl:px-3 whitespace-nowrap"
                 }
               >
@@ -138,7 +138,7 @@ export function Navigation() {
                 <Link
                   href="/kids"
                   className={(!isDashboard && url.startsWith('/kids'))
-                    ? "font-extrabold text-sm tracking-wide uppercase px-4 xl:px-5 py-1.5 rounded-full border-[3px] border-white dark:border-slate-200 bg-yellow-400 text-black shadow-[0_4px_0_#b45309] dark:shadow-[0_4px_0_#0f172a] md:hover:-translate-y-0.5 md:hover:shadow-[0_6px_0_#b45309] dark:md:hover:shadow-[0_6px_0_#0f172a] active:translate-y-1 active:shadow-none transition-none flex items-center gap-1.5 whitespace-nowrap outline-none" 
+                    ? "font-extrabold text-sm tracking-wide uppercase px-4 xl:px-5 py-1.5 rounded-full border-[3px] border-white dark:border-slate-200 bg-yellow-400 text-black shadow-[0_4px_0_#b45309] md:hover:-translate-y-0.5 md:hover:shadow-[0_6px_0_#b45309] active:translate-y-1 active:shadow-none transition-none flex items-center gap-1.5 whitespace-nowrap outline-none" 
                     : "font-extrabold text-sm tracking-wide uppercase text-white md:hover:text-yellow-200 transition-none drop-shadow-sm py-1.5 px-2 xl:px-3 flex items-center gap-1.5 whitespace-nowrap outline-none cursor-pointer"
                   }
                 >
@@ -148,7 +148,7 @@ export function Navigation() {
                 <DropdownMenu modal={false}>
                   <DropdownMenuTrigger 
                     className={(!isDashboard && url !== '/login' && url !== '/register' && url !== '/about' && url !== '/profile')
-                      ? "font-extrabold text-sm tracking-wide uppercase px-4 xl:px-5 py-1.5 rounded-full border-[3px] border-white dark:border-slate-200 bg-yellow-400 text-black shadow-[0_4px_0_#b45309] dark:shadow-[0_4px_0_#0f172a] data-[state=closed]:md:hover:-translate-y-0.5 data-[state=closed]:md:hover:shadow-[0_6px_0_#b45309] dark:data-[state=closed]:md:hover:shadow-[0_6px_0_#0f172a] active:translate-y-1 active:shadow-none data-[state=open]:translate-y-1 data-[state=open]:shadow-none dark:data-[state=open]:shadow-none transition-all duration-200 flex items-center gap-1.5 group outline-none cursor-pointer" 
+                      ? "font-extrabold text-sm tracking-wide uppercase px-4 xl:px-5 py-1.5 rounded-full border-[3px] border-white dark:border-slate-200 bg-yellow-400 text-black shadow-[0_4px_0_#b45309] data-[state=closed]:md:hover:-translate-y-0.5 data-[state=closed]:md:hover:shadow-[0_6px_0_#b45309] active:translate-y-1 active:shadow-none data-[state=open]:translate-y-1 data-[state=open]:shadow-none transition-all duration-200 flex items-center gap-1.5 group outline-none cursor-pointer" 
                       : "font-extrabold text-sm tracking-wide uppercase text-white md:hover:text-yellow-200 data-[state=open]:text-yellow-400 data-[state=open]:translate-y-0.5 transition-all duration-200 drop-shadow-sm py-1.5 px-2 xl:px-3 flex items-center gap-1.5 whitespace-nowrap outline-none cursor-pointer"
                     }
                   >

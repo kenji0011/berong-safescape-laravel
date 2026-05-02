@@ -174,51 +174,67 @@ const AdultPageClient = ({ initialBlogs }: AdultPageClientProps) => {
                                 )}
                             </div>
                         ) : (
-                            <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6">
+                            <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6">
                                 {filteredBlogs.map((blog) => (
                                     <Link key={blog.id} href={`/adult/blog/${blog.id}`} className="outline-none block w-full group h-full">
-                                        <div className="flex flex-col h-full bg-white dark:bg-slate-800 rounded-2xl sm:rounded-3xl border-2 sm:border-[4px] border-white dark:border-slate-700 overflow-hidden relative transition-all duration-300 shadow-[0_4px_0_#cbd5e1] dark:shadow-[0_4px_0_#1e293b] sm:shadow-[0_6px_0_#cbd5e1] sm:dark:shadow-[0_6px_0_#1e293b] group-hover:-translate-y-1 sm:group-hover:-translate-y-1.5 group-hover:shadow-[0_6px_0_#cbd5e1] sm:group-hover:shadow-[0_12px_0_#cbd5e1] dark:group-hover:shadow-[0_12px_0_#1e293b] group-active:translate-y-[2px] sm:group-active:translate-y-[6px] group-active:shadow-[0_0px_0_#cbd5e1]">
-                                            {/* Image Header */}
-                                            <div className="h-28 sm:h-48 shrink-0 w-full border-b-2 sm:border-b-[3px] border-white dark:border-slate-700 relative overflow-hidden bg-slate-100 dark:bg-slate-900 transition-colors">
+                                        <div className="flex flex-col h-full bg-white dark:bg-slate-800/90 rounded-xl sm:rounded-[1.75rem] overflow-hidden relative transition-all duration-300 border-[2px] border-slate-100 dark:border-slate-700/80 shadow-[0_2px_12px_rgba(0,0,0,0.06)] dark:shadow-[0_2px_12px_rgba(0,0,0,0.3)] group-hover:-translate-y-1.5 group-hover:shadow-[0_12px_32px_rgba(0,0,0,0.1)] dark:group-hover:shadow-[0_12px_32px_rgba(0,0,0,0.5)] group-active:translate-y-0 group-active:shadow-[0_2px_8px_rgba(0,0,0,0.06)]">
+                                            {/* Image Section */}
+                                            <div className="relative h-28 sm:h-52 shrink-0 w-full overflow-hidden bg-slate-100 dark:bg-slate-900">
                                                 <img
                                                     src={blog.imageUrl || "/placeholder.svg?height=300&width=400"}
                                                     alt={blog.title}
                                                     decoding="async"
                                                     loading="lazy"
-                                                    className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                                                    className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-110"
                                                 />
-                                                {/* Image Overlay - Subtle darkening for text contrast if needed, but removed for now as it was obscuring the image */}
-                                                <div className="absolute inset-0 bg-black/10 dark:bg-black/20 z-0 transition-opacity" />
-                                                {/* Tag / Badge - Updated to Glassmorphism */}
-                                                <div className="absolute top-2 left-2 sm:top-3 sm:left-3 bg-black/40 backdrop-blur-md text-white text-[9px] sm:text-xs font-extrabold px-2 py-0.5 sm:px-3 sm:py-1 rounded-full border border-white/30 shadow-sm uppercase tracking-wide z-10">
-                                                    Article
+                                                {/* Bottom Gradient Overlay */}
+                                                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent z-[1]" />
+                                                
+                                                {/* Read Time / Date on Image */}
+                                                <div className="absolute bottom-3 left-3 z-[2] flex items-center gap-2">
+                                                    <span className="text-white/90 text-[10px] sm:text-xs font-bold flex items-center gap-1">
+                                                        <Calendar className="h-3 w-3" strokeWidth={2.5} />
+                                                        {new Date((blog as any).created_at || blog.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}
+                                                    </span>
                                                 </div>
                                             </div>
+
+                                            {/* Accent Line */}
+                                            <div className="h-[2px] sm:h-[3px] w-full bg-gradient-to-r from-orange-500 via-red-500 to-orange-400" />
                                             
                                             {/* Content Area */}
-                                            <div className="p-3 sm:p-5 flex flex-col flex-1 bg-white dark:bg-slate-800 transition-colors">
-                                                <div className="min-h-[2.5rem] sm:min-h-[3.5rem]">
-                                                    <h3 className="font-black text-xs sm:text-lg text-slate-800 dark:text-white line-clamp-2 mb-1 sm:mb-2 group-hover:text-red-600 dark:group-hover:text-red-400 transition-colors leading-tight">
-                                                        {blog.title}
-                                                    </h3>
-                                                </div>
+                                            <div className="p-2.5 sm:p-5 flex flex-col flex-1 bg-white dark:bg-slate-800/90 transition-colors">
+                                                <h3 className="font-black text-[11px] sm:text-[1.05rem] text-slate-800 dark:text-white line-clamp-2 mb-1.5 sm:mb-3 group-hover:text-orange-600 dark:group-hover:text-orange-400 transition-colors leading-snug tracking-tight">
+                                                    {blog.title}
+                                                </h3>
                                                 
-                                                <div className="hidden sm:block flex-1 min-h-[4.5rem]">
-                                                    <p className="text-sm font-bold text-slate-500 dark:text-slate-400 line-clamp-3 mb-4 transition-colors">
-                                                        {blog.excerpt || ''}
-                                                    </p>
-                                                </div>
+                                                <p className="text-[10px] sm:text-sm font-medium text-slate-500 dark:text-slate-400 line-clamp-2 sm:line-clamp-3 mb-2.5 sm:mb-5 leading-relaxed flex-1 transition-colors">
+                                                    {blog.excerpt || ''}
+                                                </p>
                                                 
-                                                {/* Metadata Footer */}
-                                                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between text-[9px] sm:text-xs font-bold text-slate-500 dark:text-slate-400 pt-2 sm:pt-4 border-t-2 sm:border-t-[3px] border-dashed border-slate-100 dark:border-slate-700 mt-auto gap-1 sm:gap-0 transition-colors">
-                                                    <div className="flex items-center gap-1 sm:gap-1.5 text-slate-700 dark:text-slate-200 bg-slate-50 dark:bg-slate-900 px-1.5 py-1 sm:px-2.5 sm:py-1.5 rounded-lg sm:rounded-xl border-[2px] border-white dark:border-slate-700 shadow-sm w-fit max-w-full overflow-hidden transition-colors">
-                                                        <User className="h-2.5 w-2.5 sm:h-3.5 sm:w-3.5 text-slate-800 dark:text-slate-300 shrink-0 transition-colors" strokeWidth={3} />
-                                                        <span className="truncate">{typeof blog.author === 'string' ? blog.author : blog.author?.name}</span>
+                                                {/* Footer */}
+                                                <div className="flex items-center justify-between pt-2 sm:pt-4 border-t border-slate-100 dark:border-slate-700/60 mt-auto transition-colors">
+                                                    {/* Author */}
+                                                    <div className="flex items-center gap-1.5 sm:gap-2 min-w-0">
+                                                        <div className="h-5 w-5 sm:h-7 sm:w-7 rounded-full bg-gradient-to-br from-orange-400 to-red-500 flex items-center justify-center shrink-0 shadow-sm">
+                                                            <User className="h-2.5 w-2.5 sm:h-3.5 sm:w-3.5 text-white" strokeWidth={3} />
+                                                        </div>
+                                                        <span className="hidden sm:inline text-xs font-bold text-slate-600 dark:text-slate-300 truncate transition-colors">
+                                                            {typeof blog.author === 'string' ? blog.author : blog.author?.name}
+                                                        </span>
+                                                        <span className="sm:hidden text-[9px] font-bold text-slate-500 dark:text-slate-400 truncate transition-colors">
+                                                            {(() => {
+                                                                const name = typeof blog.author === 'string' ? blog.author : blog.author?.name || '';
+                                                                return name.length > 10 ? name.split(' ')[0] : name;
+                                                            })()}
+                                                        </span>
                                                     </div>
-                                                    <div className="flex items-center gap-1 sm:gap-1.5 bg-slate-50 dark:bg-slate-900 px-1.5 py-1 sm:px-2.5 sm:py-1.5 rounded-lg sm:rounded-xl border-[2px] border-white dark:border-slate-700 shadow-sm w-fit max-w-full overflow-hidden transition-colors">
-                                                        <Calendar className="h-2.5 w-2.5 sm:h-3.5 sm:w-3.5 text-slate-600 dark:text-slate-400 shrink-0 transition-colors" strokeWidth={3} />
-                                                        <span className="truncate">{new Date((blog as any).created_at || blog.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}</span>
-                                                    </div>
+                                                    
+                                                    {/* Read More CTA */}
+                                                    <span className="text-[9px] sm:text-xs font-black text-orange-500 dark:text-orange-400 flex items-center gap-0.5 sm:gap-1 shrink-0 group-hover:gap-2 transition-all">
+                                                        Read
+                                                        <ArrowRight className="h-2.5 w-2.5 sm:h-3.5 sm:w-3.5" strokeWidth={3} />
+                                                    </span>
                                                 </div>
                                             </div>
                                         </div>

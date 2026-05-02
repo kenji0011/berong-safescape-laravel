@@ -11,33 +11,33 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   const { url } = usePage();
   const isAuthPage = url.startsWith('/login') || url.startsWith('/register');
   return (
-    <div className="antialiased relative min-h-screen font-sans overflow-x-hidden bg-slate-50 dark:bg-slate-950 transition-colors duration-500">
-      <Suspense fallback={null}>
-        <PageLoader />
-      </Suspense>
+    <AuthProvider>
+      <div className="antialiased relative min-h-screen font-sans overflow-x-hidden bg-slate-50 dark:bg-slate-950 transition-colors duration-500">
+        <Suspense fallback={null}>
+          <PageLoader />
+        </Suspense>
 
-      {/* Background Image Layer - 20% opacity */}
-      <div
-        className="fixed inset-0 opacity-10 sm:opacity-20 bg-cover z-0 pointer-events-none transform-gpu"
-        style={{ 
-          backgroundImage: "url('/web-background-image.jpg')", 
-          backgroundPosition: 'center 80%',
-          backfaceVisibility: 'hidden',
-          WebkitBackfaceVisibility: 'hidden'
-        }}
-      />
+        {/* Background Image Layer - 20% opacity */}
+        <div
+          className="fixed inset-0 opacity-10 sm:opacity-20 bg-cover z-0 pointer-events-none transform-gpu"
+          style={{ 
+            backgroundImage: "url('/web-background-image.jpg')", 
+            backgroundPosition: 'center 80%',
+            backfaceVisibility: 'hidden',
+            WebkitBackfaceVisibility: 'hidden'
+          }}
+        />
 
-      {/* Content Layer - Full opacity */}
-      <div className="relative z-10 w-full min-h-screen flex flex-col">
-        <AuthProvider>
+        {/* Content Layer - Full opacity */}
+        <div className="relative z-10 w-full min-h-screen flex flex-col">
           <ProfileCheckWrapper>
             {children}
           </ProfileCheckWrapper>
           {!isAuthPage && <Chatbot />}
           <LoginLoader />
           <LogoutLoader />
-        </AuthProvider>
+        </div>
       </div>
-    </div>
+    </AuthProvider>
   );
 }

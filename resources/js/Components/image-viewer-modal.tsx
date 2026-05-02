@@ -28,7 +28,7 @@ export function ImageViewerModal({
                 showCloseButton={false}
             >
                 <DialogTitle className="sr-only">{imageTitle}</DialogTitle>
-                <div className="relative w-full h-full flex flex-col items-center justify-center p-2 sm:p-4">
+                <div className="relative w-full h-full flex flex-col items-center justify-center p-2 sm:p-4 cursor-zoom-out" onClick={onClose}>
                     <div className="relative w-full h-[80vh] sm:h-[90vh] bg-black/80 rounded-2xl overflow-hidden border border-white/10 shadow-2xl flex items-center justify-center">
                         <Image
                             src={imageUrl}

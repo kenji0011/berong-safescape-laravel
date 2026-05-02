@@ -20,6 +20,7 @@ const ALL_BADGES = [
   { id: 'memory_master', name: "Memory Master", source: "Memory Game", icon: "🧠", hint: "Finish the Memory Match game with zero mistakes.", target: "/kids/challenges" },
   { id: 'smoke_scout', name: "Smoke Scout", source: "Smoke Crawl", icon: "🔦", hint: "Navigate the Smoke Labyrinth safely.", target: "/kids/safescape/4" },
   { id: 'safety_scout', name: "Safety Scout", source: "Hot or Not", icon: "🤖", hint: "Correcty identify all hazards in the Hazard House.", target: "/kids/challenges" },
+  { id: 'hazard_hero', name: "Hazard Hero", source: "Hazard Blitz", icon: "⚡", hint: "Neutralize hazards and reach 500 points in Hazard Blitz.", target: "/kids/challenges" },
   { id: 'intel_analyst', name: "Intel Analyst", source: "Videos", icon: "🎬", hint: "Watch all fire safety training videos.", target: "/kids/videos" }
 ]
 
@@ -81,7 +82,7 @@ const BadgeHallPage = ({ completedModules = [], earnedBadges = [] }: BadgeHallPr
                 <div 
                   key={i} 
                   className={cn(
-                    "group relative p-4 sm:p-6 rounded-2xl sm:rounded-[2.5rem] border-2 sm:border-[3px] transition-all duration-500 flex flex-col aspect-square sm:aspect-auto sm:h-[300px] overflow-hidden",
+                    "group relative p-4 sm:p-6 rounded-2xl sm:rounded-[2.5rem] border-2 sm:border-[3px] transition-all duration-500 flex flex-col min-h-[200px] h-auto sm:min-h-[280px] sm:h-auto overflow-hidden",
                     state.isEarned 
                       ? "bg-slate-800 border-white/10 shadow-xl hover:-translate-y-1.5 sm:hover:-translate-y-2" 
                       : "bg-slate-950/40 border-slate-800/40 opacity-60"
@@ -130,7 +131,7 @@ const BadgeHallPage = ({ completedModules = [], earnedBadges = [] }: BadgeHallPr
                     </div>
                     
                     <p className={cn(
-                      "text-[10px] sm:text-sm font-bold leading-tight line-clamp-2 sm:line-clamp-4",
+                      "text-[10px] sm:text-sm font-bold leading-tight line-clamp-3 sm:line-clamp-none",
                       state.isEarned ? "text-slate-400" : "text-slate-600 italic"
                     )}>
                       {state.isEarned 

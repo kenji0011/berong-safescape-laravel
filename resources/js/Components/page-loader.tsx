@@ -4,11 +4,13 @@ import { useEffect, useState } from 'react';
 import { router, usePage } from '@inertiajs/react';
 import { motion, AnimatePresence } from 'motion/react';
 import Image from '@/components/Image';
+import { useAuth } from '@/lib/auth-context';
 
 export function PageLoader() {
     const pathname = usePage().url;
     const searchParams = new URLSearchParams(window.location.search);
     const [isLoading, setIsLoading] = useState(false);
+    const { isAuthenticating, isLoggingOut } = useAuth();
 
     useEffect(() => {
         // Set loading to false after navigation completes
@@ -30,7 +32,7 @@ export function PageLoader() {
 
     return (
         <AnimatePresence>
-            {isLoading && (
+            {isLoading && !isAuthenticating && !isLoggingOut && (
                 <motion.div 
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}

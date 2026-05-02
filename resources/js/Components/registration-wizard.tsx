@@ -517,6 +517,7 @@ export function RegistrationWizard({ onBackToLogin }: RegistrationWizardProps) {
               <Label htmlFor="lastName" className="text-sm font-bold text-slate-700 dark:text-slate-300 transition-colors">Last Name *</Label>
               <Input
                 id="lastName"
+                autoComplete="family-name"
                 placeholder="Enter your last name"
                 value={data.lastName}
                 onChange={(e) => updateField("lastName", e.target.value)}
@@ -531,6 +532,7 @@ export function RegistrationWizard({ onBackToLogin }: RegistrationWizardProps) {
               <Label htmlFor="firstName" className="text-sm font-bold text-slate-700 dark:text-slate-300 transition-colors">First Name *</Label>
               <Input
                 id="firstName"
+                autoComplete="given-name"
                 placeholder="Enter your first name"
                 value={data.firstName}
                 onChange={(e) => updateField("firstName", e.target.value)}
@@ -557,6 +559,7 @@ export function RegistrationWizard({ onBackToLogin }: RegistrationWizardProps) {
               <Input
                 id="age"
                 type="number"
+                inputMode="numeric"
                 placeholder="Enter your age"
                 min="1"
                 max="99"
@@ -743,6 +746,7 @@ export function RegistrationWizard({ onBackToLogin }: RegistrationWizardProps) {
                 <Label htmlFor="username" className="text-sm font-bold text-slate-700 dark:text-slate-300 ml-1 transition-colors">Username *</Label>
                 <Input
                   id="username"
+                  autoComplete="username"
                   placeholder="Choose a username"
                   value={data.username}
                   onChange={(e) => updateField("username", e.target.value)}
@@ -761,6 +765,7 @@ export function RegistrationWizard({ onBackToLogin }: RegistrationWizardProps) {
                 <Input
                   id="email"
                   type="email"
+                  autoComplete="email"
                   placeholder="example@gmail.com"
                   value={data.email}
                   onChange={(e) => updateField("email", e.target.value)}
@@ -779,6 +784,7 @@ export function RegistrationWizard({ onBackToLogin }: RegistrationWizardProps) {
                   <Input
                     id="password"
                     type={showPassword ? "text" : "password"}
+                    autoComplete="new-password"
                     placeholder="Create a password"
                     value={data.password}
                     onChange={(e) => updateField("password", e.target.value)}
@@ -802,6 +808,7 @@ export function RegistrationWizard({ onBackToLogin }: RegistrationWizardProps) {
                 <Input
                   id="confirmPassword"
                   type={showPassword ? "text" : "password"}
+                  autoComplete="new-password"
                   placeholder="Confirm your password"
                   value={data.confirmPassword}
                   onChange={(e) => updateField("confirmPassword", e.target.value)}

@@ -86,7 +86,6 @@ export default function ProfilePage() {
   // Scores
   const [scores, setScores] = useState<UserScores | null>(null)
   const [scoresLoading, setScoresLoading] = useState(true)
-  const [showPasswordRequirements, setShowPasswordRequirements] = useState(false)
 
   useEffect(() => {
     if (isLoading) return
@@ -542,11 +541,6 @@ export default function ProfilePage() {
                         setError("")
                         setPassword({ ...password, new: e.target.value })
                       }}
-                      onFocus={() => setShowPasswordRequirements(true)}
-                      onBlur={() => {
-                        // Delay hide so user can see it briefly after finishing
-                        setTimeout(() => setShowPasswordRequirements(false), 200)
-                      }}
                       className="rounded-2xl border-2 border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-4 py-6 pr-12 focus-visible:border-red-500 dark:focus-visible:border-red-500 focus-visible:ring-offset-0 focus-visible:ring-0 transition-colors font-medium text-slate-700 dark:text-slate-200"
                     />
                     <button
@@ -557,43 +551,32 @@ export default function ProfilePage() {
                     >
                       {showNewPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
                     </button>
-
-                    {/* Floating Password Requirements Popup */}
-                    <AnimatePresence>
-                      {showPasswordRequirements && (
-                        <motion.div 
-                          initial={{ opacity: 0, y: 10, scale: 0.95 }}
-                          animate={{ opacity: 1, y: 0, scale: 1 }}
-                          exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                          className="absolute bottom-full mb-3 left-0 right-0 z-[100] bg-white dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-700 rounded-[2rem] p-5 shadow-2xl shadow-slate-200/50 dark:shadow-slate-950/50 transition-colors"
-                        >
-                          <p className="text-[10px] font-black text-slate-700 dark:text-slate-300 mb-4 uppercase tracking-wider flex items-center gap-2">
-                            <Shield className="h-3 w-3 text-orange-500" />
-                            Password Strength
-                          </p>
-                          <div className="grid grid-cols-1 gap-y-2.5">
-                            {[
-                              { label: "At least 8 characters", met: password.new.length >= 8 },
-                              { label: "One uppercase letter", met: /[A-Z]/.test(password.new) },
-                              { label: "One lowercase letter", met: /[a-z]/.test(password.new) },
-                              { label: "One number (0-9)", met: /[0-9]/.test(password.new) },
-                              { label: "One special character (!@#...)", met: /[^A-Za-z0-9]/.test(password.new) },
-                            ].map((req, i) => (
-                              <div key={i} className="flex items-center gap-3">
-                                <div className={`h-5 w-5 rounded-full flex items-center justify-center transition-all duration-300 ${req.met ? "bg-green-500 scale-110" : "bg-slate-100 dark:bg-slate-800"}`}>
-                                  <Check className={`h-3 w-3 text-white transition-opacity ${req.met ? "opacity-100" : "opacity-0"}`} strokeWidth={4} />
-                                </div>
-                                <span className={`text-xs font-bold transition-colors ${req.met ? "text-green-700 dark:text-green-400" : "text-slate-500 dark:text-slate-400"}`}>
-                                  {req.label}
-                                </span>
-                              </div>
-                            ))}
+                  </div>
+                  
+                  {/* Permanent Password Requirements - Inline Below Input */}
+                  <div className="bg-slate-50 dark:bg-slate-900/50 border-2 border-slate-200 dark:border-slate-800 rounded-2xl p-5 transition-colors">
+                    <p className="text-[10px] font-black text-slate-700 dark:text-slate-300 mb-4 uppercase tracking-wider flex items-center gap-2">
+                      <Shield className="h-3 w-3 text-orange-500" />
+                      Password Strength
+                    </p>
+                    <div className="grid grid-cols-2 gap-x-4 gap-y-2.5">
+                      {[
+                        { label: "At least 8 characters", met: password.new.length >= 8 },
+                        { label: "One uppercase letter", met: /[A-Z]/.test(password.new) },
+                        { label: "One lowercase letter", met: /[a-z]/.test(password.new) },
+                        { label: "One number (0-9)", met: /[0-9]/.test(password.new) },
+                        { label: "One special character (!@#...)", met: /[^A-Za-z0-9]/.test(password.new) },
+                      ].map((req, i) => (
+                        <div key={i} className="flex items-center gap-2.5">
+                          <div className={`h-4 w-4 shrink-0 rounded-full flex items-center justify-center transition-all duration-300 ${req.met ? "bg-green-500 scale-110" : "bg-slate-100 dark:bg-slate-800"}`}>
+                            <Check className={`h-2.5 w-2.5 text-white transition-opacity ${req.met ? "opacity-100" : "opacity-0"}`} strokeWidth={5} />
                           </div>
-                          {/* Triangle tail */}
-                          <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-4 h-4 bg-white dark:bg-slate-900 border-r-2 border-b-2 border-slate-200 dark:border-slate-700 rotate-45" />
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
+                          <span className={`text-[10px] sm:text-xs font-bold leading-tight transition-colors ${req.met ? "text-green-700 dark:text-green-400" : "text-slate-500 dark:text-slate-400"}`}>
+                            {req.label}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
                   </div>
                 </div>
                 <div className="space-y-2">
@@ -876,20 +859,26 @@ export default function ProfilePage() {
 
       {/* Password Confirmation Dialog */}
       <Dialog open={showConfirmDialog} onOpenChange={setShowConfirmDialog}>
-        <DialogContent className="sm:max-w-md">
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
-              <Key className="h-5 w-5 text-orange-500" />
-              Confirm Changes
-            </DialogTitle>
-            <DialogDescription>
-              Enter your password to save profile changes.
-            </DialogDescription>
-          </DialogHeader>
+        <DialogContent className="sm:max-w-md rounded-[2rem] border-[3px] border-slate-200 dark:border-slate-700 p-0 overflow-hidden shadow-[0_8px_0_#e2e8f0] dark:shadow-[0_8px_0_#0f172a] bg-white dark:bg-slate-800 transition-colors">
+          {/* Header */}
+          <div className="bg-slate-50 dark:bg-slate-900 border-b-2 border-slate-100 dark:border-slate-700 p-6 sm:p-8 transition-colors">
+            <DialogHeader>
+              <DialogTitle className="flex items-center gap-3 text-xl font-black text-slate-800 dark:text-white transition-colors">
+                <div className="bg-orange-100 dark:bg-orange-900/30 p-2 rounded-xl transition-colors">
+                  <Key className="h-5 w-5 text-orange-500 dark:text-orange-400" strokeWidth={2.5} />
+                </div>
+                Confirm Changes
+              </DialogTitle>
+              <DialogDescription className="text-slate-500 dark:text-slate-400 font-medium mt-1 ml-1 transition-colors">
+                Enter your password to save profile changes.
+              </DialogDescription>
+            </DialogHeader>
+          </div>
 
-          <div className="space-y-4 py-2">
+          {/* Body */}
+          <div className="p-6 sm:p-8 space-y-5">
             <div className="space-y-2">
-              <Label htmlFor="confirm-edit-password">Password</Label>
+              <Label htmlFor="confirm-edit-password" className="font-bold text-slate-700 dark:text-slate-300 ml-1 transition-colors">Password</Label>
               <div className="relative">
                 <Input
                   id="confirm-edit-password"
@@ -901,54 +890,56 @@ export default function ProfilePage() {
                     setConfirmPassword(e.target.value)
                   }}
                   onKeyDown={(e) => { if (e.key === 'Enter' && confirmPassword) handleConfirmUpdate() }}
-                  className="pr-10"
+                  className="rounded-2xl border-2 border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-4 py-6 pr-12 focus-visible:border-orange-500 dark:focus-visible:border-orange-500 focus-visible:ring-offset-0 focus-visible:ring-0 transition-colors font-medium text-slate-700 dark:text-slate-200"
                   autoFocus
                 />
                 <button
                   type="button"
                   onClick={() => setShowConfirmPasswordField(!showConfirmPasswordField)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 transition-colors"
                   tabIndex={-1}
                 >
-                  {showConfirmPasswordField ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  {showConfirmPasswordField ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
                 </button>
               </div>
             </div>
 
             {confirmError && (
-              <Alert variant="destructive">
-                <AlertCircle className="h-4 w-4" />
-                <AlertDescription>{confirmError}</AlertDescription>
-              </Alert>
+              <div className="flex items-center gap-2.5 bg-red-50 dark:bg-red-950/30 border-2 border-red-200 dark:border-red-900/50 text-red-700 dark:text-red-400 rounded-xl p-3 transition-colors">
+                <AlertCircle className="h-4 w-4 shrink-0" strokeWidth={2.5} />
+                <span className="text-sm font-bold">{confirmError}</span>
+              </div>
             )}
-          </div>
 
-          <DialogFooter>
-            <Button
-              variant="outline"
-              onClick={() => {
-                setShowConfirmDialog(false)
-                setConfirmPassword("")
-                setConfirmError("")
-              }}
-            >
-              Cancel
-            </Button>
-            <Button
-              onClick={handleConfirmUpdate}
-              disabled={confirmLoading || !confirmPassword}
-              className="bg-orange-500 hover:bg-orange-600"
-            >
-              {confirmLoading ? (
-                <>
-                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                  Saving...
-                </>
-              ) : (
-                "Confirm & Save"
-              )}
-            </Button>
-          </DialogFooter>
+            {/* Actions */}
+            <div className="flex items-center gap-3 pt-2">
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setShowConfirmDialog(false)
+                  setConfirmPassword("")
+                  setConfirmError("")
+                }}
+                className="flex-1 rounded-full border-2 border-slate-200 dark:border-slate-700 font-black py-6 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 transition-all uppercase tracking-wider text-xs"
+              >
+                Cancel
+              </Button>
+              <Button
+                onClick={handleConfirmUpdate}
+                disabled={confirmLoading || !confirmPassword}
+                className="flex-[2] bg-orange-500 hover:bg-orange-600 text-white rounded-full font-black py-6 shadow-[0_4px_0_#c2410c] hover:-translate-y-0.5 hover:shadow-[0_6px_0_#c2410c] active:translate-y-1 active:shadow-[0_0px_0_#c2410c] transition-all uppercase tracking-wider text-xs"
+              >
+                {confirmLoading ? (
+                  <>
+                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                    Saving...
+                  </>
+                ) : (
+                  "Confirm & Save"
+                )}
+              </Button>
+            </div>
+          </div>
         </DialogContent>
       </Dialog>
       {/* Hero Selection Modal */}

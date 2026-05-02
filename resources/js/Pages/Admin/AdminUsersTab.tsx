@@ -64,6 +64,17 @@ export const AdminUsersTab: React.FC<UsersTabProps> = ({
                   <div className="flex flex-wrap items-center gap-2">
                     <button
                       type="button"
+                      onClick={() => promptRoleChange(u.id, "accessKids", u.name, u.permissions.accessKids ? "remove" : "add")}
+                      className={`inline-flex items-center justify-center font-extrabold px-4 pb-2 pt-2.5 rounded-xl text-xs sm:text-sm transition-all ${
+                        u.permissions.accessKids
+                          ? "bg-yellow-500 dark:bg-yellow-600 text-white shadow-[0_4px_0_#ca8a04] dark:shadow-[0_4px_0_#0f172a] hover:-translate-y-0.5 hover:shadow-[0_6px_0_#ca8a04] hover:bg-red-600 dark:hover:bg-red-700 hover:shadow-[0_4px_0_#991b1b] active:translate-y-1 active:shadow-[0_0px_0_#991b1b]"
+                          : "bg-white dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 shadow-[0_4px_0_#e2e8f0] dark:shadow-[0_4px_0_#0f172a] hover:-translate-y-0.5 hover:shadow-[0_6px_0_#e2e8f0] dark:hover:shadow-[0_6px_0_#0f172a] hover:bg-slate-50 dark:hover:bg-slate-700 hover:text-slate-700 dark:hover:text-slate-200 active:translate-y-1 active:shadow-[0_0px_0_#e2e8f0]"
+                      }`}
+                    >
+                      Kid Access {u.permissions.accessKids && <Trash2 className="h-4 w-4 ml-2 inline opacity-0 group-hover:opacity-100 transition-opacity" strokeWidth={2.5} style={{ opacity: 0.7 }} />}
+                    </button>
+                    <button
+                      type="button"
                       onClick={() => promptRoleChange(u.id, "accessAdult", u.name, u.permissions.accessAdult ? "remove" : "add")}
                       className={`inline-flex items-center justify-center font-extrabold px-4 pb-2 pt-2.5 rounded-xl text-xs sm:text-sm transition-all ${
                         u.permissions.accessAdult

@@ -147,27 +147,28 @@ export function NotificationPopover() {
     return `${Math.floor(diffInSeconds / 86400)}d ago`;
   };
 
-  const getNotificationIcon = (type: string) => {
+  const getNotificationIcon = (type: string, isSmall: boolean = false) => {
+    const sizeClasses = isSmall ? "h-3.5 w-3.5" : "h-5 w-5";
     switch (type) {
-      case "urgent": return <Bell className="h-4 w-4 text-destructive" />;
-      case "warning": return <Bell className="h-4 w-4 text-yellow-500" />;
-      case "success": return <Bell className="h-4 w-4 text-green-500" />;
-      case "blog": return <Bell className="h-4 w-4 text-primary" />;
-      case "video": return <Bell className="h-4 w-4 text-secondary" />;
-      case "achievement": return <Trophy className="h-4 w-4 text-yellow-600" />;
-      default: return <Bell className="h-4 w-4 text-primary" />;
+      case "urgent": return <Bell className={`${sizeClasses} text-white`} />;
+      case "warning": return <Bell className={`${sizeClasses} text-white`} />;
+      case "success": return <Check className={`${sizeClasses} text-white`} />;
+      case "blog": return <Bell className={`${sizeClasses} text-white`} />;
+      case "video": return <Bell className={`${sizeClasses} text-white`} />;
+      case "achievement": return <Trophy className={`${sizeClasses} text-white`} />;
+      default: return <Bell className={`${sizeClasses} text-white`} />;
     }
   };
 
   const getNotificationBadge = (type: string) => {
     switch (type) {
-      case "urgent": return "bg-destructive";
+      case "urgent": return "bg-red-500";
       case "warning": return "bg-yellow-500";
       case "success": return "bg-green-500";
-      case "blog": return "bg-primary";
-      case "video": return "bg-secondary";
-      case "achievement": return "bg-yellow-400";
-      default: return "bg-primary";
+      case "blog": return "bg-blue-500";
+      case "video": return "bg-purple-500";
+      case "achievement": return "bg-orange-500";
+      default: return "bg-blue-500";
     }
   };
 
@@ -198,28 +199,29 @@ export function NotificationPopover() {
             }}
           >
             {/* Arrow pointing up to the bell */}
-            <div className="absolute -top-[10px] right-3 sm:right-4 w-4 h-4 bg-white dark:bg-slate-900 border-t-[3px] border-l-[3px] border-blue-500 dark:border-blue-600 rotate-45 rounded-tl-[2px] z-0" />
+            <div className="absolute -top-[10px] right-3 sm:right-4 w-4 h-4 bg-white dark:bg-slate-900 border-t-[3px] border-l-[3px] border-blue-500 dark:border-blue-600 rotate-45 rounded-tl-[2px] z-0 transition-colors" />
             
             <div className="relative z-10 p-4 rounded-[13px] overflow-hidden">
-              <div className="absolute inset-0 bg-blue-50/50 dark:bg-blue-900/10 opacity-0 group-hover:opacity-100 transition-opacity" />
               <div className="relative z-10">
-                <div className="flex items-center gap-3 mb-3">
-                  <div className={`h-8 w-8 rounded-full flex items-center justify-center shadow-inner ${getNotificationBadge(previewNotification.type)}`}>
-                    {getNotificationIcon(previewNotification.type)}
-                  </div>
-                  <div className="flex flex-col">
-                    <span className="text-[10px] font-black text-blue-600 dark:text-blue-400 uppercase tracking-widest leading-none mb-1">New Notification</span>
-                    <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wider leading-none">{formatDate(previewNotification.createdAt)}</span>
+                <div className="flex items-center justify-between mb-4">
+                  <div className="flex items-center gap-3">
+                    <div className={`h-10 w-10 rounded-xl flex items-center justify-center shadow-inner border-[3px] border-white/20 ${getNotificationBadge(previewNotification.type)}`}>
+                      {getNotificationIcon(previewNotification.type, false)}
+                    </div>
+                    <div className="flex flex-col">
+                      <span className="text-[11px] font-black text-slate-800 dark:text-white uppercase tracking-widest leading-none mb-1">New Alert</span>
+                      <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider leading-none">{formatDate(previewNotification.createdAt)}</span>
+                    </div>
                   </div>
                   <button 
                     onClick={(e) => { e.stopPropagation(); setPreviewNotification(null); }}
-                    className="ml-auto text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 h-6 w-6 flex items-center justify-center rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                    className="text-slate-400 hover:text-slate-600 dark:text-slate-500 dark:hover:text-slate-300 h-8 w-8 flex items-center justify-center rounded-full bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors border-2 border-transparent hover:border-slate-300 dark:hover:border-slate-600 outline-none"
                   >
-                    <X className="h-4 w-4" />
+                    <X className="h-4 w-4" strokeWidth={3} />
                   </button>
                 </div>
-                <h5 className="text-base font-black text-slate-800 dark:text-white line-clamp-1 mb-1">{previewNotification.title}</h5>
-                <p className="text-sm font-medium text-slate-500 dark:text-slate-400 line-clamp-2 leading-snug">{previewNotification.message}</p>
+                <h5 className="text-base font-black text-slate-800 dark:text-white line-clamp-1 mb-1.5">{previewNotification.title}</h5>
+                <p className="text-sm font-medium text-slate-500 dark:text-slate-400 line-clamp-2 leading-relaxed">{previewNotification.message}</p>
                 
                 <div className="mt-4 flex items-center justify-between border-t border-slate-100 dark:border-slate-800 pt-3">
                   <div className="flex items-center gap-1.5">
@@ -227,7 +229,7 @@ export function NotificationPopover() {
                     <div className="w-1.5 h-1.5 rounded-full bg-blue-400 animate-pulse delay-75" />
                     <div className="w-1.5 h-1.5 rounded-full bg-blue-300 animate-pulse delay-150" />
                   </div>
-                  <div className="text-xs font-black text-blue-600 dark:text-blue-400 flex items-center gap-1 group-hover:translate-x-1 transition-transform">
+                  <div className="text-xs font-black text-blue-600 dark:text-blue-400 flex items-center gap-1">
                     View Details <ArrowRight className="h-3.5 w-3.5" />
                   </div>
                 </div>
@@ -270,8 +272,8 @@ export function NotificationPopover() {
                         }`}
                     >
                       <div className="flex items-start gap-3">
-                        <div className={`mt-0.5 flex h-6 w-6 items-center justify-center rounded-full ${getNotificationBadge(notification.type)}`}>
-                          {getNotificationIcon(notification.type)}
+                        <div className={`mt-0.5 flex h-7 w-7 items-center justify-center rounded-full shadow-inner ${getNotificationBadge(notification.type)}`}>
+                          {getNotificationIcon(notification.type, true)}
                         </div>
                         <div className="flex-1 min-w-0 pr-8">
                           <div className="flex items-center gap-2">

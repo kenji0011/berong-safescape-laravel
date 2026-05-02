@@ -219,12 +219,12 @@ function AuthContent() {
   }
 
   return (
-    <div className="min-h-screen bg-background flex flex-col items-center justify-center p-4 sm:p-6 relative overflow-hidden transition-colors duration-500">
+    <div className="min-h-screen bg-white dark:bg-slate-950 bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] dark:bg-[radial-gradient(#1e293b_1px,transparent_1px)] [background-size:16px_16px] flex flex-col items-center justify-center p-4 sm:p-6 relative overflow-hidden transition-colors duration-500">
 
 
       {/* Registration Wizard Modal - Full screen overlay */}
       {showRegistrationWizard && (
-        <div className="fixed inset-0 z-50 bg-background flex items-start justify-center overflow-y-auto py-6 sm:py-8">
+        <div className="fixed inset-0 z-50 bg-white dark:bg-slate-950 bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] dark:bg-[radial-gradient(#1e293b_1px,transparent_1px)] [background-size:16px_16px] flex items-start justify-center overflow-y-auto overscroll-y-contain py-6 sm:py-8">
           <div className="w-full max-w-3xl mx-2 sm:mx-4">
             <RegistrationWizard onBackToLogin={() => setShowRegistrationWizard(false)} />
           </div>
@@ -271,8 +271,8 @@ function AuthContent() {
           <CardContent className="relative z-10 px-5 sm:px-8">
             <Tabs defaultValue={defaultTab} className="w-full">
               <TabsList className="grid w-full grid-cols-2 bg-slate-100 dark:bg-slate-800 p-1 sm:p-1.5 rounded-xl sm:rounded-2xl h-12 sm:h-14 mb-4 sm:mb-6 transition-colors">
-                <TabsTrigger value="login" className="rounded-lg sm:rounded-xl font-extrabold text-slate-400 dark:text-slate-500 text-xs sm:text-sm data-[state=active]:bg-[#d60000] dark:data-[state=active]:bg-red-600 data-[state=active]:text-white dark:data-[state=active]:text-white data-[state=active]:shadow-[0_3px_0_#991b1b] dark:data-[state=active]:shadow-[0_3px_0_#7f1d1d] transition-all duration-300 h-full">Log In</TabsTrigger>
-                <TabsTrigger value="register" className="rounded-lg sm:rounded-xl font-extrabold text-slate-400 dark:text-slate-500 text-xs sm:text-sm data-[state=active]:bg-[#2563eb] dark:data-[state=active]:bg-blue-600 data-[state=active]:text-white dark:data-[state=active]:text-white data-[state=active]:shadow-[0_3px_0_#1e40af] dark:data-[state=active]:shadow-[0_3px_0_#1e3a8a] transition-all duration-300 h-full">Register</TabsTrigger>
+                <TabsTrigger value="login" className="rounded-lg sm:rounded-xl font-extrabold text-slate-400 dark:text-slate-500 text-xs sm:text-sm data-[state=active]:bg-[#d60000] dark:data-[state=active]:bg-red-600 data-[state=active]:text-white dark:data-[state=active]:text-white data-[state=active]:shadow-[0_3px_0_#991b1b] dark:data-[state=active]:shadow-[0_3px_0_#7f1d1d] data-[state=active]:border-transparent border-transparent outline-none transition-all duration-300 h-full">Log In</TabsTrigger>
+                <TabsTrigger value="register" className="rounded-lg sm:rounded-xl font-extrabold text-slate-400 dark:text-slate-500 text-xs sm:text-sm data-[state=active]:bg-[#2563eb] dark:data-[state=active]:bg-blue-600 data-[state=active]:text-white dark:data-[state=active]:text-white data-[state=active]:shadow-[0_3px_0_#1e40af] dark:data-[state=active]:shadow-[0_3px_0_#1e3a8a] data-[state=active]:border-transparent border-transparent outline-none transition-all duration-300 h-full">Register</TabsTrigger>
               </TabsList>
 
 
@@ -515,7 +515,7 @@ function AuthContent() {
 
 function AuthLoading() {
   return (
-    <div className="min-h-screen bg-background flex items-center justify-center p-4 transition-colors duration-500">
+    <div className="min-h-screen bg-white dark:bg-slate-950 bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] dark:bg-[radial-gradient(#1e293b_1px,transparent_1px)] [background-size:16px_16px] flex items-center justify-center p-4 transition-colors duration-500">
       <div className="flex flex-col items-center gap-4">
         <Loader2 className="h-8 w-8 animate-spin text-orange-500" />
         <p className="text-slate-500 dark:text-slate-400 font-medium">Loading platform...</p>

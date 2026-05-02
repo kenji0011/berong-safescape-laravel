@@ -137,11 +137,11 @@ export function KidsWelcomeBanner({ completedModules = [], earnedBadges = [] }: 
                                 <Icon className={cn("h-6 w-6", rank.color)} />
                              </div>
                              <div className="flex-1">
-                                <div className="flex items-center justify-between">
-                                   <h4 className={cn("font-black text-sm uppercase tracking-tight", rank.color)}>{rank.name}</h4>
-                                   <span className="text-[10px] font-black text-slate-400 uppercase">{rank.count}+ Badges</span>
-                                </div>
-                                <p className="text-[10px] sm:text-xs font-bold text-slate-500 dark:text-slate-400 leading-tight mt-0.5">{rank.desc}</p>
+                                 <div className="flex items-center justify-between">
+                                    <h4 className={cn("font-black text-sm uppercase tracking-tight", rank.color.replace('-400', '-600'), "dark:" + rank.color)}>{rank.name}</h4>
+                                    <span className="text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase">{rank.count}+ Badges</span>
+                                 </div>
+                                 <p className="text-[10px] sm:text-xs font-bold text-slate-700 dark:text-slate-400 leading-tight mt-0.5">{rank.desc}</p>
                              </div>
                           </div>
                         )
@@ -183,7 +183,7 @@ export function KidsWelcomeBanner({ completedModules = [], earnedBadges = [] }: 
            {/* Card 2: Badges Summary Link */}
            <Link 
              href="/kids/badges"
-             className="bg-white/10 dark:bg-slate-950/40 backdrop-blur-xl rounded-[2rem] p-6 border border-white/20 dark:border-white/5 flex flex-col shadow-2xl hover:bg-white/15 dark:hover:bg-slate-950/60 transition-all group"
+             className="bg-white/10 dark:bg-slate-950/40 backdrop-blur-xl rounded-[2rem] p-6 border border-white/20 dark:border-white/5 flex flex-col shadow-2xl hover:bg-white/15 dark:hover:bg-white/10 transition-all group"
            >
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-2">

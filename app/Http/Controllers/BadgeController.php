@@ -50,6 +50,40 @@ class BadgeController extends Controller
                 'isRead' => false,
                 'createdAt' => now(),
             ]);
+
+            // Robust Hero Rank Level Up Check
+            $totalBadges = UserBadge::where('userId', $user->id)->count();
+            
+            $ranks = [
+                8 => ['name' => 'Legendary Hero', 'icon' => '🌟'],
+                5 => ['name' => 'Master Hero', 'icon' => '🏆'],
+                3 => ['name' => 'Safety Elite', 'icon' => '🛡️'],
+                1 => ['name' => 'Fire Scout', 'icon' => '🔥'],
+            ];
+
+            foreach ($ranks as $threshold => $rankInfo) {
+                if ($totalBadges >= $threshold) {
+                    // Check if they already have this specific rank notification
+                    $exists = Notification::where('userId', $user->id)
+                        ->where('category', 'kids/rank')
+                        ->where('message', 'LIKE', "%{$rankInfo['name']}%")
+                        ->exists();
+                    
+                    if (!$exists) {
+                        Notification::create([
+                            'userId' => $user->id,
+                            'title' => "Hero Rank Up! {$rankInfo['icon']}",
+                            'message' => "Amazing! You've reached the rank of {$rankInfo['name']}!",
+                            'type' => 'achievement',
+                            'category' => 'kids/rank',
+                            'isRead' => false,
+                            'createdAt' => now(),
+                        ]);
+                        // Stop after notifying for the highest achieved rank
+                        break; 
+                    }
+                }
+            }
         }
 
         return response()->json([

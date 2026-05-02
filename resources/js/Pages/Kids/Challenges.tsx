@@ -83,6 +83,17 @@ const KidsChallengesPage = ({ progress }: ChallengesProps) => {
               difficulty: "easy",
               category: "activities",
               isCompleted: earnedBadgeIds.includes('safety_scout')
+            },
+            {
+              id: "activity-8",
+              title: "Hazard Blitz",
+              description: "Fast-paced action! Neutralize falling hazards before they hit the floor. Watch out for safety gear!",
+              type: "activity",
+              imageUrl: "/hazard_blitz.jpg",
+              href: "/kids/hazard-blitz",
+              difficulty: "medium",
+              category: "activities",
+              isCompleted: earnedBadgeIds.includes('hazard_hero')
             }
           ]
 
@@ -176,7 +187,7 @@ const KidsChallengesPage = ({ progress }: ChallengesProps) => {
               contents={challenges}
               variant="grid"
               isLoading={isLoadingContent}
-              skeletonCount={4}
+              skeletonCount={5}
               emptyMessage="More challenges coming soon! 🎉"
             />
           </div>
