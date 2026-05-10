@@ -10,6 +10,7 @@ import { ContentCard, ContentCardData } from "@/Components/content-card"
 import { Footer } from "@/Components/footer"
 import DashboardLayout from "@/Layouts/DashboardLayout"
 import React from "react"
+import { toast } from "sonner"
 import Particles from "@/Components/ui/particles"
 import { useSettings } from "@/lib/settings-context"
 import { KidsWelcomeBannerSkeleton, ContentGridSkeleton } from "@/Components/dashboard-skeletons"
@@ -46,6 +47,17 @@ const KidsDashboardPage = ({ modules, progress }: KidsPageProps) => {
       isCompleted: completedIds.length >= 5
     },
     {
+      id: "edith-simulation",
+      title: "EDITH Simulation",
+      description: "Practice your Home Fire Escape Plan! Save your family from the spreading fire in this realistic 3D simulation.",
+      type: "game",
+      emoji: "🏠",
+      href: "/kids/simulation",
+      isLocked: completedIds.length < 5,
+      category: "games",
+      unlockRequirement: "Complete 5 Modules"
+    },
+    {
       id: "video-game",
       title: "Task Master",
       description: "Complete daily missions and earn legendary rewards! Show your skills as a top fire safety expert.",
@@ -54,7 +66,8 @@ const KidsDashboardPage = ({ modules, progress }: KidsPageProps) => {
       href: "#",
       isLocked: true,
       category: "games",
-      duration: "Coming Soon!"
+      duration: "Under Development",
+      unlockRequirement: "Under Development"
     },
     {
       id: "escape-room-game",
@@ -65,7 +78,8 @@ const KidsDashboardPage = ({ modules, progress }: KidsPageProps) => {
       href: "#",
       isLocked: true,
       category: "games",
-      duration: "Under Development"
+      duration: "Under Development",
+      unlockRequirement: "Under Development"
     },
     {
       id: "video-portal",
@@ -87,18 +101,7 @@ const KidsDashboardPage = ({ modules, progress }: KidsPageProps) => {
       difficulty: "medium",
       category: "activities"
     },
-    {
-      id: "more-content",
-      title: "More Missions Coming!",
-      description: "We're busy building new adventures for our Fire Safety Heroes! Keep practicing your skills.",
-      type: "activity",
-      emoji: "🚀",
-      href: "#",
-      isLocked: true,
-      category: "activities",
-      duration: "More contents soon!",
-      hideBadge: true
-    },
+
   ]
 
   const allContent = useMemo(() => {
@@ -106,6 +109,16 @@ const KidsDashboardPage = ({ modules, progress }: KidsPageProps) => {
   }, [progress])
 
   const handleContentClick = (content: ContentCardData) => {
+    if (content.isLocked) {
+      if (content.id === "edith-simulation") {
+        toast.error("Access Denied!", {
+          description: "You must complete all 5 modules of the SafeScape Fire Safety Course to unlock this simulation!",
+          duration: 5000,
+        })
+      }
+      return
+    }
+
     if (content.href !== "#") {
       router.visit(content.href)
     }

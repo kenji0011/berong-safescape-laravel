@@ -88,7 +88,7 @@ const AdultPageClient = ({ initialBlogs }: AdultPageClientProps) => {
                                 </div>
 
                                 {/* Arrow */}
-                                <div className="h-8 w-8 sm:h-12 sm:w-12 bg-slate-50 dark:bg-slate-700 rounded-full border-[2px] sm:border-[3px] border-slate-100 dark:border-slate-600 flex items-center justify-center text-slate-300 dark:text-slate-500 group-hover:bg-orange-500 dark:group-hover:bg-orange-500 group-hover:text-white dark:group-hover:text-white group-hover:border-orange-400 dark:group-hover:border-orange-400 group-hover:scale-110 group-hover:shadow-[0_0_30px_rgba(249,115,22,0.8)] group-hover:ring-4 group-hover:ring-orange-500/30 transition-all duration-300 z-10 shrink-0">
+                                <div className="h-8 w-8 sm:h-12 sm:w-12 bg-orange-500 dark:bg-orange-600 rounded-full border-[2px] sm:border-[3px] border-orange-400 dark:border-orange-500 flex items-center justify-center text-white group-hover:scale-110 group-hover:shadow-[0_0_30px_rgba(249,115,22,0.8)] group-hover:ring-4 group-hover:ring-orange-500/30 transition-all duration-300 z-10 shrink-0">
                                     <ArrowRight className="h-4 w-4 sm:h-6 sm:w-6 drop-shadow-[0_0_8px_rgba(255,255,255,0.5)]" strokeWidth={3} />
                                 </div>
                             </div>
@@ -118,7 +118,7 @@ const AdultPageClient = ({ initialBlogs }: AdultPageClientProps) => {
                                 </div>
 
                                 {/* Arrow */}
-                                <div className="h-8 w-8 sm:h-12 sm:w-12 bg-slate-50 dark:bg-slate-700 rounded-full border-[2px] sm:border-[3px] border-slate-100 dark:border-slate-600 flex items-center justify-center text-slate-300 dark:text-slate-500 group-hover:bg-red-500 dark:group-hover:bg-red-500 group-hover:text-white dark:group-hover:text-white group-hover:border-red-400 dark:group-hover:border-red-400 group-hover:scale-110 group-hover:shadow-[0_0_30_rgba(239,68,68,0.8)] group-hover:ring-4 group-hover:ring-red-500/30 transition-all duration-300 z-10 shrink-0">
+                                <div className="h-8 w-8 sm:h-12 sm:w-12 bg-red-500 dark:bg-red-600 rounded-full border-[2px] sm:border-[3px] border-red-400 dark:border-red-500 flex items-center justify-center text-white group-hover:scale-110 group-hover:shadow-[0_0_30px_rgba(239,68,68,0.8)] group-hover:ring-4 group-hover:ring-red-500/30 transition-all duration-300 z-10 shrink-0">
                                     <ArrowRight className="h-4 w-4 sm:h-6 sm:w-6 drop-shadow-[0_0_8px_rgba(255,255,255,0.5)]" strokeWidth={3} />
                                 </div>
                             </div>

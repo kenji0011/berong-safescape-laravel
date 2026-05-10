@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState, useRef } from "react"
+import React, { useState, useRef, useEffect } from "react"
 import { useAuth } from "@/lib/auth-context"
 import { Link, Deferred } from '@inertiajs/react'
 import { Navigation } from "@/Components/navigation"
@@ -9,15 +9,17 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Alert, AlertDescription } from "@/components/ui/alert"
-import { Shield, Video, Clock, Search, BookOpen, FileText, AlertCircle, Play } from "lucide-react"
+import { Shield, Video, Clock, Search, BookOpen, FileText, AlertCircle, Play, CheckCircle2, GraduationCap, Medal, Trophy, Star, Zap, ArrowRight } from "lucide-react"
 import { professionalVideos, type VideoContent } from "@/lib/mock-data"
 import { ManualsDialog } from "@/Components/ui/manuals-dialog"
+import axios from "axios"
+import { Progress } from "@/Components/ui/progress"
 import { Footer } from "@/Components/footer"
 import DashboardLayout from "@/Layouts/DashboardLayout"
 import SpotlightCard from "@/Components/ui/spotlight-card"
-import "@/components/ui/spotlight-card.css"
+import "@/Components/ui/spotlight-card.css"
 // import { logEngagement } from "@/lib/engagement-tracker" // Removed since tracking might not exist yet
-import { ProfessionalWelcomeBanner } from "@/components/professional-welcome-banner"
+import { ProfessionalWelcomeBanner } from "@/Components/professional-welcome-banner"
 
 const VideoSkeleton = () => (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6 w-full">
@@ -42,6 +44,7 @@ const VideoSkeleton = () => (
 
 interface ProfessionalPageClientProps {
     initialVideos?: VideoContent[]
+    watchedVideoIds?: string[]
 }
 
 const getYouTubeId = (url: string) => {
@@ -51,14 +54,69 @@ const getYouTubeId = (url: string) => {
     return (match && match[2].length === 11) ? match[2] : url;
 };
 
-const ProfessionalDashboard = ({ initialVideos }: ProfessionalPageClientProps) => {
+const ProfessionalDashboard = ({ initialVideos, watchedVideoIds = [] }: ProfessionalPageClientProps) => {
     const { user } = useAuth()
     const [searchQuery, setSearchQuery] = useState("")
     const [selectedVideo, setSelectedVideo] = useState<VideoContent | null>(null)
-    const trackedVideos = useRef<Set<string>>(new Set())
+    const [watchedIds, setWatchedIds] = useState<Set<string>>(new Set())
     const playerRef = useRef<HTMLDivElement>(null)
+    const ytPlayerRef = useRef<any>(null)
 
-    React.useEffect(() => {
+    // Sync watchedIds when deferred prop arrives
+    useEffect(() => {
+        if (watchedVideoIds && watchedVideoIds.length > 0) {
+            setWatchedIds(new Set(watchedVideoIds.map(String)))
+        }
+    }, [watchedVideoIds])
+
+    // Load YouTube API
+    useEffect(() => {
+        const tag = document.createElement('script');
+        tag.src = "https://www.youtube.com/iframe_api";
+        const firstScriptTag = document.getElementsByTagName('script')[0];
+        firstScriptTag.parentNode?.insertBefore(tag, firstScriptTag);
+
+        (window as any).onYouTubeIframeAPIReady = () => {
+            // API ready
+        };
+    }, []);
+
+    // Handle Video Completion
+    const handleVideoEnd = async (videoId: string) => {
+        if (!watchedIds.has(videoId)) {
+            try {
+                await axios.post('/api/engagement/log', {
+                    activityType: "VIDEO_WATCHED",
+                    metadata: { videoId, videoTitle: selectedVideo?.title }
+                });
+                
+                setWatchedIds(prev => new Set([...prev, videoId]));
+            } catch (error) {
+                console.error("Failed to log video completion", error);
+            }
+        }
+    };
+
+    // Initialize/Update Player
+    useEffect(() => {
+        if (selectedVideo && (window as any).YT && (window as any).YT.Player) {
+            if (ytPlayerRef.current) {
+                ytPlayerRef.current.destroy();
+            }
+
+            ytPlayerRef.current = new (window as any).YT.Player(`youtube-player-${selectedVideo.id}`, {
+                events: {
+                    'onStateChange': (event: any) => {
+                        if (event.data === (window as any).YT.PlayerState.ENDED) {
+                            handleVideoEnd(selectedVideo.id.toString());
+                        }
+                    }
+                }
+            });
+        }
+    }, [selectedVideo]);
+
+    useEffect(() => {
         if (selectedVideo) {
             setTimeout(() => {
                 playerRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' })
@@ -67,17 +125,24 @@ const ProfessionalDashboard = ({ initialVideos }: ProfessionalPageClientProps) =
     }, [selectedVideo])
 
     const videos = initialVideos || []
+    const watchedCount = videos.filter(v => watchedIds.has(v.id.toString())).length;
+    const progressPercent = videos.length > 0 ? Math.round((watchedCount / videos.length) * 100) : 0
 
-    // Handle video selection with tracking
+    // Ranking Logic for Professionals
+    const getProfessionalRank = (count: number) => {
+        if (count >= 10) return { name: "Master Fire Chief", icon: Trophy, color: "text-red-600", bg: "bg-red-50", border: "border-red-200" };
+        if (count >= 6) return { name: "Elite Responder", icon: Star, color: "text-blue-600", bg: "bg-blue-50", border: "border-blue-200" };
+        if (count >= 3) return { name: "Safety Specialist", icon: Shield, color: "text-emerald-600", bg: "bg-emerald-50", border: "border-emerald-200" };
+        if (count >= 1) return { name: "Active Officer", icon: Zap, color: "text-orange-600", bg: "bg-orange-50", border: "border-orange-200" };
+        return { name: "Novice Officer", icon: Medal, color: "text-slate-600", bg: "bg-slate-50", border: "border-slate-200" };
+    };
+
+    const currentRank = getProfessionalRank(watchedIds.size);
+    const RankIcon = currentRank.icon;
+
+    // Handle video selection
     const handleVideoSelect = (video: VideoContent) => {
         setSelectedVideo(video)
-        if (!trackedVideos.current.has(video.id.toString())) {
-            trackedVideos.current.add(video.id.toString())
-            // logEngagement({
-            //     activityType: "VIDEO_WATCHED",
-            //     metadata: { videoId: String(video.id), videoTitle: video.title }
-            // })
-        }
     }
 
     const filteredVideos = videos.filter(
@@ -109,43 +174,59 @@ const ProfessionalDashboard = ({ initialVideos }: ProfessionalPageClientProps) =
                 {/* Quick Links - Horizontal on mobile, grid on desktop */}
                 <div className="space-y-3 sm:space-y-0 sm:grid sm:grid-cols-2 sm:gap-5 mb-8 sm:mb-10">
                     <Link href="#training-videos-section" onClick={(e) => { e.preventDefault(); document.getElementById('training-videos-section')?.scrollIntoView({ behavior: 'smooth' }) }} className="block group h-full outline-none">
-                        <div className="relative overflow-hidden bg-white dark:bg-slate-800 border-[3px] sm:border-[4px] border-white dark:border-slate-700 rounded-2xl sm:rounded-[1.5rem] shadow-[0_6px_0_#cbd5e1] dark:shadow-[0_6px_0_#0f172a] sm:shadow-[0_8px_0_#cbd5e1] active:translate-y-[6px] sm:active:translate-y-[8px] active:shadow-none transition-all duration-300 flex flex-col h-full">
-                            <div className="absolute inset-0 bg-red-50/50 dark:bg-red-900/10 opacity-0 group-hover:opacity-100 transition-opacity z-0 pointer-events-none"></div>
-                            <img
-                                src="/Training Vidoes Modal.png"
-                                alt="Training Background"
-                                className="absolute inset-0 w-full h-full object-cover mix-blend-multiply opacity-10 group-hover:opacity-20 transition-opacity duration-500 group-hover:scale-105 pointer-events-none dark:invert dark:opacity-5"
-                            />
+                        <div className="relative overflow-hidden bg-white dark:bg-slate-800 rounded-[1.5rem] sm:rounded-[2rem] p-3 sm:p-4 flex items-center gap-3 sm:gap-6 shadow-[0_6px_0_#cbd5e1] dark:shadow-[0_6px_0_#1e293b] sm:shadow-[0_8px_0_#cbd5e1] sm:dark:shadow-[0_8px_0_#1e293b] transition-all duration-300 border-[3px] border-white dark:border-slate-700 h-full transition-colors">
+                            {/* Subtle Background Image */}
+                            <div className="absolute inset-0 z-0 opacity-[0.05] dark:opacity-[0.1] group-hover:opacity-[0.08] dark:group-hover:opacity-[0.15] transition-opacity duration-500">
+                                <img src="/Training Vidoes Modal.png" className="w-full h-full object-cover dark:brightness-50" alt="" />
+                            </div>
                             
-                            <div className="p-4 sm:p-6 flex items-center gap-3 sm:gap-4 relative z-10 bg-transparent">
-                                <div className="h-10 w-10 sm:h-14 sm:w-14 rounded-xl sm:rounded-[1rem] bg-white dark:bg-slate-700 border-[2px] border-slate-200 dark:border-slate-600 flex items-center justify-center shrink-0 group-hover:bg-red-50 dark:group-hover:bg-red-900/30 group-hover:border-red-200 dark:group-hover:border-red-800 group-hover:scale-110 transition-all duration-300 shadow-sm">
-                                    <Video className="h-5 w-5 sm:h-6 sm:w-6 text-red-500" strokeWidth={2.5} />
-                                </div>
-                                <div className="min-w-0 flex-1">
-                                    <h3 className="text-base sm:text-xl font-black text-slate-800 dark:text-white mb-0.5 sm:mb-1 group-hover:text-red-600 dark:group-hover:text-red-400 transition-colors">Training Videos</h3>
-                                    <p className="text-slate-500 dark:text-slate-400 font-bold text-[10px] sm:text-xs">{videos.length} professional training videos</p>
-                                </div>
+                            {/* Icon Box */}
+                            <div className="h-12 w-12 sm:h-20 sm:w-20 rounded-xl sm:rounded-[1.5rem] bg-white dark:bg-slate-900 border-[2px] sm:border-[3px] border-slate-100 dark:border-slate-700 flex items-center justify-center shrink-0 shadow-sm z-10 group-hover:scale-105 transition-all">
+                                <Video className="h-6 w-6 sm:h-10 sm:w-10 text-red-500" strokeWidth={2.5} />
+                            </div>
+                            
+                            {/* Content */}
+                            <div className="flex-1 z-10 min-w-0">
+                                <h3 className="text-base sm:text-2xl font-black text-slate-800 dark:text-white leading-tight group-hover:text-red-600 dark:group-hover:text-red-400 transition-colors truncate">
+                                    Training Videos
+                                </h3>
+                                <p className="text-slate-500 dark:text-slate-400 font-bold text-[10px] sm:text-sm mt-0.5 sm:mt-1.5 line-clamp-1 transition-colors">
+                                    {videos.length} professional training videos
+                                </p>
+                            </div>
+                            
+                            {/* Arrow */}
+                            <div className="h-8 w-8 sm:h-12 sm:w-12 bg-red-500 dark:bg-red-600 rounded-full border-[2px] sm:border-[3px] border-red-400 dark:border-red-500 flex items-center justify-center text-white group-hover:scale-110 group-hover:shadow-[0_0_30px_rgba(239,68,68,0.8)] group-hover:ring-4 group-hover:ring-red-500/30 transition-all duration-300 z-10 shrink-0">
+                                <ArrowRight className="h-4 w-4 sm:h-6 sm:w-6 drop-shadow-[0_0_8px_rgba(255,255,255,0.5)]" strokeWidth={3} />
                             </div>
                         </div>
                     </Link>
 
                     <Link href="#manuals-section" onClick={(e) => { e.preventDefault(); document.getElementById('manuals-section')?.scrollIntoView({ behavior: 'smooth' }) }} className="block group h-full outline-none">
-                        <div className="relative overflow-hidden bg-white dark:bg-slate-800 border-[3px] sm:border-[4px] border-white dark:border-slate-700 rounded-2xl sm:rounded-[1.5rem] shadow-[0_6px_0_#cbd5e1] dark:shadow-[0_6px_0_#0f172a] sm:shadow-[0_8px_0_#cbd5e1] active:translate-y-[6px] sm:active:translate-y-[8px] active:shadow-none transition-all duration-300 flex flex-col h-full">
-                            <div className="absolute inset-0 bg-blue-50/50 dark:bg-blue-900/10 opacity-0 group-hover:opacity-100 transition-opacity z-0 pointer-events-none"></div>
-                            <img
-                                src="/BFP Manuals Modal.png"
-                                alt="Manuals Background"
-                                className="absolute inset-0 w-full h-full object-cover mix-blend-multiply opacity-10 group-hover:opacity-20 transition-opacity duration-500 group-hover:scale-105 pointer-events-none dark:invert dark:opacity-5"
-                            />
+                        <div className="relative overflow-hidden bg-white dark:bg-slate-800 rounded-[1.5rem] sm:rounded-[2rem] p-3 sm:p-4 flex items-center gap-3 sm:gap-6 shadow-[0_6px_0_#cbd5e1] dark:shadow-[0_6px_0_#1e293b] sm:shadow-[0_8px_0_#cbd5e1] sm:dark:shadow-[0_8px_0_#1e293b] transition-all duration-300 border-[3px] border-white dark:border-slate-700 h-full transition-colors">
+                            {/* Subtle Background Image */}
+                            <div className="absolute inset-0 z-0 opacity-[0.05] dark:opacity-[0.1] group-hover:opacity-[0.08] dark:group-hover:opacity-[0.15] transition-opacity duration-500">
+                                <img src="/BFP Manuals Modal.png" className="w-full h-full object-cover dark:brightness-50" alt="" />
+                            </div>
                             
-                            <div className="p-4 sm:p-6 flex items-center gap-3 sm:gap-4 relative z-10 bg-transparent">
-                                <div className="h-10 w-10 sm:h-14 sm:w-14 rounded-xl sm:rounded-[1rem] bg-white dark:bg-slate-700 border-[2px] border-slate-200 dark:border-slate-600 flex items-center justify-center shrink-0 group-hover:bg-blue-50 dark:group-hover:bg-blue-900/30 group-hover:border-blue-200 dark:group-hover:border-blue-800 group-hover:scale-110 transition-all duration-300 shadow-sm">
-                                    <BookOpen className="h-5 w-5 sm:h-6 sm:w-6 text-blue-500" strokeWidth={2.5} />
-                                </div>
-                                <div className="min-w-0 flex-1">
-                                    <h3 className="text-base sm:text-xl font-black text-slate-800 dark:text-white mb-0.5 sm:mb-1 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">BFP Manuals</h3>
-                                    <p className="text-slate-500 dark:text-slate-400 font-bold text-[10px] sm:text-xs">Standard operating procedures</p>
-                                </div>
+                            {/* Icon Box */}
+                            <div className="h-12 w-12 sm:h-20 sm:w-20 rounded-xl sm:rounded-[1.5rem] bg-white dark:bg-slate-900 border-[2px] sm:border-[3px] border-slate-100 dark:border-slate-700 flex items-center justify-center shrink-0 shadow-sm z-10 group-hover:scale-105 transition-all">
+                                <BookOpen className="h-6 w-6 sm:h-10 sm:w-10 text-blue-500" strokeWidth={2.5} />
+                            </div>
+                            
+                            {/* Content */}
+                            <div className="flex-1 z-10 min-w-0">
+                                <h3 className="text-base sm:text-2xl font-black text-slate-800 dark:text-white leading-tight group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors truncate">
+                                    Training Manuals
+                                </h3>
+                                <p className="text-slate-500 dark:text-slate-400 font-bold text-[10px] sm:text-sm mt-0.5 sm:mt-1.5 line-clamp-1 transition-colors">
+                                    Standard operating procedures
+                                </p>
+                            </div>
+                            
+                            {/* Arrow */}
+                            <div className="h-8 w-8 sm:h-12 sm:w-12 bg-blue-500 dark:bg-blue-600 rounded-full border-[2px] sm:border-[3px] border-blue-400 dark:border-blue-500 flex items-center justify-center text-white group-hover:scale-110 group-hover:shadow-[0_0_30px_rgba(59,130,246,0.8)] group-hover:ring-4 group-hover:ring-blue-500/30 transition-all duration-300 z-10 shrink-0">
+                                <ArrowRight className="h-4 w-4 sm:h-6 sm:w-6 drop-shadow-[0_0_8px_rgba(255,255,255,0.5)]" strokeWidth={3} />
                             </div>
                         </div>
                     </Link>
@@ -174,6 +255,7 @@ const ProfessionalDashboard = ({ initialVideos }: ProfessionalPageClientProps) =
                         <CardContent className="px-0 pb-6">
                             <div className="aspect-video bg-black rounded-2xl overflow-hidden mb-5 shadow-inner">
                                 <iframe
+                                    id={`youtube-player-${selectedVideo.id}`}
                                     width="100%"
                                     height="100%"
                                     src={`https://www.youtube.com/embed/${getYouTubeId(selectedVideo.youtubeId)}?enablejsapi=1&origin=${window.location.origin}`}
@@ -199,7 +281,36 @@ const ProfessionalDashboard = ({ initialVideos }: ProfessionalPageClientProps) =
 
                 {/* Video Grid */}
                 <div id="training-videos-section">
-                    <h2 className="text-2xl font-bold mb-6 text-slate-800 dark:text-white">Training Videos</h2>
+                    <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-6 mb-10">
+                        <h2 className="text-3xl font-black text-slate-800 dark:text-white tracking-tight">Training Videos</h2>
+                        
+                        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4 w-full xl:w-auto">
+                            {/* Rank Badge */}
+                            <div className={`flex items-center gap-3 px-5 py-3 rounded-2xl border-2 bg-white dark:bg-slate-800 ${currentRank.border} dark:border-slate-700 shadow-sm animate-in fade-in slide-in-from-right-4 duration-500 flex-1 sm:flex-initial min-w-[200px]`}>
+                                <div className={`p-2 rounded-xl bg-slate-50 dark:bg-slate-900 shadow-inner ${currentRank.color} shrink-0`}>
+                                    <RankIcon className="h-5 w-5" />
+                                </div>
+                                <div className="flex flex-col">
+                                    <span className="text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-300">Professional Rank</span>
+                                    <span className={`text-[15px] font-black ${currentRank.color} dark:text-white whitespace-nowrap`}>{currentRank.name}</span>
+                                </div>
+                            </div>
+
+                            {/* Progress Tracker */}
+                            <div className="bg-white dark:bg-slate-800 px-5 py-3 rounded-2xl border-2 border-slate-100 dark:border-slate-700 shadow-sm flex items-center gap-4 flex-1 sm:flex-initial sm:min-w-[300px]">
+                                <div className="h-10 w-10 rounded-full bg-emerald-50 dark:bg-emerald-950/30 flex items-center justify-center shrink-0 shadow-inner">
+                                    <GraduationCap className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
+                                </div>
+                                <div className="flex-1 space-y-1.5">
+                                    <div className="flex justify-between text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-300">
+                                        <span>Training Progress</span>
+                                        <span className="text-emerald-600 dark:text-emerald-400 font-bold">{watchedCount} / {videos.length}</span>
+                                    </div>
+                                    <Progress value={progressPercent} className="h-2.5 bg-slate-100 dark:bg-slate-700" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                     <Deferred data="initialVideos" fallback={<VideoSkeleton />}>
                         {filteredVideos.length === 0 ? (
                             <Card className="rounded-[2rem] border-slate-200 dark:border-slate-700 dark:bg-slate-800 hover:shadow-md transition-shadow">
@@ -223,7 +334,17 @@ const ProfessionalDashboard = ({ initialVideos }: ProfessionalPageClientProps) =
                                                     alt={video.title}
                                                     className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                                                 />
-                                                {/* Play Button Overlay (Desktop only or subtle on mobile) */}
+                                                {/* Status Badge */}
+                                                <div className="absolute top-2 left-2 z-20 flex flex-col gap-2">
+                                                    {watchedIds.has(video.id.toString()) && (
+                                                        <div className="bg-emerald-500 text-white font-black text-[8px] sm:text-[10px] tracking-widest uppercase px-2 py-1 rounded-full shadow-lg border-2 border-white/20 flex items-center gap-1.5 animate-in zoom-in-95 duration-300">
+                                                            <CheckCircle2 className="h-3 w-3" />
+                                                            Watched
+                                                        </div>
+                                                    )}
+                                                </div>
+
+                                                {/* Play Button Overlay */}
                                                 <div className="absolute inset-0 bg-black/10 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                                                     <div className="w-10 h-10 bg-red-600/90 rounded-full flex items-center justify-center shadow-lg">
                                                         <Play className="h-4 w-4 text-white ml-0.5" fill="currentColor" />

@@ -3,83 +3,99 @@
 import React, { useState, useRef, useEffect } from 'react';
 import axios from 'axios';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Upload, Copy, Check, Image as ImageIcon } from 'lucide-react';
+import { Upload, Check, ImageIcon, RotateCcw, AlertCircle, Move, Search } from 'lucide-react';
+import Cropper from 'react-easy-crop';
+import { getCroppedImg } from '@/lib/cropImage';
+import { Slider } from '@/components/ui/slider';
 
 interface ImageUploadProps {
-  key?: React.Key;
   onUploadComplete: (url: string) => void;
   title?: string;
   description?: string;
+  overlayTitle?: string;
+  overlayAlt?: string;
 }
 
-export function ImageUpload({ onUploadComplete, title = "Image Upload", description = "Upload an image to generate a URL" }: ImageUploadProps) {
+export function ImageUpload({ onUploadComplete, title = "Carousel Image", description = "Upload image for the hero carousel", overlayTitle, overlayAlt }: ImageUploadProps) {
   const [file, setFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [uploadUrl, setUploadUrl] = useState<string>('');
   const [isUploading, setIsUploading] = useState(false);
-  const [isCopied, setIsCopied] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [imageDimensions, setImageDimensions] = useState<{ w: number; h: number } | null>(null);
+  
+  // Cropper State
+  const [crop, setCrop] = useState({ x: 0, y: 0 });
+  const [zoom, setZoom] = useState(1);
+  const [croppedAreaPixels, setCroppedAreaPixels] = useState<any>(null);
+  const [isCropping, setIsCropping] = useState(false);
+
+  const MIN_WIDTH = 1920;
+  const MIN_HEIGHT = 1080;
 
   useEffect(() => {
-    // Clean up preview URL on unmount
     return () => {
-      if (previewUrl) {
-        URL.revokeObjectURL(previewUrl);
-      }
+      if (previewUrl) URL.revokeObjectURL(previewUrl);
     };
   }, [previewUrl]);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files?.[0];
-    if (selectedFile) {
-      // Validate file type
-      if (!selectedFile.type.startsWith('image/')) {
-        setError('Please select an image file (JPEG, PNG, etc.)');
-        return;
-      }
+    if (selectedFile) processFile(selectedFile);
+  };
 
-      // Validate file size (max 15MB)
-      if (selectedFile.size > 15 * 1024 * 1024) {
-        setError('File size too large. Maximum 15MB allowed.');
-        return;
-      }
+  const processFile = (selectedFile: File) => {
+    if (!selectedFile.type.startsWith('image/')) {
+      setError('Please select an image file');
+      return;
+    }
+    if (selectedFile.size > 15 * 1024 * 1024) {
+      setError('File too large (max 15MB)');
+      return;
+    }
 
+    setError(null);
+    const url = URL.createObjectURL(selectedFile);
+    const img = new window.Image();
+    img.onload = () => {
+      setImageDimensions({ w: img.naturalWidth, h: img.naturalHeight });
       setFile(selectedFile);
-      setError(null);
-
-      // Create preview URL
-      const url = URL.createObjectURL(selectedFile);
       setPreviewUrl(url);
       setUploadUrl('');
-    }
+    };
+    img.src = url;
+  };
+
+  const onCropComplete = (croppedArea: any, croppedAreaPixels: any) => {
+    setCroppedAreaPixels(croppedAreaPixels);
   };
 
   const handleUpload = async () => {
-    if (!file) {
-      setError('Please select a file first');
-      return;
-    }
+    if (!file || !previewUrl || !croppedAreaPixels) return;
 
     setIsUploading(true);
     setError(null);
 
     try {
+      // 1. Perform client-side crop to get a lossless PNG file
+      const croppedFile = await getCroppedImg(previewUrl, croppedAreaPixels);
+      
+      if (!croppedFile) {
+        throw new Error("Could not crop image");
+      }
+
+      // 2. Upload the cropped file
       const formData = new FormData();
-      formData.append('file', file);
+      formData.append('file', croppedFile);
 
       const response = await axios.post('/api/admin/upload', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        }
+        headers: { 'Content-Type': 'multipart/form-data' }
       });
 
-      const result = response.data;
-      setUploadUrl(result.url);
-      onUploadComplete(result.url);
+      setUploadUrl(response.data.url);
+      onUploadComplete(response.data.url);
     } catch (err: any) {
       setError(err.message || 'Upload failed');
     } finally {
@@ -87,133 +103,141 @@ export function ImageUpload({ onUploadComplete, title = "Image Upload", descript
     }
   };
 
-  const handleCopyUrl = () => {
-    if (uploadUrl) {
-      navigator.clipboard.writeText(uploadUrl);
-      setIsCopied(true);
-      setTimeout(() => setIsCopied(false), 2000);
-    }
-  };
-
-  const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
-    e.preventDefault();
-  };
-
-  const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
-    e.preventDefault();
-    const droppedFile = e.dataTransfer.files?.[0];
-    if (droppedFile) {
-      if (!droppedFile.type.startsWith('image/')) {
-        setError('Please drop an image file (JPEG, PNG, etc.)');
-        return;
-      }
-
-      if (droppedFile.size > 15 * 1024 * 1024) {
-        setError('File size too large. Maximum 15MB allowed.');
-        return;
-      }
-
-      setFile(droppedFile);
-      setError(null);
-
-      // Create preview URL
-      const url = URL.createObjectURL(droppedFile);
-      setPreviewUrl(url);
-      setUploadUrl('');
-    }
+  const reset = () => {
+    setFile(null);
+    setPreviewUrl(null);
+    setUploadUrl('');
+    setError(null);
+    setImageDimensions(null);
   };
 
   return (
-    <Card className="rounded-[1.5rem] border-[3px] border-slate-200 dark:border-slate-700 shadow-sm hover:shadow-[0_4px_0_#e2e8f0] dark:hover:shadow-[0_4px_0_#0f172a] overflow-hidden bg-slate-50 dark:bg-slate-800/50 backdrop-blur-md transition-all h-full flex flex-col">
-      <CardHeader>
+    <Card className="rounded-[2rem] border-[3px] border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800/50 shadow-[0_8px_0_#cbd5e1] dark:shadow-[0_8px_0_#0f172a] overflow-hidden transition-all h-full flex flex-col">
+      <CardHeader className="relative">
         <CardTitle className="text-xl font-bold text-slate-800 dark:text-white">{title}</CardTitle>
-        <CardDescription className="text-slate-500 dark:text-slate-400 font-medium">{description}</CardDescription>
-      </CardHeader>
-      <CardContent className="flex-1 flex flex-col justify-center">
-        {error && (
-          <div className="mb-4 p-3 bg-red-50 dark:bg-red-900/30 border-2 border-red-200 dark:border-red-900/50 rounded-xl flex items-center gap-2">
-            <span className="text-sm font-bold text-red-700 dark:text-red-400">{error}</span>
+        <CardDescription className="text-xs text-slate-500 dark:text-slate-400">{description}</CardDescription>
+        
+        {imageDimensions && (
+          <div className={`absolute top-6 right-6 px-3 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-widest flex items-center gap-1.5 shadow-inner ${
+            imageDimensions.w < MIN_WIDTH ? 'bg-amber-50 text-amber-600 border border-amber-200 dark:bg-amber-900/20 dark:text-amber-400 dark:border-amber-800' : 'bg-emerald-50 text-emerald-600 border border-emerald-200 dark:bg-emerald-900/20 dark:text-emerald-400 dark:border-emerald-800'
+          }`}>
+            {imageDimensions.w < MIN_WIDTH && <AlertCircle className="h-3.5 w-3.5" />}
+            {imageDimensions.w} × {imageDimensions.h}PX
           </div>
         )}
-        
-        <div className={`grid gap-6 ${previewUrl || uploadUrl ? 'grid-cols-1 sm:grid-cols-2' : 'grid-cols-1'} h-full items-stretch`}>
-          <div
-            className="border-[3px] border-dashed border-slate-300 dark:border-slate-700 rounded-[1.5rem] p-6 text-center cursor-pointer bg-slate-50 dark:bg-slate-900/50 hover:bg-slate-100 dark:hover:bg-slate-900/80 hover:border-slate-400 dark:hover:border-slate-600 transition-all shadow-inner flex flex-col items-center justify-center min-h-[200px]"
-            onDragOver={handleDragOver}
-            onDrop={handleDrop}
-            onClick={() => fileInputRef.current?.click()}
-          >
-            <input
-              type="file"
-              ref={fileInputRef}
-              onChange={handleFileChange}
-              accept="image/*"
-              className="hidden"
-            />
-            <div className="flex flex-col items-center justify-center gap-3">
-              <div className="bg-white dark:bg-slate-800 p-3 rounded-full shadow-sm border-2 border-slate-200 dark:border-slate-700">
-                <Upload className="h-6 w-6 text-slate-400 dark:text-slate-500" />
+      </CardHeader>
+
+      <CardContent className="flex-1 flex flex-col pt-0">
+        {error && (
+          <div className="mb-4 px-3 py-2 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-900/50 rounded-xl text-xs font-medium text-red-600 dark:text-red-400">
+            {error}
+          </div>
+        )}
+
+        <div className="relative flex-1 min-h-[300px]">
+          {!(previewUrl || uploadUrl) ? (
+            <div
+              className="absolute inset-0 border-3 border-dashed border-slate-200 dark:border-slate-700 rounded-3xl flex flex-col items-center justify-center gap-4 cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-900/50 transition-all duration-300 group/upload bg-slate-50/50 dark:bg-slate-800/30"
+              onClick={() => fileInputRef.current?.click()}
+              onDragOver={(e) => e.preventDefault()}
+              onDrop={(e) => { e.preventDefault(); processFile(e.dataTransfer.files[0]); }}
+            >
+              <input type="file" ref={fileInputRef} onChange={handleFileChange} accept="image/*" className="hidden" />
+              <div className="p-5 bg-white dark:bg-slate-800 rounded-2xl text-slate-400 group-hover/upload:text-red-500 group-hover/upload:scale-110 transition-all duration-300 shadow-sm border-2 border-transparent group-hover/upload:border-red-100 dark:group-hover/upload:border-red-900">
+                <Upload className="h-8 w-8" strokeWidth={2.5} />
               </div>
-              <div>
-                <p className="text-sm font-bold text-slate-700 dark:text-slate-300">
-                  {file ? file.name : 'Click or drag image'}
-                </p>
-                <p className="text-xs font-medium text-slate-500 dark:text-slate-500 mt-1">
-                  Max size: 15MB
-                </p>
+              <div className="text-center space-y-1">
+                <p className="text-sm font-bold text-slate-800 dark:text-white">Click or drag image to upload</p>
+                <p className="text-[10px] text-slate-400 font-medium tracking-normal">Max size: 15MB</p>
               </div>
             </div>
-          </div>
-
-          {(previewUrl || uploadUrl) && (
-            <div className="flex flex-col items-center justify-between border-2 border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/50 rounded-[1.5rem] p-4 shadow-sm min-h-[200px]">
-              {previewUrl && !uploadUrl && (
-                <>
-                  <div className="flex-1 w-full flex items-center justify-center bg-white dark:bg-slate-900 rounded-xl border-2 border-slate-200 dark:border-slate-700 mb-4 overflow-hidden p-2">
-                    <img
-                      src={previewUrl}
-                      alt="Preview"
-                      className="max-h-32 object-contain"
+          ) : (
+            <div className="flex flex-col h-full gap-4">
+              <div className="relative w-full aspect-video rounded-[2rem] overflow-hidden border-2 border-slate-200 dark:border-slate-800 bg-slate-900 shadow-2xl group/cropper">
+                {uploadUrl ? (
+                  <img 
+                    src={uploadUrl} 
+                    className="w-full h-full object-cover" 
+                    alt="Uploaded" 
+                  />
+                ) : (
+                  <div className="absolute inset-0">
+                    <Cropper
+                      image={previewUrl!}
+                      crop={crop}
+                      zoom={zoom}
+                      aspect={16 / 9}
+                      onCropChange={setCrop}
+                      onCropComplete={onCropComplete}
+                      onZoomChange={setZoom}
+                      classes={{
+                        containerClassName: "rounded-[2.5rem]",
+                        mediaClassName: "rounded-[2.5rem]",
+                        cropAreaClassName: "rounded-[2.5rem] border-[3px] border-white/80 shadow-[0_0_0_9999em_rgba(15,23,42,0.8)]",
+                      }}
                     />
+                    
+                    {/* Floating Controls Overlay */}
+                    <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-3 sm:gap-4 bg-slate-900/90 backdrop-blur-md px-4 sm:px-5 py-2.5 sm:py-3 rounded-2xl border border-white/20 opacity-100 sm:opacity-0 sm:group-hover/cropper:opacity-100 transition-all duration-300 sm:translate-y-2 sm:group-hover/cropper:translate-y-0 w-[90%] sm:w-auto max-w-[320px] sm:max-w-sm z-10 shadow-2xl">
+                      <div className="flex items-center gap-2 sm:gap-3 w-full sm:w-48">
+                        <Search className="h-4 w-4 text-slate-400 shrink-0" />
+                        <Slider
+                          value={[zoom]}
+                          min={1}
+                          max={3}
+                          step={0.01}
+                          onValueChange={(vals) => setZoom(vals[0])}
+                          className="w-full cursor-grab active:cursor-grabbing"
+                        />
+                      </div>
+                      <div className="w-[1px] h-6 bg-white/20 mx-1 shrink-0" />
+                      <div className="flex items-center gap-1.5 sm:gap-2 text-white font-bold text-[10px] sm:text-xs uppercase tracking-widest shrink-0">
+                        <Move className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-yellow-400 animate-pulse" />
+                        <span className="hidden sm:inline">Drag to Position</span>
+                        <span className="sm:hidden">Drag</span>
+                      </div>
+                    </div>
                   </div>
-                  <Button
-                    onClick={handleUpload}
+                )}
+                
+                {uploadUrl && (
+                  <div className="absolute inset-0 bg-black/40 backdrop-blur-[2px] flex items-center justify-center">
+                    <div className="bg-white/90 dark:bg-slate-900/90 px-6 py-3 rounded-full flex items-center gap-3 text-green-600 font-black shadow-2xl border border-white/20 animate-in zoom-in-90 duration-300">
+                      <Check className="h-6 w-6" strokeWidth={4} />
+                      <span className="uppercase tracking-widest text-sm">Published Successfully</span>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {!uploadUrl ? (
+                <div className="flex gap-2 mt-auto">
+                  <Button variant="outline" onClick={reset} className="w-fit px-6 pb-2 pt-2.5 rounded-xl border-slate-200 dark:border-slate-800 text-slate-600">
+                    Cancel
+                  </Button>
+                  <Button 
+                    onClick={handleUpload} 
                     disabled={isUploading}
-                    className="w-full bg-[#d60000] text-white font-extrabold h-11 rounded-xl text-sm shadow-[0_4px_0_#991b1b] hover:-translate-y-0.5 hover:shadow-[0_6px_0_#991b1b] active:translate-y-1 active:shadow-[0_0px_0_#991b1b] transition-all"
+                    className="w-fit bg-[#d60000] hover:bg-[#d60000] text-white font-black px-6 pb-2 pt-2.5 rounded-xl text-xs shadow-[0_4px_0_#991b1b] hover:-translate-y-0.5 hover:shadow-[0_6px_0_#991b1b] active:translate-y-1 active:shadow-[0_0px_0_#991b1b] transition-all uppercase tracking-widest"
                   >
                     {isUploading ? (
-                      <>
-                        <span className="mr-2">Uploading...</span>
-                        <div className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent"></div>
-                      </>
+                      <div className="flex items-center gap-2">
+                        <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                        Processing...
+                      </div>
                     ) : (
                       <>
-                        <Upload className="h-4 w-4 mr-2" strokeWidth={2.5} />
-                        Upload Image
+                        <Check className="h-4 w-4 mr-2" strokeWidth={3} />
+                        Apply & Upload
                       </>
                     )}
                   </Button>
-                </>
-              )}
-
-              {uploadUrl && (
-                <>
-                  <div className="flex-1 w-full flex items-center justify-center bg-white dark:bg-slate-900 rounded-xl border-2 border-slate-200 dark:border-slate-700 mb-4 overflow-hidden p-2">
-                    <img
-                      src={uploadUrl}
-                      alt="Uploaded"
-                      className="max-h-32 object-contain"
-                    />
-                  </div>
-                  <div className="w-full flex flex-col gap-2">
-                    <div className="w-full flex items-center justify-center gap-2 p-2.5 bg-green-50 dark:bg-green-900/30 border-2 border-green-200 dark:border-green-900/50 rounded-xl">
-                      <Check className="h-5 w-5 text-green-600 dark:text-green-400" strokeWidth={2.5} />
-                      <span className="text-sm font-bold text-green-700 dark:text-green-400">
-                        Upload Success!
-                      </span>
-                    </div>
-                  </div>
-                </>
+                </div>
+              ) : (
+                <Button variant="ghost" onClick={reset} className="w-full rounded-xl h-11 text-slate-500 hover:text-slate-800">
+                  <RotateCcw className="h-4 w-4 mr-2" />
+                  Upload another image
+                </Button>
               )}
             </div>
           )}

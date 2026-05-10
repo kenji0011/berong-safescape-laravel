@@ -8,7 +8,21 @@ import Particles from "@/Components/ui/particles"
 import { useSettings } from "@/lib/settings-context"
 import { useEffect } from "react"
 
-const VideosPage = () => {
+interface Video {
+  id: string | number;
+  title: string;
+  description: string;
+  youtubeId: string;
+  category: string;
+  duration?: string;
+}
+
+interface VideosPageProps {
+  initialVideos: Video[];
+  watchedVideoIds: string[];
+}
+
+const VideosPage = ({ initialVideos, watchedVideoIds }: VideosPageProps) => {
   const { reduceMotion } = useSettings()
   const [isMobile, setIsMobile] = React.useState(false)
 
@@ -19,12 +33,25 @@ const VideosPage = () => {
     return () => window.removeEventListener('resize', handleResize)
   }, [])
 
-  const [activeVideo, setActiveVideo] = useState({
-    id: "1",
-    title: "Fire Safety for Kids",
-    description: "Learn important fire safety rules in a fun way!",
-    src: "https://www.youtube.com/embed/AWHGdWOI4kw",
-    thumbnail: "https://img.youtube.com/vi/AWHGdWOI4kw/maxresdefault.jpg",
+  // Map database videos to UI format
+  const videos = initialVideos || []
+  const moreVideos = videos.map((v, index) => ({
+    id: v.id.toString(),
+    title: v.title,
+    description: v.description || "Learn important fire safety rules in a fun way!",
+    src: `https://www.youtube.com/embed/${v.youtubeId}`,
+    thumbnail: `https://img.youtube.com/vi/${v.youtubeId}/maxresdefault.jpg`,
+    color: index % 2 === 0 ? "bg-purple-200" : "bg-[#fbcfe8]",
+    icon: index % 3 === 0 ? "🎬" : index % 3 === 1 ? "🔥" : "🚒",
+    duration: v.duration || "3:00"
+  }))
+
+  const [activeVideo, setActiveVideo] = useState(moreVideos[0] || {
+    id: "0",
+    title: "No Videos Available",
+    description: "Check back later for new fire safety videos!",
+    src: "",
+    thumbnail: "",
     icon: "🎬"
   })
 
@@ -83,18 +110,43 @@ const VideosPage = () => {
   }, [activeVideo])
 
   const [watchedVideos, setWatchedVideos] = useState<Set<string>>(new Set())
+
+  // Sync watched videos and filter to only include those in the current list
+  useEffect(() => {
+    const validIds = new Set(moreVideos.map(v => v.id))
+    const filteredWatched = watchedVideoIds.filter(id => validIds.has(id))
+    setWatchedVideos(new Set(filteredWatched))
+  }, [watchedVideoIds])
+
   const [badgeAwarded, setBadgeAwarded] = useState(false)
+
+  const logVideoWatched = async (videoId: string) => {
+    try {
+      await axios.post('/api/engagement/log', {
+        activityType: 'VIDEO_WATCHED',
+        metadata: { videoId, category: 'kids' }
+      })
+    } catch (err) {
+      console.error("Failed to log video progress:", err)
+    }
+  }
 
   const onPlayerStateChange = (event: any) => {
     // YT.PlayerState.ENDED is 0
     if (event.data === 0) {
+      const currentVideoId = activeVideoRef.current.id
+      
+      // Log progress to database if not already watched
+      if (!watchedVideos.has(currentVideoId)) {
+        logVideoWatched(currentVideoId)
+      }
+
       setWatchedVideos(prev => {
         const newWatched = new Set(prev)
-        const currentVideoId = activeVideoRef.current.id
         newWatched.add(currentVideoId)
         
         // Check if all videos have been watched
-        if (!badgeAwarded && newWatched.size === moreVideos.length) {
+        if (!badgeAwarded && moreVideos.length > 0 && newWatched.size === moreVideos.length) {
           awardBadge()
         }
         return newWatched
@@ -119,35 +171,7 @@ const VideosPage = () => {
     playerRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' })
   }
 
-  const moreVideos = [
-    {
-      id: "1",
-      title: "Fire Safety for Kids",
-      description: "Learn important fire safety rules in a fun way!",
-      src: "https://www.youtube.com/embed/AWHGdWOI4kw",
-      thumbnail: "https://img.youtube.com/vi/AWHGdWOI4kw/maxresdefault.jpg",
-      color: "bg-purple-200",
-      icon: "🎬"
-    },
-    {
-      id: "2",
-      title: "Stop, Drop, and Roll",
-      description: "Learn what to do if your clothes catch fire!",
-      src: "https://www.youtube.com/embed/ZlB9q3E-RCI",
-      thumbnail: "https://img.youtube.com/vi/ZlB9q3E-RCI/maxresdefault.jpg",
-      color: "bg-[#fbcfe8]",
-      icon: "🔥"
-    },
-    {
-      id: "3",
-      title: "Meet a Firefighter",
-      description: "See what firefighters do every day!",
-      src: "https://www.youtube.com/embed/5_lGysdHLFQ",
-      thumbnail: "https://img.youtube.com/vi/5_lGysdHLFQ/maxresdefault.jpg",
-      color: "bg-[#fbcfe8]",
-      icon: "🚒"
-    }
-  ]
+  // Removed hardcoded moreVideos list as it is now derived from props
 
   return (
     <div className="min-h-screen relative overflow-hidden bg-blue-50 dark:bg-slate-950 transition-colors duration-500">
@@ -311,7 +335,7 @@ const VideosPage = () => {
                        
                        {/* Duration Overlay */}
                        <div className="absolute bottom-2 right-2 bg-black/80 px-2 py-0.5 rounded text-[10px] font-bold text-white tracking-wider">
-                          {video.id === "1" ? "3:45" : video.id === "2" ? "2:15" : "4:30"}
+                          {video.duration}
                        </div>
 
                        {/* Active Glow */}

@@ -352,8 +352,8 @@ export default function ProfilePage() {
       <Navigation />
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-[80px] sm:pt-[96px] pb-8 relative z-10">
-        {/* Background Overlay - Dynamic based on theme */}
-        <div className="fixed inset-0 bg-background transition-colors duration-500 pointer-events-none" />
+        {/* Background Layer with Dotted Pattern */}
+        <div className="fixed inset-0 pointer-events-none transition-colors duration-500 bg-white dark:bg-slate-950 bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] dark:bg-[radial-gradient(#1e293b_1px,transparent_1px)] [background-size:16px_16px]" />
 
         {/* Header */}
         <div className="mb-6 sm:mb-8 bg-white dark:bg-slate-800 p-6 rounded-[2rem] border-[3px] border-slate-200 dark:border-slate-700 shadow-[0_8px_0_#cbd5e1] dark:shadow-[0_8px_0_#1e293b] flex items-center justify-between transition-colors relative z-10">

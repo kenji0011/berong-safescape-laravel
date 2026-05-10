@@ -59,6 +59,73 @@ const teamMembers = [
         color: "from-blue-500 to-cyan-500",
         roleIcons: [Code, Database, Brain],
     },
+    {
+        name: "Kean Gabriel E. Salvahan",
+        roles: ["Developer", "UI Designer", "UX Designer"],
+        image: "/salvahan_pr.jpg",
+        socials: [
+            { icon: Github, url: "https://github.com/kenji0011", label: "GitHub" },
+            { icon: Globe, url: "https://kenji-v2-beta-green.vercel.app/#about", label: "Portfolio" },
+            { icon: Linkedin, url: "https://www.linkedin.com/in/salvahan-kean-gabriel-e-06760537b", label: "LinkedIn" },
+        ],
+        color: "from-emerald-500 to-teal-500",
+        roleIcons: [Cpu, GraduationCap, Palette],
+    },
+    {
+        name: "Prince Genel R. Umali",
+        roles: ["AI Engineer", "Developer", "Data Scientist"],
+        image: "/umali_pr.png",
+        socials: [
+            { icon: Github, url: "#", label: "GitHub" },
+            { icon: Linkedin, url: "#", label: "LinkedIn" },
+        ],
+        color: "from-amber-500 to-yellow-500",
+        roleIcons: [Brain, Cpu, Database],
+    },
+    {
+        name: "Justin Angelo A. Luzande",
+        roles: ["Developer", "UI Designer", "UX Designer"],
+        image: "/luzande_pr.jpg",
+        socials: [
+            { icon: Github, url: "#", label: "GitHub" },
+            { icon: Linkedin, url: "#", label: "LinkedIn" },
+        ],
+        color: "from-rose-500 to-pink-500",
+        roleIcons: [Cpu, GraduationCap, Palette],
+    },
+    {
+        name: "Aeron Jhed V. Lachano",
+        roles: ["Game Designer", "Game Developer"],
+        image: "/lachano_pr.png",
+        socials: [
+            { icon: Github, url: "#", label: "GitHub" },
+            { icon: Linkedin, url: "#", label: "LinkedIn" },
+        ],
+        color: "from-indigo-500 to-blue-500",
+        roleIcons: [Palette, Gamepad2],
+    },
+    {
+        name: "Axcel Andrei V. Delos Reyes",
+        roles: ["Game Designer", "Game Developer"],
+        image: "/delosreyes_pr.png",
+        socials: [
+            { icon: Github, url: "#", label: "GitHub" },
+            { icon: Linkedin, url: "#", label: "LinkedIn" },
+        ],
+        color: "from-violet-500 to-purple-500",
+        roleIcons: [Palette, Gamepad2],
+    },
+    {
+        name: "Zyril G. Dela Paz",
+        roles: ["Game Designer", "Game Developer"],
+        image: "/delapaz_pr .png",
+        socials: [
+            { icon: Github, url: "#", label: "GitHub" },
+            { icon: Linkedin, url: "#", label: "LinkedIn" },
+        ],
+        color: "from-orange-500 to-red-500",
+        roleIcons: [Palette, Gamepad2],
+    },
 ];
 
 // Feature Data
@@ -159,8 +226,7 @@ function TeamCard({ member, index, reduceMotion }: { key?: React.Key; member: ty
                 y: -6,
                 transition: { duration: 0.2, ease: "easeOut" }
             }}
-            className="group relative bg-white dark:bg-slate-800 rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-shadow duration-300 border border-slate-200 dark:border-slate-700 h-full flex flex-col cursor-pointer transform-gpu will-change-transform"
-            style={{ backfaceVisibility: "hidden" }}
+            className="group relative bg-white dark:bg-slate-800 rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-shadow duration-300 border border-slate-200 dark:border-slate-700 h-full flex flex-col cursor-pointer"
         >
             {/* Gradient Header */}
             <div className={`h-32 bg-gradient-to-r ${member.color} relative`}>
@@ -197,7 +263,7 @@ function TeamCard({ member, index, reduceMotion }: { key?: React.Key; member: ty
                 <h3 className="text-xl font-bold text-slate-800 dark:text-white mb-2 transition-colors">{member.name}</h3>
 
                 {/* Roles */}
-                <div className="flex flex-wrap justify-center gap-2 mb-4 flex-grow content-start">
+                <div className="flex flex-wrap justify-center gap-2 mb-4 flex-grow content-start min-h-[70px]">
                     {member.roles.map((role, roleIndex) => (
                         <motion.span
                             key={roleIndex}
@@ -222,7 +288,7 @@ function TeamCard({ member, index, reduceMotion }: { key?: React.Key; member: ty
                 {/* Social Links */}
                 <div className="flex justify-center gap-3 pt-4 border-t border-slate-100 dark:border-slate-700 mt-auto transition-colors">
                     {member.socials.map((social, socialIndex) => (
-                        <Link
+                        <a
                             key={socialIndex}
                             href={social.url}
                             target="_blank"
@@ -236,7 +302,7 @@ function TeamCard({ member, index, reduceMotion }: { key?: React.Key; member: ty
                             >
                                 <social.icon className="w-5 h-5" />
                             </Button>
-                        </Link>
+                        </a>
                     ))}
                 </div>
             </div>
@@ -619,7 +685,7 @@ export function LandingAboutSection() {
                         </p>
                     </motion.div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" style={{ perspective: 1200 }}>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                         {teamMembers.map((member, index) => (
                             <TeamCard key={index} member={member} index={index} reduceMotion={reduceMotion} />
                         ))}

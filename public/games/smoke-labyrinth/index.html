@@ -43,43 +43,52 @@
             }
         }
 
-        /* Mobile Arrow Keys D-Pad */
+        /* Mobile Arrow Keys D-Pad - Fixed Bottom Dock */
         .dpad-container {
-            position: absolute;
-            bottom: 8px;
-            right: 8px;
-            width: 120px;
-            height: 120px;
-            z-index: 30;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            z-index: 50;
             touch-action: none;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            padding: 12px 16px;
+            padding-bottom: max(12px, env(safe-area-inset-bottom));
+            background: rgba(15, 23, 42, 0.97);
+            backdrop-filter: blur(12px);
+            border-top: 2px solid rgba(51, 65, 85, 0.6);
+            box-shadow: 0 -4px 20px rgba(0,0,0,0.3);
+        }
+        @media (min-width: 768px) {
+            .dpad-container {
+                display: none !important;
+            }
+        }
+        .dpad-inner {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
             grid-template-rows: repeat(3, 1fr);
-            gap: 3px;
-        }
-        @media (min-width: 640px) {
-            .dpad-container {
-                bottom: 12px;
-                right: 12px;
-                width: 140px;
-                height: 140px;
-            }
+            gap: 4px;
+            max-width: 140px;
+            margin-left: auto;
         }
         .dpad-btn {
             display: flex;
             align-items: center;
             justify-content: center;
-            border-radius: 6px;
-            background: rgba(30, 41, 59, 0.85);
-            border: 1.5px solid rgba(148, 163, 184, 0.35);
+            border-radius: 10px;
+            background: rgba(30, 41, 59, 0.9);
+            border: 2px solid rgba(148, 163, 184, 0.3);
             color: rgba(248, 250, 252, 0.9);
-            font-size: 18px;
+            font-size: 16px;
             cursor: pointer;
             user-select: none;
             -webkit-user-select: none;
-            backdrop-filter: blur(4px);
             transition: background 0.1s, transform 0.08s, box-shadow 0.1s;
             touch-action: none;
+            aspect-ratio: 1;
         }
         .dpad-btn:active, .dpad-btn.active {
             background: rgba(251, 146, 60, 0.7);
@@ -92,6 +101,24 @@
         }
         .dpad-spacer {
             /* empty grid cell */
+        }
+        .dpad-crouch-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            border-radius: 16px;
+            background: rgba(30, 41, 59, 0.9);
+            border: 2px solid rgba(148, 163, 184, 0.3);
+            color: rgba(248, 250, 252, 0.9);
+            font-size: 11px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            cursor: pointer;
+            user-select: none;
+            padding: 12px;
         }
     </style>
 </head>
@@ -153,8 +180,14 @@
                         <div class="text-green-400 font-mono text-xs mb-1">VISIBILITY: LOW</div>
                         <div class="text-slate-400 font-mono text-xs">OBJECTIVE: ESCAPE</div>
                     </div>
-                    <!-- Mobile Arrow Keys D-Pad -->
-                    <div id="dpad" class="dpad-container md:hidden">
+                </div>
+
+                <!-- Mobile Arrow Keys D-Pad - Fixed Bottom Dock -->
+                <div id="dpad" class="dpad-container">
+                    <div class="dpad-crouch-btn" style="opacity:0; pointer-events:none;">
+                        <!-- Placeholder to keep grid balanced -->
+                    </div>
+                    <div class="dpad-inner">
                         <div class="dpad-spacer"></div>
                         <button class="dpad-btn" data-dir="up" aria-label="Move Up"><i class="fa-solid fa-caret-up"></i></button>
                         <div class="dpad-spacer"></div>

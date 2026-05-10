@@ -132,6 +132,51 @@ class ChatbotController extends Controller
         ]);
     }
 
+    public function generateSpeech(Request $request)
+    {
+        $request->validate([
+            'text' => 'required|string',
+            'voice' => 'sometimes|string'
+        ]);
+
+        $apiKey = env('ELEVENLABS_API_KEY');
+
+        if (empty($apiKey)) {
+            return response()->json(['error' => 'ElevenLabs API key missing'], 500);
+        }
+
+        $text = $request->input('text');
+        // Clean text (remove markdown for better speech)
+        $cleanText = preg_replace('/[*#_`]/', '', $text);
+        
+        // "Antoni" voice ID (a natural male voice). 
+        // You can browse other voices and get their IDs in your ElevenLabs dashboard.
+        $voiceId = $request->input('voice', '1CkEF8EejhtlF4pZv178'); 
+
+        $response = Http::withHeaders([
+                'xi-api-key' => $apiKey,
+            ])
+            ->withoutVerifying()
+            ->timeout(30)
+            ->post("https://api.elevenlabs.io/v1/text-to-speech/{$voiceId}", [
+                'text' => $cleanText,
+                'model_id' => 'eleven_multilingual_v2', // Multilingual model is highly realistic
+                'voice_settings' => [
+                    'stability' => 0.5,
+                    'similarity_boost' => 0.75
+                ]
+            ]);
+
+        if ($response->successful()) {
+            return response($response->body(), 200, [
+                'Content-Type' => 'audio/mpeg',
+            ]);
+        }
+
+        Log::error("ElevenLabs TTS Error: " . $response->body());
+        return response()->json(['error' => 'Failed to generate speech'], 500);
+    }
+
     /**
      * A simple local RAG search algorithm.
      * Reads the dataset, scores each row based on keyword matches with the user message,

@@ -23,7 +23,7 @@ class AdminController extends Controller
         return \Inertia\Inertia::render('AdminDashboard', [
             'initialCarouselImages' => \App\Models\CarouselImage::where('isActive', true)->orderBy('order', 'asc')->get(),
             'initialBlogPosts' => \App\Models\BlogPost::with('author:id,name')->orderBy('created_at', 'desc')->get(),
-            'initialVideos' => \App\Models\Video::orderBy('created_at', 'desc')->get(),
+            'initialVideos' => \App\Models\Video::orderBy('order', 'asc')->orderBy('created_at', 'desc')->get(),
             'initialUsers' => \App\Models\User::latest()->paginate(20),
             'initialQuickQuestions' => \App\Models\QuickQuestion::where('isActive', true)->orderBy('created_at', 'desc')->get(),
             'initialFireCodeSections' => \App\Models\FireCodeSection::orderBy('sectionNum')->get(),
@@ -519,10 +519,16 @@ class AdminController extends Controller
     public function reorderBlogs(Request $request)
     {
         $request->validate(['blogIds' => 'required|array']);
+        return response()->json(['success' => true]);
+    }
+
+    public function reorderVideos(Request $request)
+    {
+        $request->validate(['videoIds' => 'required|array']);
         
-        // Note: original blog model might not have order field, but let's assume it does or just return success
-        // If it doesn't have order, we might need to skip or implement it.
-        // Let's check BlogPost model later or just return success for now if column missing.
+        foreach ($request->videoIds as $index => $id) {
+            Video::where('id', $id)->update(['order' => $index]);
+        }
         
         return response()->json(['success' => true]);
     }

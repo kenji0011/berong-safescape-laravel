@@ -31,11 +31,11 @@ const mockFeaturedCards: FeaturedCardItem[] = [
     title: 'Professional Learning',
     btn: 'For Professionals',
     description: 'Access comprehensive fire safety codes, standards, and professional training materials.',
-    imageUrl: '/professional_card.png',
+    imageUrl: '/prof_learning.jpg',
     link: '/professional',
     requiredPermission: 'accessProfessional',
     icon: <Briefcase className="h-6 w-6 sm:h-7 sm:w-7" strokeWidth={2.5} />,
-    color: 'bg-blue-600',
+    color: 'bg-red-600',
   },
   {
     id: 2,

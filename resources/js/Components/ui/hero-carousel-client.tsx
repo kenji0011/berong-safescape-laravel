@@ -45,12 +45,10 @@ export function HeroCarouselClient({ images }: HeroCarouselClientProps) {
                 <CarouselContent>
                     {images.map((image, index) => (
                         <CarouselItem key={image.id}>
-                            <div className="relative isolate w-full h-[40vh] sm:h-[50vh] min-h-[300px] overflow-hidden rounded-[2.5rem] shadow-2xl border border-gray-200 dark:border-slate-800 group-slide bg-slate-200 dark:bg-slate-800 transition-colors duration-500">
+                            <div className="relative isolate w-full aspect-video overflow-hidden rounded-[2.5rem] shadow-2xl border border-gray-200 dark:border-slate-800 group-slide bg-slate-200 dark:bg-slate-800 transition-colors duration-500">
                                 <style dangerouslySetInnerHTML={{ __html: `
                                     .carousel-zoom-image {
                                         transition: opacity 0.7s ease-out, transform 0.7s cubic-bezier(0.33, 1, 0.68, 1) !important;
-                                        image-rendering: -webkit-optimize-contrast;
-                                        image-rendering: high-quality;
                                     }
                                     .group-slide:hover .carousel-zoom-image {
                                         transform: scale(1.1) !important;
@@ -65,7 +63,7 @@ export function HeroCarouselClient({ images }: HeroCarouselClientProps) {
                                 />
 
                                 {/* Gradient Overlay - Bottom Left aligned */}
-                                <div className="absolute inset-0 bg-gray-900/70 flex flex-col justify-end items-start p-6 pb-12 sm:p-10 sm:pb-16 md:p-14 md:pb-20 pointer-events-none rounded-[2.5rem]">
+                                <div className="absolute inset-0 bg-gradient-to-t from-gray-900/90 via-gray-900/40 to-transparent flex flex-col justify-end items-start p-6 pb-12 sm:p-10 sm:pb-16 md:p-14 md:pb-20 pointer-events-none rounded-[2.5rem]">
                                     <div className="relative z-10 text-white w-full max-w-5xl pointer-events-auto">
                                         <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black mb-3 sm:mb-5 drop-shadow-2xl tracking-tight leading-tight">
                                             {image.title}

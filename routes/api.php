@@ -59,6 +59,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     // Chatbot AI Domain
     // ==========================================
     Route::middleware('throttle:ai')->post('/chatbot/ai-response', [\App\Http\Controllers\ChatbotController::class, 'respond']);
+    Route::middleware('throttle:ai')->post('/chatbot/tts', [\App\Http\Controllers\ChatbotController::class, 'generateSpeech']);
 
     // ==========================================
     // 1. Content Domain (Blog, Videos, FAQs, Carousel)
@@ -160,6 +161,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::post('/carousel/reorder', [AdminController::class, 'reorderCarousel']);
 
         Route::post('/blogs/reorder', [AdminController::class, 'reorderBlogs']);
+        Route::post('/videos/reorder', [AdminController::class, 'reorderVideos']);
 
         // Quick Questions Alias
         Route::get('/quick-questions', [ContentController::class, 'questions']);

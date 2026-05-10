@@ -66,6 +66,73 @@ const teamMembers = [
         color: "from-blue-500 to-cyan-500",
         roleIcons: [Code, Database, Brain],
     },
+    {
+        name: "Kean Gabriel E. Salvahan",
+        roles: ["Developer", "UI Designer", "UX Designer"],
+        image: "/salvahan_pr.jpg",
+        socials: [
+            { icon: Github, url: "https://github.com/kenji0011", label: "GitHub" },
+            { icon: Globe, url: "https://kenji-v2-beta-green.vercel.app/#about", label: "Portfolio" },
+            { icon: Linkedin, url: "https://www.linkedin.com/in/salvahan-kean-gabriel-e-06760537b", label: "LinkedIn" },
+        ],
+        color: "from-emerald-500 to-teal-500",
+        roleIcons: [Cpu, GraduationCap, Palette],
+    },
+    {
+        name: "Prince Genel R. Umali",
+        roles: ["AI Engineer", "Developer", "Data Scientist"],
+        image: "/umali_pr.png",
+        socials: [
+            { icon: Github, url: "#", label: "GitHub" },
+            { icon: Linkedin, url: "#", label: "LinkedIn" },
+        ],
+        color: "from-amber-500 to-yellow-500",
+        roleIcons: [Brain, Cpu, Database],
+    },
+    {
+        name: "Justin Angelo A. Luzande",
+        roles: ["Developer", "UI Designer", "UX Designer"],
+        image: "/luzande_pr.jpg",
+        socials: [
+            { icon: Github, url: "#", label: "GitHub" },
+            { icon: Linkedin, url: "#", label: "LinkedIn" },
+        ],
+        color: "from-rose-500 to-pink-500",
+        roleIcons: [Cpu, GraduationCap, Palette],
+    },
+    {
+        name: "Aeron Jhed V. Lachano",
+        roles: ["Game Designer", "Game Developer"],
+        image: "/lachano_pr.png",
+        socials: [
+            { icon: Github, url: "#", label: "GitHub" },
+            { icon: Linkedin, url: "#", label: "LinkedIn" },
+        ],
+        color: "from-indigo-500 to-blue-500",
+        roleIcons: [Palette, Gamepad2],
+    },
+    {
+        name: "Axcel Andrei V. Delos Reyes",
+        roles: ["Game Designer", "Game Developer"],
+        image: "/delosreyes_pr.png",
+        socials: [
+            { icon: Github, url: "#", label: "GitHub" },
+            { icon: Linkedin, url: "#", label: "LinkedIn" },
+        ],
+        color: "from-violet-500 to-purple-500",
+        roleIcons: [Palette, Gamepad2],
+    },
+    {
+        name: "Zyril G. Dela Paz",
+        roles: ["Game Designer", "Game Developer"],
+        image: "/delapaz_pr .png",
+        socials: [
+            { icon: Github, url: "#", label: "GitHub" },
+            { icon: Linkedin, url: "#", label: "LinkedIn" },
+        ],
+        color: "from-orange-500 to-red-500",
+        roleIcons: [Palette, Gamepad2],
+    },
 ];
 
 // Animated Feature Card Component
@@ -128,19 +195,19 @@ function TeamCard({ member, index }: { member: typeof teamMembers[0]; index: num
     // Index 1: Aedran - slide up only (no rotation)
     // Index 2: Keinji - flip from right (rotateY: 15)
     const getInitialAnimation = () => {
-        switch (index) {
-            case 0: return { opacity: 0, scale: 0.8, rotateY: -15, y: 40 }; // John - flip from left
-            case 1: return { opacity: 0, scale: 0.8, rotateY: 0, y: 60 };   // Aedran - just slide up
-            case 2: return { opacity: 0, scale: 0.8, rotateY: 15, y: 40 };  // Keinji - flip from right (left direction)
+        switch (index % 3) {
+            case 0: return { opacity: 0, scale: 0.8, rotateY: -15, y: 40 }; // Left - flip from left
+            case 1: return { opacity: 0, scale: 0.8, rotateY: 0, y: 60 };   // Center - just slide up
+            case 2: return { opacity: 0, scale: 0.8, rotateY: 15, y: 40 };  // Right - flip from right
             default: return { opacity: 0, scale: 0.8, rotateY: -15, y: 40 };
         }
     };
 
     const getHoverAnimation = () => {
-        switch (index) {
-            case 0: return { scale: 1.02, rotateY: 5 };   // John - tilt right on hover
-            case 1: return { scale: 1.02, y: -5 };        // Aedran - lift up on hover
-            case 2: return { scale: 1.02, rotateY: -5 };  // Keinji - tilt left on hover
+        switch (index % 3) {
+            case 0: return { scale: 1.02, rotateY: 5 };   // Left - tilt right on hover
+            case 1: return { scale: 1.02, y: -5 };        // Center - lift up on hover
+            case 2: return { scale: 1.02, rotateY: -5 };  // Right - tilt left on hover
             default: return { scale: 1.02, rotateY: 5 };
         }
     };
@@ -159,10 +226,10 @@ function TeamCard({ member, index }: { member: typeof teamMembers[0]; index: num
                 scale: 1.02,
                 transition: { duration: 0.3 }
             }}
-            className="group relative bg-white dark:bg-slate-800 rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 border border-slate-200 dark:border-slate-700 transition-colors"
+            className="group relative bg-white dark:bg-slate-800 rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 border border-slate-200 dark:border-slate-700 h-full flex flex-col cursor-pointer transition-colors"
         >
             {/* Gradient Header */}
-            <div className={`h-32 bg-slate-200 dark:bg-slate-700 relative`}>
+            <div className={`h-32 bg-gradient-to-r ${member.color} relative`}>
                 <div className="absolute inset-0 bg-black/20" />
                 {/* Decorative circles - Animated only on desktop */}
                 <motion.div
@@ -193,11 +260,11 @@ function TeamCard({ member, index }: { member: typeof teamMembers[0]; index: num
             </div>
 
             {/* Content */}
-            <div className="p-6 pt-4 text-center">
+            <div className="p-6 pt-4 text-center flex flex-col flex-1">
                 <h3 className="text-xl font-bold text-slate-800 dark:text-white mb-2 transition-colors">{member.name}</h3>
 
                 {/* Roles */}
-                <div className="flex flex-wrap justify-center gap-2 mb-4">
+                <div className="flex flex-wrap justify-center gap-2 mb-4 flex-grow content-start min-h-[70px]">
                     {member.roles.map((role, roleIndex) => (
                         <motion.span
                             key={roleIndex}
@@ -220,7 +287,7 @@ function TeamCard({ member, index }: { member: typeof teamMembers[0]; index: num
                 </div>
 
                 {/* Social Links */}
-                <div className="flex justify-center gap-3 pt-4 border-t border-slate-100 dark:border-slate-700 transition-colors">
+                <div className="flex justify-center gap-3 pt-4 border-t border-slate-100 dark:border-slate-700 mt-auto transition-colors">
                     {member.socials.map((social, socialIndex) => (
                         <Link
                             key={socialIndex}
@@ -645,7 +712,7 @@ export default function AboutPage() {
                             </p>
                         </motion.div>
 
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" style={{ perspective: 1200 }}>
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                             {teamMembers.map((member, index) => (
                                 <TeamCard key={index} member={member} index={index} />
                             ))}

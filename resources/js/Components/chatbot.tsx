@@ -61,21 +61,88 @@ export function Chatbot() {
   const [isTyping, setIsTyping] = useState(false)
   const abortControllerRef = useRef<AbortController | null>(null)
   const messagesEndRef = useRef<HTMLDivElement>(null)
+  const currentAudioRef = useRef<HTMLAudioElement | null>(null)
+  const [speakingMessageId, setSpeakingMessageId] = useState<string | null>(null)
+  const [isTTSLoading, setIsTTSLoading] = useState(false)
 
   const readAloudRef = useRef(readAloud)
   useEffect(() => {
     readAloudRef.current = readAloud
   }, [readAloud])
 
-  const speakText = (text: string) => {
-    if (!readAloudRef.current) return
-    window.speechSynthesis.cancel() // Stop any current speech
+  const speakText = async (text: string, messageId: string | null = null, force: boolean = false) => {
+    if (!readAloudRef.current && !force) return
     
-    // Attempt to parse out basic markdown if present to read cleaner
-    const cleanText = text.replace(/[*#_`]/g, '').replace(/\n+/g, ' ')
-    const utterance = new SpeechSynthesisUtterance(cleanText)
-    utterance.lang = 'en-US'
-    window.speechSynthesis.speak(utterance)
+    // Stop any current native speech or audio
+    window.speechSynthesis.cancel() 
+    if (currentAudioRef.current) {
+      currentAudioRef.current.pause()
+      currentAudioRef.current.currentTime = 0
+    }
+    setSpeakingMessageId(null)
+    
+    // Set new speaking message
+    setSpeakingMessageId(messageId)
+    setIsTTSLoading(true)
+    
+    try {
+      // Call our backend API to get the audio from OpenAI
+      const response = await axios.post('/api/chatbot/tts', { text }, {
+        responseType: 'blob' // Expecting an audio file back
+      })
+
+      // Create a URL for the blob and play it
+      const audioUrl = URL.createObjectURL(response.data)
+      const audio = new Audio(audioUrl)
+      
+      currentAudioRef.current = audio
+      audio.play()
+      setIsTTSLoading(false)
+      
+      // Cleanup URL after playing
+      audio.onended = () => {
+        URL.revokeObjectURL(audioUrl)
+        setSpeakingMessageId(null)
+        setIsTTSLoading(false)
+      }
+      audio.onerror = () => {
+        setSpeakingMessageId(null)
+        setIsTTSLoading(false)
+      }
+    } catch (error) {
+      setIsTTSLoading(false)
+      console.error("AI Voice Error, falling back to browser voice:", error)
+      
+      // Fallback to built-in browser voice if the API fails (e.g., missing API key)
+      const cleanText = text.replace(/[*#_`]/g, '').replace(/\n+/g, ' ')
+      const utterance = new SpeechSynthesisUtterance(cleanText)
+      
+      const voices = window.speechSynthesis.getVoices()
+      const preferredVoice = voices.find(voice => 
+        voice.name.includes('Google US English') ||
+        voice.name.includes('Samantha') ||
+        voice.name.includes('Microsoft Zira') ||
+        voice.lang === 'en-US' ||
+        voice.lang === 'en-GB'
+      )
+
+      if (preferredVoice) {
+        utterance.voice = preferredVoice
+      } else {
+        utterance.lang = 'en-US'
+      }
+
+      utterance.onend = () => {
+        setSpeakingMessageId(null)
+        setIsTTSLoading(false)
+      }
+      utterance.onerror = () => {
+        setSpeakingMessageId(null)
+        setIsTTSLoading(false)
+      }
+
+      window.speechSynthesis.speak(utterance)
+    }
   }
 
   const startListening = () => {
@@ -258,7 +325,7 @@ export function Chatbot() {
     requestAnimationFrame(() => {
       messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
     })
-  }, [messages, isTyping])
+  }, [messages, isTyping, isOpen])
 
   // Load quick questions when the component mounts
   useEffect(() => {
@@ -347,7 +414,7 @@ export function Chatbot() {
     }
     setMessages((prev) => [...prev, botMessage])
     if (botResponse !== "Response generation stopped.") {
-      speakText(botResponse)
+      speakText(botResponse, botMessage.id)
     }
   }
 
@@ -376,7 +443,7 @@ export function Chatbot() {
       timestamp: new Date(),
     }
     setMessages((prev) => [...prev, botMessage])
-    speakText(responseText)
+    speakText(responseText, botMessage.id)
   }
 
   const generateBotResponse = async (input: string, currentHistory: Message[] = [], signal?: AbortSignal): Promise<string> => {
@@ -596,7 +663,15 @@ export function Chatbot() {
                   <button
                     onClick={() => {
                       setReadAloud(prev => !prev)
-                      if (readAloud) window.speechSynthesis.cancel()
+                      if (readAloud) {
+                        window.speechSynthesis.cancel()
+                        if (currentAudioRef.current) {
+                          currentAudioRef.current.pause()
+                          currentAudioRef.current.currentTime = 0
+                        }
+                        setSpeakingMessageId(null)
+                        setIsTTSLoading(false)
+                      }
                     }}
                     className={`h-9 w-9 flex items-center justify-center rounded-lg transition-colors ${readAloud ? 'bg-white/30 text-white' : 'text-white/80 hover:bg-white/20'}`}
                     title={readAloud ? 'Turn off voice' : 'Turn on voice'}
@@ -665,25 +740,38 @@ export function Chatbot() {
                 {messages.map((message) => (
                   <div key={message.id} className={`flex ${message.sender === "user" ? "justify-end" : "justify-start"}`}>
                     <div
-                      className={`max-w-[85%] rounded-2xl p-3 shadow-sm ${
+                      className={`max-w-[85%] rounded-2xl p-3 shadow-sm relative group ${
                         message.sender === "user"
                           ? "bg-[#1a6b3c] dark:bg-[#1a6b3c] text-white rounded-br-md"
                           : "bg-[#1e3a4a] dark:bg-slate-800 text-white border border-[#2a5060] dark:border-slate-700 rounded-bl-md"
                       }`}
                     >
                       {message.sender === "bot" ? (
-                        <div className="text-sm prose prose-sm prose-invert max-w-none
-                          [&>p]:my-1 [&>ul]:my-1 [&>ol]:my-1 [&>li]:my-0.5
-                          [&>ul]:pl-4 [&>ol]:pl-4 [&>ul]:list-disc [&>ol]:list-decimal
-                          [&>h1]:text-base [&>h1]:font-bold [&>h1]:mt-2 [&>h1]:mb-1
-                          [&>h2]:text-sm [&>h2]:font-bold [&>h2]:mt-2 [&>h2]:mb-1
-                          [&>h3]:text-sm [&>h3]:font-semibold [&>h3]:mt-1.5 [&>h3]:mb-0.5
-                          [&>strong]:font-semibold [&>em]:italic
-                          [&>code]:bg-white/10 dark:[&>code]:bg-slate-950/50 [&>code]:px-1 [&>code]:rounded [&>code]:text-xs
-                          [&>blockquote]:border-l-2 [&>blockquote]:border-orange-400 [&>blockquote]:pl-2 [&>blockquote]:italic
-                        ">
-                          <ReactMarkdown>{message.text}</ReactMarkdown>
-                        </div>
+                        <>
+                          <div className="text-sm prose prose-sm prose-invert max-w-none
+                            [&>p]:my-1 [&>ul]:my-1 [&>ol]:my-1 [&>li]:my-0.5
+                            [&>ul]:pl-4 [&>ol]:pl-4 [&>ul]:list-disc [&>ol]:list-decimal
+                            [&>h1]:text-base [&>h1]:font-bold [&>h1]:mt-2 [&>h1]:mb-1
+                            [&>h2]:text-sm [&>h2]:font-bold [&>h2]:mt-2 [&>h2]:mb-1
+                            [&>h3]:text-sm [&>h3]:font-semibold [&>h3]:mt-1.5 [&>h3]:mb-0.5
+                            [&>strong]:font-semibold [&>em]:italic
+                            [&>code]:bg-white/10 dark:[&>code]:bg-slate-950/50 [&>code]:px-1 [&>code]:rounded [&>code]:text-xs
+                            [&>blockquote]:border-l-2 [&>blockquote]:border-orange-400 [&>blockquote]:pl-2 [&>blockquote]:italic
+                          ">
+                            <ReactMarkdown>{message.text}</ReactMarkdown>
+                          </div>
+                          <button
+                            onClick={() => speakText(message.text, message.id, true)}
+                            className={`absolute -bottom-2 -right-2 h-8 w-8 flex items-center justify-center rounded-full border-2 shadow-md transition-all hover:scale-110 active:scale-90 z-10 ${
+                              speakingMessageId === message.id 
+                                ? `bg-orange-500 border-orange-200 text-white ${isTTSLoading ? 'animate-pulse' : ''}` 
+                                : "bg-slate-500 dark:bg-slate-700 border-white dark:border-slate-900 text-white"
+                            }`}
+                            title="Read aloud"
+                          >
+                            <Volume2 className="h-4 w-4" strokeWidth={2.5} />
+                          </button>
+                        </>
                       ) : (
                         <p className="text-sm font-medium">{message.text}</p>
                       )}

@@ -69,11 +69,11 @@ export const AdminVideosTab: React.FC<VideosTabProps> = ({
                   <SelectItem value="kids" className="rounded-lg font-bold text-slate-700 dark:text-slate-300 focus:bg-slate-50 dark:focus:bg-slate-700 focus:text-red-600 dark:focus:text-red-400 transition-colors cursor-pointer py-2.5">
                     Kids
                   </SelectItem>
-                  <SelectItem value="adult" className="rounded-lg font-bold text-slate-700 dark:text-slate-300 focus:bg-slate-50 dark:focus:bg-slate-700 focus:text-red-600 dark:focus:text-red-400 transition-colors cursor-pointer py-2.5">
-                    Adult
-                  </SelectItem>
                   <SelectItem value="professional" className="rounded-lg font-bold text-slate-700 dark:text-slate-300 focus:bg-slate-50 dark:focus:bg-slate-700 focus:text-red-600 dark:focus:text-red-400 transition-colors cursor-pointer py-2.5">
                     Professional
+                  </SelectItem>
+                  <SelectItem value="adult" className="rounded-lg font-bold text-slate-700 dark:text-slate-300 focus:bg-slate-50 dark:focus:bg-slate-700 focus:text-red-600 dark:focus:text-red-400 transition-colors cursor-pointer py-2.5">
+                    Adult
                   </SelectItem>
                 </SelectContent>
               </Select>
@@ -148,26 +148,70 @@ export const AdminVideosTab: React.FC<VideosTabProps> = ({
         </CardContent>
       </Card>
 
-      <SortableContentList
-        title="Current Videos"
-        description={`${videos.length} videos in collection`}
-        items={videos}
-        onReorder={(newOrder) => handleReorderVideos(newOrder as Video[])}
-        onDelete={handleDeleteVideo}
-        renderContent={(video) => (
-          <div className="flex flex-col">
-            <h4 className="font-semibold text-slate-800 dark:text-white truncate">{video.title}</h4>
-            <div className="flex items-center gap-2 mt-0.5">
-              <span className="text-[10px] font-black uppercase px-2 py-0.5 bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 rounded-md border border-slate-200 dark:border-slate-700">
-                {video.category}
-              </span>
-              <span className="text-xs text-slate-500 dark:text-slate-400 font-medium">
-                {video.duration}
-              </span>
+      <div className="grid grid-cols-1 gap-6">
+        <SortableContentList
+          title="Current Videos in Kids"
+          description={`${videos.filter(v => v.category === 'kids').length} videos in collection • Drag to reorder`}
+          items={videos.filter(v => v.category === 'kids')}
+          onReorder={(newOrder) => handleReorderVideos(newOrder as Video[])}
+          onDelete={handleDeleteVideo}
+          renderContent={(video) => (
+            <div className="flex flex-col">
+              <h4 className="font-semibold text-slate-800 dark:text-white truncate">{video.title}</h4>
+              <div className="flex items-center gap-2 mt-0.5">
+                <span className="text-[10px] font-black uppercase px-2 py-0.5 bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 rounded-md border border-red-100 dark:border-red-900/50">
+                  {video.category}
+                </span>
+                <span className="text-xs text-slate-500 dark:text-slate-400 font-medium">
+                  {video.duration}
+                </span>
+              </div>
             </div>
-          </div>
-        )}
-      />
+          )}
+        />
+
+        <SortableContentList
+          title="Current Videos in Professional"
+          description={`${videos.filter(v => v.category === 'professional').length} videos in collection • Drag to reorder`}
+          items={videos.filter(v => v.category === 'professional')}
+          onReorder={(newOrder) => handleReorderVideos(newOrder as Video[])}
+          onDelete={handleDeleteVideo}
+          renderContent={(video) => (
+            <div className="flex flex-col">
+              <h4 className="font-semibold text-slate-800 dark:text-white truncate">{video.title}</h4>
+              <div className="flex items-center gap-2 mt-0.5">
+                <span className="text-[10px] font-black uppercase px-2 py-0.5 bg-amber-50 dark:bg-amber-900/20 text-amber-600 dark:text-amber-400 rounded-md border border-amber-100 dark:border-amber-900/50">
+                  {video.category}
+                </span>
+                <span className="text-xs text-slate-500 dark:text-slate-400 font-medium">
+                  {video.duration}
+                </span>
+              </div>
+            </div>
+          )}
+        />
+
+        <SortableContentList
+          title="Current Videos in Adults"
+          description={`${videos.filter(v => v.category === 'adult').length} videos in collection • Drag to reorder`}
+          items={videos.filter(v => v.category === 'adult')}
+          onReorder={(newOrder) => handleReorderVideos(newOrder as Video[])}
+          onDelete={handleDeleteVideo}
+          renderContent={(video) => (
+            <div className="flex flex-col">
+              <h4 className="font-semibold text-slate-800 dark:text-white truncate">{video.title}</h4>
+              <div className="flex items-center gap-2 mt-0.5">
+                <span className="text-[10px] font-black uppercase px-2 py-0.5 bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 rounded-md border border-blue-100 dark:border-blue-900/50">
+                  {video.category}
+                </span>
+                <span className="text-xs text-slate-500 dark:text-slate-400 font-medium">
+                  {video.duration}
+                </span>
+              </div>
+            </div>
+          )}
+        />
+      </div>
     </div>
   )
 }

@@ -93,7 +93,31 @@ Route::get('/about', function () {
     })->name('kids.module');
 
     Route::get('/kids/videos', function () {
-        return Inertia::render('Kids/Videos');
+        return Inertia::render('Kids/Videos', [
+            'initialVideos' => \App\Models\Video::where('isActive', true)
+                ->where('category', 'kids')
+                ->orderBy('order', 'asc')
+                ->get(),
+            'watchedVideoIds' => \App\Models\EngagementLog::where('userId', Auth::id())
+                ->where('eventType', 'VIDEO_WATCHED')
+                ->get()
+                ->map(function ($log) {
+                    $data = is_string($log->eventData) ? json_decode($log->eventData, true) : $log->eventData;
+                    return [
+                        'id' => (string)($data['videoId'] ?? ''),
+                        'category' => $data['category'] ?? null
+                    ];
+                })
+                ->filter(function ($item) {
+                    // If category is present, it must be kids. 
+                    // If not present (old logs), we might want to check the video table, 
+                    // but for now let's just match against current category videos.
+                    return $item['id'] !== '' && ($item['category'] === 'kids' || $item['category'] === null);
+                })
+                ->pluck('id')
+                ->unique()
+                ->values(),
+        ]);
     })->name('kids.videos');
 
     Route::get('/kids/quiz', function () {
@@ -164,6 +188,16 @@ Route::get('/about', function () {
                 ->where('category', 'professional')
                 ->orderBy('created_at', 'desc')
                 ->get()),
+            'watchedVideoIds' => Inertia::defer(fn () => \App\Models\EngagementLog::where('userId', Auth::id())
+                ->where('eventType', 'VIDEO_WATCHED')
+                ->get()
+                ->map(function ($log) {
+                    $data = is_string($log->eventData) ? json_decode($log->eventData, true) : $log->eventData;
+                    return $data['videoId'] ?? null;
+                })
+                ->filter()
+                ->unique()
+                ->values()),
         ]);
     })->name('professional');
     

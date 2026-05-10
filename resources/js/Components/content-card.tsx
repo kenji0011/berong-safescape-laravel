@@ -22,6 +22,7 @@ export interface ContentCardData {
   duration?: string
   category?: string
   hideBadge?: boolean
+  unlockRequirement?: string
 }
 
 interface ContentCardProps {
@@ -104,10 +105,17 @@ export const ContentCard = React.memo(({ content, onClick }: ContentCardProps) =
 
         {/* Lock overlay */}
         {content.isLocked && (
-          <div className="absolute inset-0 bg-slate-900/60 flex items-center justify-center z-30">
-            <div className="bg-white/10 p-4 rounded-full border-2 border-white/20">
-              <Lock className="h-10 w-10 text-white drop-shadow-2xl" />
+          <div className="absolute inset-0 bg-slate-900/80 backdrop-blur-sm flex flex-col items-center justify-center z-30 p-2 sm:p-4 text-center">
+            <div className="bg-white/10 p-3 sm:p-4 rounded-full border-2 border-white/20 mb-2 sm:mb-3 shadow-2xl">
+              <Lock className="h-6 w-6 sm:h-10 sm:w-10 text-white drop-shadow-2xl" />
             </div>
+            {content.unlockRequirement && (
+              <div className="bg-slate-900/80 border border-slate-700/50 px-2.5 py-1.5 sm:px-4 sm:py-2 rounded-xl max-w-[90%]">
+                <span className="text-[9px] sm:text-xs font-black text-amber-400 uppercase tracking-widest drop-shadow-md leading-tight block">
+                  {content.unlockRequirement}
+                </span>
+              </div>
+            )}
           </div>
         )}
 

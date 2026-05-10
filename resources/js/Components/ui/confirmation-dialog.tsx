@@ -53,7 +53,7 @@ export function ConfirmationDialog({
             className={`rounded-xl font-black h-12 px-8 transition-all shadow-[0_4px_0_#991b1b] hover:-translate-y-0.5 hover:shadow-[0_6px_0_#991b1b] active:translate-y-1 active:shadow-none ${
               variant === 'destructive' 
                 ? 'bg-red-600 text-white hover:bg-red-500' 
-                : 'bg-slate-900 dark:bg-white text-white dark:text-slate-900'
+                : 'bg-[#d60000] text-white hover:bg-[#d60000]'
             }`}
           >
             {confirmText}

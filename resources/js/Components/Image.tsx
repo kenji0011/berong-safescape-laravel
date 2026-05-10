@@ -20,12 +20,14 @@ export default function Image({
     ...props
 }: ImageProps) {
     const style: React.CSSProperties = {
-        ...(fill ? { width: '100%', height: '100%' } : {}),
+        ...(fill ? { width: '100%', height: '100%', objectFit: 'cover' } : {}),
         imageRendering: 'auto',
-        WebkitImageRendering: 'optimize-contrast' as any,
+        WebkitFontSmoothing: 'antialiased',
+        backfaceVisibility: 'hidden',
+        transform: 'translateZ(0)',
     };
     const resolvedLoading = loading || (priority ? 'eager' : 'lazy');
-    const resolvedDecoding = decoding || 'async';
+    const resolvedDecoding = decoding || (priority ? 'sync' : 'async');
     const resolvedFetchPriority = fetchPriority || (priority ? 'high' : 'auto');
 
     return (

@@ -10,6 +10,13 @@ import { usePage } from '@inertiajs/react';
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   const { url } = usePage();
   const isAuthPage = url.startsWith('/login') || url.startsWith('/register');
+  
+  const isMiniGame = url.startsWith('/kids/quiz') || 
+                     url.startsWith('/kids/memory-game') || 
+                     url.startsWith('/kids/smoke-crawl') || 
+                     url.startsWith('/kids/hot-or-not') || 
+                     url.startsWith('/kids/hazard-blitz');
+
   return (
     <AuthProvider>
       <div className="antialiased relative min-h-screen font-sans overflow-x-hidden bg-slate-50 dark:bg-slate-950 transition-colors duration-500">
@@ -33,7 +40,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <ProfileCheckWrapper>
             {children}
           </ProfileCheckWrapper>
-          {!isAuthPage && <Chatbot />}
+          {(!isAuthPage && !isMiniGame) && <Chatbot />}
           <LoginLoader />
           <LogoutLoader />
         </div>

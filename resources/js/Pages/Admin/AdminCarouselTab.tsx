@@ -25,10 +25,12 @@ export const AdminCarouselTab: React.FC<CarouselTabProps> = ({
           key={carouselUploadKey}
           title="Upload Carousel Image"
           description="Upload an image to generate a URL for the carousel"
+          overlayTitle={newCarousel.title}
+          overlayAlt={newCarousel.alt}
           onUploadComplete={(url) => setNewCarousel({ ...newCarousel, url })}
         />
 
-        <Card className="rounded-[1.5rem] border-[3px] border-slate-200 dark:border-slate-700 shadow-sm hover:shadow-[0_4px_0_#e2e8f0] dark:hover:shadow-[0_4px_0_#0f172a] overflow-hidden bg-slate-50 dark:bg-slate-800/50 backdrop-blur-md transition-all h-full flex flex-col">
+        <Card className="rounded-[2rem] border-[3px] border-slate-200 dark:border-slate-700 shadow-[0_8px_0_#cbd5e1] dark:shadow-[0_8px_0_#0f172a] overflow-hidden bg-white dark:bg-slate-800/50 backdrop-blur-md transition-all h-full flex flex-col">
           <CardHeader>
             <CardTitle className="text-xl font-bold text-slate-800 dark:text-white">Add New Carousel Image</CardTitle>
             <CardDescription className="text-slate-500 dark:text-slate-400 font-medium">Add images to the dashboard carousel</CardDescription>

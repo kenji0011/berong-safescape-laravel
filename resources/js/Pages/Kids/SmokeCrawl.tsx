@@ -337,7 +337,7 @@ const SmokeCrawl = () => {
   }
 
   return (
-    <div className="min-h-screen relative bg-blue-50 dark:bg-slate-950 selection:bg-orange-500 selection:text-white pb-32 overflow-x-hidden transition-colors duration-500">
+    <div className="min-h-screen relative bg-blue-50 dark:bg-slate-950 selection:bg-orange-500 selection:text-white pb-8 sm:pb-32 overflow-x-hidden transition-colors duration-500">
       <Head title="The Smoke Crawl | SafeScape" />
       
       {/* Background decoration */}
@@ -353,36 +353,36 @@ const SmokeCrawl = () => {
       </div>
 
       <div className="relative z-10 p-2 sm:p-6 max-w-5xl mx-auto w-full">
-        <div className="flex items-center justify-between mb-8">
+        <div className="flex items-center justify-between mb-3 sm:mb-8">
           <Link 
             href="/kids/challenges" 
-            className="inline-flex items-center gap-2 text-slate-500 dark:text-slate-400 font-bold hover:text-orange-600 dark:hover:text-orange-400 transition-all text-sm bg-white/60 dark:bg-slate-800/60 backdrop-blur-sm px-4 py-2 rounded-full border border-white/60 dark:border-slate-700/60 shadow-sm"
+            className="inline-flex items-center gap-2 text-slate-500 dark:text-slate-400 font-bold hover:text-orange-600 dark:hover:text-orange-400 transition-all text-sm bg-white dark:bg-slate-800 px-4 py-2 rounded-full border border-white/60 dark:border-slate-700/60 shadow-sm"
           >
             <ArrowLeft className="h-4 w-4" />
-            Back to Missions
+            Back to Activities
           </Link>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-8">
           {/* Main Game Area */}
           <div className="lg:col-span-2">
-            <div className="mb-4 flex items-center justify-between bg-white dark:bg-slate-900 rounded-3xl p-4 shadow-sm border-2 border-slate-100 dark:border-slate-800 transition-colors">
-               <div className="flex items-center gap-3">
-                  <Wind className={cn("h-6 w-6", oxygen < 30 ? "text-red-500 animate-bounce" : "text-blue-500 dark:text-blue-400")} />
-                  <span className="font-black text-slate-800 dark:text-white text-sm uppercase tracking-wider">Oxygen Supply</span>
+            <div className="mb-2 sm:mb-4 flex items-center justify-between bg-white dark:bg-slate-900 rounded-2xl sm:rounded-3xl p-2.5 sm:p-4 shadow-sm border-2 border-slate-100 dark:border-slate-800 transition-colors">
+               <div className="flex items-center gap-2 sm:gap-3 shrink-0">
+                  <Wind className={cn("h-4 w-4 sm:h-6 sm:w-6", oxygen < 30 ? "text-red-500 animate-bounce" : "text-blue-500 dark:text-blue-400")} />
+                  <span className="font-black text-slate-800 dark:text-white text-[10px] sm:text-sm uppercase tracking-wider">O₂</span>
                </div>
-               <div className="flex items-center gap-4 flex-1 max-w-xs ml-8">
-                  <div className="flex-1 h-4 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden border border-slate-200 dark:border-slate-700">
+               <div className="flex items-center gap-2 sm:gap-4 flex-1 ml-3 sm:ml-8">
+                  <div className="flex-1 h-3 sm:h-4 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden border border-slate-200 dark:border-slate-700">
                     <div 
                       className={cn("h-full transition-all duration-300", oxygen > 50 ? "bg-blue-500" : oxygen > 20 ? "bg-yellow-500" : "bg-red-500")}
                       style={{ width: `${oxygen}%` }}
                     ></div>
                   </div>
-                  <span className="text-slate-700 dark:text-slate-300 font-black text-sm min-w-[3rem] text-right">{Math.round(oxygen)}%</span>
+                  <span className="text-slate-700 dark:text-slate-300 font-black text-xs sm:text-sm min-w-[2.5rem] text-right">{Math.round(oxygen)}%</span>
                </div>
             </div>
 
-            <div className="relative bg-white dark:bg-slate-900 rounded-[2rem] p-2 sm:p-4 shadow-xl border-4 border-slate-100 dark:border-slate-800 overflow-hidden aspect-square flex items-center justify-center w-full transition-colors">
+            <div className="relative bg-white dark:bg-slate-900 rounded-2xl sm:rounded-[2rem] p-1.5 sm:p-4 shadow-xl border-2 sm:border-4 border-slate-100 dark:border-slate-800 overflow-hidden aspect-square flex items-center justify-center w-full transition-colors">
               <canvas 
                 ref={canvasRef} 
                 width={15 * TILE_SIZE} 
@@ -503,59 +503,57 @@ const SmokeCrawl = () => {
                 </div>
               )}
             </div>
-            
-            {/* Mobile Controls */}
+
+            {/* Mobile Controls - Fixed Bottom Dock */}
             {gameState === 'playing' && (
-              <div className="lg:hidden mt-8 grid grid-cols-2 gap-4 h-48">
+              <div className="lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-t-2 border-slate-200 dark:border-slate-700 px-4 py-3 grid grid-cols-2 gap-3 safe-bottom shadow-[0_-4px_20px_rgba(0,0,0,0.1)]">
                 {/* Crouch Toggle */}
-                <div className="flex flex-col gap-2 h-full">
-                  <button 
-                    onClick={() => setIsCrouched(!isCrouched)}
-                    className={cn(
-                      "flex-1 rounded-3xl font-black text-lg shadow-lg flex flex-col items-center justify-center gap-2 transition-all",
-                      isCrouched 
-                        ? "bg-orange-500 text-white shadow-[0_4px_0_#c2410c] translate-y-1" 
-                        : "bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-2 border-slate-200 dark:border-slate-700 shadow-[0_6px_0_#e2e8f0] dark:shadow-[0_6px_0_#1e293b] active:translate-y-1 active:shadow-none"
-                    )}
-                  >
-                    <User className={cn("h-10 w-10", isCrouched ? "animate-pulse" : "")} />
-                    {isCrouched ? "STAYING LOW" : "TAP TO CROUCH"}
-                  </button>
-                </div>
+                <button 
+                  onClick={() => setIsCrouched(!isCrouched)}
+                  className={cn(
+                    "rounded-2xl font-black text-xs shadow-lg flex flex-col items-center justify-center gap-1 py-3 transition-all",
+                    isCrouched 
+                      ? "bg-orange-500 text-white shadow-[0_4px_0_#c2410c]" 
+                      : "bg-slate-50 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-2 border-slate-200 dark:border-slate-700 shadow-[0_4px_0_#e2e8f0] dark:shadow-[0_4px_0_#1e293b] active:translate-y-1 active:shadow-none"
+                  )}
+                >
+                  <User className={cn("h-6 w-6", isCrouched ? "animate-pulse" : "")} />
+                  {isCrouched ? "STAYING LOW" : "TAP TO CROUCH"}
+                </button>
 
                 {/* D-Pad */}
-                <div className="grid grid-cols-3 gap-2 h-full">
+                <div className="grid grid-cols-3 gap-1">
                   <div />
                   <button 
                     onClick={() => movePlayer(player.x, player.y - 1)}
-                    className="aspect-square bg-white dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 rounded-2xl flex items-center justify-center active:bg-orange-100 dark:active:bg-orange-950/20 active:border-orange-500 shadow-[0_4px_0_#e2e8f0] dark:shadow-[0_4px_0_#1e293b] active:shadow-none active:translate-y-1 transition-all"
+                    className="aspect-square bg-slate-50 dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 rounded-xl flex items-center justify-center active:bg-orange-100 active:border-orange-500 transition-all"
                   >
-                    <ChevronUp className="h-10 w-10 text-slate-600 dark:text-slate-400" />
+                    <ChevronUp className="h-5 w-5 text-slate-600 dark:text-slate-400" />
                   </button>
                   <div />
                   
                   <button 
                     onClick={() => movePlayer(player.x - 1, player.y)}
-                    className="aspect-square bg-white dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 rounded-2xl flex items-center justify-center active:bg-orange-100 dark:active:bg-orange-950/20 active:border-orange-500 shadow-[0_4px_0_#e2e8f0] dark:shadow-[0_4px_0_#1e293b] active:shadow-none active:translate-y-1 transition-all"
+                    className="aspect-square bg-slate-50 dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 rounded-xl flex items-center justify-center active:bg-orange-100 active:border-orange-500 transition-all"
                   >
-                    <ChevronLeft className="h-10 w-10 text-slate-600 dark:text-slate-400" />
+                    <ChevronLeft className="h-5 w-5 text-slate-600 dark:text-slate-400" />
                   </button>
-                  <div className="aspect-square bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-2xl flex items-center justify-center">
-                    <div className="w-2 h-2 bg-slate-300 dark:bg-slate-700 rounded-full" />
+                  <div className="aspect-square bg-slate-100 dark:bg-slate-900 rounded-xl flex items-center justify-center">
+                    <div className="w-1.5 h-1.5 bg-slate-300 dark:bg-slate-700 rounded-full" />
                   </div>
                   <button 
                     onClick={() => movePlayer(player.x + 1, player.y)}
-                    className="aspect-square bg-white dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 rounded-2xl flex items-center justify-center active:bg-orange-100 dark:active:bg-orange-950/20 active:border-orange-500 shadow-[0_4px_0_#e2e8f0] dark:shadow-[0_4px_0_#1e293b] active:shadow-none active:translate-y-1 transition-all"
+                    className="aspect-square bg-slate-50 dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 rounded-xl flex items-center justify-center active:bg-orange-100 active:border-orange-500 transition-all"
                   >
-                    <ChevronRight className="h-10 w-10 text-slate-600 dark:text-slate-400" />
+                    <ChevronRight className="h-5 w-5 text-slate-600 dark:text-slate-400" />
                   </button>
                   
                   <div />
                   <button 
                     onClick={() => movePlayer(player.x, player.y + 1)}
-                    className="aspect-square bg-white dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 rounded-2xl flex items-center justify-center active:bg-orange-100 dark:active:bg-orange-950/20 active:border-orange-500 shadow-[0_4px_0_#e2e8f0] dark:shadow-[0_4px_0_#1e293b] active:shadow-none active:translate-y-1 transition-all"
+                    className="aspect-square bg-slate-50 dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 rounded-xl flex items-center justify-center active:bg-orange-100 active:border-orange-500 transition-all"
                   >
-                    <ChevronDown className="h-10 w-10 text-slate-600 dark:text-slate-400" />
+                    <ChevronDown className="h-5 w-5 text-slate-600 dark:text-slate-400" />
                   </button>
                   <div />
                 </div>
@@ -563,8 +561,8 @@ const SmokeCrawl = () => {
             )}
           </div>
 
-          {/* Instructions Sidebar */}
-          <div className="space-y-6">
+          {/* Instructions Sidebar - Hidden on mobile during gameplay to save space */}
+          <div className="hidden lg:block space-y-6">
             <div className="bg-white dark:bg-slate-900 rounded-[2rem] p-6 border-2 border-slate-100 dark:border-slate-800 shadow-xl transition-colors">
                <h3 className="text-xl font-black text-slate-800 dark:text-white mb-4 flex items-center gap-2">
                   <Info className="text-blue-500 dark:text-blue-400 h-6 w-6" />
@@ -594,11 +592,6 @@ const SmokeCrawl = () => {
                <p className="text-slate-700 dark:text-slate-300 text-sm leading-relaxed italic font-bold">
                   "In a fire, the smoke is hot and poisonous. It naturally rises to the ceiling. By crawling on your hands and knees, you stay in the 'Good Air Zone' near the floor."
                </p>
-            </div>
-
-            {/* Mobile Controls Hint */}
-            <div className="lg:hidden bg-blue-50 dark:bg-blue-950/30 rounded-2xl p-4 border border-blue-100 dark:border-blue-900/50 text-center">
-              <p className="text-blue-600 dark:text-blue-400 text-xs font-black uppercase tracking-widest">Touch controls active! Use the buttons below the maze.</p>
             </div>
           </div>
         </div>

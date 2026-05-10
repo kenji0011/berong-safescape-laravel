@@ -125,41 +125,43 @@
             display: block;
         }
 
-        /* Mobile Arrow Keys D-Pad */
-        .dpad-container {
-            position: absolute;
-            bottom: 8px;
-            right: 8px;
-            width: 120px;
-            height: 120px;
-            z-index: 30;
-            touch-action: none;
+        /* Mobile Arrow Keys D-Pad - Inline replacement for status log */
+        .dpad-dock {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 16px;
+            background: rgba(15, 23, 42, 0.5);
+            border: 3px solid rgba(51, 65, 85, 0.6);
+            border-radius: 2rem;
+        }
+        @media (min-width: 768px) {
+            .dpad-dock {
+                display: none !important;
+            }
+        }
+        .dpad-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
             grid-template-rows: repeat(3, 1fr);
-            gap: 3px;
-        }
-        @media (min-width: 640px) {
-            .dpad-container {
-                bottom: 12px;
-                right: 12px;
-                width: 140px;
-                height: 140px;
-            }
+            gap: 6px;
+            width: 150px;
+            height: 150px;
         }
         .dpad-btn {
             display: flex;
             align-items: center;
             justify-content: center;
-            border-radius: 6px;
-            background: rgba(30, 41, 59, 0.85);
-            border: 1.5px solid rgba(148, 163, 184, 0.35);
+            border-radius: 12px;
+            background: rgba(30, 41, 59, 0.9);
+            border: 2px solid rgba(148, 163, 184, 0.3);
             color: rgba(248, 250, 252, 0.9);
             font-size: 18px;
             cursor: pointer;
             user-select: none;
             -webkit-user-select: none;
-            backdrop-filter: blur(4px);
             transition: background 0.1s, transform 0.08s, box-shadow 0.1s;
             touch-action: none;
         }
@@ -174,6 +176,33 @@
         }
         .dpad-spacer {
             /* empty grid cell */
+        }
+        .dpad-label {
+            color: rgba(148, 163, 184, 0.8);
+            font-size: 10px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            text-align: center;
+        }
+        .dpad-reset-btn {
+            width: 100%;
+            max-width: 150px;
+            margin-top: 8px;
+            background: rgba(30, 41, 59, 0.8);
+            border: 2px solid rgba(51, 65, 85, 0.6);
+            color: rgba(248, 250, 252, 0.8);
+            font-size: 10px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            padding: 8px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background 0.15s;
+        }
+        .dpad-reset-btn:active {
+            background: rgba(51, 65, 85, 0.8);
         }
     </style>
 </head>
@@ -322,7 +351,7 @@
                 <div class="relative w-full max-w-[600px] mx-auto">
                     <div id="game-container" class="rounded-[2rem] sm:rounded-[3rem] border-[3px] sm:border-[4px] border-slate-600 shadow-xl overflow-hidden relative bg-slate-900 cursor-crosshair">
                         <canvas id="gameCanvas" width="600" height="400" class="w-full h-auto block"></canvas>
-                        <div class="absolute top-2 left-2 sm:top-4 sm:left-4 text-left pointer-events-none">
+                        <div class="absolute top-2 left-2 sm:top-4 sm:left-4 text-left pointer-events-none hidden md:block">
                             <div class="text-green-400 font-black tracking-widest text-[10px] sm:text-xs mb-0.5 sm:mb-1 uppercase">VISIBILITY: LOW</div>
                             <div class="text-slate-400 font-bold tracking-wider text-[10px] sm:text-xs mb-2 uppercase">OBJECTIVE: ESCAPE</div>
                             <div class="inline-flex items-center gap-1.5 bg-blue-500/20 text-blue-300 px-2 py-1 rounded-md border border-blue-500/30 text-[9px] sm:text-[10px] font-black uppercase animate-pulse">
@@ -330,18 +359,7 @@
                                 Crawling under smoke...
                             </div>
                         </div>
-                        <!-- Mobile Arrow Keys D-Pad -->
-                        <div id="dpad" class="dpad-container md:hidden">
-                            <div class="dpad-spacer"></div>
-                            <button class="dpad-btn" data-dir="up" aria-label="Move Up"><i class="fa-solid fa-caret-up"></i></button>
-                            <div class="dpad-spacer"></div>
-                            <button class="dpad-btn" data-dir="left" aria-label="Move Left"><i class="fa-solid fa-caret-left"></i></button>
-                            <div class="dpad-spacer"></div>
-                            <button class="dpad-btn" data-dir="right" aria-label="Move Right"><i class="fa-solid fa-caret-right"></i></button>
-                            <div class="dpad-spacer"></div>
-                            <button class="dpad-btn" data-dir="down" aria-label="Move Down"><i class="fa-solid fa-caret-down"></i></button>
-                            <div class="dpad-spacer"></div>
-                        </div>
+
                         <!-- Integrity Modal (Moved here to be an overlay) -->
                         <div id="integrity-modal"
                             class="hidden absolute inset-0 z-40 bg-slate-900/90 backdrop-blur-md flex flex-col items-center justify-center p-6 text-center animate-in fade-in zoom-in duration-300">
@@ -362,26 +380,47 @@
                     </div>
                 </div>
 
-                <div
-                    class="w-full xl:w-72 bg-slate-900/50 backdrop-blur-sm p-4 sm:p-6 rounded-[2rem] sm:rounded-[3rem] border-[3px] sm:border-[4px] border-slate-700 shadow-sm text-left flex flex-col h-full self-stretch">
-                    <h3 class="text-[10px] sm:text-xs font-black text-slate-500 uppercase tracking-widest mb-2 sm:mb-3 flex items-center gap-2">
-                        <span class="w-1.5 h-1.5 bg-green-500 rounded-full animate-ping"></span>
-                        Mission Status Log
-                    </h3>
-                    <div id="game-log"
-                        class="text-xs font-mono font-bold space-y-2 sm:space-y-3 h-48 sm:h-64 overflow-y-auto mb-4 border-b border-slate-800 pb-2 scroll-smooth">
-                        <p class="text-green-400">> Environment Loaded.</p>
-                        <p class="text-slate-400">> Smoke Density: 90%</p>
-                    </div>
-
-                    <div class="mt-auto">
-                        <button onclick="initGame()"
-                            class="w-full bg-slate-800/80 hover:bg-slate-700 text-white font-bold py-2.5 sm:py-3 rounded-xl border-2 border-slate-600 shadow-sm transition-all hover:-translate-y-0.5 active:translate-y-1 text-xs sm:text-sm uppercase tracking-wider flex items-center justify-center gap-2">
-                            <i class="fa-solid fa-rotate"></i>Reset Simulation
+                <!-- Side panel: Status Log (desktop) / D-Pad (mobile) -->
+                <div class="w-full xl:w-72 flex flex-col gap-4">
+                    <!-- Mobile D-Pad (replaces status log on mobile) -->
+                    <div id="dpad" class="dpad-dock">
+                        <div class="dpad-label">Touch Controls</div>
+                        <div class="dpad-grid">
+                            <div class="dpad-spacer"></div>
+                            <button class="dpad-btn" data-dir="up" aria-label="Move Up"><i class="fa-solid fa-caret-up"></i></button>
+                            <div class="dpad-spacer"></div>
+                            <button class="dpad-btn" data-dir="left" aria-label="Move Left"><i class="fa-solid fa-caret-left"></i></button>
+                            <div class="dpad-spacer"></div>
+                            <button class="dpad-btn" data-dir="right" aria-label="Move Right"><i class="fa-solid fa-caret-right"></i></button>
+                            <div class="dpad-spacer"></div>
+                            <button class="dpad-btn" data-dir="down" aria-label="Move Down"><i class="fa-solid fa-caret-down"></i></button>
+                            <div class="dpad-spacer"></div>
+                        </div>
+                        <button onclick="initGame()" class="dpad-reset-btn">
+                            <i class="fa-solid fa-rotate" style="margin-right:4px;"></i>Reset
                         </button>
                     </div>
+
+                    <!-- Desktop Status Log (hidden on mobile) -->
+                    <div class="hidden md:flex flex-col bg-slate-900/50 backdrop-blur-sm p-4 sm:p-6 rounded-[2rem] sm:rounded-[3rem] border-[3px] sm:border-[4px] border-slate-700 shadow-sm text-left h-full self-stretch">
+                        <h3 class="text-[10px] sm:text-xs font-black text-slate-500 uppercase tracking-widest mb-2 sm:mb-3 flex items-center gap-2">
+                            <span class="w-1.5 h-1.5 bg-green-500 rounded-full animate-ping"></span>
+                            Mission Status Log
+                        </h3>
+                        <div id="game-log"
+                            class="text-xs font-mono font-bold space-y-2 sm:space-y-3 h-48 sm:h-64 overflow-y-auto mb-4 border-b border-slate-800 pb-2 scroll-smooth">
+                            <p class="text-green-400">> Environment Loaded.</p>
+                            <p class="text-slate-400">> Smoke Density: 90%</p>
+                        </div>
+
+                        <div class="mt-auto">
+                            <button onclick="initGame()"
+                                class="w-full bg-slate-800/80 hover:bg-slate-700 text-white font-bold py-2.5 sm:py-3 rounded-xl border-2 border-slate-600 shadow-sm transition-all hover:-translate-y-0.5 active:translate-y-1 text-xs sm:text-sm uppercase tracking-wider flex items-center justify-center gap-2">
+                                <i class="fa-solid fa-rotate"></i>Reset Simulation
+                            </button>
+                        </div>
+                    </div>
                 </div>
-            </div>
 
             <div id="door-check-overlay" class="hidden fixed inset-0 bg-slate-900/80 backdrop-blur-sm flex items-center justify-center z-50">
                 <div class="bg-white dark:bg-slate-900 p-8 rounded-[2rem] border-[4px] border-orange-300 dark:border-orange-900/30 max-w-sm text-center shadow-2xl transition-colors">
@@ -581,6 +620,7 @@
         let walls = [];
         let exits = [];
         let doorIsHot = true;
+        let animFrameId = null;
 
         const CELL_SIZE = 20;
         const COLS = Math.floor(canvas.width / CELL_SIZE);
@@ -649,11 +689,17 @@
         }
 
         function initGame() {
+            // Cancel any existing game loop to prevent stacking
+            if (animFrameId) {
+                cancelAnimationFrame(animFrameId);
+                animFrameId = null;
+            }
             generateMaze();
             fogCtx.fillStyle = '#020617';
             fogCtx.fillRect(0, 0, fogCanvas.width, fogCanvas.height);
             player.x = 30; player.y = 30;
             player.dx = 0; player.dy = 0;
+            keys = { ArrowUp: false, ArrowDown: false, ArrowLeft: false, ArrowRight: false };
             gameState = 'playing';
             document.getElementById('completion-msg').classList.add('hidden');
             document.getElementById('integrity-modal').classList.add('hidden');
@@ -666,7 +712,7 @@
             if (gameState !== 'playing') return;
             updatePhysics();
             drawGame();
-            requestAnimationFrame(gameLoop);
+            animFrameId = requestAnimationFrame(gameLoop);
         }
 
         function updatePhysics() {

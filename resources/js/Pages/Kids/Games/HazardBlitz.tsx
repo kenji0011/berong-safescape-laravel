@@ -270,12 +270,12 @@ const HazardBlitz = () => {
   return (
     <div className="relative w-full flex-1 flex flex-col py-4 pb-28 sm:pb-4">
       {/* Standardized Back Button - Upper Left */}
-      <div className="absolute top-4 left-4 z-[60] sm:top-2">
+      <div className="absolute top-2 left-4 z-[60] flex gap-2">
         <Link 
           href="/kids/challenges" 
-          className="inline-flex items-center gap-2 text-slate-500 dark:text-slate-400 font-black hover:text-blue-600 dark:hover:text-blue-400 transition-all text-[10px] sm:text-sm bg-white dark:bg-slate-800 px-3 py-1.5 sm:px-4 sm:py-2 rounded-full border-2 border-slate-100 dark:border-slate-700 shadow-sm"
+          className="inline-flex items-center gap-2 text-slate-500 dark:text-slate-400 font-bold hover:text-orange-600 dark:hover:text-orange-400 transition-all text-sm bg-white dark:bg-slate-800 px-4 py-2 rounded-full border border-white/60 dark:border-slate-700/60 shadow-sm"
         >
-          <ArrowLeft className="h-3 w-3 sm:h-4 sm:w-4" />
+          <ArrowLeft className="h-4 w-4" />
           Back to Activities
         </Link>
       </div>
