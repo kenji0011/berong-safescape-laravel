@@ -130,6 +130,8 @@ export function NotificationPopover() {
         router.get('/assessment/pre-test');
       } else if (notification.type === 'blog' || notification.category === 'adult') {
         router.get('/adult');
+      } else if (notification.category === 'kids/rank') {
+        router.get('/kids?rankGuide=true');
       } else {
         router.get(`/${notification.category}`);
       }

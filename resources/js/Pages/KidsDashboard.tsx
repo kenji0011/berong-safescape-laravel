@@ -62,7 +62,7 @@ const KidsDashboardPage = ({ modules, progress }: KidsPageProps) => {
       title: "Task Master",
       description: "Complete daily missions and earn legendary rewards! Show your skills as a top fire safety expert.",
       type: "game",
-      emoji: "🕹️",
+      imageUrl: "/task_master.png",
       href: "#",
       isLocked: true,
       category: "games",

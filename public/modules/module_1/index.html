@@ -572,6 +572,7 @@
                 if (!localState.elementMixerCompleted) {
                     SafeScapeProgress.completeSection(moduleNum, 'elementMixerCompleted', true);
                     showToast('success', '🎉 Element Mixer completed! Module 1 done!');
+                    new Audio('../../sounds/win.mp3').play().catch(e => {});
                 }
             } else {
                 flame.classList.remove('active');

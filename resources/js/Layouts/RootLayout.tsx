@@ -15,7 +15,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                      url.startsWith('/kids/memory-game') || 
                      url.startsWith('/kids/smoke-crawl') || 
                      url.startsWith('/kids/hot-or-not') || 
-                     url.startsWith('/kids/hazard-blitz');
+                     url.startsWith('/kids/hazard-blitz') ||
+                     url.startsWith('/assessment');
 
   return (
     <AuthProvider>

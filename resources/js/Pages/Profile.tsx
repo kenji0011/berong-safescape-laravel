@@ -47,7 +47,7 @@ export default function ProfilePage() {
 
   // Avatars Configuration
   const AVATAR_OPTIONS = [
-    { id: 'cow', icon: '🐮', label: 'Default Guide', category: 'Special' },
+    { id: 'cow', icon: '/berong_pr.png', label: 'Berong', category: 'Special' },
     { id: 'ff1', icon: '👨‍🚒', label: 'Hero Jack', category: 'Firefighter' },
     { id: 'ff2', icon: '👩‍🚒', label: 'Hero Sarah', category: 'Firefighter' },
     { id: 'kid1', icon: '🧒', label: 'Safety Scout', category: 'Kid' },
@@ -375,8 +375,21 @@ export default function ProfilePage() {
               onClick={() => setShowAvatarModal(true)}
               className="group relative flex items-center justify-center h-16 w-16 sm:h-20 sm:w-20 rounded-full border-4 border-dashed border-slate-200 dark:border-slate-700 hover:border-yellow-400 dark:hover:border-yellow-500 hover:bg-yellow-50 dark:hover:bg-yellow-950/20 transition-all duration-300 shrink-0 overflow-visible"
             >
-              <div className="text-3xl sm:text-4xl group-hover:scale-110 transition-transform">
-                {AVATAR_OPTIONS.find(opt => opt.id === profile.avatar)?.icon || "🐮"}
+              <div className="h-full w-full flex items-center justify-center group-hover:scale-110 transition-transform overflow-hidden rounded-full">
+                {(() => {
+                  const opt = AVATAR_OPTIONS.find(opt => opt.id === profile.avatar);
+                  if (opt?.icon.startsWith('/')) {
+                    return <img 
+                      src={opt.icon} 
+                      alt={opt.label} 
+                      className={cn(
+                        "h-full w-full object-cover rounded-full transform-gpu transition-all duration-300",
+                        opt.id === 'cow' && "dark:brightness-90 dark:contrast-110 dark:grayscale-[5%]"
+                      )} 
+                    />;
+                  }
+                  return <span className="text-3xl sm:text-4xl">{opt?.icon || "🐮"}</span>;
+                })()}
               </div>
               <div className="absolute -bottom-1 -right-1 h-6 w-6 sm:h-7 sm:w-7 bg-yellow-400 rounded-full border-4 border-white dark:border-slate-800 flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
                 <span className="text-white font-black text-xs sm:text-sm">+</span>
@@ -976,7 +989,19 @@ export default function ProfilePage() {
                     "h-14 w-14 sm:h-20 sm:w-20 rounded-full flex items-center justify-center text-3xl sm:text-5xl transition-transform group-hover:scale-110",
                     selectedAvatar === opt.id ? "bg-yellow-50 dark:bg-yellow-900/30" : "bg-slate-50 dark:bg-slate-900"
                   )}>
-                    {opt.icon}
+                    {(() => {
+                      if (opt.icon.startsWith('/')) {
+                        return <img 
+                          src={opt.icon} 
+                          alt={opt.label} 
+                          className={cn(
+                            "h-full w-full object-cover rounded-full transform-gpu transition-all duration-300",
+                            opt.id === 'cow' && "dark:brightness-90 dark:contrast-110 dark:grayscale-[5%]"
+                          )} 
+                        />;
+                      }
+                      return opt.icon;
+                    })()}
                   </div>
                   
                   <div className="text-center px-1">

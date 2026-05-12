@@ -119,13 +119,16 @@ export default function Assessment({ type }: AssessmentProps) {
             // Format answers for the API
             const formattedAnswers = Object.entries(answers).map(([qId, ansIdx]) => ({
                 questionId: parseInt(qId),
-                selectedAnswer: ansIdx
+                selectedAnswer: String(ansIdx)
             }))
 
             const endpoint = isPreTest ? "/api/assessments/pre-test" : "/api/assessments/post-test"
             const response = await axios.post(endpoint, { answers: formattedAnswers })
 
             if (response.status === 200) {
+                // Play win sound
+                new Audio('/sounds/win.mp3').play().catch(e => console.warn("Audio playback failed:", e));
+
                 // Refresh the global user state to ensure scores are updated in auth-context
                 await refreshUser()
                 
@@ -336,7 +339,7 @@ export default function Assessment({ type }: AssessmentProps) {
                 </div>
             </div>
 
-            <Card className="max-w-2xl mx-auto border-[4px] border-blue-200 dark:border-blue-900 shadow-[0_8px_0_#bfdbfe] dark:shadow-[0_8px_0_#1e3a8a] rounded-[2rem] overflow-hidden bg-white dark:bg-slate-900 transition-colors duration-500">
+            <Card className="max-w-2xl mx-auto border-[4px] border-slate-200 dark:border-slate-800 shadow-[0_8px_0_#e2e8f0] dark:shadow-[0_8px_0_#0f172a] rounded-[2rem] overflow-hidden bg-white dark:bg-slate-900 transition-colors duration-500">
                 {loading ? (
                     <div className="flex flex-col items-center justify-center py-24">
                         <Loader2 className="h-12 w-12 animate-spin text-orange-500 mb-4" />
@@ -354,18 +357,18 @@ export default function Assessment({ type }: AssessmentProps) {
                 ) : (
                     <>
                         {/* Progress Header */}
-                        <div className="bg-white dark:bg-slate-900 px-6 pb-4 pt-6 border-b-2 border-slate-100 dark:border-slate-800">
+                        <div className="bg-slate-50 dark:bg-slate-900/80 px-6 pb-4 pt-6 border-b-[3px] border-slate-100 dark:border-slate-800">
                             <div className="flex justify-between items-center mb-3">
-                                <span className="font-bold text-slate-500 dark:text-slate-400 text-sm uppercase tracking-wider">
+                                <span className="font-black text-slate-500 dark:text-slate-400 text-sm uppercase tracking-wider">
                                     Question {currentQuestionIndex + 1} of {questions.length}
                                 </span>
-                                <span className="font-bold text-orange-600 dark:text-orange-400 bg-orange-100 dark:bg-orange-950/30 px-3 py-1 rounded-full text-xs">
+                                <span className="font-black text-green-600 dark:text-green-400 bg-green-50 dark:bg-green-950/30 px-3 py-1 rounded-full text-xs border border-green-200 dark:border-green-900/50">
                                     {Math.round(((currentQuestionIndex) / questions.length) * 100)}% Completed
                                 </span>
                             </div>
-                            <div className="w-full bg-slate-100 dark:bg-slate-800 rounded-full h-4 overflow-hidden border-2 border-slate-200 dark:border-slate-700 shadow-inner">
+                            <div className="w-full bg-slate-100 dark:bg-slate-800 rounded-full h-3 overflow-hidden border-2 border-slate-200 dark:border-slate-700 shadow-inner">
                                 <div
-                                    className="bg-green-500 h-4 rounded-full transition-all duration-300 ease-out"
+                                    className="bg-gradient-to-r from-green-500 to-emerald-400 h-full rounded-full transition-all duration-300 ease-out"
                                     style={{ width: `${((currentQuestionIndex) / questions.length) * 100}%` }}
                                 />
                             </div>
@@ -380,11 +383,11 @@ export default function Assessment({ type }: AssessmentProps) {
                                 </div>
                             )}
 
-                            <div className="mb-6 p-5 sm:p-6 bg-blue-600 dark:bg-blue-700 rounded-[1.5rem] border-[3px] border-blue-700 dark:border-blue-800 shadow-[0_4px_0_#1d4ed8] dark:shadow-[0_4px_0_#1e3a8a] relative mt-2">
+                            <div className="mb-6 p-5 sm:p-6 bg-gradient-to-br from-orange-500 to-red-600 dark:from-orange-600 dark:to-red-700 rounded-[1.5rem] border-[3px] border-orange-600 dark:border-orange-800 shadow-[0_4px_0_#c2410c] dark:shadow-[0_4px_0_#7c2d12] relative mt-2">
                                 <span className="absolute -top-3 sm:-top-4 left-6 px-3 py-1 bg-yellow-400 text-orange-800 font-black text-[10px] sm:text-xs uppercase tracking-widest rounded-full border-[2px] border-yellow-500 shadow-sm">
                                     {questions[currentQuestionIndex].category}
                                 </span>
-                                <h3 className="text-lg sm:text-xl font-black text-white leading-tight mt-1">
+                                <h3 className="text-lg sm:text-xl font-black text-white leading-tight mt-1 drop-shadow-sm">
                                     {questions[currentQuestionIndex].question}
                                 </h3>
                             </div>
@@ -400,10 +403,10 @@ export default function Assessment({ type }: AssessmentProps) {
                                         <div 
                                             key={index} 
                                             className={`
-                                                flex items-center space-x-3 p-3 sm:p-4 rounded-xl border-[2px] transition-all cursor-pointer group
+                                                flex items-center space-x-3 sm:space-x-4 p-3.5 sm:p-4 rounded-2xl border-[3px] transition-all cursor-pointer group
                                                 ${isSelected 
-                                                    ? 'bg-green-50 dark:bg-emerald-950/20 border-green-500 dark:border-emerald-500 shadow-[0_4px_0_#22c55e] dark:shadow-[0_4px_0_#059669] -translate-y-1' 
-                                                    : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 shadow-[0_4px_0_#e2e8f0] dark:shadow-[0_4px_0_#0f172a] hover:border-blue-300 dark:hover:border-blue-600 hover:bg-blue-50 dark:hover:bg-slate-700/50 hover:-translate-y-1 hover:shadow-[0_6px_0_#93c5fd] dark:hover:shadow-[0_6px_0_#1e3a8a] active:shadow-none active:translate-y-[2px]'
+                                                    ? 'bg-green-50 dark:bg-emerald-950/20 border-green-500 dark:border-emerald-600 shadow-[0_4px_0_#16a34a] dark:shadow-[0_4px_0_#065f46] -translate-y-1' 
+                                                    : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 shadow-[0_4px_0_#e2e8f0] dark:shadow-[0_4px_0_#0f172a] hover:border-orange-300 dark:hover:border-orange-700 hover:bg-orange-50 dark:hover:bg-slate-700/50 hover:-translate-y-1 hover:shadow-[0_5px_0_#fed7aa] dark:hover:shadow-[0_5px_0_#431407] active:shadow-none active:translate-y-[2px]'
                                                 }
                                             `}
                                             onClick={() => handleAnswerQuestion(questions[currentQuestionIndex].id, index)}
@@ -411,14 +414,14 @@ export default function Assessment({ type }: AssessmentProps) {
                                             <RadioGroupItem 
                                                 value={index.toString()} 
                                                 id={`q-${questions[currentQuestionIndex].id}-opt-${index}`} 
-                                                className={`h-6 w-6 border-2 transition-all ${
-                                                    isSelected ? 'border-green-600 dark:border-emerald-500 fill-green-600 dark:fill-emerald-500 text-green-600 dark:text-emerald-500' : 'border-slate-300 dark:border-slate-600 group-hover:border-blue-400 dark:group-hover:border-blue-500'
+                                                className={`h-6 w-6 border-[3px] transition-all shrink-0 ${
+                                                    isSelected ? 'border-green-600 dark:border-emerald-500 fill-green-600 dark:fill-emerald-500 text-green-600 dark:text-emerald-500' : 'border-slate-300 dark:border-slate-600 group-hover:border-orange-400 dark:group-hover:border-orange-500'
                                                 }`}
                                             />
                                             <Label 
                                                 htmlFor={`q-${questions[currentQuestionIndex].id}-opt-${index}`}
-                                                className={`text-base sm:text-lg font-bold cursor-pointer w-full leading-snug ${
-                                                    isSelected ? 'text-green-900 dark:text-emerald-50' : 'text-slate-700 dark:text-slate-300 group-hover:text-slate-900 dark:group-hover:text-white'
+                                                className={`text-sm sm:text-base font-black cursor-pointer w-full leading-snug ${
+                                                    isSelected ? 'text-green-800 dark:text-emerald-50' : 'text-slate-700 dark:text-slate-300 group-hover:text-slate-900 dark:group-hover:text-white'
                                                 }`}
                                             >
                                                 {option}
@@ -430,7 +433,7 @@ export default function Assessment({ type }: AssessmentProps) {
                         </CardContent>
 
                         {/* Navigation Footer */}
-                        <div className="bg-slate-50 dark:bg-slate-800 px-6 py-4 border-t-[3px] border-slate-200 dark:border-slate-700 flex justify-between items-center rounded-b-[2rem]">
+                        <div className="px-6 py-4 flex justify-between items-center">
                             <Button 
                                 variant="outline" 
                                 disabled={currentQuestionIndex === 0 || submitting} 

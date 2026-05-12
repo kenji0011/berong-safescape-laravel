@@ -474,6 +474,7 @@
                     <h3 class="ss-completion-title" id="result-title"></h3>
                     <p class="ss-completion-desc" id="result-desc"></p>
                     <div class="ss-completion-actions">
+                        <button id="btn-retake" onclick="resetTFQuiz()" class="hidden ss-btn-premium ss-btn-outline">Retake Quiz</button>
                         <button id="btn-review" onclick="toggleReview()" class="ss-btn-premium ss-btn-outline">Review Answers</button>
                         <a href="../module_5/index.html" id="btn-next-module" class="hidden ss-btn-premium ss-btn-gold">
                             Go to Module 5 <i class="fa-solid fa-arrow-right"></i>
@@ -823,6 +824,7 @@
                 
                 result.classList.remove('hidden');
                 btn.classList.remove('hidden');
+                document.getElementById('btn-retake').classList.add('hidden');
 
                 if (!reviewMode) {
                     document.getElementById('tf-questions').classList.add('hidden');
@@ -834,6 +836,7 @@
                     localState.finalCheckPassed = true;
                     saveLocalProgress();
                     showToast('success', '🎉 Module 4 complete! Module 5 unlocked!');
+                    new Audio('../../sounds/win.mp3').play().catch(e => {});
                 }
             } else {
                 document.getElementById('result-icon').innerText = "⚠️";
@@ -842,16 +845,26 @@
                 document.getElementById('result-desc').innerText = `You got ${correctCount}/5 correct. Review the answers!`;
                 
                 result.classList.remove('hidden');
-
-                // Still allow progression if they answered all
-                setTimeout(() => {
-                    btn.classList.remove('hidden');
-                    if (!localState.finalCheckPassed) {
-                        localState.finalCheckPassed = true;
-                        saveLocalProgress();
-                    }
-                }, 2000);
+                btn.classList.add('hidden');
+                document.getElementById('btn-retake').classList.remove('hidden');
             }
+        }
+
+        function resetTFQuiz() {
+            localState.tfAnswers = [null, null, null, null, null];
+            localState.finalCheckPassed = false;
+            document.getElementById('check-result').classList.add('hidden');
+            document.getElementById('btn-next-module').classList.add('hidden');
+            document.getElementById('btn-retake').classList.add('hidden');
+            if (reviewMode) toggleReview();
+            
+            // show the quiz if it was hidden
+            document.getElementById('tf-questions').classList.remove('hidden');
+            document.getElementById('check-unlocked').querySelector('h3').classList.remove('hidden');
+            document.getElementById('check-unlocked').querySelector('p').classList.remove('hidden');
+            
+            renderTFQuestions();
+            saveLocalProgress();
         }
 
         function showToast(type, message) {

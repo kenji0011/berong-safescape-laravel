@@ -52,9 +52,9 @@ export function KidsWelcomeBanner({ completedModules = [], earnedBadges = [] }: 
 
   // Avatars Mapping
   const AVATAR_MAP: Record<string, string> = {
-    cow: '🐮', ff1: '👨‍🚒', ff2: '👩‍🚒', kid1: '🧒', kid2: '👧', adult1: '👨', adult2: '👩',
+    cow: '/berong_pr.png', ff1: '👨‍🚒', ff2: '👩‍🚒', kid1: '🧒', kid2: '👧', adult1: '👨', adult2: '👩',
   }
-  const userAvatar = AVATAR_MAP[user?.avatar || 'cow'] || '🐮'
+  const userAvatar = AVATAR_MAP[user?.avatar || 'cow'] || '/berong_pr.png'
 
   // Ranking Logic
   const getHeroRank = (count: number) => {
@@ -96,6 +96,7 @@ export function KidsWelcomeBanner({ completedModules = [], earnedBadges = [] }: 
       if (newRank.name !== oldRankName && newRank.name !== "Recruit") {
         setPromotedRank(newRank)
         setShowPromotion(true)
+        new Audio('/sounds/finish.mp3').play().catch(e => console.warn("Audio playback failed:", e));
         
         // Trigger confetti
         const duration = 3000;
@@ -128,6 +129,17 @@ export function KidsWelcomeBanner({ completedModules = [], earnedBadges = [] }: 
     }
   }, [badgesFound, user?.id])
 
+  useEffect(() => {
+    // Check for rankGuide parameter to automatically open the guide
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('rankGuide') === 'true') {
+      setShowRankGuide(true);
+      // Clean up the URL
+      const newUrl = window.location.pathname;
+      window.history.replaceState({}, '', newUrl);
+    }
+  }, []);
+
   return (
     <>
       <div className="relative bg-primary rounded-2xl sm:rounded-[2.5rem] shadow-xl mb-6 sm:mb-8 border-[3px] sm:border-[6px] border-white/90 dark:border-black/20 overflow-hidden transform translate-z-0 transition-colors duration-500">
@@ -142,8 +154,16 @@ export function KidsWelcomeBanner({ completedModules = [], earnedBadges = [] }: 
           
           {/* ── Header: Now includes Avatar on Mobile ── */}
           <div className="text-center mb-6 lg:mb-8 flex flex-col items-center gap-3">
-            <div className="sm:hidden h-16 w-16 rounded-full bg-white dark:bg-red-950 shadow-xl flex items-center justify-center text-3xl border-2 border-white dark:border-black/20 transform rotate-3 transition-colors">
-              {userAvatar}
+            <div className="sm:hidden h-16 w-16 rounded-full bg-white dark:bg-red-900/30 shadow-xl flex items-center justify-center text-3xl border-2 border-white dark:border-white/20 transform rotate-3 transition-colors overflow-hidden">
+              {userAvatar.startsWith('/') ? (
+                <img 
+                  src={userAvatar} 
+                  alt="Hero" 
+                  className="h-full w-full object-cover rounded-full transform-gpu dark:brightness-90 dark:contrast-110 dark:grayscale-[5%]" 
+                />
+              ) : (
+                userAvatar
+              )}
             </div>
             <div>
               <h1 className="text-3xl sm:text-5xl lg:text-7xl font-black text-white drop-shadow-md tracking-tighter mb-1">
@@ -221,8 +241,16 @@ export function KidsWelcomeBanner({ completedModules = [], earnedBadges = [] }: 
              
              {/* Card 1: Identity & Rank - HIDDEN ON MOBILE */}
              <div className="hidden lg:flex bg-white/10 dark:bg-slate-950/40 rounded-[2rem] p-6 border border-white/20 dark:border-white/5 items-center gap-6 shadow-2xl transition-colors">
-                <div className="h-20 w-20 sm:h-24 sm:w-24 rounded-full bg-white dark:bg-red-950 shadow-inner flex items-center justify-center text-4xl sm:text-5xl border-4 border-white dark:border-black/20 transform hover:scale-110 transition-all duration-500">
-                  {userAvatar}
+                <div className="h-20 w-20 sm:h-24 sm:w-24 rounded-full bg-white dark:bg-red-900/30 shadow-inner flex items-center justify-center text-4xl sm:text-5xl border-4 border-white dark:border-white/20 transform hover:scale-110 transition-all duration-500 overflow-hidden">
+                  {userAvatar.startsWith('/') ? (
+                    <img 
+                      src={userAvatar} 
+                      alt="Hero" 
+                      className="h-full w-full object-cover rounded-full transform-gpu dark:brightness-90 dark:contrast-110 dark:grayscale-[5%]" 
+                    />
+                  ) : (
+                    userAvatar
+                  )}
                 </div>
                 <div className="flex-1">
                    <span className="text-[10px] font-black text-yellow-300/80 uppercase tracking-widest block mb-1">HERO IDENTITY</span>

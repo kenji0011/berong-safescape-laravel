@@ -421,6 +421,7 @@
                         </div>
                     </div>
                 </div>
+            </div>
 
             <div id="door-check-overlay" class="hidden fixed inset-0 bg-slate-900/80 backdrop-blur-sm flex items-center justify-center z-50">
                 <div class="bg-white dark:bg-slate-900 p-8 rounded-[2rem] border-[4px] border-orange-300 dark:border-orange-900/30 max-w-sm text-center shadow-2xl transition-colors">
@@ -1077,6 +1078,7 @@
                 if (!localState.quizPassed) {
                     SafeScapeProgress.completeSection(moduleNum, 'quizPassed', true);
                     showToast('success', '🎉 Module 3 complete! Module 4 unlocked!');
+                    new Audio('../../sounds/win.mp3').play().catch(e => {});
                 }
             } else {
                 icon.innerText = "⚠️";

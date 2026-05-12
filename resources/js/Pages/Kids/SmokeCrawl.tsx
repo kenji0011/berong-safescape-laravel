@@ -122,21 +122,30 @@ const SmokeCrawl = () => {
 
     walk(1, 1)
 
+    // Create alternative paths by breaking some walls (to ensure there's a way around)
+    for (let i = 0; i < 10; i++) {
+      const rx = Math.floor(Math.random() * (width - 2)) + 1
+      const ry = Math.floor(Math.random() * (height - 2)) + 1
+      if (newMaze[ry][rx] === 1) {
+        newMaze[ry][rx] = 0
+      }
+    }
+
     // Set Start (5) and Exit (4)
     newMaze[1][1] = 5
     newMaze[height - 2][width - 2] = 4
 
-    // Ensure exit is reachable (it should be by the algo, but let's make sure it's clear)
+    // Ensure exit is reachable
     newMaze[height - 2][width - 3] = 0 
     newMaze[height - 3][width - 2] = 0
 
     // Add some random doors (2: Cool, 3: Hot)
     let doorsCount = 0
-    while (doorsCount < 3) {
+    while (doorsCount < 4) {
       const rx = Math.floor(Math.random() * (width - 2)) + 1
       const ry = Math.floor(Math.random() * (height - 2)) + 1
       if (newMaze[ry][rx] === 0 && (rx !== 1 || ry !== 1)) {
-        newMaze[ry][rx] = Math.random() > 0.3 ? 2 : 3 // 70% chance cool door
+        newMaze[ry][rx] = Math.random() > 0.4 ? 2 : 3 // 60% chance cool door
         doorsCount++
       }
     }
@@ -240,25 +249,26 @@ const SmokeCrawl = () => {
   }
 
   const checkDoor = (x: number, y: number, isHot: boolean) => {
-    if (isHot) {
-      doorSoundRef.current?.play()
-      setMessage("⚠️ OUCH! That door is HOT! Opening it hurt your oxygen...")
-      setOxygen(prev => Math.max(0, prev - 25)) // 25% penalty for hot doors
-      
-      setTimeout(() => {
-        setDoorStates(prev => ({ ...prev, [`${x}-${y}`]: 'open' }))
-        setPlayer({ x, y })
-        setMessage(null)
-      }, 1500) // Slightly longer delay for hot doors
-    } else {
-      doorSoundRef.current?.play()
-      setMessage("This door is cool. Opening...")
-      setTimeout(() => {
-        setDoorStates(prev => ({ ...prev, [`${x}-${y}`]: 'open' }))
-        setPlayer({ x, y })
-        setMessage(null)
-      }, 1000)
-    }
+    setMessage("Checking the door with the back of your hand...")
+    
+    setTimeout(() => {
+      if (isHot) {
+        doorSoundRef.current?.play()
+        setMessage("⚠️ THIS DOOR IS HOT! You felt the heat with the back of your hand. DO NOT OPEN IT! Find another way around.")
+        // Door remains closed, player doesn't move. No oxygen penalty.
+        setTimeout(() => {
+          setMessage(null)
+        }, 3000)
+      } else {
+        doorSoundRef.current?.play()
+        setMessage("This door is cool. Opening...")
+        setTimeout(() => {
+          setDoorStates(prev => ({ ...prev, [`${x}-${y}`]: 'open' }))
+          setPlayer({ x, y })
+          setMessage(null)
+        }, 1000)
+      }
+    }, 800)
   }
 
   // Draw logic
@@ -329,6 +339,7 @@ const SmokeCrawl = () => {
     const newMaze = generateMaze()
     setMaze(newMaze)
     setOxygen(100)
+    setIsCrouched(false)
     setGameState('start')
     setMessage(null)
     setDoorStates({})
@@ -352,16 +363,19 @@ const SmokeCrawl = () => {
         <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-blue-500/5 rounded-full blur-[120px]"></div>
       </div>
 
-      <div className="relative z-10 p-2 sm:p-6 max-w-5xl mx-auto w-full">
-        <div className="flex items-center justify-between mb-3 sm:mb-8">
-          <Link 
-            href="/kids/challenges" 
-            className="inline-flex items-center gap-2 text-slate-500 dark:text-slate-400 font-bold hover:text-orange-600 dark:hover:text-orange-400 transition-all text-sm bg-white dark:bg-slate-800 px-4 py-2 rounded-full border border-white/60 dark:border-slate-700/60 shadow-sm"
-          >
-            <ArrowLeft className="h-4 w-4" />
-            Back to Activities
-          </Link>
-        </div>
+      {/* Ghost Header - absolute positioned to save vertical space and maintain consistency */}
+      <div className="absolute top-4 left-4 z-20">
+        <Link 
+          href="/kids/challenges" 
+          className="inline-flex items-center gap-2 text-slate-500 dark:text-slate-400 font-bold hover:text-orange-600 dark:hover:text-orange-400 transition-all text-sm bg-white dark:bg-slate-800 px-4 py-2 rounded-full border border-white/60 dark:border-slate-700/60 shadow-sm"
+        >
+          <ArrowLeft className="h-4 w-4" />
+          <span className="inline">Back to Activities</span>
+        </Link>
+      </div>
+
+      <div className="relative z-10 pt-16 sm:pt-6 p-2 sm:p-6 max-w-5xl mx-auto w-full">
+
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-8">
           {/* Main Game Area */}
@@ -396,7 +410,7 @@ const SmokeCrawl = () => {
                   <div className="w-24 h-24 bg-orange-500 rounded-3xl flex items-center justify-center mb-6 shadow-lg shadow-orange-500/20">
                     <Wind className="h-12 w-12 text-white" />
                   </div>
-                  <h2 className="text-4xl font-black text-slate-800 dark:text-white mb-4 uppercase tracking-tighter">Mission Ready?</h2>
+                  <h2 className="text-2xl sm:text-4xl font-black text-slate-800 dark:text-white mb-4 uppercase tracking-tighter">Mission Ready?</h2>
                   
                   {/* Controls Preview for Mobile */}
                   <div className="lg:hidden w-full bg-blue-50 dark:bg-slate-900 rounded-2xl p-4 mb-6 border border-blue-100 dark:border-slate-800 grid grid-cols-2 gap-4">
@@ -429,7 +443,7 @@ const SmokeCrawl = () => {
                           setCountdown(3)
                           musicRef.current?.play().catch(() => {})
                         }}
-                        className="bg-orange-500 hover:bg-orange-400 text-white font-black py-5 px-10 rounded-2xl shadow-[0_6px_0_#c2410c] hover:-translate-y-1 active:translate-y-0 active:shadow-none transition-all uppercase tracking-widest text-2xl"
+                        className="bg-orange-500 hover:bg-orange-400 text-white font-black py-4 sm:py-5 px-8 sm:px-10 rounded-2xl shadow-[0_4px_0_#c2410c] sm:shadow-[0_6px_0_#c2410c] hover:-translate-y-1 active:translate-y-0 active:shadow-none transition-all uppercase tracking-widest text-xl sm:text-2xl"
                      >
                         START GAME
                      </button>
@@ -504,56 +518,59 @@ const SmokeCrawl = () => {
               )}
             </div>
 
-            {/* Mobile Controls - Fixed Bottom Dock */}
-            {gameState === 'playing' && (
-              <div className="lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-t-2 border-slate-200 dark:border-slate-700 px-4 py-3 grid grid-cols-2 gap-3 safe-bottom shadow-[0_-4px_20px_rgba(0,0,0,0.1)]">
+            {/* Mobile Controls - Now literally below the game */}
+            {gameState !== 'start' && (
+              <div className="lg:hidden mt-6 bg-white dark:bg-slate-900 border-2 border-slate-100 dark:border-slate-800 rounded-[2.5rem] p-6 grid grid-cols-2 gap-6 shadow-xl transition-colors">
                 {/* Crouch Toggle */}
                 <button 
                   onClick={() => setIsCrouched(!isCrouched)}
+                  style={{ touchAction: 'none' }}
                   className={cn(
-                    "rounded-2xl font-black text-xs shadow-lg flex flex-col items-center justify-center gap-1 py-3 transition-all",
+                    "rounded-3xl font-black text-base shadow-lg flex flex-col items-center justify-center gap-3 py-10 transition-all",
                     isCrouched 
-                      ? "bg-orange-500 text-white shadow-[0_4px_0_#c2410c]" 
-                      : "bg-slate-50 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-2 border-slate-200 dark:border-slate-700 shadow-[0_4px_0_#e2e8f0] dark:shadow-[0_4px_0_#1e293b] active:translate-y-1 active:shadow-none"
+                      ? "bg-orange-500 text-white shadow-[0_6px_0_#c2410c] scale-[1.02]" 
+                      : "bg-slate-100 dark:bg-slate-800 text-slate-400 dark:text-slate-500 border border-slate-200 dark:border-slate-700 active:scale-95"
                   )}
                 >
-                  <User className={cn("h-6 w-6", isCrouched ? "animate-pulse" : "")} />
+                  <User className={cn("h-10 w-10 mb-1", isCrouched ? "animate-pulse" : "")} />
                   {isCrouched ? "STAYING LOW" : "TAP TO CROUCH"}
                 </button>
 
                 {/* D-Pad */}
-                <div className="grid grid-cols-3 gap-1">
+                <div className="grid grid-cols-3 gap-3 max-w-[240px] mx-auto">
                   <div />
                   <button 
-                    onClick={() => movePlayer(player.x, player.y - 1)}
-                    className="aspect-square bg-slate-50 dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 rounded-xl flex items-center justify-center active:bg-orange-100 active:border-orange-500 transition-all"
+                    onClick={() => movePlayer(player.x, player.y - 1)} 
+                    style={{ touchAction: 'none' }}
+                    className="aspect-square bg-slate-100 dark:bg-slate-800 rounded-2xl flex items-center justify-center border-2 border-slate-200 dark:border-slate-700 active:bg-orange-500 active:text-white active:scale-90 transition-all shadow-md"
                   >
-                    <ChevronUp className="h-5 w-5 text-slate-600 dark:text-slate-400" />
+                    <ChevronUp className="h-10 w-10" />
                   </button>
                   <div />
-                  
                   <button 
                     onClick={() => movePlayer(player.x - 1, player.y)}
-                    className="aspect-square bg-slate-50 dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 rounded-xl flex items-center justify-center active:bg-orange-100 active:border-orange-500 transition-all"
+                    style={{ touchAction: 'none' }}
+                    className="aspect-square bg-slate-100 dark:bg-slate-800 rounded-2xl flex items-center justify-center border-2 border-slate-200 dark:border-slate-700 active:bg-orange-500 active:text-white active:scale-90 transition-all shadow-md"
                   >
-                    <ChevronLeft className="h-5 w-5 text-slate-600 dark:text-slate-400" />
+                    <ChevronLeft className="h-10 w-10" />
                   </button>
-                  <div className="aspect-square bg-slate-100 dark:bg-slate-900 rounded-xl flex items-center justify-center">
-                    <div className="w-1.5 h-1.5 bg-slate-300 dark:bg-slate-700 rounded-full" />
+                  <div className="flex items-center justify-center text-slate-300 dark:text-slate-600">
+                    <div className="w-3 h-3 rounded-full bg-current" />
                   </div>
                   <button 
                     onClick={() => movePlayer(player.x + 1, player.y)}
-                    className="aspect-square bg-slate-50 dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 rounded-xl flex items-center justify-center active:bg-orange-100 active:border-orange-500 transition-all"
+                    style={{ touchAction: 'none' }}
+                    className="aspect-square bg-slate-100 dark:bg-slate-800 rounded-2xl flex items-center justify-center border-2 border-slate-200 dark:border-slate-700 active:bg-orange-500 active:text-white active:scale-90 transition-all shadow-md"
                   >
-                    <ChevronRight className="h-5 w-5 text-slate-600 dark:text-slate-400" />
+                    <ChevronRight className="h-10 w-10" />
                   </button>
-                  
                   <div />
                   <button 
                     onClick={() => movePlayer(player.x, player.y + 1)}
-                    className="aspect-square bg-slate-50 dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 rounded-xl flex items-center justify-center active:bg-orange-100 active:border-orange-500 transition-all"
+                    style={{ touchAction: 'none' }}
+                    className="aspect-square bg-slate-100 dark:bg-slate-800 rounded-2xl flex items-center justify-center border-2 border-slate-200 dark:border-slate-700 active:bg-orange-500 active:text-white active:scale-90 transition-all shadow-md"
                   >
-                    <ChevronDown className="h-5 w-5 text-slate-600 dark:text-slate-400" />
+                    <ChevronDown className="h-10 w-10" />
                   </button>
                   <div />
                 </div>
@@ -561,8 +578,8 @@ const SmokeCrawl = () => {
             )}
           </div>
 
-          {/* Instructions Sidebar - Hidden on mobile during gameplay to save space */}
-          <div className="hidden lg:block space-y-6">
+          {/* Instructions Sidebar - Moved to bottom on mobile, side on desktop */}
+          <div className="block lg:block space-y-6 mt-8 lg:mt-0">
             <div className="bg-white dark:bg-slate-900 rounded-[2rem] p-6 border-2 border-slate-100 dark:border-slate-800 shadow-xl transition-colors">
                <h3 className="text-xl font-black text-slate-800 dark:text-white mb-4 flex items-center gap-2">
                   <Info className="text-blue-500 dark:text-blue-400 h-6 w-6" />
@@ -575,7 +592,11 @@ const SmokeCrawl = () => {
                   </div>
                   <div className="flex gap-4">
                      <div className="w-10 h-10 bg-slate-50 dark:bg-slate-800 rounded-xl flex items-center justify-center text-slate-700 dark:text-slate-300 font-bold shrink-0 border border-slate-100 dark:border-slate-700">2</div>
-                     <p className="text-slate-600 dark:text-slate-400 text-sm leading-relaxed font-bold">Tap <span className="text-orange-600 dark:text-orange-400">Crouch</span> to stay low and save oxygen!</p>
+                     <p className="text-slate-600 dark:text-slate-400 text-sm leading-relaxed font-bold">
+                        <span className="lg:hidden">Tap <span className="text-orange-600 dark:text-orange-400">Crouch</span></span>
+                        <span className="hidden lg:inline">Hold <span className="text-orange-600 dark:text-orange-400">Spacebar</span></span>
+                        {" "}to stay low and save oxygen!
+                     </p>
                   </div>
                   <div className="flex gap-4">
                      <div className="w-10 h-10 bg-slate-50 dark:bg-slate-800 rounded-xl flex items-center justify-center text-slate-700 dark:text-slate-300 font-bold shrink-0 border border-slate-100 dark:border-slate-700">3</div>

@@ -18,6 +18,7 @@ const ModuleFivePage = ({ moduleNum }: { moduleNum: number }) => {
   const badgeAwardedRef = React.useRef(false)
   const quizSubmittedRef = React.useRef(false)
   const syncingRef = React.useRef(false)
+  const pendingSyncRef = React.useRef<any>(null)
   const iframeRef = React.useRef<HTMLIFrameElement>(null)
 
   useEffect(() => {
@@ -70,6 +71,39 @@ const ModuleFivePage = ({ moduleNum }: { moduleNum: number }) => {
     }
   }, [fullProgress, iframeLoading]);
 
+  const processSectionSync = async (data: any) => {
+    try {
+      if (data.completed && completedRef.current) return;
+
+      syncingRef.current = true;
+      console.log("Syncing section complete:", data);
+      const response = await axios.post("/api/kids/safescape", {
+        moduleNum: data.moduleNum,
+        sectionData: data.sectionData,
+        completed: data.completed
+      });
+
+      console.log("Progress synced successfully for module", data.moduleNum, response.data);
+
+      if (data.completed && !completedRef.current) {
+        console.log(`Module ${currentModule} marked as completed!`);
+        setModuleCompleted(true)
+        loadState()
+      }
+    } catch (error: any) {
+      console.error("Failed to sync progress:", error.response?.data || error.message)
+    } finally {
+      syncingRef.current = false;
+
+      // Process any queued message that arrived while we were syncing
+      const pending = pendingSyncRef.current;
+      if (pending) {
+        pendingSyncRef.current = null;
+        await processSectionSync(pending);
+      }
+    }
+  };
+
   useEffect(() => {
     const handleMessage = async (e: MessageEvent) => {
       if (e.origin !== window.location.origin) return;
@@ -89,32 +123,12 @@ const ModuleFivePage = ({ moduleNum }: { moduleNum: number }) => {
 
       // 2. Section completed - sync to backend
       if (data.type === 'SAFESCAPE_SECTION_COMPLETE' && data.moduleNum === currentModule) {
-        if (syncingRef.current) return;
-        try {
-          // Prevent redundant sync if already marked completed locally
-          if (data.completed && completedRef.current) return;
-
-          syncingRef.current = true;
-          console.log("Syncing section complete:", data);
-          const response = await axios.post("/api/kids/safescape", {
-            moduleNum: data.moduleNum,
-            sectionData: data.sectionData,
-            completed: data.completed
-          });
-
-          console.log("Progress synced successfully for module", data.moduleNum, response.data);
-
-          // Show completion banner when current module is done
-          if (data.completed && !completedRef.current) {
-            console.log(`Module ${currentModule} marked as completed!`);
-            setModuleCompleted(true)
-            loadState() // Sync full state
-          }
-        } catch (error: any) {
-          console.error("Failed to sync progress:", error.response?.data || error.message)
-        } finally {
-          syncingRef.current = false;
+        if (syncingRef.current) {
+          // Queue the latest message instead of dropping it
+          pendingSyncRef.current = data;
+          return;
         }
+        await processSectionSync(data);
       }
 
       // 3. Quiz submission
@@ -212,14 +226,14 @@ const ModuleFivePage = ({ moduleNum }: { moduleNum: number }) => {
       const iframeAny = iframeWindow as any;
       
       if (typeof iframeAny.localState !== 'undefined') {
-        iframeAny.localState.quizPassed = true;
+        iframeAny.localState.finalExamPassed = true;
+        iframeAny.localState.certified = true;
         iframeAny.localState.videoWatched = true;
-        iframeAny.localState.isExamPassed = true;
       }
       
-      const examResult = iframeDoc.getElementById('exam-result');
-      if (examResult && typeof iframeAny.renderQuiz === 'function') {
-        iframeAny.renderQuiz();
+      // Module 5 uses loadExam() not renderQuiz()
+      if (typeof iframeAny.loadExam === 'function') {
+        iframeAny.loadExam();
       }
       
       if (typeof iframeAny.updateSectionStates === 'function') {
@@ -235,7 +249,7 @@ const ModuleFivePage = ({ moduleNum }: { moduleNum: number }) => {
         `;
         iframeDoc.head.appendChild(style);
       }
-    } catch (e) {}
+    } catch (e) {};
   };
 
   const handleIframeLoad = (e: React.SyntheticEvent<HTMLIFrameElement, Event>) => {
