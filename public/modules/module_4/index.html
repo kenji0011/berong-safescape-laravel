@@ -149,20 +149,20 @@
 
         <!-- CARDS PROGRESS DASHBOARD -->
         <div class="max-w-md mx-auto fade-in px-2 sm:px-0" style="animation-delay: 0.15s;">
-            <div class="bg-slate-900 dark:bg-slate-900 rounded-2xl sm:rounded-[2rem] p-3 sm:p-6 border-[3px] border-slate-800 dark:border-slate-700 shadow-[0_5px_0_#0f172a] sm:shadow-[0_8px_0_#0f172a] relative overflow-hidden transition-all group">
+            <div class="bg-white dark:bg-slate-900 rounded-2xl sm:rounded-[2rem] p-3 sm:p-6 border-[3px] border-slate-200 dark:border-slate-700 shadow-[0_5px_0_#e2e8f0] dark:shadow-[0_5px_0_#0f172a] sm:shadow-[0_8px_0_#e2e8f0] dark:sm:shadow-[0_8px_0_#0f172a] relative overflow-hidden transition-all group">
                 <div class="absolute top-0 right-0 w-24 h-24 sm:w-32 sm:h-32 bg-orange-500/10 blur-[40px] sm:blur-[50px] -mr-12 -mt-12 pointer-events-none"></div>
                 <div class="relative z-10 flex items-center gap-3 sm:gap-5">
-                    <div class="h-10 w-10 sm:h-16 sm:w-16 bg-slate-800 dark:bg-slate-950 rounded-xl sm:rounded-2xl flex items-center justify-center shrink-0 border-2 border-slate-700 shadow-inner group-hover:border-orange-500/50 transition-colors duration-500">
+                    <div class="h-10 w-10 sm:h-16 sm:w-16 bg-slate-50 dark:bg-slate-950 rounded-xl sm:rounded-2xl flex items-center justify-center shrink-0 border-2 border-slate-200 dark:border-slate-700 shadow-inner group-hover:border-orange-500/50 transition-colors duration-500">
                         <i id="lock-icon" class="fa-solid fa-lock text-orange-500 text-sm sm:text-2xl animate-pulse"></i>
                     </div>
                     <div class="flex-1 min-w-0">
-                        <p class="text-slate-400 font-black text-[8px] sm:text-xs uppercase tracking-[0.2em] mb-0.5 sm:mb-1 truncate">Mission Requirement</p>
-                        <h3 class="text-white font-black text-xs sm:text-lg uppercase tracking-tight leading-tight truncate">Unlock the Final Check</h3>
+                        <p class="text-slate-500 dark:text-slate-400 font-black text-[8px] sm:text-xs uppercase tracking-[0.2em] mb-0.5 sm:mb-1 truncate transition-colors">Mission Requirement</p>
+                        <h3 class="text-slate-800 dark:text-white font-black text-xs sm:text-lg uppercase tracking-tight leading-tight truncate transition-colors">Unlock the Final Check</h3>
                         <div class="mt-1 sm:mt-2 flex items-center gap-2 sm:gap-3">
-                            <div class="flex-1 h-1.5 sm:h-2 bg-slate-800 rounded-full overflow-hidden border border-slate-700/50">
+                            <div class="flex-1 h-1.5 sm:h-2 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden border border-slate-200 dark:border-slate-700/50 transition-colors">
                                 <div id="progress-bar-inner" class="h-full bg-gradient-to-r from-orange-600 to-orange-400 transition-all duration-1000 shadow-[0_0_15px_rgba(249,115,22,0.3)]" style="width: 0%"></div>
                             </div>
-                            <span class="text-orange-500 font-black text-xs sm:text-lg tabular-nums shrink-0"><span id="cards-done">0</span><span class="text-slate-600 ml-0.5 sm:ml-1">/</span><span class="text-slate-600">5</span></span>
+                            <span class="text-orange-500 font-black text-xs sm:text-lg tabular-nums shrink-0"><span id="cards-done">0</span><span class="text-slate-400 dark:text-slate-600 ml-0.5 sm:ml-1 transition-colors">/</span><span class="text-slate-400 dark:text-slate-600 transition-colors">5</span></span>
                         </div>
                     </div>
                 </div>
@@ -171,9 +171,9 @@
 
         <!-- CARD 1: PHYSICS OF SMOKE -->
         <section id="card-1"
-            class="fade-in ss-section info-card bg-white dark:bg-slate-900 overflow-hidden shadow-sm border-[3px] sm:border-[4px] border-orange-200 dark:border-orange-900/30 relative transition-colors"
+            class="fade-in ss-section info-card bg-white dark:bg-slate-900 shadow-sm border-[3px] sm:border-[4px] border-orange-200 dark:border-orange-900/30 relative transition-colors"
             style="animation-delay: 0.2s;">
-            <div class="ss-section-badge"><i class="fa-regular fa-circle-check"></i></div>
+            <div class="ss-section-badge bg-green-500 border-[3px] border-white dark:border-slate-800 shadow-sm text-white transition-colors"><i class="fa-regular fa-circle-check"></i></div>
             <div class="grid grid-cols-1 sm:grid-cols-2">
                 <div class="p-5 sm:p-8 md:p-10 flex flex-col justify-center space-y-4 sm:space-y-6">
                     <h2 class="text-xl sm:text-3xl font-black text-orange-600 drop-shadow-sm"><i class="fa-solid fa-wind mr-2 text-orange-400"></i> The Physics of
@@ -226,9 +226,9 @@
         </section>
 
         <section id="card-2"
-            class="fade-in ss-section info-card bg-white dark:bg-slate-900 overflow-hidden shadow-sm border-[3px] sm:border-[4px] border-red-200 dark:border-red-900/30 relative transition-colors"
+            class="fade-in ss-section info-card bg-white dark:bg-slate-900 shadow-sm border-[3px] sm:border-[4px] border-red-200 dark:border-red-900/30 relative transition-colors"
             style="animation-delay: 0.3s;">
-            <div class="ss-section-badge"><i class="fa-regular fa-circle-check"></i></div>
+            <div class="ss-section-badge bg-green-500 border-[3px] border-white dark:border-slate-800 shadow-sm text-white transition-colors"><i class="fa-regular fa-circle-check"></i></div>
             <div class="grid grid-cols-1 md:grid-cols-2">
                 <!-- Image Left on Desktop for Variety -->
                 <div class="order-2 md:order-1 bg-slate-50 dark:bg-slate-950 p-3 sm:p-6 flex items-center justify-center border-r-0 sm:border-r-2 border-b-2 sm:border-b-0 border-slate-100 dark:border-slate-800 transition-colors">
@@ -280,9 +280,9 @@
         </section>
 
         <section id="card-3"
-            class="fade-in ss-section info-card bg-white dark:bg-slate-900 overflow-hidden shadow-sm border-[3px] sm:border-[4px] border-blue-200 dark:border-blue-900/30 relative transition-colors"
+            class="fade-in ss-section info-card bg-white dark:bg-slate-900 shadow-sm border-[3px] sm:border-[4px] border-blue-200 dark:border-blue-900/30 relative transition-colors"
             style="animation-delay: 0.4s;">
-            <div class="ss-section-badge"><i class="fa-regular fa-circle-check"></i></div>
+            <div class="ss-section-badge bg-green-500 border-[3px] border-white dark:border-slate-800 shadow-sm text-white transition-colors"><i class="fa-regular fa-circle-check"></i></div>
             <div class="grid grid-cols-1 md:grid-cols-2">
                 <div class="p-5 sm:p-8 md:p-10 flex flex-col justify-center space-y-4 sm:space-y-6">
                     <h2 class="text-xl sm:text-3xl font-black text-blue-600 drop-shadow-sm"><i class="fa-solid fa-person-crawling mr-2 text-blue-400"></i> Hands
@@ -338,9 +338,9 @@
         </section>
 
         <section id="card-4"
-            class="fade-in ss-section info-card bg-white dark:bg-slate-900 overflow-hidden shadow-sm border-[3px] sm:border-[4px] border-slate-300 dark:border-slate-700 relative transition-colors"
+            class="fade-in ss-section info-card bg-white dark:bg-slate-900 shadow-sm border-[3px] sm:border-[4px] border-slate-300 dark:border-slate-700 relative transition-colors"
             style="animation-delay: 0.5s;">
-            <div class="ss-section-badge"><i class="fa-regular fa-circle-check"></i></div>
+            <div class="ss-section-badge bg-green-500 border-[3px] border-white dark:border-slate-800 shadow-sm text-white transition-colors"><i class="fa-regular fa-circle-check"></i></div>
             <div class="grid grid-cols-1 md:grid-cols-2">
                 <!-- Image Left on Desktop -->
                 <div class="order-2 md:order-1 bg-slate-50 dark:bg-slate-950 p-3 sm:p-6 flex items-center justify-center border-r-0 sm:border-r-2 border-b-2 sm:border-b-0 border-slate-100 dark:border-slate-800 transition-colors">
@@ -393,9 +393,9 @@
         </section>
 
         <section id="card-5"
-            class="fade-in ss-section info-card bg-white dark:bg-slate-900 overflow-hidden shadow-sm border-[3px] sm:border-[4px] border-teal-200 dark:border-teal-900/30 relative transition-colors"
+            class="fade-in ss-section info-card bg-white dark:bg-slate-900 shadow-sm border-[3px] sm:border-[4px] border-teal-200 dark:border-teal-900/30 relative transition-colors"
             style="animation-delay: 0.6s;">
-            <div class="ss-section-badge"><i class="fa-regular fa-circle-check"></i></div>
+            <div class="ss-section-badge bg-green-500 border-[3px] border-white dark:border-slate-800 shadow-sm text-white transition-colors"><i class="fa-regular fa-circle-check"></i></div>
             <div class="grid grid-cols-1 md:grid-cols-2">
                 <div class="p-5 sm:p-8 md:p-10 flex flex-col justify-center space-y-4 sm:space-y-6">
                     <h2 class="text-xl sm:text-3xl font-black text-teal-600 drop-shadow-sm transition-colors"><i class="fa-solid fa-shirt mr-2 text-teal-400"></i> Use a Filter
@@ -452,20 +452,19 @@
 
         <!-- INTERACTIVE KNOWLEDGE CHECK -->
         <section id="section-check"
-            class="fade-in ss-section w-full bg-yellow-50 p-4 sm:p-8 md:p-12 rounded-xl sm:rounded-[3rem] border-[3px] sm:border-[4px] border-yellow-300 text-center space-y-4 sm:space-y-6 shadow-sm"
+            class="fade-in ss-section w-full bg-yellow-50 dark:bg-yellow-950/20 p-4 sm:p-8 md:p-12 rounded-xl sm:rounded-[3rem] border-[3px] sm:border-[4px] border-yellow-300 dark:border-yellow-900/30 text-center space-y-4 sm:space-y-6 shadow-sm transition-all duration-500"
             style="animation-delay: 0.7s;">
-            <div class="ss-section-badge bg-green-500 border-[3px] border-white shadow-sm text-white"><i class="fa-regular fa-circle-check"></i></div>
-
+            
             <div id="check-locked" class="py-4 sm:py-8">
-                <i class="fa-solid fa-lock text-3xl sm:text-5xl text-yellow-300 mb-3 sm:mb-6"></i>
-                <h3 class="text-lg sm:text-2xl font-black text-slate-800 drop-shadow-sm">Complete All Cards First</h3>
-                <p class="text-xs sm:text-base text-slate-600 font-bold mt-1 sm:mt-2">Answer all 5 questions above to unlock the final check</p>
+                <i class="fa-solid fa-lock text-3xl sm:text-5xl text-yellow-300 dark:text-yellow-600 mb-3 sm:mb-6 transition-colors"></i>
+                <h3 class="text-lg sm:text-2xl font-black text-slate-800 dark:text-yellow-300 drop-shadow-sm transition-colors">Complete All Cards First</h3>
+                <p class="text-xs sm:text-base text-slate-600 dark:text-slate-400 font-bold mt-1 sm:mt-2 transition-colors">Answer all 5 questions above to unlock the final check</p>
             </div>
 
             <div id="check-unlocked" class="hidden">
-                <h3 class="text-xl sm:text-3xl font-black text-yellow-900 mb-1 sm:mb-2 drop-shadow-sm"><i
+                <h3 class="text-xl sm:text-3xl font-black text-yellow-900 dark:text-yellow-300 mb-1 sm:mb-2 drop-shadow-sm transition-colors"><i
                         class="fa-solid fa-clipboard-check text-orange-500 mr-2"></i> True or False</h3>
-                <p class="text-xs sm:text-base text-slate-700 font-bold mb-4 sm:mb-8">Answer all 5 questions correctly to complete the module</p>
+                <p class="text-xs sm:text-base text-slate-700 dark:text-slate-400 font-bold mb-4 sm:mb-8 transition-colors">Answer all 5 questions correctly to complete the module</p>
 
                 <div id="tf-questions" class="space-y-6 text-left">
                     <!-- Questions rendered by JS -->
@@ -559,10 +558,14 @@
 
         function updateSectionStates() {
             // Completed states
-            if (localState.finalCheckPassed) document.getElementById('section-check').classList.add('completed');
+            const secCheck = document.getElementById('section-check');
+            if (localState.finalCheckPassed) {
+                secCheck.className = "fade-in ss-section w-full bg-slate-50 dark:bg-slate-900 p-4 sm:p-8 md:p-12 rounded-xl sm:rounded-[3rem] border-[4px] border-slate-200 dark:border-slate-800 text-center space-y-4 sm:space-y-6 shadow-sm transition-all duration-500";
+            } else {
+                secCheck.className = "fade-in ss-section w-full bg-yellow-50 dark:bg-yellow-950/20 p-4 sm:p-8 md:p-12 rounded-xl sm:rounded-[3rem] border-[3px] sm:border-[4px] border-yellow-300 dark:border-yellow-900/30 text-center space-y-4 sm:space-y-6 shadow-sm transition-all duration-500";
+            }
 
             // Locked states (sequential)
-            const secCheck = document.getElementById('section-check');
             if (!localState.allCardsCompleted) secCheck.classList.add('locked');
             else secCheck.classList.remove('locked');
         }
@@ -667,15 +670,14 @@
 
             tfQuestions.forEach((q, idx) => {
                 const div = document.createElement('div');
-                div.className = 'bg-white dark:bg-slate-900 p-6 rounded-3xl border-[3px] border-yellow-200 dark:border-yellow-900/30 shadow-sm transition-colors';
+                div.className = 'bg-white dark:bg-slate-900 p-6 rounded-3xl border-[3px] border-slate-200 dark:border-slate-800 shadow-sm transition-colors';
                 div.id = `tf-q-${idx}`;
                 div.innerHTML = `
                     <p class="text-slate-800 dark:text-white font-black text-lg mb-4 transition-colors">${idx + 1}. "${q.statement}"</p>
-                    <div class="flex gap-3">
-                        <button onclick="answerTF(${idx}, true)" class="tf-btn flex-1 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 py-3 rounded-xl border-2 border-slate-200 dark:border-slate-700 text-sm font-black text-slate-600 dark:text-slate-400 transition-all shadow-sm hover:-translate-y-0.5 active:translate-y-1 active:shadow-none uppercase tracking-wide">TRUE</button>
-                        <button onclick="answerTF(${idx}, false)" class="tf-btn flex-1 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 py-3 rounded-xl border-2 border-slate-200 dark:border-slate-700 text-sm font-black text-slate-600 dark:text-slate-400 transition-all shadow-sm hover:-translate-y-0.5 active:translate-y-1 active:shadow-none uppercase tracking-wide">FALSE</button>
+                    <div class="grid grid-cols-2 gap-3">
+                        <button onclick="answerTF(${idx}, true)" class="tf-btn w-full text-center p-3 sm:p-4 rounded-xl border-2 font-bold text-sm sm:text-base border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800 shadow-sm transition-all hover:-translate-y-0.5 active:translate-y-1 active:shadow-none">TRUE</button>
+                        <button onclick="answerTF(${idx}, false)" class="tf-btn w-full text-center p-3 sm:p-4 rounded-xl border-2 font-bold text-sm sm:text-base border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800 shadow-sm transition-all hover:-translate-y-0.5 active:translate-y-1 active:shadow-none">FALSE</button>
                     </div>
-                    <div id="tf-feedback-${idx}" class="hidden mt-4 text-sm font-bold bg-slate-50 dark:bg-slate-950 p-3 rounded-xl border-2 border-slate-100 dark:border-slate-800 transition-colors"></div>
                 `;
                 container.appendChild(div);
             });
@@ -694,43 +696,37 @@
         function answerTF(idx, userAnswer) {
             const qDiv = document.getElementById(`tf-q-${idx}`);
             const buttons = qDiv.querySelectorAll('.tf-btn');
-            const feedback = document.getElementById(`tf-feedback-${idx}`);
             const correct = tfQuestions[idx].answer === userAnswer;
 
-            // Clean up hover/active classes on all buttons to prevent weird effects when disabled
             buttons.forEach(b => {
                 b.disabled = true;
-                b.classList.remove('hover:bg-slate-50', 'hover:-translate-y-0.5', 'active:translate-y-1', 'active:shadow-none', 'shadow-sm');
-                b.classList.add('opacity-50', 'cursor-not-allowed'); // Make them look disabled
             });
 
             // Store answer
             localState.tfAnswers[idx] = userAnswer;
 
+            const baseClass = "tf-btn w-full text-center p-3 sm:p-4 rounded-xl border-2 font-bold text-sm sm:text-base transition-colors";
+            const correctClass = baseClass + " bg-green-700 border-green-400 text-white shadow-sm";
+            const incorrectClass = baseClass + " bg-red-800 border-red-400 text-white opacity-70 shadow-sm";
+            const disabledClass = baseClass + " border-slate-200 dark:border-slate-800 text-slate-400 dark:text-slate-600 bg-slate-50 dark:bg-slate-950 opacity-40 cursor-not-allowed shadow-none";
+
             if (correct) {
                 if (userAnswer) {
-                    buttons[0].classList.add('bg-green-500', 'border-green-600', 'text-white', 'opacity-100');
-                    buttons[0].classList.remove('text-slate-600', 'bg-white', 'opacity-50');
+                    buttons[0].className = correctClass;
+                    buttons[1].className = disabledClass;
                 } else {
-                    buttons[1].classList.add('bg-green-500', 'border-green-600', 'text-white', 'opacity-100');
-                    buttons[1].classList.remove('text-slate-600', 'bg-white', 'opacity-50');
+                    buttons[1].className = correctClass;
+                    buttons[0].className = disabledClass;
                 }
-                feedback.innerHTML = '<span class="text-green-600"><i class="fa-solid fa-check mr-2"></i> Correct!</span>';
             } else {
                 if (userAnswer) {
-                    buttons[0].classList.add('bg-red-500', 'border-red-600', 'text-white');
-                    buttons[0].classList.remove('text-slate-600', 'bg-white');
-                    buttons[1].classList.add('bg-green-500', 'border-green-600', 'text-white');
-                    buttons[1].classList.remove('text-slate-600', 'bg-white');
+                    buttons[0].className = incorrectClass;
+                    buttons[1].className = correctClass;
                 } else {
-                    buttons[1].classList.add('bg-red-500', 'border-red-600', 'text-white');
-                    buttons[1].classList.remove('text-slate-600', 'bg-white');
-                    buttons[0].classList.add('bg-green-500', 'border-green-600', 'text-white');
-                    buttons[0].classList.remove('text-slate-600', 'bg-white');
+                    buttons[1].className = incorrectClass;
+                    buttons[0].className = correctClass;
                 }
-                feedback.innerHTML = '<span class="text-red-500"><i class="fa-solid fa-xmark mr-2"></i> Incorrect</span>';
             }
-            feedback.classList.remove('hidden');
 
             // Check if all answered
             checkTFComplete();
@@ -741,39 +737,34 @@
             const qDiv = document.getElementById(`tf-q-${idx}`);
             if (!qDiv) return;
             const buttons = qDiv.querySelectorAll('.tf-btn');
-            const feedback = document.getElementById(`tf-feedback-${idx}`);
             const correct = tfQuestions[idx].answer === userAnswer;
 
             buttons.forEach(b => {
                 b.disabled = true;
-                b.classList.remove('hover:bg-slate-50', 'hover:-translate-y-0.5', 'active:translate-y-1', 'active:shadow-none', 'shadow-sm');
-                b.classList.add('opacity-50', 'cursor-not-allowed');
             });
+
+            const baseClass = "tf-btn w-full text-center p-3 sm:p-4 rounded-xl border-2 font-bold text-sm sm:text-base transition-colors";
+            const correctClass = baseClass + " bg-green-700 border-green-400 text-white shadow-sm";
+            const incorrectClass = baseClass + " bg-red-800 border-red-400 text-white opacity-70 shadow-sm";
+            const disabledClass = baseClass + " border-slate-200 dark:border-slate-800 text-slate-400 dark:text-slate-600 bg-slate-50 dark:bg-slate-950 opacity-40 cursor-not-allowed shadow-none";
 
             if (correct) {
                 if (userAnswer) {
-                    buttons[0].classList.add('bg-green-500', 'border-green-600', 'text-white', 'opacity-100');
-                    buttons[0].classList.remove('text-slate-600', 'bg-white', 'opacity-50');
+                    buttons[0].className = correctClass;
+                    buttons[1].className = disabledClass;
                 } else {
-                    buttons[1].classList.add('bg-green-500', 'border-green-600', 'text-white', 'opacity-100');
-                    buttons[1].classList.remove('text-slate-600', 'bg-white', 'opacity-50');
+                    buttons[1].className = correctClass;
+                    buttons[0].className = disabledClass;
                 }
-                feedback.innerHTML = '<span class="text-green-600"><i class="fa-solid fa-check mr-2"></i> Correct!</span>';
             } else {
                 if (userAnswer) {
-                    buttons[0].classList.add('bg-red-500', 'border-red-600', 'text-white');
-                    buttons[0].classList.remove('text-slate-600', 'bg-white');
-                    buttons[1].classList.add('bg-green-500', 'border-green-600', 'text-white');
-                    buttons[1].classList.remove('text-slate-600', 'bg-white');
+                    buttons[0].className = incorrectClass;
+                    buttons[1].className = correctClass;
                 } else {
-                    buttons[1].classList.add('bg-red-500', 'border-red-600', 'text-white');
-                    buttons[1].classList.remove('text-slate-600', 'bg-white');
-                    buttons[0].classList.add('bg-green-500', 'border-green-600', 'text-white');
-                    buttons[0].classList.remove('text-slate-600', 'bg-white');
+                    buttons[1].className = incorrectClass;
+                    buttons[0].className = correctClass;
                 }
-                feedback.innerHTML = '<span class="text-red-500"><i class="fa-solid fa-xmark mr-2"></i> Incorrect</span>';
             }
-            feedback.classList.remove('hidden');
         }
 
         let reviewMode = false;
@@ -784,6 +775,7 @@
             const headerP = document.getElementById('check-unlocked').querySelector('p');
             
             if (reviewMode) {
+                tfQuestionsDiv.classList.add('animate-fade-in');
                 tfQuestionsDiv.classList.remove('hidden');
                 headerH3.classList.remove('hidden');
                 headerP.classList.remove('hidden');
@@ -794,13 +786,14 @@
                 }, 150);
             } else {
                 tfQuestionsDiv.classList.add('hidden');
+                tfQuestionsDiv.classList.remove('animate-fade-in');
                 headerH3.classList.add('hidden');
                 headerP.classList.add('hidden');
                 document.getElementById('btn-review').innerText = "Review Answers";
                 // Scroll back to result card
                 setTimeout(() => {
                     document.getElementById('check-result').scrollIntoView({ behavior: 'smooth', block: 'center' });
-                }, 150);
+                }, 50);
             }
         }
 
@@ -883,3 +876,6 @@
 </body>
 
 </html>
+
+
+

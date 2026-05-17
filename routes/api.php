@@ -31,6 +31,7 @@ Route::middleware('throttle:api')->prefix('auth')->group(function () {
     Route::get('/check-username', [AuthApiController::class, 'checkUsername']);
     Route::post('/validate-credentials', [AuthApiController::class, 'validateCredentials']);
     Route::middleware('throttle:auth')->post('/register', [AuthApiController::class, 'register']);
+    Route::middleware('throttle:password-reset')->post('/reset-password', [AuthApiController::class, 'resetPassword']);
 });
 
 // Public content — home page carousel, assessment questions for pre-test

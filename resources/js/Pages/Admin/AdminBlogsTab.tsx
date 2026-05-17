@@ -26,7 +26,11 @@ export const AdminBlogsTab: React.FC<BlogsTabProps> = ({
         <ImageUpload
           key={blogUploadKey}
           title="Upload Blog Image"
-          description="Upload an image to generate a URL for the blog post"
+          description="Upload an image for your blog post"
+          enableCropping={false}
+          recommendedResolution="1200 × 630 PX (High Quality)"
+          minWidth={1200}
+          minHeight={630}
           onUploadComplete={(url) => setNewBlog({ ...newBlog, imageUrl: url })}
         />
 

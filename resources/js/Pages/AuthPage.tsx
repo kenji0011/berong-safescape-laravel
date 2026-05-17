@@ -11,7 +11,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Label } from "@/components/ui/label"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Alert, AlertDescription } from "@/components/ui/alert"
-import { Shield, AlertCircle, Loader2, KeyRound, Eye, EyeOff, ArrowLeft } from "lucide-react"
+import { Shield, AlertCircle, Loader2, KeyRound, Eye, EyeOff, ArrowLeft, CheckCircle2, XCircle, Lock, User, MapPin, Mail, FileText } from "lucide-react"
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Link } from '@inertiajs/react';
 import Image from '@/components/Image';
@@ -33,9 +33,26 @@ function AuthContent() {
   const [showResetDialog, setShowResetDialog] = useState(false)
   const [resetUsername, setResetUsername] = useState("")
   const [resetCode, setResetCode] = useState("")
-  const [resetStep, setResetStep] = useState(1) // 1 = enter username, 2 = enter code
+  const [resetStep, setResetStep] = useState(1) // 1 = username, 2 = code, 3 = new password, 4 = success
   const [resetLoading, setResetLoading] = useState(false)
   const [resetMessage, setResetMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null)
+  const [resetToken, setResetToken] = useState("") // one-time token from step 2
+  const [newPassword, setNewPassword] = useState("")
+  const [confirmNewPassword, setConfirmNewPassword] = useState("")
+  const [showNewPassword, setShowNewPassword] = useState(false)
+
+  // Password strength checker
+  const getPasswordStrength = (pw: string) => {
+    const checks = {
+      length: pw.length >= 8,
+      uppercase: /[A-Z]/.test(pw),
+      lowercase: /[a-z]/.test(pw),
+      number: /[0-9]/.test(pw),
+      symbol: /[^A-Za-z0-9]/.test(pw),
+    }
+    const passed = Object.values(checks).filter(Boolean).length
+    return { checks, passed, total: 5 }
+  }
 
   const [loginData, setLoginData] = useState({ username: "", password: "" })
   const [registerData, setRegisterData] = useState({
@@ -148,7 +165,7 @@ function AuthContent() {
         setResetLoading(false)
       }
     } else if (resetStep === 2) {
-      // Step 2: Verify code and reset password
+      // Step 2: Verify code — get one-time reset token
       if (!resetCode.trim()) {
         setResetMessage({ type: 'error', text: 'Please enter the verification code.' })
         return
@@ -166,8 +183,49 @@ function AuthContent() {
         const result = await response.json()
 
         if (result.success) {
+          setResetToken(result.resetToken)
+          setResetStep(3) // Move to new password step
           setResetMessage({ type: 'success', text: result.message })
-          setResetStep(3) // Done state
+        } else {
+          setResetMessage({ type: 'error', text: result.error })
+        }
+      } catch (err) {
+        setResetMessage({ type: 'error', text: 'Something went wrong. Please try again.' })
+      } finally {
+        setResetLoading(false)
+      }
+    } else if (resetStep === 3) {
+      // Step 3: Set new password
+      const strength = getPasswordStrength(newPassword)
+      if (strength.passed < 5) {
+        setResetMessage({ type: 'error', text: 'Password does not meet all requirements.' })
+        return
+      }
+      if (newPassword !== confirmNewPassword) {
+        setResetMessage({ type: 'error', text: 'Passwords do not match.' })
+        return
+      }
+
+      setResetLoading(true)
+      setResetMessage(null)
+
+      try {
+        const response = await fetch('/api/auth/reset-password', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            username: resetUsername.trim(),
+            step: 3,
+            resetToken: resetToken,
+            newPassword: newPassword,
+            confirmPassword: confirmNewPassword,
+          }),
+        })
+        const result = await response.json()
+
+        if (result.success) {
+          setResetMessage({ type: 'success', text: result.message })
+          setResetStep(4) // Done state
         } else {
           setResetMessage({ type: 'error', text: result.error })
         }
@@ -219,19 +277,19 @@ function AuthContent() {
   }
 
   return (
-    <div className="min-h-screen bg-white dark:bg-slate-950 bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] dark:bg-[radial-gradient(#1e293b_1px,transparent_1px)] [background-size:16px_16px] flex flex-col items-center justify-center p-4 sm:p-6 relative overflow-hidden transition-colors duration-500">
+    <div className="min-h-dvh bg-white dark:bg-slate-950 bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] dark:bg-[radial-gradient(#1e293b_1px,transparent_1px)] [background-size:16px_16px] flex flex-col items-center p-4 sm:p-6 relative transition-colors duration-500">
 
 
       {/* Registration Wizard Modal - Full screen overlay */}
       {showRegistrationWizard && (
-        <div className="fixed inset-0 z-50 bg-white dark:bg-slate-950 bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] dark:bg-[radial-gradient(#1e293b_1px,transparent_1px)] [background-size:16px_16px] flex items-start justify-center overflow-y-auto overscroll-y-contain py-6 sm:py-8">
-          <div className="w-full max-w-3xl mx-2 sm:mx-4">
+        <div className="fixed inset-0 z-50 bg-white dark:bg-slate-900 overflow-y-auto overscroll-y-contain sm:bg-slate-950 sm:bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] sm:dark:bg-[radial-gradient(#1e293b_1px,transparent_1px)] sm:[background-size:16px_16px] sm:flex sm:items-start sm:justify-center sm:py-8">
+          <div className="w-full max-w-3xl flex flex-col min-h-full sm:min-h-0">
             <RegistrationWizard onBackToLogin={() => setShowRegistrationWizard(false)} />
           </div>
         </div>
       )}
 
-      <div className="w-full max-w-5xl z-10 relative flex flex-col lg:flex-row items-center gap-8 lg:gap-16">
+      <div className="w-full max-w-5xl z-10 relative flex flex-col lg:flex-row items-center gap-8 lg:gap-16 my-auto py-4">
         {/* Left Side — Branding */}
         <div className="flex-1 flex flex-col items-center lg:items-start text-center lg:text-left">
           <div className="flex justify-center lg:justify-start gap-3 sm:gap-4 mb-4 sm:mb-6">
@@ -348,6 +406,10 @@ function AuthContent() {
                         setResetUsername("")
                         setResetCode("")
                         setResetStep(1)
+                        setResetToken("")
+                        setNewPassword("")
+                        setConfirmNewPassword("")
+                        setShowNewPassword(false)
                       }}
                     >
                       <KeyRound className="h-3 w-3 sm:h-3.5 sm:w-3.5 mr-1.5 text-slate-400 dark:text-slate-500" />
@@ -400,7 +462,7 @@ function AuthContent() {
         </Card>
 
         <Dialog open={showResetDialog} onOpenChange={setShowResetDialog}>
-          <DialogContent className="sm:max-w-md bg-white/95 dark:bg-slate-900/90 backdrop-blur-xl rounded-[2rem] border-[3px] border-slate-200 dark:border-slate-700 shadow-2xl p-0 overflow-hidden transition-all duration-300">
+          <DialogContent className="top-[8%] translate-y-0 sm:top-[50%] sm:translate-y-[-50%] sm:max-w-md bg-white/95 dark:bg-slate-900/90 backdrop-blur-xl rounded-[2rem] border-[3px] border-slate-200 dark:border-slate-700 shadow-2xl p-0 overflow-y-auto max-h-[85dvh] sm:max-h-none transition-all duration-300">
             <div className="bg-slate-50 dark:bg-slate-950/50 border-b-2 border-slate-100 dark:border-slate-800 p-6 sm:p-8 transition-colors">
               <DialogHeader>
                 <DialogTitle className="flex items-center gap-3 text-2xl font-black text-slate-800 dark:text-white transition-colors">
@@ -412,7 +474,8 @@ function AuthContent() {
                 <DialogDescription className="text-slate-500 dark:text-slate-400 font-bold mt-2 ml-1 text-sm transition-colors">
                   {resetStep === 1 && 'Enter your username. A verification code will be sent to your email.'}
                   {resetStep === 2 && 'Enter the 6-digit verification code sent to your email.'}
-                  {resetStep === 3 && 'Your password has been reset successfully!'}
+                  {resetStep === 3 && 'Create a strong new password for your account.'}
+                  {resetStep === 4 && 'Your password has been changed successfully!'}
                 </DialogDescription>
               </DialogHeader>
             </div>
@@ -438,8 +501,8 @@ function AuthContent() {
 
               {/* Step 2: Verification Code */}
               {resetStep === 2 && (
-                <div className="space-y-3 text-center">
-                  <Label htmlFor="reset-code" className="font-black text-slate-700 dark:text-slate-300 uppercase tracking-widest text-[10px] transition-colors">Verification Code</Label>
+                <div className="space-y-4 text-center">
+                  <Label htmlFor="reset-code" className="font-black text-slate-700 dark:text-slate-300 uppercase tracking-widest text-xs sm:text-sm transition-colors">Verification Code</Label>
                   <Input
                     id="reset-code"
                     placeholder="000000"
@@ -450,24 +513,111 @@ function AuthContent() {
                     }}
                     onKeyDown={(e) => { if (e.key === 'Enter' && resetCode.length === 6) handleResetPassword() }}
                     maxLength={6}
-                    className="text-center text-3xl tracking-[0.6em] font-mono h-20 rounded-[1.5rem] border-2 border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-950 text-slate-800 dark:text-white dark:placeholder:text-slate-800 transition-all focus-visible:ring-0 focus-visible:border-orange-500 dark:focus-visible:border-orange-500"
+                    style={{ fontSize: 'clamp(28px, 5vw, 48px)', lineHeight: '1', letterSpacing: 'clamp(0.3em, 2vw, 0.5em)' }}
+                    className="text-center font-mono h-16 sm:h-28 rounded-[1.5rem] border-2 border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-950 text-slate-800 dark:text-white dark:placeholder:text-slate-700 placeholder:text-slate-300 transition-all focus-visible:ring-0 focus-visible:border-orange-500 dark:focus-visible:border-orange-500 font-bold"
                   />
-                  <p className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">Code was sent to your associated email</p>
+                  <p className="text-[10px] sm:text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">Code was sent to your associated email</p>
+                </div>
+              )}
+
+              {/* Step 3: Set New Password */}
+              {resetStep === 3 && (
+                <div className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="reset-new-password" className="font-black text-slate-700 dark:text-slate-300 uppercase tracking-widest text-[10px] transition-colors">New Password</Label>
+                    <div className="relative">
+                      <Input
+                        id="reset-new-password"
+                        type={showNewPassword ? 'text' : 'password'}
+                        placeholder="Enter new password"
+                        value={newPassword}
+                        onChange={(e) => { setNewPassword(e.target.value); setResetMessage(null) }}
+                        className="rounded-2xl border-2 border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-950 px-4 py-5 pr-12 focus-visible:ring-0 focus-visible:border-orange-500 dark:focus-visible:border-orange-500 font-bold text-slate-700 dark:text-white transition-all"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowNewPassword(!showNewPassword)}
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 p-1 transition-colors"
+                        tabIndex={-1}
+                      >
+                        {showNewPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Password Strength Indicator */}
+                  {newPassword && (() => {
+                    const strength = getPasswordStrength(newPassword)
+                    const percent = (strength.passed / strength.total) * 100
+                    const barColor = percent <= 40 ? '#ef4444' : percent <= 60 ? '#f59e0b' : percent <= 80 ? '#3b82f6' : '#22c55e'
+                    return (
+                      <div className="space-y-2 p-3 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 transition-colors">
+                        <div className="flex items-center justify-between">
+                          <span className="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400">Strength</span>
+                          <span className="text-[10px] font-bold" style={{ color: barColor }}>
+                            {percent <= 40 ? 'Weak' : percent <= 60 ? 'Fair' : percent <= 80 ? 'Good' : 'Strong'}
+                          </span>
+                        </div>
+                        <div className="h-1.5 bg-slate-200 dark:bg-slate-800 rounded-full overflow-hidden transition-colors">
+                          <div className="h-full rounded-full transition-all duration-500" style={{ width: `${percent}%`, background: barColor }} />
+                        </div>
+                        <div className="grid grid-cols-1 gap-1 mt-1">
+                          {[
+                            { key: 'length', label: 'At least 8 characters' },
+                            { key: 'uppercase', label: 'Uppercase letter (A-Z)' },
+                            { key: 'lowercase', label: 'Lowercase letter (a-z)' },
+                            { key: 'number', label: 'Number (0-9)' },
+                            { key: 'symbol', label: 'Symbol (!@#$...)' },
+                          ].map(({ key, label }) => (
+                            <div key={key} className="flex items-center gap-1.5">
+                              {strength.checks[key as keyof typeof strength.checks]
+                                ? <CheckCircle2 className="h-3 w-3 text-green-500 flex-shrink-0" />
+                                : <XCircle className="h-3 w-3 text-slate-300 dark:text-slate-600 flex-shrink-0" />
+                              }
+                              <span className={`text-[10px] font-semibold ${strength.checks[key as keyof typeof strength.checks] ? 'text-green-600 dark:text-green-400' : 'text-slate-400 dark:text-slate-500'}`}>{label}</span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )
+                  })()}
+
+                  <div className="space-y-2">
+                    <Label htmlFor="reset-confirm-password" className="font-black text-slate-700 dark:text-slate-300 uppercase tracking-widest text-[10px] transition-colors">Confirm Password</Label>
+                    <Input
+                      id="reset-confirm-password"
+                      type={showNewPassword ? 'text' : 'password'}
+                      placeholder="Re-enter new password"
+                      value={confirmNewPassword}
+                      onChange={(e) => { setConfirmNewPassword(e.target.value); setResetMessage(null) }}
+                      onKeyDown={(e) => { if (e.key === 'Enter' && newPassword && confirmNewPassword) handleResetPassword() }}
+                      className="rounded-2xl border-2 border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-950 px-4 py-5 focus-visible:ring-0 focus-visible:border-orange-500 dark:focus-visible:border-orange-500 font-bold text-slate-700 dark:text-white transition-all"
+                    />
+                    {confirmNewPassword && confirmNewPassword !== newPassword && (
+                      <p className="text-[10px] font-bold text-red-500 ml-1">Passwords do not match</p>
+                    )}
+                    {confirmNewPassword && confirmNewPassword === newPassword && newPassword.length > 0 && (
+                      <p className="text-[10px] font-bold text-green-500 ml-1 flex items-center gap-1"><CheckCircle2 className="h-3 w-3" /> Passwords match</p>
+                    )}
+                  </div>
                 </div>
               )}
 
               {resetMessage && (
-                <Alert variant={resetMessage.type === 'error' ? 'destructive' : 'default'}
-                  className={resetMessage.type === 'success' ? 'border-green-500 dark:border-green-500/50 bg-green-50 dark:bg-green-500/10 text-green-800 dark:text-green-400 transition-colors' : 'dark:bg-red-500/10 dark:text-red-400 transition-colors'}
+                <Alert variant="default"
+                  className={resetMessage.type === 'success'
+                    ? 'border-green-500 dark:border-green-400/50 bg-green-50 dark:bg-green-500/10 text-green-800 dark:text-green-300 transition-colors [&>svg]:text-green-600 dark:[&>svg]:text-green-300'
+                    : 'border-red-400 dark:border-red-400/60 bg-red-50 dark:bg-red-900/40 text-red-700 dark:text-white transition-colors [&>svg]:text-red-500 dark:[&>svg]:text-red-300'
+                  }
                 >
                   <AlertCircle className="h-4 w-4" />
-                  <AlertDescription>{resetMessage.text}</AlertDescription>
+                  <AlertDescription className="font-semibold text-sm">{resetMessage.text}</AlertDescription>
                 </Alert>
               )}
             </div>
 
             <div className="px-6 sm:p-8 pt-0 pb-8 flex flex-col gap-3">
-              {resetStep === 3 ? (
+              {resetStep === 4 ? (
                 <Button 
                   onClick={() => setShowResetDialog(false)} 
                   className="w-full bg-slate-900 dark:bg-slate-700 text-white rounded-2xl h-14 font-black uppercase tracking-wider shadow-lg hover:bg-slate-800 transition-all"
@@ -480,7 +630,10 @@ function AuthContent() {
                     variant="outline" 
                     className="flex-1 rounded-2xl h-12 sm:h-14 font-bold text-slate-500 dark:text-slate-400 border-2 border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all" 
                     onClick={() => {
-                      if (resetStep === 2) {
+                      if (resetStep === 3) {
+                        // Can't go back from password step (token is one-time)
+                        setShowResetDialog(false)
+                      } else if (resetStep === 2) {
                         setResetStep(1)
                         setResetCode("")
                         setResetMessage(null)
@@ -493,13 +646,18 @@ function AuthContent() {
                   </Button>
                   <Button
                     onClick={handleResetPassword}
-                    disabled={resetLoading || (resetStep === 1 && !resetUsername) || (resetStep === 2 && resetCode.length !== 6)}
+                    disabled={
+                      resetLoading ||
+                      (resetStep === 1 && !resetUsername) ||
+                      (resetStep === 2 && resetCode.length !== 6) ||
+                      (resetStep === 3 && (!newPassword || !confirmNewPassword || newPassword !== confirmNewPassword || getPasswordStrength(newPassword).passed < 5))
+                    }
                     className="flex-[1.5] bg-orange-500 hover:bg-orange-400 text-white rounded-2xl h-12 sm:h-14 font-black uppercase tracking-wider shadow-[0_4px_0_#c2410c] active:translate-y-1 active:shadow-none transition-all"
                   >
                     {resetLoading ? (
                       <Loader2 className="h-5 w-5 animate-spin" />
                     ) : (
-                      resetStep === 1 ? 'Send Code' : 'Verify Code'
+                      resetStep === 1 ? 'Send Code' : resetStep === 2 ? 'Verify Code' : 'Set Password'
                     )}
                   </Button>
                 </div>

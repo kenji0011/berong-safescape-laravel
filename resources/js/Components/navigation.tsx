@@ -74,6 +74,12 @@ export function Navigation() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false)
 
+  const accessibleItems = [];
+  if (user?.permissions?.accessProfessional) accessibleItems.push({ name: 'PROFESSIONAL', href: '/professional', active: url.startsWith('/professional') });
+  if (user?.permissions?.accessAdult) accessibleItems.push({ name: 'ADULTS', href: '/adult', active: url.startsWith('/adult') });
+  if (user?.permissions?.accessKids) accessibleItems.push({ name: 'KIDS', href: '/kids', active: url.startsWith('/kids') });
+  if (user?.role === 'admin') accessibleItems.push({ name: 'ADMIN', href: '/admin', active: url.startsWith('/admin') });
+
   return (
     <nav className="bg-primary fixed inset-x-0 top-0 z-[80] shadow-md dark:shadow-none dark:border-b dark:border-black/20 transition-colors duration-500 h-[64px] sm:h-[72px] flex items-center">
       {/* Background Image Layer - 10% opacity */}
@@ -134,17 +140,17 @@ export function Navigation() {
                 DASHBOARD
               </Link>
               
-              {isAuthenticated && user?.role === 'kid' ? (
+              {isAuthenticated && accessibleItems.length === 1 ? (
                 <Link
-                  href="/kids"
-                  className={(!isDashboard && url.startsWith('/kids'))
+                  href={accessibleItems[0].href}
+                  className={accessibleItems[0].active
                     ? "font-extrabold text-sm tracking-wide uppercase px-4 xl:px-5 py-1.5 rounded-full border-[3px] border-white dark:border-slate-200 bg-yellow-400 text-black shadow-[0_4px_0_#b45309] md:hover:-translate-y-0.5 md:hover:shadow-[0_6px_0_#b45309] active:translate-y-1 active:shadow-none transition-none flex items-center gap-1.5 whitespace-nowrap outline-none" 
                     : "font-extrabold text-sm tracking-wide uppercase text-white md:hover:text-yellow-200 transition-none drop-shadow-sm py-1.5 px-2 xl:px-3 flex items-center gap-1.5 whitespace-nowrap outline-none cursor-pointer"
                   }
                 >
-                  KIDS
+                  {accessibleItems[0].name}
                 </Link>
-              ) : isAuthenticated && (
+              ) : isAuthenticated && accessibleItems.length > 1 && (
                 <DropdownMenu modal={false}>
                   <DropdownMenuTrigger 
                     className={(!isDashboard && url !== '/login' && url !== '/register' && url !== '/about' && url !== '/profile')

@@ -84,8 +84,6 @@ export const ContentCard = React.memo(({ content, onClick }: ContentCardProps) =
              </div>
            ) : null}
         </div>
-
-        {/* Status badges (Top Right) */}
         <div className="absolute top-3 right-3 flex flex-col gap-1.5 z-20">
           {content.isNew && (
             <div className="bg-rose-500 text-white font-black text-[7px] sm:text-[10px] tracking-widest uppercase px-2 py-1 sm:px-3 sm:py-1.5 rounded-full shadow-[0_4px_12px_rgba(244,63,94,0.4)] sm:animate-bounce border-2 border-white/40 flex items-center gap-1 sm:gap-1.5 ring-2 ring-rose-500/20">
@@ -98,7 +96,7 @@ export const ContentCard = React.memo(({ content, onClick }: ContentCardProps) =
           )}
           {content.isCompleted && (
             <div className="bg-[#10B981] text-white font-black text-[7px] sm:text-[10px] tracking-wider uppercase px-2 py-1 sm:px-3 sm:py-1 rounded-full shadow-xl flex items-center gap-1 sm:gap-1.5 border-2 border-emerald-400">
-              <CheckCircle className="h-2.5 w-2.5 sm:h-3 sm:w-3" /> DONE
+              <CheckCircle className="h-2.5 w-2.5 sm:h-3.5 sm:w-3.5" /> DONE
             </div>
           )}
         </div>
@@ -144,13 +142,23 @@ export const ContentCard = React.memo(({ content, onClick }: ContentCardProps) =
                    setImageLoading(false)
                  }}
                />
-               {/* Subtle Overlay to make text/status more readable if needed, though they are already positioned well */}
+               {/* Subtle Overlay */}
                {!imageLoading && <div className="absolute inset-0 bg-black/5 group-hover:bg-transparent transition-colors duration-500"></div>}
             </div>
           ) : (
             <div className="text-5xl sm:text-8xl drop-shadow-2xl group-hover:-translate-y-2 transition-transform duration-500">{typeIcons[content.type]}</div>
           )}
         </div>
+
+        {/* Start Here Floating Indication */}
+        {content.shouldPulse && (
+          <div className="absolute inset-0 z-40 bg-yellow-400/10 pointer-events-none flex items-center justify-center">
+            <div className="bg-yellow-400 text-red-700 font-extrabold px-3 py-1.5 sm:px-6 sm:py-2.5 rounded-full text-[9px] sm:text-xs uppercase tracking-widest animate-bounce shadow-[0_10px_25px_rgba(234,179,8,0.5)] border-2 border-white flex items-center gap-1">
+              <span>Start Here</span>
+              <ArrowRight className="h-3 w-3 sm:h-4 sm:w-4" strokeWidth={4} />
+            </div>
+          </div>
+        )}
 
       </div>
 
@@ -178,9 +186,9 @@ export const ContentCard = React.memo(({ content, onClick }: ContentCardProps) =
               )}>
                  <div className="flex items-center justify-center">
                    {content.isCompleted ? (
-                     <CheckCircle className="h-2.5 w-2.5 sm:h-3.5 sm:w-3.5 text-white fill-white/20" />
+                      <CheckCircle className="h-2.5 w-2.5 sm:h-3.5 sm:w-3.5 text-white fill-white/20" />
                    ) : (
-                     <span className="text-[10px] sm:text-sm">🎖️</span>
+                      <span className="text-[10px] sm:text-sm">🎖️</span>
                    )}
                  </div>
                  <span className={cn(
@@ -227,7 +235,9 @@ export const ContentCard = React.memo(({ content, onClick }: ContentCardProps) =
         className={cn(
           "group relative flex flex-col h-full w-full rounded-2xl sm:rounded-[2.5rem] overflow-hidden bg-white dark:bg-slate-800",
           "opacity-60 cursor-not-allowed filter grayscale-[0.3]",
-          content.type === "module" && "ring-4 ring-yellow-400 shadow-[0_0_20px_rgba(250,204,21,0.3)]"
+          content.shouldPulse 
+            ? "ring-[6px] ring-yellow-400 animate-pulse shadow-[0_0_40px_rgba(250,204,21,0.6)]" 
+            : (content.type === "module" && "ring-4 ring-yellow-400 shadow-[0_10px_30px_rgba(250,204,21,0.2)]")
         )}
       >
         {innerContent}
@@ -250,7 +260,9 @@ export const ContentCard = React.memo(({ content, onClick }: ContentCardProps) =
       className={cn(
          "group relative flex flex-col h-full w-full rounded-2xl sm:rounded-[2.5rem] overflow-hidden bg-white dark:bg-slate-800",
          "cursor-pointer shadow-[0_8px_30px_rgba(0,0,0,0.06)] border border-slate-100 dark:border-slate-700/50",
-         content.type === "module" && "ring-4 ring-yellow-400 shadow-[0_10px_30px_rgba(250,204,21,0.2)]"
+         content.shouldPulse 
+           ? "ring-[6px] ring-yellow-400 animate-pulse shadow-[0_0_45px_rgba(250,204,21,0.7)]" 
+           : (content.type === "module" && "ring-4 ring-yellow-400 shadow-[0_10px_30px_rgba(250,204,21,0.2)]")
       )}
     >
       {innerContent}

@@ -107,6 +107,28 @@
                 opacity: 1;
             }
         }
+
+        /* Quiz Styles */
+        .quiz-option {
+            transition: all 0.2s;
+        }
+
+        .quiz-option:hover {
+            transform: translateX(5px);
+        }
+
+        .option-correct {
+            background-color: #15803d !important;
+            border-color: #4ade80 !important;
+            color: white !important;
+        }
+
+        .option-wrong {
+            background-color: #991b1b !important;
+            border-color: #f87171 !important;
+            color: white !important;
+            opacity: 0.7;
+        }
     </style>
 </head>
 
@@ -158,8 +180,8 @@
         </section>
 
         <!-- PART 1: THE HOOK (VIDEO) -->
-        <section id="section-video" class="fade-in ss-section" style="animation-delay: 0.2s;">
-            <div class="ss-section-badge"><i class="fa-solid fa-check"></i></div>
+        <section id="section-video" class="fade-in ss-section border-[3px] sm:border-[4px] border-slate-700" style="animation-delay: 0.2s;">
+            <div class="ss-section-badge bg-green-500 border-[3px] border-white dark:border-slate-800 shadow-sm text-white transition-colors"><i class="fa-regular fa-circle-check"></i></div>
             <div
                 class="w-full aspect-video bg-black rounded-[2rem] sm:rounded-[3rem] overflow-hidden shadow-2xl border border-slate-700 relative group">
                 <video id="module-video" controls class="w-full h-full object-cover" onplay="onVideoPlay()">
@@ -170,9 +192,9 @@
         </section>
 
         <!-- PART 2: THE SCIENCE (SECTION 1.1) -->
-        <section id="section-1-1" class="fade-in ss-section grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-8 md:gap-12 items-center"
+        <section id="section-1-1" class="fade-in ss-section border-[3px] sm:border-[4px] border-slate-700 grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-8 md:gap-12 items-center p-4 sm:p-8 md:p-12"
             style="animation-delay: 0.3s;">
-            <div class="ss-section-badge"><i class="fa-solid fa-check"></i></div>
+            <div class="ss-section-badge bg-green-500 border-[3px] border-white dark:border-slate-800 shadow-sm text-white transition-colors"><i class="fa-regular fa-circle-check"></i></div>
 
             <!-- 1.1 Text Content -->
             <div class="order-2 md:order-1 space-y-4 sm:space-y-6">
@@ -233,13 +255,14 @@
 
         <!-- PART 3: THE RULES (SECTION 1.2) -->
         <section id="section-1-2"
-            class="fade-in ss-section bg-gradient-to-br from-slate-800 to-slate-900 p-6 sm:p-8 md:p-12 border border-slate-700 shadow-2xl relative overflow-hidden"
+            class="fade-in ss-section bg-gradient-to-br from-slate-800 to-slate-900 p-6 sm:p-8 md:p-12 border-[3px] sm:border-[4px] border-slate-700 shadow-2xl relative"
             style="animation-delay: 0.4s;">
-            <div class="ss-section-badge"><i class="fa-solid fa-check"></i></div>
+            <div class="ss-section-badge bg-green-500 border-[3px] border-white dark:border-slate-800 shadow-sm text-white transition-colors"><i class="fa-regular fa-circle-check"></i></div>
 
             <!-- Background Decoration -->
-            <i
-                class="fa-solid fa-triangle-exclamation absolute -top-10 -right-10 text-9xl text-slate-800 opacity-50 rotate-12"></i>
+            <div class="absolute inset-0 overflow-hidden rounded-[inherit] pointer-events-none">
+                <i class="fa-solid fa-triangle-exclamation absolute -top-10 -right-10 text-9xl text-slate-800 opacity-50 rotate-12"></i>
+            </div>
 
             <div class="relative z-10 max-w-4xl mx-auto">
                 <div class="flex items-center gap-2 sm:gap-3 mb-4 sm:mb-6">
@@ -289,9 +312,9 @@
 
         <!-- PART 4: THE SIMULATION (GAME) -->
         <section id="section-game"
-            class="fade-in ss-section bg-slate-800 p-4 sm:p-6 md:p-8 shadow-2xl border border-slate-700"
+            class="fade-in ss-section bg-slate-800 p-4 sm:p-6 md:p-8 shadow-2xl border-[3px] sm:border-[4px] border-slate-700"
             style="animation-delay: 0.5s;">
-            <div class="ss-section-badge"><i class="fa-solid fa-check"></i></div>
+            <div class="ss-section-badge bg-green-500 border-[3px] border-white dark:border-slate-800 shadow-sm text-white transition-colors"><i class="fa-regular fa-circle-check"></i></div>
 
             <div class="text-center mb-4 sm:mb-6 md:mb-8">
                 <h2 class="text-xl sm:text-2xl md:text-3xl font-bold text-white"><i class="fa-solid fa-flask text-purple-400 mr-1.5 sm:mr-2 text-base sm:text-xl"></i> The
@@ -353,15 +376,30 @@
             </div>
         </section>
 
-        <!-- MODULE COMPLETE / NEXT MODULE -->
-        <section id="section-complete" class="fade-in hidden py-12">
-            <div class="ss-completion-card success mx-auto">
-                <div class="ss-completion-icon">🏆</div>
-                <h3 class="ss-completion-title">Module 1 Complete!</h3>
-                <p class="ss-completion-desc">Great job! You've learned about the Fire Triangle and why fire tools are for grown-ups only.</p>
+        <!-- FINAL QUIZ SECTION -->
+        <section id="final-quiz"
+            class="fade-in ss-section bg-yellow-50 dark:bg-yellow-950/20 rounded-xl sm:rounded-[2rem] p-4 sm:p-8 md:p-12 border-[3px] sm:border-[4px] border-yellow-300 dark:border-yellow-900/30 shadow-sm transition-colors"
+            style="animation-delay: 0.6s;">
+            <div class="ss-section-badge bg-green-500 border-[3px] border-white dark:border-slate-800 shadow-sm text-white transition-colors"><i class="fa-regular fa-circle-check"></i></div>
+            <div class="text-center mb-4 sm:mb-10">
+                <h2 class="text-lg sm:text-3xl font-black text-yellow-900 dark:text-yellow-300 mb-2 sm:mb-3 drop-shadow-sm transition-colors"><i
+                        class="fa-solid fa-graduation-cap text-orange-500 dark:text-orange-400 mr-2"></i> Fire Safety Certification</h2>
+            </div>
+
+            <div id="quiz-container" class="max-w-2xl mx-auto space-y-6">
+                <!-- Questions are injected by JS -->
+            </div>
+
+            <div id="quiz-result" class="hidden ss-completion-card success mx-auto mt-10">
+                <div class="ss-completion-icon" id="result-icon">🏆</div>
+                <h3 class="ss-completion-title" id="result-title"></h3>
+                <p class="ss-completion-desc" id="result-desc"></p>
+
                 <div class="ss-completion-actions">
-                    <a href="../module_2/index.html" id="next-module-btn" class="ss-btn-premium ss-btn-gold">
-                        Continue to Module 2 <i class="fa-solid fa-arrow-right"></i>
+                    <button id="btn-retake" onclick="renderQuiz()" class="hidden ss-btn-premium ss-btn-outline">Retake Quiz</button>
+                    <button id="btn-review" onclick="toggleReview()" class="hidden ss-btn-premium ss-btn-outline">Review Answers</button>
+                    <a href="../module_2/index.html" id="btn-next-module" class="hidden ss-btn-premium ss-btn-gold">
+                        Go to Module 2 <i class="fa-solid fa-arrow-right"></i>
                     </a>
                 </div>
             </div>
@@ -387,7 +425,9 @@
             videoWatched: false,
             section1Read: false,
             section2Read: false,
-            elementMixerCompleted: false
+            elementMixerCompleted: false,
+            quizScore: 0,
+            quizPassed: false
         };
 
         // --- INITIALIZATION ---
@@ -399,6 +439,7 @@
 
             updateNavigation();
             updateSectionStates();
+            renderQuiz();
         });
 
         function loadProgress() {
@@ -409,17 +450,17 @@
             }
             updateModuleProgress();
             updateSectionStates();
+            renderQuiz();
         }
 
         // REMOVED: saveLocalProgress loop to prevent API race conditions
         // logic is now reactive via SafeScapeProgress events
 
         function updateModuleProgress() {
-            const completed = Object.values(localState).filter(v => v === true).length;
-            const total = Object.keys(localState).length;
-            const percent = Math.round((completed / total) * 100);
+            const keys = ['videoWatched', 'section1Read', 'section2Read', 'elementMixerCompleted', 'quizPassed'];
+            const completed = keys.filter(k => localState[k] === true).length;
+            const percent = Math.round((completed / keys.length) * 100);
             document.getElementById('module-progress').textContent = `${percent}%`;
-            checkModuleComplete(); // Check completion on update
         }
 
         // --- SECTION COMPLETION ---
@@ -461,12 +502,12 @@
             if (localState.elementMixerCompleted) {
                 document.getElementById('section-game').classList.add('completed');
             }
-        }
+            if (localState.quizPassed) document.getElementById('final-quiz').classList.add('completed');
 
-        function checkModuleComplete() {
-            if (localState.elementMixerCompleted) {
-                document.getElementById('section-complete').classList.remove('hidden');
-            }
+            // Locked states (sequential): quiz locked until game is done
+            const secQuiz = document.getElementById('final-quiz');
+            if (!localState.elementMixerCompleted) secQuiz.classList.add('locked');
+            else secQuiz.classList.remove('locked');
         }
 
         // --- NAVIGATION UPDATE ---
@@ -571,8 +612,7 @@
                 // Mark game as completed
                 if (!localState.elementMixerCompleted) {
                     SafeScapeProgress.completeSection(moduleNum, 'elementMixerCompleted', true);
-                    showToast('success', '🎉 Element Mixer completed! Module 1 done!');
-                    new Audio('../../sounds/win.mp3').play().catch(e => {});
+                    showToast('success', '🎉 Element Mixer completed! Take the quiz to finish Module 1.');
                 }
             } else {
                 flame.classList.remove('active');
@@ -600,6 +640,172 @@
             document.getElementById('game-status').className = "text-slate-400";
             checkFire();
         }
+
+        // --- QUIZ LOGIC ---
+        const quizData = [
+            { q: "What are the three things fire needs to burn (The Fire Triangle)?", options: ["Heat, Fuel, Oxygen", "Wood, Water, Air", "Smoke, Ash, Sparks"], correct: 0 },
+            { q: "Why are matches and lighters considered 'tools' and not toys?", options: ["They are too expensive for kids", "They create heat and can start dangerous fires", "Only teachers are allowed to use them"], correct: 1 },
+            { q: "What should you do if you find matches or a lighter?", options: ["Hide them in your bag", "Try to light them carefully", "Do not touch them and tell a grown-up right away"], correct: 2 },
+            { q: "What happens to a fire if you take away one part of the Fire Triangle?", options: ["It gets bigger", "It goes out", "It changes color"], correct: 1 },
+            { q: "Which of these is an example of 'Fuel' in the Fire Triangle?", options: ["A spark from a lighter", "The wind blowing", "Paper, wood, or cloth"], correct: 2 }
+        ];
+
+        let correctCount = 0;
+        let answeredCount = 0;
+
+        let reviewMode = false;
+        function toggleReview() {
+            reviewMode = !reviewMode;
+            const container = document.getElementById('quiz-container');
+            const header = document.getElementById('final-quiz').querySelector('.text-center');
+            if (reviewMode) {
+                container.classList.add('animate-fade-in');
+                container.classList.remove('hidden');
+                if (header) header.classList.remove('hidden');
+                document.getElementById('btn-review').innerText = "Hide Answers";
+                setTimeout(() => {
+                    container.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }, 150);
+            } else {
+                container.classList.add('hidden');
+                container.classList.remove('animate-fade-in');
+                if (header) header.classList.add('hidden');
+                document.getElementById('btn-review').innerText = "Review Answers";
+                setTimeout(() => {
+                    document.getElementById('quiz-result').scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }, 150);
+            }
+        }
+
+        function renderQuiz() {
+            const container = document.getElementById('quiz-container');
+
+            if (localState.quizPassed) {
+                document.getElementById('quiz-result').classList.remove('hidden');
+                document.getElementById('btn-retake').classList.add('hidden');
+                document.getElementById('btn-review').classList.remove('hidden');
+                document.getElementById('result-icon').innerText = "🏆";
+                document.getElementById('result-title').innerText = "FIRE SAFETY CERTIFIED!";
+                document.getElementById('result-title').className = "ss-completion-title";
+                document.getElementById('result-desc').innerText = "You have already completed this quiz!";
+                document.getElementById('btn-next-module').classList.remove('hidden');
+                // Render questions with correct answers for review
+                container.innerHTML = '';
+                quizData.forEach((item, idx) => {
+                    const qDiv = document.createElement('div');
+                    qDiv.className = "bg-white dark:bg-slate-900 p-6 rounded-3xl border-[3px] border-yellow-200 dark:border-yellow-900/30 shadow-sm transition-colors";
+                    qDiv.innerHTML = `<h3 class="text-slate-800 dark:text-white font-black mb-4 text-lg transition-colors">${idx + 1}. ${item.q}</h3>`;
+                    const optionsDiv = document.createElement('div');
+                    optionsDiv.className = "grid grid-cols-1 gap-3";
+                    item.options.forEach((opt, optIdx) => {
+                        const btn = document.createElement('button');
+                        btn.disabled = true;
+                        btn.innerText = opt;
+                        if (optIdx === item.correct) {
+                            btn.className = "quiz-option w-full text-left p-4 rounded-xl border-2 font-bold transition-all bg-green-500 border-green-600 text-white shadow-sm";
+                        } else {
+                            btn.className = "quiz-option w-full text-left p-4 rounded-xl border-2 border-slate-200 dark:border-slate-800 text-slate-400 dark:text-slate-600 font-bold bg-white dark:bg-slate-950 opacity-50 cursor-not-allowed transition-colors";
+                        }
+                        optionsDiv.appendChild(btn);
+                    });
+                    qDiv.appendChild(optionsDiv);
+                    container.appendChild(qDiv);
+                });
+                container.classList.add('hidden');
+                document.getElementById('final-quiz').querySelector('.text-center').classList.add('hidden');
+                return;
+            }
+
+            document.getElementById('quiz-result').classList.add('hidden');
+            document.getElementById('btn-retake').classList.add('hidden');
+            document.getElementById('btn-next-module').classList.add('hidden');
+            container.innerHTML = '';
+            container.classList.remove('hidden');
+            correctCount = 0;
+            answeredCount = 0;
+
+            quizData.forEach((item, idx) => {
+                const qDiv = document.createElement('div');
+                qDiv.className = "bg-white dark:bg-slate-900 p-6 rounded-3xl border-[3px] border-yellow-200 dark:border-yellow-900/30 shadow-sm transition-colors";
+                qDiv.innerHTML = `<h3 class="text-slate-800 dark:text-white font-black mb-4 text-lg transition-colors">${idx + 1}. ${item.q}</h3>`;
+
+                const optionsDiv = document.createElement('div');
+                optionsDiv.className = "grid grid-cols-1 gap-3";
+
+                item.options.forEach((opt, optIdx) => {
+                    const btn = document.createElement('button');
+                    btn.className = "quiz-option w-full text-left p-4 rounded-xl border-2 border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 font-bold bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800 shadow-sm hover:-translate-y-0.5 active:translate-y-1 active:shadow-none transition-all";
+                    btn.innerText = opt;
+                    btn.onclick = () => checkQuizAnswer(btn, optIdx, item.correct, idx);
+                    optionsDiv.appendChild(btn);
+                });
+
+                qDiv.appendChild(optionsDiv);
+                container.appendChild(qDiv);
+            });
+        }
+
+        function checkQuizAnswer(btn, selectedIdx, correctIdx, qIdx) {
+            const parent = btn.parentElement;
+            const allBtns = parent.querySelectorAll('button');
+            allBtns.forEach(b => b.disabled = true);
+
+            if (selectedIdx === correctIdx) {
+                btn.classList.add('option-correct');
+                correctCount++;
+            } else {
+                btn.classList.add('option-wrong');
+                allBtns[correctIdx].classList.add('option-correct');
+            }
+
+            answeredCount++;
+            if (answeredCount === quizData.length) {
+                setTimeout(() => {
+                    showQuizResult();
+                    // Save quiz result to database
+                    SafeScapeProgress.submitQuizResult(moduleNum, correctCount, 5);
+                }, 1000);
+            }
+        }
+
+        function showQuizResult() {
+            const resultDiv = document.getElementById('quiz-result');
+            const icon = document.getElementById('result-icon');
+            const title = document.getElementById('result-title');
+            const desc = document.getElementById('result-desc');
+            const retakeBtn = document.getElementById('btn-retake');
+            const nextBtn = document.getElementById('btn-next-module');
+
+            resultDiv.classList.remove('hidden');
+            localState.quizScore = correctCount;
+
+            if (correctCount >= 4) {
+                icon.innerText = "🏆";
+                title.innerText = "FIRE SAFETY CERTIFIED!";
+                title.className = "ss-completion-title";
+                desc.innerText = `You scored ${correctCount}/5. You are a true Fire Safety Hero!`;
+
+                nextBtn.classList.remove('hidden');
+                document.getElementById('btn-review').classList.remove('hidden');
+                // Hide questions, show result card
+                document.getElementById('quiz-container').classList.add('hidden');
+                document.getElementById('final-quiz').querySelector('.text-center').classList.add('hidden');
+
+                if (!localState.quizPassed) {
+                    SafeScapeProgress.completeSection(moduleNum, 'quizPassed', true);
+                    showToast('success', '🎉 Module 1 complete! Module 2 unlocked!');
+                    new Audio('../../sounds/win.mp3').play().catch(e => {});
+                }
+            } else {
+                icon.innerText = "⚠️";
+                title.innerText = "KEEP PRACTICING";
+                title.className = "ss-completion-title !text-red-500";
+                desc.innerText = `You scored ${correctCount}/5. You need 4/5 to pass.`;
+                retakeBtn.classList.remove('hidden');
+            }
+        }
+
+        function scrollToQuiz() { document.getElementById('final-quiz').scrollIntoView({ behavior: 'smooth' }); }
 
         // --- TOAST ---
         function showToast(type, message) {

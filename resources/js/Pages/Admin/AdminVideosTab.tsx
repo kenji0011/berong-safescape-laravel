@@ -45,10 +45,31 @@ export const AdminVideosTab: React.FC<VideosTabProps> = ({
                 value={newVideo.youtubeId}
                 onChange={(e) => {
                   let val = e.target.value;
-                  const match = val.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))([^&?\n]+)/);
+                  // Improved regex to handle watch, embed, shorts, live, and youtu.be
+                  const regex = /(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=|shorts\/|live\/))([^&?\n]+)/;
+                  const match = val.match(regex);
+                  
                   if (match && match[1]) {
                     val = match[1];
+                  } else if (val.includes('youtube.com') || val.includes('youtu.be')) {
+                    // If it's a youtube link but didn't match the regex, try to at least not use the full URL
+                    // This could happen with some weird query params
+                    try {
+                      const url = new URL(val);
+                      if (url.hostname.includes('youtube.com')) {
+                        val = url.searchParams.get('v') || val.split('/').pop() || val;
+                      } else if (url.hostname.includes('youtu.be')) {
+                        val = url.pathname.slice(1);
+                      }
+                    } catch (e) {
+                      // fallback to original val if URL parsing fails
+                    }
                   }
+                  
+                  // Clean up the ID (remove any trailing junk)
+                  if (val.includes('?')) val = val.split('?')[0];
+                  if (val.includes('&')) val = val.split('&')[0];
+                  
                   setNewVideo({ ...newVideo, youtubeId: val });
                 }}
                 className="border-2 border-slate-200 dark:border-slate-700 dark:bg-slate-900 dark:text-white focus-visible:ring-red-500 rounded-xl"

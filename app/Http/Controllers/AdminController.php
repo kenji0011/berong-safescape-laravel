@@ -219,11 +219,13 @@ class AdminController extends Controller
             'description' => 'nullable|string|max:2000',
             'category' => 'required|string|max:50',
             'duration' => 'nullable|string|max:50',
-            'youtubeId' => 'nullable|string|max:100',
-            'youtube_id' => 'nullable|string|max:100',
+            'youtubeId' => 'nullable|string|max:200', // Increased max length for URLs
+            'youtube_id' => 'nullable|string|max:200',
         ]);
 
-        $youtubeId = strip_tags($request->input('youtubeId') ?? $request->input('youtube_id'));
+        $youtubeId = $request->input('youtubeId') ?? $request->input('youtube_id');
+        $youtubeId = $this->extractYoutubeId($youtubeId);
+
         $video = Video::create([
             'title' => strip_tags($request->input('title')),
             'description' => strip_tags($request->input('description')),
@@ -252,8 +254,8 @@ class AdminController extends Controller
             'duration' => 'nullable|string|max:50',
             'isActive' => 'nullable|boolean',
             'is_active' => 'nullable|boolean',
-            'youtubeId' => 'nullable|string|max:100',
-            'youtube_id' => 'nullable|string|max:100',
+            'youtubeId' => 'nullable|string|max:200',
+            'youtube_id' => 'nullable|string|max:200',
         ]);
 
         $video = Video::findOrFail($id);
@@ -262,15 +264,50 @@ class AdminController extends Controller
         if (isset($updates['description'])) $updates['description'] = strip_tags($updates['description']);
         if (isset($updates['category'])) $updates['category'] = strip_tags($updates['category']);
         if (isset($updates['duration'])) $updates['duration'] = strip_tags($updates['duration']);
+        
         if ($request->has('isActive') || $request->has('is_active')) {
             $updates['isActive'] = $request->boolean($request->has('isActive') ? 'isActive' : 'is_active');
         }
+        
         if ($request->has('youtubeId') || $request->has('youtube_id')) {
-            $updates['youtubeId'] = $request->input('youtubeId') ?? $request->input('youtube_id');
+            $youtubeId = $request->input('youtubeId') ?? $request->input('youtube_id');
+            $updates['youtubeId'] = $this->extractYoutubeId($youtubeId);
         }
         
         $video->update($updates);
         return response()->json(['success' => true, 'video' => $video]);
+    }
+
+    private function extractYoutubeId($value)
+    {
+        if (!$value) return "";
+        
+        $value = trim($value);
+        
+        // Improved regex to handle watch, embed, shorts, live, and youtu.be
+        $pattern = '/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=|shorts\/|live\/))([^&?\n]+)/';
+        if (preg_match($pattern, $value, $matches)) {
+            $value = $matches[1];
+        } else if (str_contains($value, 'youtube.com') || str_contains($value, 'youtu.be')) {
+            // Manual fallback if regex fails
+            try {
+                $parsed = parse_url($value);
+                if (isset($parsed['host']) && str_contains($parsed['host'], 'youtube.com')) {
+                    parse_str($parsed['query'] ?? "", $query);
+                    $value = $query['v'] ?? basename($parsed['path'] ?? "") ?? $value;
+                } else if (isset($parsed['host']) && str_contains($parsed['host'], 'youtu.be')) {
+                    $value = ltrim($parsed['path'] ?? "", '/');
+                }
+            } catch (\Exception $e) {
+                // Keep as is
+            }
+        }
+        
+        // Clean up any trailing junk
+        if (str_contains($value, '?')) $value = explode('?', $value)[0];
+        if (str_contains($value, '&')) $value = explode('&', $value)[0];
+        
+        return $value;
     }
 
     public function deleteVideo($id)

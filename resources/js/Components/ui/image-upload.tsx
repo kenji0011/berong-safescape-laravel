@@ -15,9 +15,25 @@ interface ImageUploadProps {
   description?: string;
   overlayTitle?: string;
   overlayAlt?: string;
+  enableCropping?: boolean;
+  aspect?: number;
+  minWidth?: number;
+  minHeight?: number;
+  recommendedResolution?: string;
 }
 
-export function ImageUpload({ onUploadComplete, title = "Carousel Image", description = "Upload image for the hero carousel", overlayTitle, overlayAlt }: ImageUploadProps) {
+export function ImageUpload({ 
+  onUploadComplete, 
+  title = "Carousel Image", 
+  description = "Upload image for the hero carousel", 
+  overlayTitle, 
+  overlayAlt,
+  enableCropping = true,
+  aspect = 16 / 9,
+  minWidth = 1920,
+  minHeight = 1080,
+  recommendedResolution
+}: ImageUploadProps) {
   const [file, setFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [uploadUrl, setUploadUrl] = useState<string>('');
@@ -30,10 +46,6 @@ export function ImageUpload({ onUploadComplete, title = "Carousel Image", descri
   const [crop, setCrop] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
   const [croppedAreaPixels, setCroppedAreaPixels] = useState<any>(null);
-  const [isCropping, setIsCropping] = useState(false);
-
-  const MIN_WIDTH = 1920;
-  const MIN_HEIGHT = 1080;
 
   useEffect(() => {
     return () => {
@@ -73,22 +85,27 @@ export function ImageUpload({ onUploadComplete, title = "Carousel Image", descri
   };
 
   const handleUpload = async () => {
-    if (!file || !previewUrl || !croppedAreaPixels) return;
+    if (!file || !previewUrl) return;
+    if (enableCropping && !croppedAreaPixels) return;
 
     setIsUploading(true);
     setError(null);
 
     try {
-      // 1. Perform client-side crop to get a lossless PNG file
-      const croppedFile = await getCroppedImg(previewUrl, croppedAreaPixels);
-      
-      if (!croppedFile) {
-        throw new Error("Could not crop image");
+      let fileToUpload: File | Blob = file;
+
+      if (enableCropping) {
+        // Perform client-side crop to get a lossless PNG file
+        const croppedFile = await getCroppedImg(previewUrl, croppedAreaPixels);
+        if (!croppedFile) {
+          throw new Error("Could not crop image");
+        }
+        fileToUpload = croppedFile;
       }
 
-      // 2. Upload the cropped file
+      // Upload the file
       const formData = new FormData();
-      formData.append('file', croppedFile);
+      formData.append('file', fileToUpload);
 
       const response = await axios.post('/api/admin/upload', formData, {
         headers: { 'Content-Type': 'multipart/form-data' }
@@ -114,14 +131,21 @@ export function ImageUpload({ onUploadComplete, title = "Carousel Image", descri
   return (
     <Card className="rounded-[2rem] border-[3px] border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800/50 shadow-[0_8px_0_#cbd5e1] dark:shadow-[0_8px_0_#0f172a] overflow-hidden transition-all h-full flex flex-col">
       <CardHeader className="relative">
-        <CardTitle className="text-xl font-bold text-slate-800 dark:text-white">{title}</CardTitle>
-        <CardDescription className="text-xs text-slate-500 dark:text-slate-400">{description}</CardDescription>
+        <div className="flex flex-col gap-1">
+          <CardTitle className="text-xl font-bold text-slate-800 dark:text-white">{title}</CardTitle>
+          <CardDescription className="text-xs text-slate-500 dark:text-slate-400">{description}</CardDescription>
+          {recommendedResolution && (
+            <p className="text-[10px] font-bold text-red-500/80 dark:text-red-400/80 uppercase tracking-wider mt-1">
+              Recommended: {recommendedResolution}
+            </p>
+          )}
+        </div>
         
         {imageDimensions && (
           <div className={`absolute top-6 right-6 px-3 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-widest flex items-center gap-1.5 shadow-inner ${
-            imageDimensions.w < MIN_WIDTH ? 'bg-amber-50 text-amber-600 border border-amber-200 dark:bg-amber-900/20 dark:text-amber-400 dark:border-amber-800' : 'bg-emerald-50 text-emerald-600 border border-emerald-200 dark:bg-emerald-900/20 dark:text-emerald-400 dark:border-emerald-800'
+            imageDimensions.w < minWidth ? 'bg-amber-50 text-amber-600 border border-amber-200 dark:bg-amber-900/20 dark:text-amber-400 dark:border-amber-800' : 'bg-emerald-50 text-emerald-600 border border-emerald-200 dark:bg-emerald-900/20 dark:text-emerald-400 dark:border-emerald-800'
           }`}>
-            {imageDimensions.w < MIN_WIDTH && <AlertCircle className="h-3.5 w-3.5" />}
+            {imageDimensions.w < minWidth && <AlertCircle className="h-3.5 w-3.5" />}
             {imageDimensions.w} × {imageDimensions.h}PX
           </div>
         )}
@@ -160,13 +184,13 @@ export function ImageUpload({ onUploadComplete, title = "Carousel Image", descri
                     className="w-full h-full object-cover" 
                     alt="Uploaded" 
                   />
-                ) : (
+                ) : enableCropping ? (
                   <div className="absolute inset-0">
                     <Cropper
                       image={previewUrl!}
                       crop={crop}
                       zoom={zoom}
-                      aspect={16 / 9}
+                      aspect={aspect}
                       onCropChange={setCrop}
                       onCropComplete={onCropComplete}
                       onZoomChange={setZoom}
@@ -198,6 +222,12 @@ export function ImageUpload({ onUploadComplete, title = "Carousel Image", descri
                       </div>
                     </div>
                   </div>
+                ) : (
+                  <img 
+                    src={previewUrl!} 
+                    className="w-full h-full object-contain" 
+                    alt="Preview" 
+                  />
                 )}
                 
                 {uploadUrl && (
@@ -228,7 +258,7 @@ export function ImageUpload({ onUploadComplete, title = "Carousel Image", descri
                     ) : (
                       <>
                         <Check className="h-4 w-4 mr-2" strokeWidth={3} />
-                        Apply & Upload
+                        {enableCropping ? 'Apply & Upload' : 'Upload Image'}
                       </>
                     )}
                   </Button>

@@ -54,6 +54,14 @@ export const COLLEGES = [
   "Laguna Santiago Educational Foundation (LSEF)",
 ] as const;
 
+export const COLLEGES_WITH_YEARS = [
+  "Laguna State Polytechnic University (LSPU) - Main Campus",
+  "Laguna University (LU)",
+  "STI College - Santa Cruz",
+  "ACTS Computer College",
+  "AMA Computer Learning Center (ACLC)"
+] as const;
+
 // Public High Schools
 export const PUBLIC_HIGH_SCHOOLS = [
   "Pedro Guevara Memorial National High School (PGMNHS)",

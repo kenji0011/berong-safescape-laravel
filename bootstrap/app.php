@@ -24,6 +24,10 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'admin' => \App\Http\Middleware\AdminRole::class,
         ]);
+        // Exclude password reset API from CSRF since guest users resetting passwords use standard fetch() without CSRF tokens.
+        $middleware->validateCsrfTokens(except: [
+            'api/auth/reset-password',
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->report(function (\Illuminate\Http\Exceptions\ThrottleRequestsException $e) {

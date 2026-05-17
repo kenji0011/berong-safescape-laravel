@@ -33,18 +33,46 @@ const VideosPage = ({ initialVideos, watchedVideoIds }: VideosPageProps) => {
     return () => window.removeEventListener('resize', handleResize)
   }, [])
 
+  // Helper to extract YouTube ID in case it's a full URL
+  const extractId = (id: string) => {
+    if (!id) return '';
+    if (id.includes('youtube.com') || id.includes('youtu.be')) {
+      const regex = /(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=|shorts\/|live\/))([^&?\n]+)/;
+      const match = id.match(regex);
+      if (match && match[1]) {
+        id = match[1];
+      } else {
+        try {
+          const url = new URL(id);
+          if (url.hostname.includes('youtube.com')) {
+            id = url.searchParams.get('v') || id.split('/').pop() || id;
+          } else if (url.hostname.includes('youtu.be')) {
+            id = url.pathname.slice(1);
+          }
+        } catch (e) {}
+      }
+    }
+    if (id.includes('?')) id = id.split('?')[0];
+    if (id.includes('&')) id = id.split('&')[0];
+    return id;
+  }
+
   // Map database videos to UI format
   const videos = initialVideos || []
-  const moreVideos = videos.map((v, index) => ({
-    id: v.id.toString(),
-    title: v.title,
-    description: v.description || "Learn important fire safety rules in a fun way!",
-    src: `https://www.youtube.com/embed/${v.youtubeId}`,
-    thumbnail: `https://img.youtube.com/vi/${v.youtubeId}/maxresdefault.jpg`,
-    color: index % 2 === 0 ? "bg-purple-200" : "bg-[#fbcfe8]",
-    icon: index % 3 === 0 ? "🎬" : index % 3 === 1 ? "🔥" : "🚒",
-    duration: v.duration || "3:00"
-  }))
+  const moreVideos = videos.map((v, index) => {
+    const cleanId = extractId(v.youtubeId);
+    return {
+      id: v.id.toString(),
+      title: v.title,
+      description: v.description || "Learn important fire safety rules in a fun way!",
+      src: `https://www.youtube.com/embed/${cleanId}`,
+      thumbnail: `https://img.youtube.com/vi/${cleanId}/maxresdefault.jpg`,
+      color: index % 2 === 0 ? "bg-purple-200" : "bg-[#fbcfe8]",
+      icon: index % 3 === 0 ? "🎬" : index % 3 === 1 ? "🔥" : "🚒",
+      duration: v.duration || "3:00",
+      cleanId: cleanId // useful for the player
+    }
+  })
 
   const [activeVideo, setActiveVideo] = useState(moreVideos[0] || {
     id: "0",
@@ -77,10 +105,11 @@ const VideosPage = ({ initialVideos, watchedVideoIds }: VideosPageProps) => {
 
   // Initialize or update player
   useEffect(() => {
+    const videoId = (activeVideo as any).cleanId || activeVideo.src.split('/').pop() || '';
     if (isApiLoaded && !ytPlayerRef.current) {
-      initPlayer(activeVideo.src.split('/').pop() || '')
+      initPlayer(videoId)
     } else if (ytPlayerRef.current && isApiLoaded) {
-      ytPlayerRef.current.loadVideoById(activeVideo.src.split('/').pop() || '')
+      ytPlayerRef.current.loadVideoById(videoId)
     }
   }, [isApiLoaded, activeVideo])
 

@@ -14,6 +14,8 @@ import { toast } from "sonner"
 import Particles from "@/Components/ui/particles"
 import { useSettings } from "@/lib/settings-context"
 import { KidsWelcomeBannerSkeleton, ContentGridSkeleton } from "@/Components/dashboard-skeletons"
+import { motion, AnimatePresence } from "framer-motion"
+import { BookOpen, Sparkles } from "lucide-react"
 
 interface KidsPageProps {
   modules?: any[]
@@ -28,6 +30,9 @@ const KidsDashboardPage = ({ modules, progress }: KidsPageProps) => {
   const { reduceMotion } = useSettings()
   const [isMobile, setIsMobile] = useState(false)
 
+  const [showFirstTimeTutorial, setShowFirstTimeTutorial] = useState(false)
+  const [pulseFirstModule, setPulseFirstModule] = useState(false)
+
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth < 768)
     handleResize()
@@ -35,7 +40,33 @@ const KidsDashboardPage = ({ modules, progress }: KidsPageProps) => {
     return () => window.removeEventListener('resize', handleResize)
   }, [])
 
-  const buildContent = (completedIds: number[]): ContentCardData[] => [
+  useEffect(() => {
+    // Show tutorial only for Kids, on their first visit, when they haven't completed any modules yet
+    if (user && (!progress?.completedModules || progress.completedModules.length === 0)) {
+      const tutorialSeen = localStorage.getItem('safescape_kid_tutorial_seen')
+      const firstModuleClicked = localStorage.getItem('safescape_first_module_clicked')
+      if (!tutorialSeen) {
+        const timer = setTimeout(() => {
+          setShowFirstTimeTutorial(true)
+        }, 1200) // Small delay to let the dashboard render
+        return () => clearTimeout(timer)
+      } else if (!firstModuleClicked) {
+        // If they already saw the tutorial but still haven't clicked the module, pulse the card to guide them!
+        setPulseFirstModule(true)
+      }
+    }
+  }, [user, progress])
+
+  const dismissTutorial = () => {
+    localStorage.setItem('safescape_kid_tutorial_seen', 'true')
+    setShowFirstTimeTutorial(false)
+    const firstModuleClicked = localStorage.getItem('safescape_first_module_clicked')
+    if (!firstModuleClicked) {
+      setPulseFirstModule(true)
+    }
+  }
+
+  const buildContent = (completedIds: number[], shouldPulse: boolean): ContentCardData[] => [
     {
       id: "safescape-course",
       title: "SafeScape Fire Safety Course",
@@ -44,7 +75,8 @@ const KidsDashboardPage = ({ modules, progress }: KidsPageProps) => {
       emoji: "🛡️",
       href: "/kids/safescape",
       category: "modules",
-      isCompleted: completedIds.length >= 5
+      isCompleted: completedIds.length >= 5,
+      shouldPulse: shouldPulse
     },
     {
       id: "edith-simulation",
@@ -105,8 +137,8 @@ const KidsDashboardPage = ({ modules, progress }: KidsPageProps) => {
   ]
 
   const allContent = useMemo(() => {
-    return buildContent(progress?.completedModules || [])
-  }, [progress])
+    return buildContent(progress?.completedModules || [], pulseFirstModule)
+  }, [progress, pulseFirstModule])
 
   const handleContentClick = (content: ContentCardData) => {
     if (content.isLocked) {
@@ -117,6 +149,11 @@ const KidsDashboardPage = ({ modules, progress }: KidsPageProps) => {
         })
       }
       return
+    }
+
+    if (content.id === "safescape-course") {
+      localStorage.setItem('safescape_first_module_clicked', 'true')
+      setPulseFirstModule(false)
     }
 
     if (content.href !== "#") {
@@ -169,6 +206,71 @@ const KidsDashboardPage = ({ modules, progress }: KidsPageProps) => {
           </Deferred>
         </main>
       </div>
+
+      {/* First-time Kid Tutorial Modal */}
+      <AnimatePresence>
+        {showFirstTimeTutorial && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[150] flex items-center justify-center bg-black/85 backdrop-blur-md p-4"
+          >
+            <motion.div
+              initial={{ scale: 0.8, y: 50, opacity: 0 }}
+              animate={{ scale: 1, y: 0, opacity: 1 }}
+              exit={{ scale: 0.8, opacity: 0 }}
+              transition={{ type: "spring", bounce: 0.4, duration: 0.6 }}
+              className="bg-slate-900 border-[6px] border-yellow-400 rounded-[2.5rem] p-6 sm:p-8 max-w-md w-full text-center relative overflow-hidden shadow-[0_20px_50px_rgba(234,179,8,0.3)] transition-colors duration-500"
+            >
+              {/* Spinning background light effect */}
+              <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(234,179,8,0.15)_0%,transparent_70%)] pointer-events-none"></div>
+              
+              <div className="relative z-10">
+                {/* Mascot avatar with white background clipped nicely to a perfect circle */}
+                <div className="relative mx-auto w-24 h-24 sm:w-28 sm:h-28 bg-white dark:bg-slate-800 rounded-full flex items-center justify-center mb-6 shadow-xl border-4 border-yellow-400 overflow-hidden transform hover:scale-105 transition-transform duration-300 shrink-0">
+                  <img 
+                    src="/berong_pr.png" 
+                    alt="Berong Mascot" 
+                    className="w-full h-full object-cover rounded-full"
+                  />
+                </div>
+
+                <h3 className="text-xl sm:text-2xl font-black text-yellow-400 uppercase tracking-tighter mb-2">
+                  Hey there, Future Fire Hero!
+                </h3>
+                
+                <p className="text-white font-black text-sm uppercase tracking-wider mb-4 px-3 py-1 bg-red-500/20 rounded-xl inline-block border border-red-500/30">
+                  Mission Alert
+                </p>
+
+                <p className="text-slate-200 font-bold text-sm sm:text-base leading-relaxed mb-6">
+                  Before we play games and earn points, you need to check out the <span className="text-yellow-300 font-black">SafeScape Fire Safety Course</span> first to learn the fire safety basics!
+                </p>
+
+                <div className="bg-slate-950/50 rounded-2xl p-4 border border-slate-800/80 mb-6 text-left flex items-start gap-3">
+                  <div className="bg-blue-500/20 p-2 rounded-xl border border-blue-500/30 shrink-0 text-blue-300">
+                    <BookOpen className="h-5 w-5" />
+                  </div>
+                  <div>
+                    <h4 className="text-xs font-black text-blue-300 uppercase">Your First Objective:</h4>
+                    <p className="text-xs font-semibold text-slate-400 mt-0.5 leading-tight">
+                      Click the <span className="text-white font-bold">START</span> button on the first card below to begin Module 1!
+                    </p>
+                  </div>
+                </div>
+
+                <button 
+                  onClick={dismissTutorial}
+                  className="w-full bg-yellow-400 hover:bg-yellow-300 text-red-700 font-extrabold py-4 rounded-2xl border-b-[6px] border-yellow-700 active:border-b-0 active:translate-y-[6px] transition-all uppercase tracking-widest text-sm shadow-lg flex items-center justify-center gap-2"
+                >
+                  Let's Go, Berong!
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   )
 }

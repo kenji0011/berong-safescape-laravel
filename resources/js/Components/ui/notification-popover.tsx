@@ -30,6 +30,7 @@ export function NotificationPopover() {
   const [previewNotification, setPreviewNotification] = useState<Notification | null>(null);
   const prevNotificationsRef = useRef<Notification[]>([]);
   const previewTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const isFirstFetchRef = useRef(true);
 
   const fetchNotifications = async () => {
     if (!user) return;
@@ -51,6 +52,11 @@ export function NotificationPopover() {
   useEffect(() => {
     // Detect new unread notifications for preview
     if (notifications.length > 0) {
+      if (isFirstFetchRef.current) {
+        isFirstFetchRef.current = false;
+        prevNotificationsRef.current = notifications;
+        return;
+      }
       const prevIds = prevNotificationsRef.current.map(n => n.id);
       const newUnread = notifications.find(n => !n.isRead && !prevIds.includes(n.id));
 

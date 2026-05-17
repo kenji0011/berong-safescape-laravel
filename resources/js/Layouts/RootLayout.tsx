@@ -20,7 +20,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
   return (
     <AuthProvider>
-      <div className="antialiased relative min-h-screen font-sans overflow-x-hidden bg-slate-50 dark:bg-slate-950 transition-colors duration-500">
+      <div className="antialiased relative min-h-screen font-sans bg-slate-50 dark:bg-slate-950 transition-colors duration-500">
         <Suspense fallback={null}>
           <PageLoader />
         </Suspense>

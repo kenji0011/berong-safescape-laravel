@@ -25,11 +25,40 @@ export const normalizeBlogPost = (post: any): BlogPost => ({
   author: typeof post?.author === "string" ? post.author : post?.author?.name ?? "Unknown",
 })
 
-export const normalizeVideo = (video: any): Video => ({
-  ...video,
-  youtubeId: video?.youtubeId ?? video?.youtube_id ?? "",
-  isActive: video?.isActive ?? video?.is_active ?? false,
-})
+export const normalizeVideo = (video: any): Video => {
+  let youtubeId = video?.youtubeId ?? video?.youtube_id ?? "";
+  
+  // If it's a full URL, extract the ID
+  if (youtubeId.includes('youtube.com') || youtubeId.includes('youtu.be')) {
+    const regex = /(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=|shorts\/|live\/))([^&?\n]+)/;
+    const match = youtubeId.match(regex);
+    if (match && match[1]) {
+      youtubeId = match[1];
+    } else {
+      // Manual fallback
+      try {
+        const url = new URL(youtubeId);
+        if (url.hostname.includes('youtube.com')) {
+          youtubeId = url.searchParams.get('v') || youtubeId.split('/').pop() || youtubeId;
+        } else if (url.hostname.includes('youtu.be')) {
+          youtubeId = url.pathname.slice(1);
+        }
+      } catch (e) {
+        // Leave as is
+      }
+    }
+  }
+
+  // Clean up
+  if (youtubeId.includes('?')) youtubeId = youtubeId.split('?')[0];
+  if (youtubeId.includes('&')) youtubeId = youtubeId.split('&')[0];
+
+  return {
+    ...video,
+    youtubeId,
+    isActive: video?.isActive ?? video?.is_active ?? false,
+  };
+}
 
 export const normalizeUser = (user: any): User => ({
   ...user,

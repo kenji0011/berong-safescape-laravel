@@ -237,19 +237,33 @@
             border-radius: 2rem;
             overflow: hidden;
             border: 2px solid #334155;
+            transition: all 0.3s ease;
+        }
+        
+        html:not(.dark) .sdr-trap-arena {
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            border-color: #e2e8f0;
         }
 
         .sdr-word {
             position: absolute;
-            padding: 12px 24px;
-            font-size: 1.25rem;
+            padding: 6px 12px;
+            font-size: 0.875rem;
             font-weight: bold;
-            border-radius: 8px;
+            border-radius: 6px;
             cursor: pointer;
             transition: transform 0.1s, box-shadow 0.1s;
             animation: wordPop 0.3s ease-out;
             user-select: none;
             z-index: 10;
+        }
+
+        @media (min-width: 640px) {
+            .sdr-word {
+                padding: 12px 24px;
+                font-size: 1.25rem;
+                border-radius: 8px;
+            }
         }
 
         .sdr-word:hover {
@@ -350,6 +364,10 @@
             background: #475569;
             transition: all 0.3s;
         }
+        
+        html:not(.dark) .round-dot {
+            background: #cbd5e1;
+        }
 
         .round-dot.active {
             background: #f59e0b;
@@ -378,6 +396,11 @@
             text-transform: uppercase;
             letter-spacing: 0.1em;
             border: 2px solid transparent;
+        }
+
+        html:not(.dark) .seq-step {
+            background: #e2e8f0;
+            color: #94a3b8;
         }
 
         @media (min-width: 640px) {
@@ -467,7 +490,7 @@
 
         <!-- VIDEO -->
         <section id="section-video" class="fade-in ss-section bg-white dark:bg-slate-900/50 border-[3px] sm:border-[4px] border-red-200 dark:border-red-900/30 shadow-sm p-4 sm:p-10 text-center transition-colors" style="animation-delay: 0.2s;">
-            <div class="ss-section-badge bg-green-500 border-[3px] border-white shadow-sm text-white"><i class="fa-regular fa-circle-check"></i></div>
+            <div class="ss-section-badge bg-green-500 border-[3px] border-white dark:border-slate-800 shadow-sm text-white transition-colors"><i class="fa-regular fa-circle-check"></i></div>
             <h2 class="text-lg sm:text-3xl font-black text-red-500 mb-4 sm:mb-6 drop-shadow-sm">Watch the Intro Video</h2>
             <div class="w-full aspect-video bg-slate-100 dark:bg-slate-950 rounded-[2rem] sm:rounded-[3rem] overflow-hidden shadow-sm border-[3px] sm:border-[4px] border-red-200 dark:border-red-900/30 relative group transition-colors">
                 <video id="module-video" controls class="w-full h-full object-cover" onplay="onVideoPlay()" onended="onVideoEnd()">
@@ -479,8 +502,8 @@
         </section>
 
         <!-- PART 1: STOP DROP ROLL -->
-        <section id="section-sdr" class="fade-in ss-section bg-white/40 dark:bg-slate-900/40 backdrop-blur-sm border-[3px] border-slate-100 dark:border-slate-800 p-6 sm:p-10 lg:p-12 shadow-sm relative overflow-hidden transition-colors" style="animation-delay: 0.3s;">
-            <div class="ss-section-badge bg-green-500 border-[3px] border-white shadow-sm text-white"><i class="fa-regular fa-circle-check"></i></div>
+        <section id="section-sdr" class="fade-in ss-section bg-white/40 dark:bg-slate-900/40 backdrop-blur-sm border-[3px] border-slate-100 dark:border-slate-800 p-6 sm:p-10 lg:p-12 shadow-sm relative transition-colors" style="animation-delay: 0.3s;">
+            <div class="ss-section-badge bg-green-500 border-[3px] border-white dark:border-slate-800 shadow-sm text-white transition-colors"><i class="fa-regular fa-circle-check"></i></div>
             
             <!-- Subtle background decorative element -->
             <div class="absolute top-0 right-0 w-64 h-64 bg-red-50 dark:bg-red-900/20 rounded-full blur-3xl -mr-32 -mt-32 opacity-50 pointer-events-none transition-colors"></div>
@@ -620,7 +643,7 @@
         </section>
 
         <section id="section-sdr-trap" class="fade-in ss-section max-w-5xl mx-auto bg-white/60 dark:bg-slate-900/60 backdrop-blur-md border-[3px] border-slate-100 dark:border-slate-800 shadow-xl p-6 sm:p-10 relative transition-colors" style="animation-delay: 0.35s;">
-            <div class="ss-section-badge bg-green-500 border-[3px] border-white shadow-sm text-white"><i class="fa-regular fa-circle-check"></i></div>
+            <div class="ss-section-badge bg-green-500 border-[3px] border-white dark:border-slate-800 shadow-sm text-white transition-colors"><i class="fa-regular fa-circle-check"></i></div>
 
             <div>
                 <!-- Header -->
@@ -651,20 +674,20 @@
 
                 <!-- Arena -->
                 <div class="relative mb-8">
-                    <div id="sdr-trap-arena" class="sdr-trap-arena bg-[#0f172a] rounded-[2rem] sm:rounded-[3rem] h-56 sm:h-80 lg:h-96 relative overflow-hidden shadow-2xl border-2 sm:border-4 border-slate-800">
+                    <div id="sdr-trap-arena" class="sdr-trap-arena bg-slate-50 dark:bg-[#0f172a] rounded-[2rem] sm:rounded-[3rem] h-56 sm:h-80 lg:h-96 relative overflow-hidden shadow-xl border-2 sm:border-4 border-slate-200 dark:border-slate-800 transition-colors">
                         <div class="absolute inset-0 pointer-events-none opacity-[0.08]" style="background-image: radial-gradient(#64748b 1px, transparent 1px); background-size: 32px 32px;"></div>
                         
                         <!-- Game Status HUD -->
-                        <div id="trap-game-status" class="absolute top-6 left-0 right-0 text-center text-white/40 text-[10px] font-black uppercase tracking-[0.3em] z-20 pointer-events-none"></div>
+                        <div id="trap-game-status" class="absolute top-6 left-0 right-0 text-center text-slate-400 dark:text-white/40 text-[10px] font-black uppercase tracking-[0.3em] z-20 pointer-events-none transition-colors"></div>
                         
-                        <div id="trap-game-overlay" class="absolute inset-0 bg-slate-900/95 backdrop-blur-md flex items-center justify-center z-30 transition-all duration-500">
+                        <div id="trap-game-overlay" class="absolute inset-0 bg-white/90 dark:bg-slate-900/95 backdrop-blur-md flex items-center justify-center z-30 transition-all duration-500">
                             <div class="text-center p-4 sm:p-8 space-y-4 sm:space-y-6">
                                 <div class="w-16 h-16 sm:w-20 sm:h-20 bg-orange-500/10 rounded-full flex items-center justify-center mx-auto mb-2 sm:mb-4 border-2 border-orange-500/20">
                                     <i class="fa-solid fa-play text-2xl sm:text-3xl text-orange-500 animate-pulse"></i>
                                 </div>
                                 <div class="space-y-1 sm:space-y-2">
-                                    <h3 class="text-white text-xl sm:text-2xl font-black uppercase tracking-tight">Begin Training</h3>
-                                    <p class="text-slate-400 text-xs sm:text-sm font-bold max-w-xs mx-auto">Click STOP → DROP → ROLL in order.</p>
+                                    <h3 class="text-slate-800 dark:text-white text-xl sm:text-2xl font-black uppercase tracking-tight transition-colors">Begin Training</h3>
+                                    <p class="text-slate-500 dark:text-slate-400 text-xs sm:text-sm font-bold max-w-xs mx-auto transition-colors">Click STOP → DROP → ROLL in order.</p>
                                 </div>
                                 <button onclick="startTrapGame()" class="bg-orange-500 hover:bg-orange-400 text-white font-black py-3 sm:py-4 px-10 sm:px-12 rounded-xl sm:rounded-2xl shadow-xl shadow-orange-900/40 active:translate-y-1 transition-all uppercase tracking-widest text-[10px] sm:text-sm">
                                     Start Simulation
@@ -672,14 +695,14 @@
                             </div>
                         </div>
 
-                        <div id="trap-game-result" class="hidden absolute inset-0 z-40 bg-slate-900/98 flex items-center justify-center p-4 sm:p-8 text-center">
+                        <div id="trap-game-result" class="hidden absolute inset-0 z-40 bg-white/95 dark:bg-slate-900/98 flex items-center justify-center p-4 sm:p-8 text-center transition-colors">
                             <div class="space-y-4 sm:space-y-6">
                                 <div id="trap-result-icon" class="text-5xl sm:text-7xl mb-1 sm:mb-2"></div>
                                 <div class="space-y-1 sm:space-y-2">
-                                    <h3 id="trap-result-title" class="text-xl sm:text-4xl font-black text-white uppercase tracking-tighter"></h3>
-                                    <p id="trap-result-desc" class="text-slate-400 text-xs sm:text-lg font-bold max-w-md mx-auto"></p>
+                                    <h3 id="trap-result-title" class="text-xl sm:text-4xl font-black text-slate-800 dark:text-white uppercase tracking-tighter transition-colors"></h3>
+                                    <p id="trap-result-desc" class="text-slate-500 dark:text-slate-400 text-xs sm:text-lg font-bold max-w-md mx-auto transition-colors"></p>
                                 </div>
-                                <button onclick="restartTrapGame()" id="trap-retry-btn" class="bg-white/10 hover:bg-white/20 text-white text-[10px] sm:text-xs font-black uppercase tracking-widest py-2.5 sm:py-3 px-6 sm:px-8 rounded-lg sm:rounded-xl border border-white/20 transition-all">
+                                <button onclick="restartTrapGame()" id="trap-retry-btn" class="bg-slate-200 hover:bg-slate-300 dark:bg-white/10 dark:hover:bg-white/20 text-slate-700 dark:text-white text-[10px] sm:text-xs font-black uppercase tracking-widest py-2.5 sm:py-3 px-6 sm:px-8 rounded-lg sm:rounded-xl border border-slate-300 dark:border-white/20 transition-all">
                                     <i class="fa-solid fa-rotate-right mr-2"></i>Try Again
                                 </button>
                             </div>
@@ -698,7 +721,7 @@
 
         <!-- PART 2: HAZARD HUNT (2-COLUMN PREMIUM LAYOUT) -->
         <section id="section-hazard" class="fade-in ss-section max-w-6xl mx-auto" style="animation-delay: 0.4s;">
-            <div class="ss-section-badge bg-green-500 border-[3px] border-white shadow-sm text-white"><i class="fa-regular fa-circle-check"></i></div>
+            <div class="ss-section-badge bg-green-500 border-[3px] border-white dark:border-slate-800 shadow-sm text-white transition-colors"><i class="fa-regular fa-circle-check"></i></div>
             
             <div class="flex flex-col gap-8">
                 <!-- Top: Briefing & Checklist -->
@@ -739,10 +762,9 @@
 
                 <!-- Bottom: Hazard Hunt Arena -->
                 <div class="w-full">
-                    <div class="bg-slate-900 p-2 sm:p-6 rounded-[2rem] sm:rounded-[3rem] shadow-2xl border-[4px] sm:border-[6px] border-slate-800 relative overflow-hidden group">
-                        <!-- Scanning HUD Overlay -->
+                    <div class="bg-slate-100 dark:bg-slate-900 p-2 sm:p-6 rounded-[2rem] sm:rounded-[3rem] shadow-2xl border-[4px] sm:border-[6px] border-slate-200 dark:border-slate-800 relative overflow-hidden group transition-colors">
                         <div class="absolute top-8 left-8 z-20 pointer-events-none">
-                            <div class="flex items-center gap-3 text-green-400 font-black text-[10px] tracking-[0.3em] uppercase animate-pulse">
+                            <div class="flex items-center gap-3 text-green-600 dark:text-green-400 font-black text-[10px] tracking-[0.3em] uppercase animate-pulse transition-colors">
                                 <span class="w-2 h-2 bg-green-500 rounded-full"></span>
                                 Active Scanning: Area Alpha
                             </div>
@@ -754,7 +776,7 @@
                                 onerror="this.classList.add('hidden'); this.nextElementSibling.classList.remove('hidden');">
                             
                             <!-- Placeholder -->
-                            <div class="w-full h-full bg-slate-900 flex items-center justify-center text-slate-500 hidden font-black tracking-widest uppercase text-center p-12">
+                            <div class="w-full h-full bg-slate-800 dark:bg-slate-900 flex items-center justify-center text-slate-400 dark:text-slate-500 hidden font-black tracking-widest uppercase text-center p-12 transition-colors">
                                 <div>
                                     <i class="fa-solid fa-camera text-4xl mb-4 text-slate-700"></i>
                                     <p class="text-xs">Hazard Room Interface Loading...</p>
@@ -797,14 +819,14 @@
                         </div>
 
                         <!-- Hazard Hunt Completion Overlay -->
-                        <div id="hazard-hunt-result" class="hidden absolute inset-0 z-50 bg-slate-900/95 backdrop-blur-md flex items-center justify-center p-4 sm:p-8 text-center transition-all duration-500">
+                        <div id="hazard-hunt-result" class="hidden absolute inset-0 z-50 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md flex items-center justify-center p-4 sm:p-8 text-center transition-all duration-500">
                             <div class="space-y-3 sm:space-y-6">
                                 <div class="w-16 h-16 sm:w-24 sm:h-24 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-2 sm:mb-6 border-2 border-green-500/30">
                                     <i class="fa-solid fa-certificate text-3xl sm:text-5xl text-green-500 animate-bounce"></i>
                                 </div>
                                 <div class="space-y-1 sm:space-y-2">
-                                    <h3 class="text-xl sm:text-3xl font-black text-white uppercase tracking-tighter">Area Secured!</h3>
-                                    <p class="text-slate-400 text-xs sm:text-lg font-bold max-w-md mx-auto">All hazards identified. You have successfully prevented a potential fire!</p>
+                                    <h3 class="text-xl sm:text-3xl font-black text-slate-800 dark:text-white uppercase tracking-tighter transition-colors">Area Secured!</h3>
+                                    <p class="text-slate-500 dark:text-slate-400 text-xs sm:text-lg font-bold max-w-md mx-auto transition-colors">All hazards identified. You have successfully prevented a potential fire!</p>
                                 </div>
                                 <button onclick="hideHazardResult()" class="bg-green-500 hover:bg-green-400 text-white font-black py-2.5 sm:py-4 px-8 sm:px-12 rounded-xl sm:rounded-2xl shadow-xl shadow-green-900/40 active:translate-y-1 transition-all uppercase tracking-widest text-[10px] sm:text-sm mt-2 sm:mt-4">
                                     Continue Mission
@@ -818,9 +840,9 @@
 
         <!-- HERO SUMMARY -->
         <section
-            class="fade-in mt-8 sm:mt-24 bg-gradient-to-br from-blue-500 to-indigo-600 p-4 sm:p-12 ss-section border-[3px] sm:border-[4px] border-blue-400 shadow-xl text-center relative overflow-hidden"
+            class="fade-in mt-8 sm:mt-24 bg-gradient-to-br from-blue-500 to-indigo-600 p-4 sm:p-12 ss-section border-[3px] sm:border-[4px] border-blue-400 shadow-xl text-center relative"
             style="animation-delay: 0.5s;">
-            <div class="absolute top-0 left-0 w-full h-full opacity-10 pointer-events-none">
+            <div class="absolute inset-0 overflow-hidden rounded-[inherit] pointer-events-none opacity-10">
                 <i class="fa-solid fa-shield-cat text-7xl sm:text-9xl absolute -top-4 sm:-top-10 -left-4 sm:-left-10 text-white"></i>
                 <i class="fa-solid fa-star text-7xl sm:text-9xl absolute -bottom-4 sm:-bottom-10 -right-4 sm:-right-10 text-white"></i>
             </div>
@@ -853,7 +875,7 @@
         <section id="final-exam"
             class="fade-in ss-section bg-yellow-50 dark:bg-yellow-950/20 p-6 sm:p-12 border-[4px] border-yellow-300 dark:border-yellow-900/50 shadow-sm mt-12 sm:mt-24 transition-colors"
             style="animation-delay: 0.6s;">
-            <div class="ss-section-badge bg-green-500 border-[3px] border-white dark:border-slate-800 shadow-sm text-white transition-colors"><i class="fa-regular fa-circle-check"></i></div>
+            
             <div id="final-exam-header" class="text-center mb-6 sm:mb-12">
                 <h2 class="text-3xl sm:text-5xl font-black text-yellow-900 dark:text-yellow-400 mb-2 sm:mb-4 drop-shadow-sm uppercase tracking-widest transition-colors">The Final Exam</h2>
                 <p class="text-slate-600 dark:text-slate-400 font-bold text-xs sm:text-lg transition-colors">15 Questions. Module 1 - 5. Prove you are a SafeScape Hero.</p>
@@ -1057,7 +1079,6 @@
                 document.getElementById('section-hazard').classList.add('completed');
                 document.getElementById('hazard-protocol-card').style.borderColor = '#22c55e';
             }
-            if (localState.finalExamPassed) document.getElementById('final-exam').classList.add('completed');
 
             // Locked states (sequential)
             const secSdr = document.getElementById('section-sdr');
@@ -1485,6 +1506,10 @@
                 
                 document.getElementById('btn-view-cert').classList.remove('hidden');
                 document.getElementById('btn-retake').classList.add('hidden');
+                
+                const fe = document.getElementById('final-exam');
+                fe.className = "fade-in ss-section bg-slate-50 dark:bg-slate-900 rounded-[2rem] p-6 sm:p-12 border-[4px] border-slate-200 dark:border-slate-800 shadow-sm mt-12 sm:mt-24 transition-colors duration-500";
+                
                 return;
             }
 
@@ -1563,6 +1588,9 @@
                     ? `You scored ${score}/15. You are now a SafeScape certified Fire Safety Hero!`
                     : `You scored ${score}/15. You need at least 12/15 to pass. Try again!`;
                 document.getElementById('btn-view-cert').classList.remove('hidden');
+                
+                const fe = document.getElementById('final-exam');
+                fe.className = "fade-in ss-section bg-slate-50 dark:bg-slate-900 rounded-[2rem] p-6 sm:p-12 border-[4px] border-slate-200 dark:border-slate-800 shadow-sm mt-12 sm:mt-24 transition-colors duration-500";
 
                 if (!localState.finalExamPassed) {
                     localState.finalExamPassed = true;
@@ -1609,3 +1637,7 @@
 </body>
 
 </html>
+
+
+
+

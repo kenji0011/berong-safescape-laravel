@@ -40,6 +40,7 @@ import {
   OCCUPATION_CATEGORIES, 
   GENDER_OPTIONS,
   GRADE_LEVELS,
+  COLLEGES_WITH_YEARS,
   getScoreRating
 } from "@/lib/constants"
 import { useAuth } from "@/lib/auth-context"
@@ -110,7 +111,23 @@ export function ProfileCompletionModal({ isOpen, onComplete }: ProfileCompletion
   }
 
   const updateField = (field: string, value: any) => {
-    setData(prev => ({ ...prev, [field]: value }))
+    setData(prev => {
+      const next = { ...prev, [field]: value };
+      
+      // If school changes, check if the current gradeLevel is valid for the selected school
+      if (field === "school") {
+        const allowedLevels = COLLEGES_WITH_YEARS.includes(value as any)
+          ? ["Grade 11", "Grade 12", "1st Year", "2nd Year", "3rd Year", "4th Year"]
+          : GRADE_LEVELS;
+        
+        if (prev.gradeLevel && !allowedLevels.includes(prev.gradeLevel as any)) {
+          next.gradeLevel = "";
+        }
+      }
+      
+      return next;
+    });
+
     if (validationErrors[field]) {
       setValidationErrors(prev => ({ ...prev, [field]: "" }))
     }
@@ -300,7 +317,7 @@ export function ProfileCompletionModal({ isOpen, onComplete }: ProfileCompletion
             <div>
               <Label>Gender *</Label>
               <Select value={data.gender} onValueChange={(value) => updateField("gender", value)}>
-                <SelectTrigger className={validationErrors.gender ? "border-red-500" : ""}>
+                <SelectTrigger className={`${validationErrors.gender ? "border-red-500" : ""} text-xs sm:text-sm md:text-base`}>
                   <SelectValue placeholder="Select your gender" />
                 </SelectTrigger>
                 <SelectContent>
@@ -317,7 +334,7 @@ export function ProfileCompletionModal({ isOpen, onComplete }: ProfileCompletion
             <div>
               <Label>Barangay *</Label>
               <Select value={data.barangay} onValueChange={(value) => updateField("barangay", value)}>
-                <SelectTrigger className={validationErrors.barangay ? "border-red-500" : ""}>
+                <SelectTrigger className={`${validationErrors.barangay ? "border-red-500" : ""} text-xs sm:text-sm md:text-base`}>
                   <SelectValue placeholder="Select your barangay" />
                 </SelectTrigger>
                 <SelectContent>
@@ -336,7 +353,7 @@ export function ProfileCompletionModal({ isOpen, onComplete }: ProfileCompletion
                 <div>
                   <Label>School *</Label>
                   <Select value={data.school} onValueChange={(value) => updateField("school", value)}>
-                    <SelectTrigger className={validationErrors.school ? "border-red-500" : ""}>
+                    <SelectTrigger className={`${validationErrors.school ? "border-red-500" : ""} text-xs sm:text-sm md:text-base`}>
                       <SelectValue placeholder="Select your school" />
                     </SelectTrigger>
                     <SelectContent>
@@ -357,7 +374,7 @@ export function ProfileCompletionModal({ isOpen, onComplete }: ProfileCompletion
                       placeholder="Enter your school name"
                       value={data.schoolOther}
                       onChange={(e) => updateField("schoolOther", e.target.value)}
-                      className={validationErrors.schoolOther ? "border-red-500" : ""}
+                      className={`${validationErrors.schoolOther ? "border-red-500" : ""} text-xs sm:text-sm md:text-base`}
                     />
                     {validationErrors.schoolOther && (
                       <p className="text-sm text-red-500 mt-1">{validationErrors.schoolOther}</p>
@@ -368,11 +385,14 @@ export function ProfileCompletionModal({ isOpen, onComplete }: ProfileCompletion
                 <div>
                   <Label>Grade Level *</Label>
                   <Select value={data.gradeLevel} onValueChange={(value) => updateField("gradeLevel", value)}>
-                    <SelectTrigger className={validationErrors.gradeLevel ? "border-red-500" : ""}>
+                    <SelectTrigger className={`${validationErrors.gradeLevel ? "border-red-500" : ""} text-xs sm:text-sm md:text-base`}>
                       <SelectValue placeholder="Select your grade level" />
                     </SelectTrigger>
-                    <SelectContent>
-                      {GRADE_LEVELS.map((level) => (
+                    <SelectContent className="rounded-xl border-slate-200 dark:border-slate-800 shadow-xl max-h-[300px]">
+                      {(COLLEGES_WITH_YEARS.includes(data.school as any)
+                        ? ["Grade 11", "Grade 12", "1st Year", "2nd Year", "3rd Year", "4th Year"]
+                        : GRADE_LEVELS
+                      ).map((level) => (
                         <SelectItem key={level} value={level}>{level}</SelectItem>
                       ))}
                     </SelectContent>
@@ -387,7 +407,7 @@ export function ProfileCompletionModal({ isOpen, onComplete }: ProfileCompletion
                 <div>
                   <Label>Occupation *</Label>
                   <Select value={data.occupation} onValueChange={(value) => updateField("occupation", value)}>
-                    <SelectTrigger className={validationErrors.occupation ? "border-red-500" : ""}>
+                    <SelectTrigger className={`${validationErrors.occupation ? "border-red-500" : ""} text-xs sm:text-sm md:text-base`}>
                       <SelectValue placeholder="Select your occupation" />
                     </SelectTrigger>
                     <SelectContent>
@@ -408,7 +428,7 @@ export function ProfileCompletionModal({ isOpen, onComplete }: ProfileCompletion
                       placeholder="Enter your occupation"
                       value={data.occupationOther}
                       onChange={(e) => updateField("occupationOther", e.target.value)}
-                      className={validationErrors.occupationOther ? "border-red-500" : ""}
+                      className={`${validationErrors.occupationOther ? "border-red-500" : ""} text-xs sm:text-sm md:text-base`}
                     />
                     {validationErrors.occupationOther && (
                       <p className="text-sm text-red-500 mt-1">{validationErrors.occupationOther}</p>

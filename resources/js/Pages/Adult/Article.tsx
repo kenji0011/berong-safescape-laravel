@@ -68,39 +68,50 @@ const BlogArticleClient = ({ blog }: BlogArticleProps) => {
             {/* Frosting overlay to ensure text readability */}
             <div className="fixed inset-0 bg-background/90 -z-10 pointer-events-none transition-colors duration-500"></div>
 
-            <main className="max-w-4xl mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-12 relative z-10">
-                {/* Navigation Bar */}
-                <div className="mb-4 sm:mb-8 flex items-center justify-between">
+            <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4 sm:pt-6 pb-24 relative z-10">
+                {/* Desktop absolute-positioned Back to Articles button (Upper Leftmost corner) */}
+                <div className="hidden lg:block lg:absolute lg:top-1.5 lg:left-4 xl:left-6 z-20">
                     <Link 
                         href="/adult" 
-                        className="inline-flex items-center gap-1.5 sm:gap-2 px-4 py-2 sm:px-5 sm:py-2.5 bg-white dark:bg-slate-800 rounded-full text-slate-700 dark:text-slate-200 font-bold hover:text-slate-900 dark:hover:text-white border-2 border-slate-200 dark:border-slate-700 border-b-[4px] dark:border-b-slate-900 active:border-b-2 active:translate-y-[2px] shadow-sm transition-all text-xs sm:text-sm"
+                        className="group inline-flex items-center gap-1.5 px-4 py-2 sm:px-5 sm:py-2.5 bg-white dark:bg-slate-800 rounded-full text-slate-700 dark:text-slate-200 font-bold hover:text-slate-900 dark:hover:text-white border-2 border-slate-200 dark:border-slate-700 border-b-[4px] dark:border-b-slate-900 active:border-b-2 active:translate-y-[2px] shadow-sm transition-all text-xs sm:text-sm"
                     >
-                        <ArrowLeft className="h-3.5 w-3.5 sm:h-4 sm:w-4" strokeWidth={3} />
+                        <ArrowLeft className="h-3.5 w-3.5 group-hover:-translate-x-1 transition-transform duration-300" strokeWidth={3} />
+                        Back to Articles
+                    </Link>
+                </div>
+
+                {/* Navigation Bar - Mobile/Tablet only to avoid overlaps */}
+                <div className="mb-4 sm:mb-6 flex lg:hidden">
+                    <Link 
+                        href="/adult" 
+                        className="group inline-flex items-center gap-1.5 sm:gap-2 px-4 py-2 sm:px-5 sm:py-2.5 bg-white dark:bg-slate-800 rounded-full text-slate-700 dark:text-slate-200 font-bold hover:text-slate-900 dark:hover:text-white border-2 border-slate-200 dark:border-slate-700 border-b-[4px] dark:border-b-slate-900 active:border-b-2 active:translate-y-[2px] shadow-sm transition-all text-xs sm:text-sm"
+                    >
+                        <ArrowLeft className="h-3.5 w-3.5 sm:h-4 sm:w-4 group-hover:-translate-x-1 transition-transform duration-300" strokeWidth={3} />
                         Back to Articles
                     </Link>
                 </div>
 
                 {/* Main Unified Article Card */}
-                <article className="bg-white dark:bg-slate-800 rounded-[1.5rem] sm:rounded-[3rem] shadow-[0_8px_30px_rgba(0,0,0,0.06)] dark:shadow-[0_8px_30px_rgba(0,0,0,0.2)] border-2 border-slate-100 dark:border-slate-700 overflow-hidden transition-colors">
+                <article className="max-w-3xl mx-auto bg-white dark:bg-slate-800/90 backdrop-blur-md rounded-[1.5rem] sm:rounded-[2rem] shadow-xl dark:shadow-[0_12px_40px_rgba(0,0,0,0.3)] border border-slate-200/60 dark:border-slate-700/50 overflow-hidden transition-all duration-300">
                     
                     {/* Header Section */}
-                    <div className="p-4 sm:p-8 md:p-10 pb-4 sm:pb-8 bg-white dark:bg-slate-800 transition-colors">
-                        <span className="inline-block px-2.5 py-0.5 sm:px-3 sm:py-1 bg-orange-100 dark:bg-orange-950/30 text-orange-600 dark:text-orange-400 font-black text-[9px] sm:text-[10px] uppercase tracking-widest rounded-full border-2 border-orange-200 dark:border-orange-900/30 mb-3 sm:mb-4 shadow-sm transition-colors">
+                    <div className="p-4 sm:p-8 md:p-9 pb-3 sm:pb-5 bg-white dark:bg-transparent transition-colors">
+                        <span className="inline-block px-2.5 py-0.5 bg-orange-500/10 dark:bg-orange-500/10 text-orange-600 dark:text-orange-400 font-extrabold text-[9px] sm:text-[10px] uppercase tracking-wider rounded-full border border-orange-500/20 mb-3 sm:mb-4 shadow-sm transition-colors">
                             Fire Safety Education
                         </span>
                         
-                        <h1 className="text-xl sm:text-3xl md:text-4xl font-black text-slate-800 dark:text-white leading-[1.2] tracking-tight mb-4 sm:mb-6 transition-colors">
+                        <h1 className="text-xl sm:text-2xl md:text-3xl font-black text-slate-800 dark:text-white leading-[1.2] tracking-tight mb-3 sm:mb-4 transition-colors">
                             {blog.title}
                         </h1>
                         
                         <div className="flex flex-wrap items-center gap-4 text-slate-500 dark:text-slate-400 transition-colors">
                             <div className="flex items-center gap-2 sm:gap-3">
-                                <div className="h-8 w-8 sm:h-10 sm:w-10 rounded-full bg-orange-100 dark:bg-orange-950/30 flex items-center justify-center border-2 border-white dark:border-slate-700 shadow-sm shrink-0 transition-colors">
-                                    <User className="h-4 w-4 sm:h-5 sm:w-5 text-orange-600 dark:text-orange-400" />
+                                <div className="h-8 w-8 sm:h-10 sm:w-10 rounded-xl bg-slate-100 dark:bg-slate-900 flex items-center justify-center border border-slate-200/50 dark:border-slate-800/80 shadow-inner shrink-0 transition-colors">
+                                    <User className="h-4 w-4 sm:h-5 sm:w-5 text-slate-500 dark:text-slate-400" />
                                 </div>
-                                <div className="text-left py-1">
-                                    <div className="font-bold text-slate-800 dark:text-slate-200 text-[12px] sm:text-[14px] leading-tight transition-colors">{authorName}</div>
-                                    <div className="flex items-center gap-1.5 text-[10px] sm:text-[11px] font-semibold text-slate-400 dark:text-slate-500 mt-0.5 transition-colors">
+                                <div className="text-left py-0.5">
+                                    <div className="font-extrabold text-slate-800 dark:text-slate-200 text-xs sm:text-sm leading-tight transition-colors">{authorName}</div>
+                                    <div className="flex items-center gap-1.5 text-[10px] sm:text-xs font-semibold text-slate-400 dark:text-slate-500 mt-0.5 transition-colors">
                                         <Calendar className="h-3 w-3" />
                                         {formattedDate}
                                     </div>
@@ -111,22 +122,33 @@ const BlogArticleClient = ({ blog }: BlogArticleProps) => {
 
                     {/* Expandable Image Section */}
                     {blog.imageUrl && (
-                        <div className="px-3 sm:px-8 md:px-10">
+                        <div className="px-4 sm:px-8 md:px-9">
                             <div 
-                                className="w-full relative group cursor-zoom-in rounded-[1rem] sm:rounded-3xl overflow-hidden shadow-sm border-2 border-slate-100 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 ring-offset-2 dark:ring-offset-slate-800 transition-all hover:ring-4 hover:ring-orange-100 dark:hover:ring-orange-950/50 active:scale-[0.99]"
+                                className="w-full relative group cursor-zoom-in rounded-xl sm:rounded-2xl overflow-hidden border border-slate-200/60 dark:border-slate-700/50 bg-slate-950/20 dark:bg-slate-950/40 transition-all hover:border-orange-500/30 hover:shadow-xl active:scale-[0.995]"
                                 onClick={() => setIsImageExpanded(true)}
                             >
-                                <img 
-                                    src={blog.imageUrl} 
-                                    alt={blog.title} 
-                                    className="w-full h-auto max-h-[200px] sm:max-h-[300px] object-contain object-center transition-transform duration-500 group-hover:scale-[1.02]"
+                                {/* Ambient Blurred Background reflection */}
+                                <div 
+                                    className="absolute inset-0 bg-cover bg-center blur-3xl opacity-30 dark:opacity-40 scale-105 pointer-events-none select-none"
+                                    style={{ backgroundImage: `url(${blog.imageUrl})` }}
                                 />
+                                {/* Subtle dark glass overlay */}
+                                <div className="absolute inset-0 bg-gradient-to-t from-slate-950/40 via-transparent to-slate-950/10 z-0" />
                                 
-                                {/* Overlay hint */}
-                                <div className="absolute inset-0 bg-slate-900/0 group-hover:bg-slate-900/10 transition-colors duration-300 flex items-center justify-center">
-                                    <div className="opacity-0 group-hover:opacity-100 translate-y-4 group-hover:translate-y-0 transition-all duration-300 bg-white dark:bg-slate-800 text-slate-800 dark:text-white font-bold px-3 py-1.5 sm:px-4 sm:py-2 rounded-full flex items-center gap-1.5 sm:gap-2 shadow-lg text-xs sm:text-sm">
-                                        <Maximize2 className="h-3 w-3 sm:h-4 sm:w-4" />
-                                        Click to expand
+                                {/* Foreground sharp image */}
+                                <div className="relative z-10 flex items-center justify-center p-3 sm:p-5 min-h-[160px] sm:min-h-[260px] md:min-h-[320px]">
+                                    <img 
+                                        src={blog.imageUrl} 
+                                        alt={blog.title} 
+                                        className="max-w-full h-auto max-h-[220px] sm:max-h-[320px] md:max-h-[380px] object-contain rounded-lg shadow-md transition-transform duration-500 group-hover:scale-[1.01]"
+                                    />
+                                </div>
+                                
+                                {/* Expand Overlay Hint */}
+                                <div className="absolute inset-0 z-20 bg-slate-950/0 group-hover:bg-slate-950/10 transition-colors duration-300 flex items-center justify-center">
+                                    <div className="opacity-0 group-hover:opacity-100 translate-y-4 group-hover:translate-y-0 transition-all duration-300 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md text-slate-800 dark:text-white font-extrabold px-3 py-1.5 rounded-full flex items-center gap-1.5 shadow-xl text-xs sm:text-sm border border-white/20">
+                                        <Maximize2 className="h-3.5 w-3.5 text-orange-500" />
+                                        Click to expand poster
                                     </div>
                                 </div>
                             </div>
@@ -134,31 +156,34 @@ const BlogArticleClient = ({ blog }: BlogArticleProps) => {
                     )}
 
                     {/* Article Content */}
-                    <div className="p-4 sm:p-8 md:p-10 pt-5 sm:pt-10 relative">
+                    <div className="p-4 sm:p-8 md:p-9 pt-5 sm:pt-8 relative">
                         <div 
                             className="prose prose-slate dark:prose-invert max-w-none 
                                 prose-headings:font-black prose-headings:text-slate-800 dark:prose-headings:text-white prose-headings:tracking-tight 
-                                prose-h2:text-lg sm:prose-h2:text-2xl prose-h2:mt-6 sm:prose-h2:mt-8 prose-h2:mb-3 sm:prose-h2:mb-4
-                                prose-p:text-slate-600 dark:prose-p:text-slate-300 prose-p:font-medium prose-p:leading-relaxed prose-p:mb-4 sm:prose-p:mb-5 prose-p:text-[13px] sm:prose-p:text-sm lg:prose-p:text-base
+                                prose-h2:text-base sm:prose-h2:text-xl prose-h2:mt-5 sm:prose-h2:mt-7 prose-h2:mb-2.5 sm:prose-h2:mb-3
+                                prose-p:text-slate-600 dark:prose-p:text-slate-300 prose-p:font-medium prose-p:leading-[1.7] sm:prose-p:leading-[1.8] prose-p:mb-5 prose-p:text-[13px] sm:prose-p:text-sm md:prose-p:text-base
                                 prose-a:text-orange-600 dark:prose-a:text-orange-400 prose-a:font-bold prose-a:no-underline hover:prose-a:underline
                                 prose-strong:font-black prose-strong:text-slate-800 dark:prose-strong:text-white
-                                prose-ul:marker:text-orange-400 dark:prose-ul:marker:text-orange-500 prose-li:font-medium prose-li:text-[13px] sm:prose-li:text-sm lg:prose-li:text-base
-                                prose-img:rounded-2xl sm:prose-img:rounded-3xl prose-img:shadow-md border-slate-100 dark:border-slate-700"
+                                prose-ul:marker:text-orange-400 dark:prose-ul:marker:text-orange-500 prose-li:font-medium prose-li:text-[13px] sm:prose-li:text-sm md:prose-li:text-base
+                                prose-img:rounded-xl sm:prose-img:rounded-2xl prose-img:shadow-md border-slate-100 dark:border-slate-700"
                             dangerouslySetInnerHTML={{ __html: blog.content }}
                         />
                     </div>
                 </article>
 
                 {/* Emergency Protocol */}
-                <div className="mt-6 sm:mt-8 overflow-hidden rounded-[1.5rem] sm:rounded-[2rem] bg-red-50 dark:bg-red-950/20 border-2 border-red-100 dark:border-red-900/30 p-4 sm:p-8 shadow-sm transition-colors">
-                    <div className="flex flex-col sm:flex-row gap-4 sm:gap-5 items-start sm:items-center">
-                        <div className="h-12 w-12 sm:h-16 sm:w-16 rounded-full bg-white dark:bg-red-900/40 flex items-center justify-center shrink-0 shadow-sm border border-red-50 dark:border-red-800 transition-colors">
-                            <Flame className="h-5 w-5 sm:h-7 sm:w-7 text-red-600 dark:text-red-400" />
+                <div className="max-w-3xl mx-auto mt-6 sm:mt-8 overflow-hidden rounded-2xl sm:rounded-[2.5rem] bg-red-500/[0.02] dark:bg-red-500/[0.03] backdrop-blur-md border border-red-500/20 dark:border-red-500/25 p-5 sm:p-8 shadow-sm transition-colors">
+                    <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 items-start sm:items-center">
+                        <div className="relative shrink-0">
+                            <div className="absolute inset-0 rounded-full bg-red-500/20 blur-md animate-pulse" />
+                            <div className="relative h-12 w-12 sm:h-16 sm:w-16 rounded-2xl bg-red-500/10 border border-red-500/20 flex items-center justify-center shrink-0 shadow-sm transition-colors">
+                                <Flame className="h-5 w-5 sm:h-7 sm:w-7 text-red-500 dark:text-red-400" />
+                            </div>
                         </div>
                         <div className="flex-1">
-                            <h3 className="text-[1.1rem] sm:text-[1.35rem] font-black text-red-950 dark:text-red-100 mb-1.5 sm:mb-2 transition-colors">Emergency Protocol</h3>
-                            <p className="text-red-900 dark:text-red-200/80 leading-relaxed font-medium text-[13px] sm:text-base transition-colors">
-                                In case of a fire emergency, do not hesitate. Call <strong className="font-extrabold text-red-950 dark:text-red-50">911</strong> immediately. Never put yourself at risk trying to fight a large fire. <strong className="font-extrabold text-red-700 dark:text-red-400">Evacuate first</strong>, then call for help.
+                            <h3 className="text-[1.1rem] sm:text-[1.35rem] font-black text-red-600 dark:text-red-400 mb-1.5 transition-colors">Emergency Protocol</h3>
+                            <p className="text-slate-600 dark:text-slate-300 leading-relaxed font-medium text-[13px] sm:text-base transition-colors">
+                                In case of a fire emergency, do not hesitate. Call <strong className="font-extrabold text-red-600 dark:text-red-400">911</strong> immediately. Never put yourself at risk trying to fight a large fire. <strong className="font-extrabold text-red-500 dark:text-red-400">Evacuate first</strong>, then call for help.
                             </p>
                         </div>
                     </div>

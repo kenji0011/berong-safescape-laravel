@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import { router, usePage } from '@inertiajs/react';
 import axios from 'axios';
 import { Button } from "@/components/ui/button"
@@ -39,6 +39,7 @@ import {
   OCCUPATION_CATEGORIES,
   GENDER_OPTIONS,
   GRADE_LEVELS,
+  COLLEGES_WITH_YEARS,
   getScoreRating
 } from "@/lib/constants"
 
@@ -130,6 +131,9 @@ export function RegistrationWizard({ onBackToLogin }: RegistrationWizardProps) {
   const [feedbackSubmitting, setFeedbackSubmitting] = useState(false)
   const [feedbackSuccess, setFeedbackSuccess] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
+  
+  // Ref for password container to ensure visibility on mobile
+  const passwordContainerRef = useRef<HTMLDivElement>(null);
 
   // Fetch pre-test questions when reaching step 4
   useEffect(() => {
@@ -165,7 +169,24 @@ export function RegistrationWizard({ onBackToLogin }: RegistrationWizardProps) {
     if (field === "firstName" || field === "lastName" || field === "middleName") {
       value = autoCapitalize(value as string)
     }
-    setData(prev => ({ ...prev, [field]: value }))
+    
+    setData(prev => {
+      const next = { ...prev, [field]: value };
+      
+      // If school changes, check if the current gradeLevel is valid for the selected school
+      if (field === "school") {
+        const allowedLevels = COLLEGES_WITH_YEARS.includes(value as any)
+          ? ["Grade 11", "Grade 12", "1st Year", "2nd Year", "3rd Year", "4th Year"]
+          : GRADE_LEVELS;
+        
+        if (prev.gradeLevel && !allowedLevels.includes(prev.gradeLevel as any)) {
+          next.gradeLevel = "";
+        }
+      }
+      
+      return next;
+    })
+
     // Clear validation error when user types
     if (validationErrors[field]) {
       setValidationErrors(prev => ({ ...prev, [field]: "" }))
@@ -412,45 +433,69 @@ export function RegistrationWizard({ onBackToLogin }: RegistrationWizardProps) {
     const rating = getScoreRating(percentage)
 
     return (
-      <Card className="w-full max-w-lg mx-auto border-none shadow-[0_8px_30px_rgba(0,0,0,0.12)] rounded-3xl overflow-hidden bg-white dark:bg-slate-900 transition-colors duration-500">
-        <div className="bg-red-600 p-6 text-center rounded-t-3xl">
-          <div className="mx-auto w-20 h-20 bg-white rounded-full flex items-center justify-center mb-4 shadow-lg">
-            <Check className="w-10 h-10 text-green-500" />
+      <Card className="w-full min-h-full sm:min-h-0 sm:max-w-md mx-auto rounded-none sm:rounded-[2rem] border-none sm:border border-slate-100 dark:border-slate-800/80 shadow-none sm:shadow-2xl bg-white dark:bg-slate-900 overflow-hidden transition-colors duration-500 flex flex-col py-0 sm:py-6 gap-0 sm:gap-6">
+        {/* Header Section */}
+        <div className="bg-red-600 px-6 pt-[calc(1.25rem+env(safe-area-inset-top,0px))] pb-6 sm:pt-6 sm:pb-6 text-center rounded-none sm:rounded-t-[2rem] relative overflow-hidden shrink-0">
+          {/* Decorative faint circles in background */}
+          <div className="absolute top-0 left-0 w-full h-full overflow-hidden opacity-20 pointer-events-none">
+            <div className="absolute -top-10 -right-10 w-32 h-32 rounded-full bg-white blur-lg"></div>
+            <div className="absolute -bottom-10 -left-10 w-24 h-24 rounded-full bg-white blur-md"></div>
           </div>
-          <h2 className="text-2xl font-bold text-white">Registration Complete!</h2>
-          <p className="text-white/80 text-sm mt-1">Welcome to SafeScape Fire Safety Learning</p>
+
+          <div className="relative z-10 mx-auto w-16 h-16 bg-white rounded-full flex items-center justify-center mb-4 shadow-[0_0_0_6px_rgba(255,255,255,0.2)] animate-bounce duration-[2000ms]">
+            <Check className="w-8 h-8 text-green-500" strokeWidth={4} />
+          </div>
+          <h2 className="text-2xl font-black text-white tracking-tight relative z-10">Registration Complete!</h2>
+          <p className="text-white/80 text-xs mt-1 font-medium relative z-10">Welcome to SafeScape Fire Safety Learning</p>
         </div>
-        <CardContent className="space-y-6 p-6">
-          <div className="text-center p-6 bg-orange-50 dark:bg-orange-500/10 rounded-2xl border-2 border-orange-200 dark:border-orange-500/20 transition-colors">
-            <p className="text-sm text-orange-600 font-semibold mb-2">Your Pre-Test Score</p>
-            <div className="text-5xl font-black" style={{ color: rating.color }}>
-              {registrationResult.score} / {registrationResult.maxScore}
+
+        {/* Content Section */}
+        <CardContent className="flex-1 flex flex-col justify-center p-6 sm:p-8 space-y-6 bg-white dark:bg-slate-900">
+          
+          {/* Score Card */}
+          <div className="text-center p-6 bg-slate-50 dark:bg-slate-950/40 rounded-3xl border-2 border-slate-100 dark:border-slate-800/50 shadow-md transition-colors">
+            <span className="inline-block text-[10px] font-black text-orange-600 dark:text-orange-400 bg-orange-50 dark:bg-orange-500/10 px-3 py-1 rounded-full uppercase tracking-wider mb-3 border border-orange-100 dark:border-orange-500/20">
+              Your Pre-Test Score
+            </span>
+            <div className="flex justify-center items-baseline gap-1.5 mb-1">
+              <span className="text-5xl font-black" style={{ color: rating.color }}>
+                {registrationResult.score}
+              </span>
+              <span className="text-2xl font-bold text-slate-300 dark:text-slate-700">
+                / {registrationResult.maxScore}
+              </span>
             </div>
-            <p className="text-lg font-bold mt-2" style={{ color: rating.color }}>
+            <p className="text-base font-black uppercase tracking-wide mb-3" style={{ color: rating.color }}>
               {rating.label}
             </p>
-            <p className="text-sm text-slate-500 dark:text-slate-400 mt-4 transition-colors">
+            
+            <div className="h-px w-12 bg-slate-200 dark:bg-slate-800 mx-auto mb-3"></div>
+            
+            <p className="text-xs font-bold text-slate-500 dark:text-slate-400 leading-relaxed max-w-[280px] mx-auto transition-colors">
               This is your baseline score. Complete modules and activities to unlock the Post-Test
-              and see how much you&apos;ve improved!
+              and see how much you've improved!
             </p>
           </div>
 
-          <button
-            onClick={handleContinue}
-            className="w-full bg-yellow-400 text-red-600 font-extrabold py-3 rounded-full text-lg shadow-[0_4px_0_#b45309] hover:-translate-y-0.5 hover:shadow-[0_6px_0_#b45309] active:translate-y-1 active:shadow-[0_0px_0_#b45309] transition-all flex items-center justify-center gap-2 mt-4"
-          >
-            Start Learning
-            <ChevronRight className="h-5 w-5" />
-          </button>
+          {/* Action Button */}
+          <div className="pt-2 text-center">
+            <button
+              onClick={handleContinue}
+              className="mx-auto inline-flex items-center gap-1.5 bg-yellow-400 text-red-700 font-extrabold px-8 py-2.5 rounded-full text-sm border-[3px] border-white shadow-[0_3px_0_#b45309] hover:-translate-y-0.5 hover:shadow-[0_5px_0_#b45309] active:translate-y-0.5 active:shadow-[0_0px_0_#b45309] transition-all"
+            >
+              Start Learning Now
+              <ChevronRight className="h-4 w-4" />
+            </button>
+          </div>
         </CardContent>
       </Card>
     )
   }
 
   return (
-    <Card className="w-full max-w-3xl mx-auto border-none shadow-[0_8px_30px_rgba(0,0,0,0.12)] rounded-3xl overflow-hidden bg-white dark:bg-slate-900 transition-colors duration-500">
+    <Card className="w-full min-h-full sm:min-h-0 sm:max-w-3xl mx-auto rounded-none sm:rounded-[2rem] border-none sm:border border-slate-100 dark:border-slate-800/80 shadow-none sm:shadow-2xl bg-white dark:bg-slate-900 overflow-hidden transition-colors duration-500 flex flex-col justify-between sm:justify-start py-0 sm:py-6 gap-0 sm:gap-6">
       {/* Colorful Gradient Header */}
-      <div className="bg-primary px-4 sm:px-6 pt-4 sm:pt-5 pb-5 sm:pb-6 rounded-t-3xl">
+      <div className="bg-primary px-4 sm:px-8 pt-[calc(1.25rem+env(safe-area-inset-top,0px))] sm:pt-6 pb-5 sm:pb-6 rounded-none sm:rounded-t-[1.85rem]">
         <div className="flex items-center gap-2 mb-2 sm:mb-3">
           <div className="w-8 h-8 sm:w-10 sm:h-10 bg-white rounded-full flex items-center justify-center shadow">
             <Shield className="h-4 w-4 sm:h-5 sm:w-5 text-orange-500" />
@@ -502,7 +547,7 @@ export function RegistrationWizard({ onBackToLogin }: RegistrationWizardProps) {
         <CardTitle>Create Your Account</CardTitle>
       </CardHeader>
 
-      <CardContent className="p-4 sm:p-6">
+      <CardContent className="p-5 sm:p-8 flex-1 flex flex-col justify-between sm:justify-start">
         {error && (
           <div className="mb-4 p-3 bg-red-50 dark:bg-red-500/10 border-2 border-red-200 dark:border-red-500/20 rounded-2xl flex items-start gap-2 transition-colors">
             <AlertCircle className="h-5 w-5 text-red-500 flex-shrink-0 mt-0.5" />
@@ -583,7 +628,7 @@ export function RegistrationWizard({ onBackToLogin }: RegistrationWizardProps) {
             <div>
               <Label className="text-sm font-bold text-slate-700 dark:text-slate-300 transition-colors">Gender *</Label>
               <Select value={data.gender} onValueChange={(value) => updateField("gender", value)}>
-                <SelectTrigger className={`rounded-xl border-2 h-11 text-base font-bold text-slate-700 dark:text-slate-200 focus:ring-orange-400 focus:border-orange-400 transition-all hover:border-slate-300 dark:bg-slate-950 dark:border-slate-800 ${validationErrors.gender ? "border-red-400 bg-red-50 dark:bg-red-500/10" : "border-gray-200"}`}>
+                <SelectTrigger className={`rounded-xl border-2 h-11 text-xs sm:text-sm md:text-base font-bold text-slate-700 dark:text-slate-200 focus:ring-orange-400 focus:border-orange-400 transition-all hover:border-slate-300 dark:bg-slate-950 dark:border-slate-800 ${validationErrors.gender ? "border-red-400 bg-red-50 dark:bg-red-500/10" : "border-gray-200"}`}>
                   <SelectValue placeholder="Select your gender" />
                 </SelectTrigger>
                 <SelectContent className="rounded-xl border-2 border-slate-200 dark:border-slate-800 dark:bg-slate-900 shadow-xl p-1">
@@ -607,7 +652,7 @@ export function RegistrationWizard({ onBackToLogin }: RegistrationWizardProps) {
             <div>
               <Label className="text-sm font-bold text-slate-700 dark:text-slate-300">Barangay *</Label>
               <Select value={data.barangay} onValueChange={(value) => updateField("barangay", value)}>
-                <SelectTrigger className={`rounded-xl border-2 h-11 text-base font-bold text-slate-700 dark:text-slate-200 focus:ring-orange-400 focus:border-orange-400 transition-all hover:border-slate-300 dark:bg-slate-950 dark:border-slate-800 ${validationErrors.barangay ? "border-red-500 bg-red-50 dark:bg-red-500/10" : "border-gray-200"}`}>
+                <SelectTrigger className={`rounded-xl border-2 h-11 text-xs sm:text-sm md:text-base font-bold text-slate-700 dark:text-slate-200 focus:ring-orange-400 focus:border-orange-400 transition-all hover:border-slate-300 dark:bg-slate-950 dark:border-slate-800 ${validationErrors.barangay ? "border-red-500 bg-red-50 dark:bg-red-500/10" : "border-gray-200"}`}>
                   <SelectValue placeholder="Select your barangay" />
                 </SelectTrigger>
                 <SelectContent className="rounded-xl border-2 border-slate-200 dark:border-slate-800 dark:bg-slate-900 shadow-xl p-1">
@@ -628,7 +673,7 @@ export function RegistrationWizard({ onBackToLogin }: RegistrationWizardProps) {
                 <div>
                   <Label className="text-sm font-bold text-slate-700 dark:text-slate-300">School *</Label>
                   <Select value={data.school} onValueChange={(value) => updateField("school", value)}>
-                    <SelectTrigger className={`rounded-xl border-2 h-11 text-base font-bold text-slate-700 dark:text-slate-200 focus:ring-orange-400 focus:border-orange-400 transition-all hover:border-slate-300 dark:bg-slate-950 dark:border-slate-800 ${validationErrors.school ? "border-red-500 bg-red-50 dark:bg-red-500/10" : "border-gray-200"}`}>
+                    <SelectTrigger className={`rounded-xl border-2 h-11 text-xs sm:text-sm md:text-base font-bold text-slate-700 dark:text-slate-200 focus:ring-orange-400 focus:border-orange-400 transition-all hover:border-slate-300 dark:bg-slate-950 dark:border-slate-800 ${validationErrors.school ? "border-red-500 bg-red-50 dark:bg-red-500/10" : "border-gray-200"}`}>
                       <SelectValue placeholder="Select your school" />
                     </SelectTrigger>
                     <SelectContent className="rounded-xl border-2 border-slate-200 dark:border-slate-800 dark:bg-slate-900 shadow-xl p-1">
@@ -652,7 +697,7 @@ export function RegistrationWizard({ onBackToLogin }: RegistrationWizardProps) {
                       placeholder="Enter your school name"
                       value={data.schoolOther}
                       onChange={(e) => updateField("schoolOther", e.target.value)}
-                      className={`rounded-xl border-2 h-11 text-base dark:bg-slate-950 dark:text-white dark:border-slate-800 ${validationErrors.schoolOther ? "border-red-500 bg-red-50 dark:bg-red-500/10" : "border-gray-200"}`}
+                      className={`rounded-xl border-2 h-11 text-xs sm:text-sm md:text-base dark:bg-slate-950 dark:text-white dark:border-slate-800 ${validationErrors.schoolOther ? "border-red-500 bg-red-50 dark:bg-red-500/10" : "border-gray-200"}`}
                     />
                     {validationErrors.schoolOther && (
                       <p className="text-sm text-red-500 mt-1">{validationErrors.schoolOther}</p>
@@ -663,11 +708,14 @@ export function RegistrationWizard({ onBackToLogin }: RegistrationWizardProps) {
                 <div>
                   <Label className="text-sm font-bold text-slate-700 dark:text-slate-300">Grade Level *</Label>
                   <Select value={data.gradeLevel} onValueChange={(value) => updateField("gradeLevel", value)}>
-                    <SelectTrigger className={`rounded-xl border-2 h-11 text-base font-bold text-slate-700 dark:text-slate-200 focus:ring-orange-400 focus:border-orange-400 transition-all hover:border-slate-300 dark:bg-slate-950 dark:border-slate-800 ${validationErrors.gradeLevel ? "border-red-500 bg-red-50 dark:bg-red-500/10" : "border-gray-200"}`}>
+                    <SelectTrigger className={`rounded-xl border-2 h-11 text-xs sm:text-sm md:text-base font-bold text-slate-700 dark:text-slate-200 focus:ring-orange-400 focus:border-orange-400 transition-all hover:border-slate-300 dark:bg-slate-950 dark:border-slate-800 ${validationErrors.gradeLevel ? "border-red-500 bg-red-50 dark:bg-red-500/10" : "border-gray-200"}`}>
                       <SelectValue placeholder="Select your grade level" />
                     </SelectTrigger>
                     <SelectContent className="rounded-xl border-2 border-slate-200 dark:border-slate-800 dark:bg-slate-900 shadow-xl p-1">
-                      {GRADE_LEVELS.map((level) => (
+                      {(COLLEGES_WITH_YEARS.includes(data.school as any)
+                        ? ["Grade 11", "Grade 12", "1st Year", "2nd Year", "3rd Year", "4th Year"]
+                        : GRADE_LEVELS
+                      ).map((level) => (
                         <SelectItem key={level} value={level} className="rounded-lg font-bold text-slate-700 dark:text-slate-300 focus:bg-orange-50 dark:focus:bg-slate-800 focus:text-orange-600 dark:focus:text-orange-400 transition-colors cursor-pointer py-2.5">
                           {level}
                         </SelectItem>
@@ -684,7 +732,7 @@ export function RegistrationWizard({ onBackToLogin }: RegistrationWizardProps) {
                 <div>
                   <Label className="text-sm font-bold text-slate-700 dark:text-slate-300">Occupation *</Label>
                   <Select value={data.occupation} onValueChange={(value) => updateField("occupation", value)}>
-                    <SelectTrigger className={`rounded-xl border-2 h-11 text-base font-bold text-slate-700 dark:text-slate-200 focus:ring-orange-400 focus:border-orange-400 transition-all hover:border-slate-300 dark:bg-slate-950 dark:border-slate-800 ${validationErrors.occupation ? "border-red-500 bg-red-50 dark:bg-red-500/10" : "border-gray-200"}`}>
+                    <SelectTrigger className={`rounded-xl border-2 h-11 text-xs sm:text-sm md:text-base font-bold text-slate-700 dark:text-slate-200 focus:ring-orange-400 focus:border-orange-400 transition-all hover:border-slate-300 dark:bg-slate-950 dark:border-slate-800 ${validationErrors.occupation ? "border-red-500 bg-red-50 dark:bg-red-500/10" : "border-gray-200"}`}>
                       <SelectValue placeholder="Select your occupation" />
                     </SelectTrigger>
                     <SelectContent className="rounded-xl border-2 border-slate-200 dark:border-slate-800 dark:bg-slate-900 shadow-xl p-1">
@@ -708,7 +756,7 @@ export function RegistrationWizard({ onBackToLogin }: RegistrationWizardProps) {
                       placeholder="Enter your occupation"
                       value={data.occupationOther}
                       onChange={(e) => updateField("occupationOther", e.target.value)}
-                      className={`rounded-xl border-2 h-11 text-base dark:bg-slate-950 dark:text-white dark:border-slate-800 ${validationErrors.occupationOther ? "border-red-500 bg-red-50 dark:bg-red-500/10" : "border-gray-200"}`}
+                      className={`rounded-xl border-2 h-11 text-xs sm:text-sm md:text-base dark:bg-slate-950 dark:text-white dark:border-slate-800 ${validationErrors.occupationOther ? "border-red-500 bg-red-50 dark:bg-red-500/10" : "border-gray-200"}`}
                     />
                     {validationErrors.occupationOther && (
                       <p className="text-sm text-red-500 mt-1">{validationErrors.occupationOther}</p>
@@ -720,7 +768,7 @@ export function RegistrationWizard({ onBackToLogin }: RegistrationWizardProps) {
                   <div>
                     <Label className="text-sm font-bold text-slate-700 dark:text-slate-300">School (Optional)</Label>
                     <Select value={data.school} onValueChange={(value) => updateField("school", value)}>
-                      <SelectTrigger className="rounded-xl border-2 h-11 text-base font-bold text-slate-700 dark:text-slate-200 focus:ring-orange-400 focus:border-orange-400 transition-all hover:border-slate-300 dark:bg-slate-950 dark:border-slate-800 border-gray-200 transition-colors">
+                      <SelectTrigger className="rounded-xl border-2 h-11 text-xs sm:text-sm md:text-base font-bold text-slate-700 dark:text-slate-200 focus:ring-orange-400 focus:border-orange-400 transition-all hover:border-slate-300 dark:bg-slate-950 dark:border-slate-800 border-gray-200 transition-colors">
                         <SelectValue placeholder="Select your school" />
                       </SelectTrigger>
                       <SelectContent className="rounded-xl border-2 border-slate-200 dark:border-slate-800 dark:bg-slate-900 shadow-xl p-1">
@@ -778,7 +826,7 @@ export function RegistrationWizard({ onBackToLogin }: RegistrationWizardProps) {
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div className="space-y-2">
+              <div className="space-y-2" ref={passwordContainerRef}>
                 <Label htmlFor="password" className="text-sm font-bold text-slate-700 dark:text-slate-300 ml-1 transition-colors">Password *</Label>
                 <div className="relative">
                   <Input
@@ -788,6 +836,12 @@ export function RegistrationWizard({ onBackToLogin }: RegistrationWizardProps) {
                     placeholder="Create a password"
                     value={data.password}
                     onChange={(e) => updateField("password", e.target.value)}
+                    onFocus={() => {
+                      // Small delay to allow the mobile keyboard to fully open before scrolling
+                      setTimeout(() => {
+                        passwordContainerRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+                      }, 300);
+                    }}
                     className={`rounded-xl border-2 h-11 text-base focus:border-orange-400 focus:ring-orange-400 dark:bg-slate-950 dark:text-white dark:border-slate-800 pr-10 ${validationErrors.password ? "border-red-400 bg-red-50 dark:bg-red-500/10" : "border-gray-200"}`}
                   />
                   <button
@@ -801,6 +855,29 @@ export function RegistrationWizard({ onBackToLogin }: RegistrationWizardProps) {
                 {validationErrors.password && (
                   <p className="text-sm text-red-500 mt-1 font-medium">⚠️ {validationErrors.password}</p>
                 )}
+
+                {/* Password Requirements Checklist */}
+                <div className="bg-slate-50 dark:bg-slate-950 border-2 border-slate-100 dark:border-slate-800 rounded-2xl p-4 transition-colors mt-3">
+                  <p className="text-xs font-black text-slate-700 dark:text-slate-300 mb-3 uppercase tracking-wider transition-colors">Password Requirements:</p>
+                  <div className="flex flex-col gap-2">
+                    {[
+                      { label: "At least 8 characters", met: data.password.length >= 8 },
+                      { label: "One uppercase letter", met: /[A-Z]/.test(data.password) },
+                      { label: "One lowercase letter", met: /[a-z]/.test(data.password) },
+                      { label: "One number (0-9)", met: /[0-9]/.test(data.password) },
+                      { label: "One special character (!@#...)", met: /[^A-Za-z0-9]/.test(data.password) },
+                    ].map((req, i) => (
+                      <div key={i} className="flex items-center gap-2">
+                        <div className={`h-4 w-4 rounded-full flex items-center justify-center transition-colors shrink-0 ${req.met ? "bg-green-500" : "bg-slate-200 dark:bg-slate-800"}`}>
+                          <Check className={`h-2.5 w-2.5 text-white transition-opacity ${req.met ? "opacity-100" : "opacity-0"}`} strokeWidth={4} />
+                        </div>
+                        <span className={`text-[11px] font-bold transition-colors ${req.met ? "text-green-700 dark:text-green-400" : "text-slate-500 dark:text-slate-400"}`}>
+                          {req.label}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
               </div>
 
               <div className="space-y-2">
@@ -820,28 +897,7 @@ export function RegistrationWizard({ onBackToLogin }: RegistrationWizardProps) {
               </div>
             </div>
 
-            {/* Password Requirements Checklist */}
-            <div className="bg-slate-50 dark:bg-slate-950 border-2 border-slate-100 dark:border-slate-800 rounded-2xl p-4 transition-colors">
-              <p className="text-xs font-black text-slate-700 dark:text-slate-300 mb-3 uppercase tracking-wider transition-colors">Password Requirements:</p>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-2">
-                {[
-                  { label: "At least 8 characters", met: data.password.length >= 8 },
-                  { label: "One uppercase letter", met: /[A-Z]/.test(data.password) },
-                  { label: "One lowercase letter", met: /[a-z]/.test(data.password) },
-                  { label: "One number (0-9)", met: /[0-9]/.test(data.password) },
-                  { label: "One special character (!@#...)", met: /[^A-Za-z0-9]/.test(data.password) },
-                ].map((req, i) => (
-                  <div key={i} className="flex items-center gap-2">
-                    <div className={`h-4 w-4 rounded-full flex items-center justify-center transition-colors ${req.met ? "bg-green-500" : "bg-slate-200 dark:bg-slate-800"}`}>
-                      <Check className={`h-2.5 w-2.5 text-white transition-opacity ${req.met ? "opacity-100" : "opacity-0"}`} strokeWidth={4} />
-                    </div>
-                    <span className={`text-xs font-bold transition-colors ${req.met ? "text-green-700 dark:text-green-400" : "text-slate-500 dark:text-slate-400"}`}>
-                      {req.label}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            </div>
+
 
             <div className="flex items-start space-x-3 pt-2 group cursor-pointer" onClick={() => updateField("dataPrivacyConsent", !data.dataPrivacyConsent)}>
               <div className={`mt-0.5 shrink-0 h-5 w-5 rounded-md border-2 flex items-center justify-center transition-all ${data.dataPrivacyConsent ? "bg-orange-500 border-orange-500 shadow-[0_2px_0_#ca8a04]" : "bg-white dark:bg-slate-950 border-slate-200 dark:border-slate-800"}`}>
@@ -880,47 +936,79 @@ export function RegistrationWizard({ onBackToLogin }: RegistrationWizardProps) {
               </div>
             ) : (
               <>
-                <div className="p-4 bg-orange-50 dark:bg-orange-500/10 rounded-2xl border-2 border-orange-200 dark:border-orange-500/20 transition-colors">
-                  <span className="inline-block text-xs font-bold text-orange-600 dark:text-orange-400 bg-orange-100 dark:bg-orange-500/20 px-3 py-1 rounded-full mb-2 transition-colors">
-                    {questions[currentQuestionIndex].category}
-                  </span>
-                  <h3 className="text-base font-bold text-slate-800 dark:text-white mb-3 transition-colors">
+                {/* Question Container */}
+                <div className="p-5 sm:p-6 bg-white dark:bg-slate-900 rounded-[2rem] border-2 border-slate-100 dark:border-slate-800 shadow-xl transition-colors">
+                  <div className="flex justify-between items-start mb-4">
+                    <span className="inline-block text-xs font-black text-orange-600 dark:text-orange-400 bg-orange-100 dark:bg-orange-500/20 px-3 py-1 rounded-full uppercase tracking-wider transition-colors">
+                      {questions[currentQuestionIndex].category}
+                    </span>
+                    <span className="text-xs font-bold text-slate-400 dark:text-slate-500">
+                      {currentQuestionIndex + 1} of {questions.length}
+                    </span>
+                  </div>
+                  
+                  <h3 className="text-lg sm:text-xl font-black text-slate-800 dark:text-white mb-6 leading-tight transition-colors">
                     {questions[currentQuestionIndex].question}
                   </h3>
 
                   <RadioGroup
                     value={data.preTestAnswers[questions[currentQuestionIndex].id]?.toString() || ""}
                     onValueChange={(value) => handleAnswerQuestion(questions[currentQuestionIndex].id, parseInt(value))}
+                    className="gap-3"
                   >
-                    {questions[currentQuestionIndex].options.map((option, index) => (
-                      <div key={index} className="flex items-center space-x-2 p-2 rounded-xl hover:bg-orange-100/60 dark:hover:bg-orange-500/10 border-2 border-transparent hover:border-orange-300 dark:hover:border-orange-500/30 transition-all cursor-pointer group">
-                        <RadioGroupItem value={index.toString()} id={`option-${index}`} className="border-orange-400 text-orange-500 dark:border-orange-500/50" />
-                        <Label htmlFor={`option-${index}`} className="flex-1 cursor-pointer font-medium text-slate-700 dark:text-slate-300 group-hover:text-slate-900 dark:group-hover:text-white transition-colors">
-                          {option}
-                        </Label>
-                      </div>
-                    ))}
+                    {questions[currentQuestionIndex].options.map((option, index) => {
+                      const isSelected = data.preTestAnswers[questions[currentQuestionIndex].id] === index;
+                      return (
+                        <div 
+                          key={index} 
+                          className="relative flex items-center"
+                        >
+                          {/* We place the RadioGroupItem completely hidden over the whole area so it handles accessibility and clicking perfectly, or we use a big label */}
+                          <RadioGroupItem 
+                            value={index.toString()} 
+                            id={`option-${index}`} 
+                            className="peer sr-only" 
+                          />
+                          <Label 
+                            htmlFor={`option-${index}`} 
+                            className={`flex-1 flex items-center p-4 cursor-pointer rounded-2xl border-[3px] transition-all font-bold text-sm sm:text-base ${
+                              isSelected 
+                                ? "bg-orange-50 dark:bg-orange-500/10 border-orange-500 text-orange-700 dark:text-orange-300 shadow-[0_4px_0_#ca8a04]" 
+                                : "bg-slate-50 dark:bg-slate-950 border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 hover:border-orange-300 dark:hover:border-orange-500/30 hover:bg-orange-50/50 dark:hover:bg-orange-500/5 shadow-[0_4px_0_#cbd5e1] dark:shadow-[0_4px_0_#1e293b]"
+                            }`}
+                          >
+                            <div className={`mr-3 w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 transition-colors ${
+                              isSelected ? "border-orange-500" : "border-slate-300 dark:border-slate-600"
+                            }`}>
+                              {isSelected && <div className="w-2.5 h-2.5 rounded-full bg-orange-500" />}
+                            </div>
+                            {option}
+                          </Label>
+                        </div>
+                      );
+                    })}
                   </RadioGroup>
-                </div>
-
-
-                {/* Question dots for quick navigation */}
-                <div className="flex flex-wrap justify-center gap-1.5 sm:gap-2 mt-5 sm:mt-6">
-                  {questions.map((q, idx) => (
-                    <button
-                      key={q.id}
-                      onClick={() => setCurrentQuestionIndex(idx)}
-                      className={`w-7 h-7 sm:w-8 sm:h-8 rounded-full text-[10px] sm:text-[11px] font-bold transition-all border-2 ${
-                        currentQuestionIndex === idx
-                          ? "bg-orange-500 text-white border-orange-300 shadow-[0_3px_0_#c2410c] scale-110"
-                          : data.preTestAnswers[q.id] !== undefined
-                            ? "bg-green-400 text-white border-green-300 shadow-[0_2px_0_#166534]"
-                            : "bg-gray-100 dark:bg-slate-800 text-gray-400 dark:text-slate-500 border-gray-200 dark:border-slate-700 hover:bg-gray-200 dark:hover:bg-slate-700"
-                      }`}
-                    >
-                      {idx + 1}
-                    </button>
-                  ))}
+                </div>                {/* Question dots for quick navigation */}
+                <div className="flex flex-wrap justify-center gap-2 sm:gap-2.5 mt-6">
+                  {questions.map((q, idx) => {
+                    const isAnswered = data.preTestAnswers[q.id] !== undefined;
+                    const isCurrent = currentQuestionIndex === idx;
+                    return (
+                      <button
+                        key={q.id}
+                        onClick={() => setCurrentQuestionIndex(idx)}
+                        className={`w-10 h-10 sm:w-11 sm:h-11 rounded-full text-xs sm:text-sm font-black transition-all border-[3px] flex items-center justify-center ${
+                          isCurrent
+                            ? "bg-orange-500 text-white border-orange-400 shadow-[0_3px_0_#ca8a04] scale-110"
+                            : isAnswered
+                              ? "bg-green-500 text-white border-green-400 shadow-[0_2px_0_#15803d]"
+                              : "bg-white dark:bg-slate-900 text-slate-400 dark:text-slate-500 border-slate-200 dark:border-slate-800 shadow-[0_2px_0_#e2e8f0] dark:shadow-[0_2px_0_#1e293b]"
+                        }`}
+                      >
+                        {isAnswered && !isCurrent ? <Check className="h-3.5 w-3.5" strokeWidth={4} /> : (idx + 1)}
+                      </button>
+                    );
+                  })}
                 </div>
 
                 {validationErrors.preTest && (
@@ -937,7 +1025,7 @@ export function RegistrationWizard({ onBackToLogin }: RegistrationWizardProps) {
             <button
               onClick={handleBack}
               disabled={currentStep === 1 && !onBackToLogin}
-              className={`flex items-center gap-1 font-bold px-5 py-2.5 rounded-full border-[3px] transition-all text-sm ${
+              className={`flex items-center gap-1 font-bold px-5 h-11 rounded-full border-[3px] transition-all text-sm ${
                 currentStep === 1 && !onBackToLogin
                   ? "border-gray-200 dark:border-slate-800 text-gray-300 dark:text-slate-700 cursor-not-allowed"
                   : "border-gray-300 dark:border-slate-700 text-slate-600 dark:text-slate-400 shadow-[0_3px_0_#94a3b8] dark:shadow-[0_3px_0_#1e293b] hover:-translate-y-0.5 hover:shadow-[0_5px_0_#94a3b8] dark:hover:shadow-[0_5px_0_#1e293b] active:translate-y-1 active:shadow-[0_0px_0_#94a3b8]"
@@ -948,7 +1036,7 @@ export function RegistrationWizard({ onBackToLogin }: RegistrationWizardProps) {
             </button>
             <button
               onClick={handleNext}
-              className="flex items-center gap-1 bg-yellow-400 text-red-600 font-extrabold px-6 py-2.5 rounded-full border-[3px] border-white shadow-[0_4px_0_#b45309] hover:-translate-y-0.5 hover:shadow-[0_6px_0_#b45309] active:translate-y-1 active:shadow-[0_0px_0_#b45309] transition-all text-sm"
+              className="flex items-center gap-1 bg-yellow-400 text-red-600 font-extrabold px-6 h-11 rounded-full border-[3px] border-white shadow-[0_3px_0_#b45309] hover:-translate-y-0.5 hover:shadow-[0_5px_0_#b45309] active:translate-y-1 active:shadow-[0_0px_0_#b45309] transition-all text-sm"
             >
               Next
               <ChevronRight className="h-4 w-4" />
@@ -963,7 +1051,7 @@ export function RegistrationWizard({ onBackToLogin }: RegistrationWizardProps) {
               className="flex items-center gap-1 font-bold px-5 py-2.5 rounded-full border-[3px] border-gray-300 dark:border-slate-700 text-slate-600 dark:text-slate-400 shadow-[0_3px_0_#94a3b8] dark:shadow-[0_3px_0_#1e293b] hover:-translate-y-0.5 hover:shadow-[0_5px_0_#94a3b8] dark:hover:shadow-[0_5px_0_#1e293b] active:translate-y-1 active:shadow-[0_0px_0_#94a3b8] transition-all text-sm"
             >
               <ChevronLeft className="h-4 w-4" />
-              Back to Account
+              Back
             </button>
 
             {currentQuestionIndex === questions.length - 1 && (

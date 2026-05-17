@@ -133,9 +133,14 @@
             justify-content: center;
             gap: 8px;
             padding: 16px;
-            background: rgba(15, 23, 42, 0.5);
-            border: 3px solid rgba(51, 65, 85, 0.6);
+            background: rgba(241, 245, 249, 0.8);
+            border: 3px solid rgba(203, 213, 225, 0.8);
             border-radius: 2rem;
+            transition: all 0.3s;
+        }
+        .dark .dpad-dock {
+            background: rgba(15, 23, 42, 0.5);
+            border-color: rgba(51, 65, 85, 0.6);
         }
         @media (min-width: 768px) {
             .dpad-dock {
@@ -155,9 +160,9 @@
             align-items: center;
             justify-content: center;
             border-radius: 12px;
-            background: rgba(30, 41, 59, 0.9);
-            border: 2px solid rgba(148, 163, 184, 0.3);
-            color: rgba(248, 250, 252, 0.9);
+            background: #ffffff;
+            border: 2px solid rgba(203, 213, 225, 0.8);
+            color: #1e293b;
             font-size: 18px;
             cursor: pointer;
             user-select: none;
@@ -165,9 +170,15 @@
             transition: background 0.1s, transform 0.08s, box-shadow 0.1s;
             touch-action: none;
         }
+        .dark .dpad-btn {
+            background: rgba(30, 41, 59, 0.9);
+            border-color: rgba(148, 163, 184, 0.3);
+            color: rgba(248, 250, 252, 0.9);
+        }
         .dpad-btn:active, .dpad-btn.active {
             background: rgba(251, 146, 60, 0.7);
             border-color: rgba(251, 146, 60, 0.8);
+            color: white;
             transform: scale(0.92);
             box-shadow: 0 0 10px rgba(251, 146, 60, 0.4);
         }
@@ -178,20 +189,23 @@
             /* empty grid cell */
         }
         .dpad-label {
-            color: rgba(148, 163, 184, 0.8);
+            color: #475569;
             font-size: 10px;
             font-weight: 800;
             text-transform: uppercase;
             letter-spacing: 0.1em;
             text-align: center;
         }
+        .dark .dpad-label {
+            color: rgba(148, 163, 184, 0.8);
+        }
         .dpad-reset-btn {
             width: 100%;
             max-width: 150px;
             margin-top: 8px;
-            background: rgba(30, 41, 59, 0.8);
-            border: 2px solid rgba(51, 65, 85, 0.6);
-            color: rgba(248, 250, 252, 0.8);
+            background: #f1f5f9;
+            border: 2px solid rgba(203, 213, 225, 0.8);
+            color: #1e293b;
             font-size: 10px;
             font-weight: 800;
             text-transform: uppercase;
@@ -201,7 +215,15 @@
             cursor: pointer;
             transition: background 0.15s;
         }
+        .dark .dpad-reset-btn {
+            background: rgba(30, 41, 59, 0.8);
+            border-color: rgba(51, 65, 85, 0.6);
+            color: rgba(248, 250, 252, 0.8);
+        }
         .dpad-reset-btn:active {
+            background: rgba(203, 213, 225, 0.8);
+        }
+        .dark .dpad-reset-btn:active {
             background: rgba(51, 65, 85, 0.8);
         }
     </style>
@@ -253,7 +275,7 @@
 
         <!-- VIDEO -->
         <section id="section-video" class="fade-in ss-section bg-white dark:bg-slate-900/50 border-[3px] sm:border-[4px] border-blue-200 dark:border-blue-900/30 shadow-sm p-4 sm:p-10 text-center transition-colors" style="animation-delay: 0.2s;">
-            <div class="ss-section-badge bg-green-500 border-[3px] border-white shadow-sm text-white"><i class="fa-regular fa-circle-check"></i></div>
+            <div class="ss-section-badge bg-green-500 border-[3px] border-white dark:border-slate-800 shadow-sm text-white transition-colors"><i class="fa-regular fa-circle-check"></i></div>
             <h2 class="text-2xl sm:text-3xl font-black text-blue-600 mb-4 sm:mb-6 drop-shadow-sm">Watch the Intro Video</h2>
             <div
                 class="w-full aspect-video bg-slate-100 dark:bg-slate-950 rounded-[2rem] sm:rounded-[3rem] overflow-hidden shadow-sm border-[3px] sm:border-[4px] border-blue-200 dark:border-blue-900/30 relative group">
@@ -267,7 +289,7 @@
 
         <!-- PART 1: STRATEGIC CONTENT -->
         <section id="section-content" class="fade-in ss-section bg-slate-50 dark:bg-slate-900/50 p-5 sm:p-8 md:p-12 border-[4px] border-slate-200 dark:border-slate-800 shadow-sm transition-colors" style="animation-delay: 0.3s;">
-            <div class="ss-section-badge bg-green-500 border-[3px] border-white shadow-sm text-white"><i class="fa-regular fa-circle-check"></i></div>
+            <div class="ss-section-badge bg-green-500 border-[3px] border-white dark:border-slate-800 shadow-sm text-white transition-colors"><i class="fa-regular fa-circle-check"></i></div>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-12 items-center">
                 <div class="space-y-4 sm:space-y-6">
                     <div>
@@ -337,19 +359,19 @@
 
         <!-- PART 2: THE CANVAS GAME -->
         <section id="section-game"
-            class="fade-in ss-section bg-slate-800 p-4 sm:p-6 md:p-8 lg:p-10 shadow-sm border-[3px] sm:border-[4px] border-slate-700 text-center"
+            class="fade-in ss-section bg-slate-50 dark:bg-slate-900/50 p-4 sm:p-6 md:p-8 lg:p-10 shadow-sm border-[3px] sm:border-[4px] border-slate-200 dark:border-slate-800 text-center transition-colors"
             style="animation-delay: 0.5s;">
-            <div class="ss-section-badge bg-green-500 border-[3px] border-white shadow-sm text-white"><i class="fa-regular fa-circle-check"></i></div>
+            <div class="ss-section-badge bg-green-500 border-[3px] border-white dark:border-slate-800 shadow-sm text-white transition-colors"><i class="fa-regular fa-circle-check"></i></div>
             <div class="mb-4 sm:mb-6">
-                <h2 class="text-xl sm:text-2xl md:text-3xl font-black text-white mb-1.5 sm:mb-2 drop-shadow-sm"><i
-                        class="fa-solid fa-compass-drafting text-blue-400 mr-1.5 sm:mr-2 text-base sm:text-xl"></i> The Smoke Labyrinth</h2>
-                <p class="text-slate-300 font-bold text-xs sm:text-sm md:text-base">Use <strong class="text-slate-800 border-[2px] sm:border-[3px] border-slate-400 bg-white px-1.5 py-0.5 sm:px-2 rounded shadow-sm text-xs sm:text-sm">ARROW
+                <h2 class="text-xl sm:text-2xl md:text-3xl font-black text-slate-800 dark:text-white mb-1.5 sm:mb-2 drop-shadow-sm transition-colors"><i
+                        class="fa-solid fa-compass-drafting text-blue-500 dark:text-blue-400 mr-1.5 sm:mr-2 text-base sm:text-xl"></i> The Smoke Labyrinth</h2>
+                <p class="text-slate-600 dark:text-slate-300 font-bold text-xs sm:text-sm md:text-base transition-colors">Use <strong class="text-slate-800 dark:text-slate-200 border-[2px] sm:border-[3px] border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-850 px-1.5 py-0.5 sm:px-2 rounded shadow-sm text-xs sm:text-sm font-black transition-colors">ARROW
                         KEYS</strong> to find your way through the smoke.</p>
             </div>
 
             <div class="flex flex-col xl:flex-row gap-4 sm:gap-6 md:gap-8 justify-center items-start">
                 <div class="relative w-full max-w-[600px] mx-auto">
-                    <div id="game-container" class="rounded-[2rem] sm:rounded-[3rem] border-[3px] sm:border-[4px] border-slate-600 shadow-xl overflow-hidden relative bg-slate-900 cursor-crosshair">
+                    <div id="game-container" class="rounded-[2rem] sm:rounded-[3rem] border-[3px] sm:border-[4px] border-slate-300 dark:border-slate-850 shadow-xl overflow-hidden relative bg-slate-950 cursor-crosshair transition-colors">
                         <canvas id="gameCanvas" width="600" height="400" class="w-full h-auto block"></canvas>
                         <div class="absolute top-2 left-2 sm:top-4 sm:left-4 text-left pointer-events-none hidden md:block">
                             <div class="text-green-400 font-black tracking-widest text-[10px] sm:text-xs mb-0.5 sm:mb-1 uppercase">VISIBILITY: LOW</div>
@@ -402,20 +424,20 @@
                     </div>
 
                     <!-- Desktop Status Log (hidden on mobile) -->
-                    <div class="hidden md:flex flex-col bg-slate-900/50 backdrop-blur-sm p-4 sm:p-6 rounded-[2rem] sm:rounded-[3rem] border-[3px] sm:border-[4px] border-slate-700 shadow-sm text-left h-full self-stretch">
-                        <h3 class="text-[10px] sm:text-xs font-black text-slate-500 uppercase tracking-widest mb-2 sm:mb-3 flex items-center gap-2">
+                    <div class="hidden md:flex flex-col bg-white dark:bg-slate-900/50 backdrop-blur-sm p-4 sm:p-6 rounded-[2rem] sm:rounded-[3rem] border-[3px] sm:border-[4px] border-slate-200 dark:border-slate-700 shadow-sm text-left h-full self-stretch transition-colors">
+                        <h3 class="text-[10px] sm:text-xs font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-2 sm:mb-3 flex items-center gap-2 transition-colors">
                             <span class="w-1.5 h-1.5 bg-green-500 rounded-full animate-ping"></span>
                             Mission Status Log
                         </h3>
                         <div id="game-log"
-                            class="text-xs font-mono font-bold space-y-2 sm:space-y-3 h-48 sm:h-64 overflow-y-auto mb-4 border-b border-slate-800 pb-2 scroll-smooth">
-                            <p class="text-green-400">> Environment Loaded.</p>
-                            <p class="text-slate-400">> Smoke Density: 90%</p>
+                            class="text-xs font-mono font-bold space-y-2 sm:space-y-3 h-48 sm:h-64 overflow-y-auto mb-4 border-b border-slate-100 dark:border-slate-800 pb-2 scroll-smooth">
+                            <p class="text-green-600 dark:text-green-400">> Environment Loaded.</p>
+                            <p class="text-slate-500 dark:text-slate-400">> Smoke Density: 90%</p>
                         </div>
 
                         <div class="mt-auto">
                             <button onclick="initGame()"
-                                class="w-full bg-slate-800/80 hover:bg-slate-700 text-white font-bold py-2.5 sm:py-3 rounded-xl border-2 border-slate-600 shadow-sm transition-all hover:-translate-y-0.5 active:translate-y-1 text-xs sm:text-sm uppercase tracking-wider flex items-center justify-center gap-2">
+                                class="w-full bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 hover:text-slate-900 dark:text-slate-300 dark:hover:text-white font-black py-2.5 sm:py-3 rounded-xl border-b-[4px] border-slate-300 dark:border-slate-950 active:border-b-[1px] active:mt-[3px] transition-all text-xs sm:text-sm uppercase tracking-wider flex items-center justify-center gap-2 shadow-sm">
                                 <i class="fa-solid fa-rotate"></i>Reset Simulation
                             </button>
                         </div>
@@ -453,13 +475,13 @@
         <section id="final-quiz"
             class="fade-in ss-section bg-yellow-50 dark:bg-yellow-950/20 p-4 sm:p-8 md:p-12 border-[3px] sm:border-[4px] border-yellow-300 dark:border-yellow-900/30 shadow-sm transition-colors"
             style="animation-delay: 0.6s;">
-            <div class="ss-section-badge bg-green-500 border-[3px] border-white shadow-sm text-white"><i class="fa-regular fa-circle-check"></i></div>
+            
             <div class="text-center mb-4 sm:mb-10">
                 <h2 class="text-lg sm:text-3xl font-black text-yellow-900 dark:text-yellow-500 mb-2 sm:mb-3 drop-shadow-sm transition-colors"><i
                         class="fa-solid fa-graduation-cap text-orange-500 mr-2"></i> Strategic Certification</h2>
             </div>
 
-            <div id="quiz-container" class="max-w-2xl mx-auto space-y-6"></div>
+            <div id="quiz-container" class="max-w-2xl mx-auto space-y-6 transition-all duration-500 ease-in-out transform-gpu overflow-hidden"></div>
 
             <div id="quiz-result" class="hidden ss-completion-card success mx-auto mt-10">
                 <div class="ss-completion-icon" id="result-icon">🏆</div>
@@ -555,7 +577,6 @@
                 }
             }
             if (localState.labyrinthEscaped && localState.integrityPassed) document.getElementById('section-game').classList.add('completed');
-            if (localState.quizPassed) document.getElementById('final-quiz').classList.add('completed');
 
             // Locked states (sequential)
             const secContent = document.getElementById('section-content');
@@ -953,6 +974,7 @@
             const container = document.getElementById('quiz-container');
             const header = document.getElementById('final-quiz').querySelector('.text-center');
             if (reviewMode) {
+                container.classList.add('animate-fade-in');
                 container.classList.remove('hidden');
                 if (header) header.classList.remove('hidden');
                 document.getElementById('btn-review').innerText = "Hide Answers";
@@ -961,6 +983,7 @@
                 }, 150);
             } else {
                 container.classList.add('hidden');
+                container.classList.remove('animate-fade-in');
                 if (header) header.classList.add('hidden');
                 document.getElementById('btn-review').innerText = "Review Answers";
                 setTimeout(() => {
@@ -981,12 +1004,14 @@
                 document.getElementById('result-title').className = "ss-completion-title";
                 document.getElementById('result-desc').innerText = "You have already completed this quiz!";
                 document.getElementById('btn-next-module').classList.remove('hidden');
+                const fq = document.getElementById('final-quiz');
+                fq.className = "fade-in ss-section bg-slate-50 dark:bg-slate-900 rounded-[2rem] p-4 sm:p-8 md:p-12 border-[4px] border-slate-200 dark:border-slate-800 shadow-sm transition-all duration-500";
                 // Render questions with correct answers for review
                 container.innerHTML = '';
                 quizData.forEach((item, idx) => {
                     const qDiv = document.createElement('div');
-                    qDiv.className = "bg-white dark:bg-slate-900 p-6 rounded-3xl border-[3px] border-yellow-200 dark:border-yellow-900/30 shadow-sm transition-colors";
-                    qDiv.innerHTML = `<h3 class="text-slate-800 dark:text-white font-black mb-4 text-lg transition-colors">${idx + 1}. ${item.q}</h3>`;
+                    qDiv.className = "bg-white dark:bg-slate-800 p-4 sm:p-6 rounded-2xl sm:rounded-3xl border-[3px] border-slate-200 dark:border-slate-700 shadow-sm transition-colors";
+                    qDiv.innerHTML = `<h3 class="text-slate-800 dark:text-white font-black mb-3 sm:mb-4 text-sm sm:text-lg transition-colors">${idx + 1}. ${item.q}</h3>`;
                     const optionsDiv = document.createElement('div');
                     optionsDiv.className = "grid grid-cols-1 gap-3";
                     item.options.forEach((opt, optIdx) => {
@@ -994,16 +1019,18 @@
                         btn.disabled = true;
                         btn.innerText = opt;
                         if (optIdx === item.correct) {
-                            btn.className = "quiz-option w-full text-left p-4 rounded-xl border-2 font-bold transition-all bg-green-500 border-green-600 text-white shadow-sm";
+                            btn.className = "quiz-option w-full text-left p-3 sm:p-4 rounded-xl border-2 font-bold text-sm sm:text-base transition-all bg-green-500 border-green-600 text-white shadow-sm";
                         } else {
-                            btn.className = "quiz-option w-full text-left p-4 rounded-xl border-2 border-slate-200 dark:border-slate-800 text-slate-400 dark:text-slate-600 font-bold bg-white dark:bg-slate-950 opacity-50 cursor-not-allowed transition-colors";
+                            btn.className = "quiz-option w-full text-left p-3 sm:p-4 rounded-xl border-2 font-bold text-sm sm:text-base border-slate-200 dark:border-slate-700 text-slate-400 dark:text-slate-500 bg-slate-50 dark:bg-slate-900 opacity-50 cursor-not-allowed transition-colors";
                         }
                         optionsDiv.appendChild(btn);
                     });
                     qDiv.appendChild(optionsDiv);
                     container.appendChild(qDiv);
                 });
+                // Hide container by default when already passed
                 container.classList.add('hidden');
+                
                 document.getElementById('final-quiz').querySelector('.text-center').classList.add('hidden');
                 return;
             }
@@ -1012,18 +1039,22 @@
             document.getElementById('btn-retake').classList.add('hidden');
             document.getElementById('btn-next-module').classList.add('hidden');
             container.innerHTML = '';
+            
+            // Remove collapse classes and show normally
+            container.classList.remove('hidden', 'max-h-0', 'opacity-0', 'mb-0', 'translate-y-4', 'scale-95', 'pointer-events-none');
+            container.classList.add('max-h-none', 'opacity-100', 'translate-y-0', 'scale-100');
             correctCount = 0;
             answeredCount = 0;
 
             quizData.forEach((item, idx) => {
                 const qDiv = document.createElement('div');
-                qDiv.className = "bg-white dark:bg-slate-900 p-6 rounded-3xl border-[3px] border-yellow-200 dark:border-yellow-900/30 shadow-sm transition-colors";
-                qDiv.innerHTML = `<h3 class="text-slate-800 dark:text-white font-black mb-4 text-lg transition-colors">${idx + 1}. ${item.q}</h3>`;
+                qDiv.className = "bg-white dark:bg-slate-800 p-4 sm:p-6 rounded-2xl sm:rounded-3xl border-[3px] border-slate-200 dark:border-slate-700 shadow-sm transition-colors";
+                qDiv.innerHTML = `<h3 class="text-slate-800 dark:text-white font-black mb-3 sm:mb-4 text-sm sm:text-lg transition-colors">${idx + 1}. ${item.q}</h3>`;
                 const optionsDiv = document.createElement('div');
                 optionsDiv.className = "grid grid-cols-1 gap-3";
                 item.options.forEach((opt, optIdx) => {
                     const btn = document.createElement('button');
-                    btn.className = "quiz-option w-full text-left p-4 rounded-xl border-2 border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 font-bold bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800 shadow-sm hover:-translate-y-0.5 active:translate-y-1 active:shadow-none transition-all";
+                    btn.className = "quiz-option w-full text-left p-3 sm:p-4 rounded-xl border-2 border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 font-bold bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800 shadow-sm hover:-translate-y-0.5 active:translate-y-1 active:shadow-none transition-all text-sm sm:text-base";
                     btn.innerText = opt;
                     btn.onclick = () => checkQuizAnswer(btn, optIdx, item.correct, idx);
                     optionsDiv.appendChild(btn);
@@ -1074,6 +1105,8 @@
                 // Hide questions, show result card
                 document.getElementById('quiz-container').classList.add('hidden');
                 document.getElementById('final-quiz').querySelector('.text-center').classList.add('hidden');
+                const fq = document.getElementById('final-quiz');
+                fq.className = "fade-in ss-section bg-slate-50 dark:bg-slate-900 rounded-[2rem] p-4 sm:p-8 md:p-12 border-[4px] border-slate-200 dark:border-slate-800 shadow-sm transition-all duration-500";
 
                 if (!localState.quizPassed) {
                     SafeScapeProgress.completeSection(moduleNum, 'quizPassed', true);
@@ -1120,3 +1153,7 @@
 </body>
 
 </html>
+
+
+
+

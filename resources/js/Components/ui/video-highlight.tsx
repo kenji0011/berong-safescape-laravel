@@ -27,8 +27,31 @@ const mockVideoHighlight: VideoHighlightItem = {
 export function VideoHighlight() {
     const { title, description, youtubeId, link, requiredPermission } = mockVideoHighlight;
 
-    // Construct the YouTube embed URL
-    const youtubeEmbedUrl = `https://www.youtube.com/embed/${youtubeId}`;
+    const extractYoutubeId = (id: string) => {
+        if (!id) return '';
+        if (id.includes('youtube.com') || id.includes('youtu.be')) {
+            const regex = /(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=|shorts\/|live\/))([^&?\n]+)/;
+            const match = id.match(regex);
+            if (match && match[1]) {
+                id = match[1];
+            } else {
+                try {
+                    const url = new URL(id);
+                    if (url.hostname.includes('youtube.com')) {
+                        id = url.searchParams.get('v') || id.split('/').pop() || id;
+                    } else if (url.hostname.includes('youtu.be')) {
+                        id = url.pathname.slice(1);
+                    }
+                } catch (e) { }
+            }
+        }
+        if (id.includes('?')) id = id.split('?')[0];
+        if (id.includes('&')) id = id.split('&')[0];
+        return id;
+    };
+
+    const cleanId = extractYoutubeId(youtubeId);
+    const youtubeEmbedUrl = `https://www.youtube.com/embed/${cleanId}`;
 
     return (
         <PermissionGuard requiredPermission={requiredPermission} targetPath={link}>

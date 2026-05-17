@@ -24,7 +24,8 @@ export const AdminCarouselTab: React.FC<CarouselTabProps> = ({
         <ImageUpload
           key={carouselUploadKey}
           title="Upload Carousel Image"
-          description="Upload an image to generate a URL for the carousel"
+          description="Upload an image for the dashboard carousel"
+          recommendedResolution="1920 × 1080 PX (High Quality)"
           overlayTitle={newCarousel.title}
           overlayAlt={newCarousel.alt}
           onUploadComplete={(url) => setNewCarousel({ ...newCarousel, url })}

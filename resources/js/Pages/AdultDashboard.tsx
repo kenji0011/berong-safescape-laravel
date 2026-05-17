@@ -8,7 +8,7 @@ import { Card, CardContent, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Alert, AlertDescription } from "@/components/ui/alert"
-import { Flame, Search, BookOpen, Calendar, User, ArrowRight, AlertCircle } from "lucide-react"
+import { Flame, Search, BookOpen, Calendar, User, ArrowRight, AlertCircle, Maximize2 } from "lucide-react"
 import type { BlogPost } from "@/lib/mock-data"
 import { Link } from '@inertiajs/react';
 import { Footer } from "@/Components/footer"
@@ -47,17 +47,6 @@ const AdultPageClient = ({ initialBlogs }: AdultPageClientProps) => {
                     {/* Welcome Banner */}
                     <AdultWelcomeBanner />
 
-                    {/* Access Notice */}
-                    <div className="mb-6 sm:mb-8 bg-blue-50/50 dark:bg-slate-900/50 backdrop-blur-sm border-[3px] border-dashed border-blue-200 dark:border-slate-800 rounded-2xl sm:rounded-[1.25rem] p-3 sm:p-4 flex items-center gap-2.5 sm:gap-3 shadow-sm animate-in fade-in slide-in-from-bottom-4 duration-500 transition-colors">
-                        <div className="h-8 w-8 sm:h-10 sm:w-10 rounded-full bg-white dark:bg-slate-800 border-[2px] sm:border-[3px] border-blue-100 dark:border-slate-700 flex items-center justify-center shrink-0 shadow-sm">
-                            <Flame className="h-4 w-4 sm:h-5 sm:w-5 text-orange-500" />
-                        </div>
-                        <div>
-                            <h3 className="text-slate-800 dark:text-white font-black text-sm sm:text-base leading-tight transition-colors">Fire Safety Awareness</h3>
-                            <p className="text-slate-500 dark:text-slate-400 font-medium text-[10px] sm:text-xs mt-0.5 leading-snug transition-colors">Learn essential fire safety practices to protect your home and family from preventable hazards.</p>
-                        </div>
-                    </div>
-
                     {/* Feature Cards */}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 mb-10 sm:mb-12">
                         {/* Fire Safety Articles Feature */}
@@ -95,7 +84,67 @@ const AdultPageClient = ({ initialBlogs }: AdultPageClientProps) => {
                         </Link>
 
                         {/* EDITH Feature */}
-                        <Link href="/adult/simulation" className="block group h-full outline-none">
+                        <Link href="/adult/simulation" className="block group h-full outline-none relative">
+                            {/* FLOATING HOVER PREVIEW WINDOW */}
+                            <div className="absolute bottom-[105%] left-1/2 -translate-x-1/2 mb-2 w-[305px] sm:w-[350px] bg-white/95 dark:bg-slate-900/95 backdrop-blur-md rounded-2xl border-2 border-red-100 dark:border-red-500/40 p-3 shadow-2xl shadow-red-100/50 dark:shadow-red-500/25 pointer-events-none opacity-0 scale-95 -translate-y-2 group-hover:opacity-100 group-hover:scale-100 group-hover:translate-y-0 transition-all duration-300 z-50">
+                                {/* Triangle indicator below preview */}
+                                <div className="absolute top-full left-1/2 -translate-x-1/2 -mt-1 w-3 h-3 bg-white dark:bg-slate-900 border-r-2 border-b-2 border-red-100 dark:border-red-500/40 rotate-45" />
+                                
+                                {/* Preview indicator */}
+                                <div className="flex items-center justify-between mb-2 px-1">
+                                    <div className="flex items-center gap-1">
+                                        <Flame className="h-3 w-3 text-red-600 dark:text-red-500 shrink-0" strokeWidth={2.5} />
+                                        <span className="text-[9.5px] sm:text-[10px] font-black text-red-600 dark:text-red-400 tracking-wider uppercase">Simulator Preview</span>
+                                    </div>
+                                    <span className="text-[8px] sm:text-[8.5px] font-black text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-1.5 py-0.5 rounded-full">Interactive</span>
+                                </div>
+                                
+                                {/* Simulator Frame */}
+                                <div className="relative rounded-xl overflow-hidden aspect-[16/10] bg-slate-50/90 dark:bg-slate-950/80 border border-slate-200 dark:border-slate-800 shadow-inner">
+                                    <img src="/EDITH Modal.png" className="w-full h-full object-cover opacity-80" alt="Simulator Preview" />
+                                    
+                                    {/* Animated simulated overlays! */}
+                                    {/* Fire Outbreak Source (Pulsing Fire Dot) */}
+                                    <div className="absolute top-[28%] left-[22%] -translate-x-1/2 -translate-y-1/2 z-20 flex items-center justify-center">
+                                        <span className="absolute inline-flex h-8 w-8 rounded-full bg-red-500/30 animate-ping"></span>
+                                        <span className="absolute inline-flex h-5 w-5 rounded-full bg-red-500/40 animate-pulse"></span>
+                                        <div className="h-2.5 w-2.5 rounded-full bg-red-600 ring-2 ring-white"></div>
+                                    </div>
+                                    <span className="absolute top-[18%] left-[26%] z-20 bg-red-600/90 text-white text-[8px] sm:text-[9px] font-black px-1.5 py-0.5 rounded tracking-wide shadow-sm uppercase animate-pulse">FIRE OUTBREAK</span>
+
+                                    {/* Exit Pathway (Glowing Evacuation Arrow and safe indicator) */}
+                                    <div className="absolute bottom-[25%] right-[20%] z-20 flex items-center gap-1.5 bg-emerald-500/95 text-white text-[8px] sm:text-[9px] font-black px-2 py-0.5 rounded shadow-md tracking-wider uppercase animate-bounce">
+                                        <span className="relative flex h-1.5 w-1.5 shrink-0">
+                                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                                            <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-200"></span>
+                                        </span>
+                                        Safe Exit Egress
+                                    </div>
+
+                                    {/* SVG path to represent glowing escape route */}
+                                    <svg className="absolute inset-0 w-full h-full pointer-events-none z-10" viewBox="0 0 100 62" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M 30,22 L 55,22 L 55,42 L 72,42" stroke="#10b981" strokeWidth="1.5" strokeDasharray="3,3" className="animate-[dash_2s_linear_infinite]" />
+                                    </svg>
+                                    
+                                    {/* Custom animation stylesheet injection inline */}
+                                    <style>{`
+                                        @keyframes dash {
+                                            to {
+                                                stroke-dashoffset: -20;
+                                            }
+                                        }
+                                    `}</style>
+                                </div>
+                                
+                                {/* Info Box */}
+                                <div className="mt-2 text-left px-1">
+                                    <h4 className="text-[11px] font-black text-slate-800 dark:text-white leading-tight">Floor Plan Escape Routing</h4>
+                                    <p className="text-[9.2px] sm:text-[9.8px] font-semibold text-slate-500 dark:text-slate-400 mt-0.5 leading-normal">
+                                        Map safe paths under custom fire spread vectors. Test exit delays and fire code egress protocols.
+                                    </p>
+                                </div>
+                            </div>
+
                             <div className="relative overflow-hidden bg-white dark:bg-slate-800 rounded-[1.5rem] sm:rounded-[2rem] p-3 sm:p-4 flex items-center gap-3 sm:gap-6 shadow-[0_6px_0_#cbd5e1] dark:shadow-[0_6px_0_#1e293b] sm:shadow-[0_8px_0_#cbd5e1] sm:dark:shadow-[0_8px_0_#1e293b] transition-all duration-300 border-[3px] border-white dark:border-slate-700 h-full transition-colors">
                                 {/* Subtle Background Image */}
                                 <div className="absolute inset-0 z-0 opacity-[0.05] dark:opacity-[0.1] group-hover:opacity-[0.08] dark:group-hover:opacity-[0.15] transition-opacity duration-500">
@@ -213,27 +262,30 @@ const AdultPageClient = ({ initialBlogs }: AdultPageClientProps) => {
                                                 </p>
                                                 
                                                 {/* Footer */}
-                                                <div className="flex items-center justify-between pt-2 sm:pt-4 border-t border-slate-100 dark:border-slate-700/60 mt-auto transition-colors">
+                                                <div className="flex items-center justify-between pt-2 sm:pt-4 border-t border-slate-100/80 dark:border-slate-700/40 mt-auto transition-colors">
                                                     {/* Author */}
-                                                    <div className="flex items-center gap-1.5 sm:gap-2 min-w-0">
-                                                        <div className="h-5 w-5 sm:h-7 sm:w-7 rounded-full bg-gradient-to-br from-orange-400 to-red-500 flex items-center justify-center shrink-0 shadow-sm">
-                                                            <User className="h-2.5 w-2.5 sm:h-3.5 sm:w-3.5 text-white" strokeWidth={3} />
+                                                    <div className="flex items-center gap-1.5 sm:gap-2.5 min-w-0">
+                                                        <div className="h-6 w-6 sm:h-7 sm:w-7 rounded-full bg-slate-100 dark:bg-slate-900/80 flex items-center justify-center shrink-0 border border-slate-200/50 dark:border-slate-700/50 shadow-inner">
+                                                            <User className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-slate-500 dark:text-slate-400" strokeWidth={2.5} />
                                                         </div>
-                                                        <span className="hidden sm:inline text-xs font-bold text-slate-600 dark:text-slate-300 truncate transition-colors">
-                                                            {typeof blog.author === 'string' ? blog.author : blog.author?.name}
-                                                        </span>
-                                                        <span className="sm:hidden text-[9px] font-bold text-slate-500 dark:text-slate-400 truncate transition-colors">
-                                                            {(() => {
-                                                                const name = typeof blog.author === 'string' ? blog.author : blog.author?.name || '';
-                                                                return name.length > 10 ? name.split(' ')[0] : name;
-                                                            })()}
-                                                        </span>
+                                                        <div className="flex flex-col min-w-0 leading-none">
+                                                            <span className="hidden sm:inline text-xs font-extrabold text-slate-700 dark:text-slate-300 truncate transition-colors">
+                                                                {typeof blog.author === 'string' ? blog.author : blog.author?.name}
+                                                            </span>
+                                                            <span className="sm:hidden text-[10px] font-extrabold text-slate-600 dark:text-slate-400 truncate transition-colors">
+                                                                {(() => {
+                                                                    const name = typeof blog.author === 'string' ? blog.author : blog.author?.name || '';
+                                                                    return name.length > 10 ? name.split(' ')[0] : name;
+                                                                })()}
+                                                            </span>
+                                                            <span className="text-[8px] sm:text-[9px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mt-0.5">Publisher</span>
+                                                        </div>
                                                     </div>
                                                     
-                                                    {/* Read More CTA */}
-                                                    <span className="text-[9px] sm:text-xs font-black text-orange-500 dark:text-orange-400 flex items-center gap-0.5 sm:gap-1 shrink-0 group-hover:gap-2 transition-all">
+                                                    {/* Read More CTA Pill */}
+                                                    <span className="inline-flex items-center gap-1 px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-full bg-slate-50 dark:bg-slate-900/60 hover:bg-orange-500 dark:hover:bg-orange-600 border border-slate-200/60 dark:border-slate-700/60 hover:border-orange-500/20 dark:hover:border-orange-600/20 text-slate-600 dark:text-slate-400 hover:text-white dark:hover:text-white font-extrabold text-[10px] sm:text-xs transition-all duration-300 shadow-sm shrink-0">
                                                         Read
-                                                        <ArrowRight className="h-2.5 w-2.5 sm:h-3.5 sm:w-3.5" strokeWidth={3} />
+                                                        <ArrowRight className="h-2.5 w-2.5 sm:h-3 w-3 group-hover:translate-x-0.5 transition-transform duration-300" strokeWidth={2.5} />
                                                     </span>
                                                 </div>
                                             </div>
