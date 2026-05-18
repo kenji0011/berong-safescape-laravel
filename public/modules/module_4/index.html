@@ -5,7 +5,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SafeScape | Module 4: Get Low & Go</title>
-    <script src="https://cdn.tailwindcss.com"></script>
     <script>
         // Silence Tailwind production warning
         (function() {
@@ -15,7 +14,9 @@
                 originalWarn.apply(console, args);
             };
         })();
-
+    </script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
         tailwind.config = {
             darkMode: 'class',
             theme: {
@@ -54,7 +55,7 @@
         })();
     </script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="../css/shared.css">
+    <link rel="stylesheet" href="../css/shared.css?v=3">
 
     <style>
         .fade-in {
@@ -471,6 +472,7 @@
                 </div>                <div id="check-result" class="hidden ss-completion-card success mx-auto mt-10">
                     <div class="ss-completion-icon" id="result-icon">🏆</div>
                     <h3 class="ss-completion-title" id="result-title"></h3>
+                    <div id="score-badge" class="ss-score-badge" style="display:none;"></div>
                     <p class="ss-completion-desc" id="result-desc"></p>
                     <div class="ss-completion-actions">
                         <button id="btn-retake" onclick="resetTFQuiz()" class="hidden ss-btn-premium ss-btn-outline">Retake Quiz</button>
@@ -801,7 +803,6 @@
             const allAnswered = localState.tfAnswers.every(a => a !== null);
             if (!allAnswered) return;
 
-            const allCorrect = localState.tfAnswers.every((ans, idx) => tfQuestions[idx].answer === ans);
             const result = document.getElementById('check-result');
             const btn = document.getElementById('btn-next-module');
 
@@ -809,15 +810,17 @@
             const correctCount = localState.tfAnswers.filter((ans, idx) => tfQuestions[idx].answer === ans).length;
             SafeScapeProgress.submitQuizResult(moduleNum, correctCount, 5);
 
-            if (allCorrect) {
+            if (correctCount >= 4) {
                 document.getElementById('result-icon').innerText = "🏆";
                 document.getElementById('result-title').innerText = "SMOKE EXPERT!";
                 document.getElementById('result-title').className = "ss-completion-title";
+                showScoreBadge(correctCount, 5);
                 document.getElementById('result-desc').innerText = "You understand smoke behavior!";
                 
                 result.classList.remove('hidden');
                 btn.classList.remove('hidden');
                 document.getElementById('btn-retake').classList.add('hidden');
+                document.getElementById('btn-review').classList.remove('hidden');
 
                 if (!reviewMode) {
                     document.getElementById('tf-questions').classList.add('hidden');
@@ -833,13 +836,15 @@
                 }
             } else {
                 document.getElementById('result-icon').innerText = "⚠️";
-                document.getElementById('result-title').innerText = "REVIEW THE PHYSICS";
-                document.getElementById('result-title').className = "ss-completion-title !text-orange-500";
-                document.getElementById('result-desc').innerText = `You got ${correctCount}/5 correct. Review the answers!`;
+                document.getElementById('result-title').innerText = "KEEP PRACTICING";
+                document.getElementById('result-title').className = "ss-completion-title !text-red-500";
+                showScoreBadge(correctCount, 5);
+                document.getElementById('result-desc').innerText = `You got ${correctCount}/5 correct. You need 4/5 to pass.`;
                 
                 result.classList.remove('hidden');
                 btn.classList.add('hidden');
                 document.getElementById('btn-retake').classList.remove('hidden');
+                document.getElementById('btn-review').classList.add('hidden');
             }
         }
 
@@ -858,6 +863,13 @@
             
             renderTFQuestions();
             saveLocalProgress();
+        }
+
+        function showScoreBadge(score, maxScore) {
+            const badge = document.getElementById('score-badge');
+            if (!badge) return;
+            badge.innerHTML = `<span class="ss-score-badge-label">Quiz Score</span><span class="ss-score-badge-value">${score} <span class="ss-score-badge-max">/ ${maxScore}</span></span>`;
+            badge.style.display = '';
         }
 
         function showToast(type, message) {

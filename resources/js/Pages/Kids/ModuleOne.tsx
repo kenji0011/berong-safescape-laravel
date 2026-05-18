@@ -54,6 +54,7 @@ const ModuleOnePage = () => {
   const [quizSubmitted,   setQuizSubmitted]   = useState(false)
   const [quizPassed,      setQuizPassed]      = useState(false)
   const [reviewMode,      setReviewMode]      = useState(false)
+  const [loadedScore,     setLoadedScore]     = useState<number | null>(null)
 
   const handleToggleReview = () => {
     const nextMode = !reviewMode
@@ -89,6 +90,7 @@ const ModuleOnePage = () => {
         if (m1.section2Read)           setSection2Done(true)
         if (m1.elementMixerCompleted)  { setLabCompleted(true); setMixerEverCompleted(true); setPitItems(CORRECT_IDS) }
         if (m1.quizPassed)             { setQuizPassed(true); setQuizSubmitted(true) }
+        if (m1.quizScore !== undefined && m1.quizScore !== null) { setLoadedScore(Number(m1.quizScore)) }
         if (data.completedModules) setCompletedModules(data.completedModules)
         if (data.completedModules?.includes(1)) setModuleCompleted(true)
       } catch (error) {
@@ -268,6 +270,13 @@ const ModuleOnePage = () => {
 
   const allQuizAnswered = quizAnswers.every(a => a !== null)
 
+  const displayScore = useMemo(() => {
+    if (loadedScore !== null) return loadedScore
+    if (quizAnswers.some(a => a !== null) && quizSubmitted) return quizScore
+    if (quizPassed) return 5 // Default fallback for legacy passed quiz
+    return null
+  }, [loadedScore, quizSubmitted, quizScore, quizPassed, quizAnswers])
+
   const handleQuizAnswer = (qIdx: number, optIdx: number) => {
     if (quizSubmitted) return
     setQuizAnswers(prev => {
@@ -284,9 +293,10 @@ const ModuleOnePage = () => {
 
     if (passed) {
       setQuizPassed(true)
+      setLoadedScore(quizScore)
       try {
         await saveSection({ videoWatched: true, section1Read: true, section2Read: true, elementMixerCompleted: true, quizPassed: true }, false)
-        await axios.post("/api/kids/safescape/quiz", { moduleNum: 1, score: quizScore, maxScore: 5 }).catch(() => {})
+        await axios.post("/api/kids/quiz", { quizType: "module_1_quiz", score: quizScore, maxScore: 5 }).catch(() => {})
       } catch {}
       showToast("🎉 Fire Safety Certified! Module 2 unlocked!")
     } else {
@@ -762,7 +772,19 @@ const ModuleOnePage = () => {
                 className="bg-white dark:bg-slate-800 rounded-[2rem] p-8 sm:p-14 border-4 border-slate-200 dark:border-slate-700 shadow-[0_25px_50px_-12px_rgba(0,0,0,0.1)] dark:shadow-[0_25px_50px_-12px_rgba(0,0,0,0.5)] text-center max-w-xl mx-auto transition-colors"
               >
                 <div className="text-5xl sm:text-7xl mb-5" style={{ filter: 'drop-shadow(0 10px 8px rgba(0,0,0,0.2))' }}>🏆</div>
-                <h3 className="text-2xl sm:text-[2.75rem] font-black text-green-600 dark:text-green-400 mb-3 uppercase leading-none tracking-tight">Fire Safety Certified!</h3>
+                <h3 className="text-2xl sm:text-[2.75rem] font-black text-green-600 dark:text-green-400 mb-2 uppercase leading-none tracking-tight">Fire Safety Certified!</h3>
+                
+                {displayScore !== null && (
+                  <div className="my-6 inline-flex flex-col items-center justify-center bg-gradient-to-br from-green-500/10 to-emerald-500/10 dark:from-green-500/20 dark:to-emerald-500/20 border-2 border-green-500/30 dark:border-green-500/50 rounded-2xl px-8 py-3.5 shadow-[0_8px_32px_rgba(34,197,94,0.12)] backdrop-blur-sm">
+                    <span className="text-slate-500 dark:text-slate-400 text-[10px] font-black uppercase tracking-widest mb-0.5">
+                      Quiz Score
+                    </span>
+                    <span className="text-green-600 dark:text-green-400 font-extrabold text-3xl sm:text-4xl tracking-tight font-mono">
+                      {displayScore} <span className="text-slate-400 dark:text-slate-500 text-xl font-normal">/ 5</span>
+                    </span>
+                  </div>
+                )}
+
                 <p className="text-slate-600 dark:text-slate-400 font-semibold text-base sm:text-lg mb-8 sm:mb-10">
                   You have already completed this quiz!
                 </p>

@@ -6,6 +6,10 @@
 
         <title inertia>{{ config('app.name', 'Laravel') }}</title>
 
+        <!-- Prefetch loader images for later display (avoids console warnings) -->
+        <link rel="prefetch" href="/berong_pr.png" as="image">
+        <link rel="prefetch" href="/berong_logout.png" as="image">
+
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

@@ -55,7 +55,7 @@
         })();
     </script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="../css/shared.css">
+    <link rel="stylesheet" href="../css/shared.css?v=3">
 
     <style>
         .fade-in {
@@ -486,6 +486,7 @@
             <div id="quiz-result" class="hidden ss-completion-card success mx-auto mt-10">
                 <div class="ss-completion-icon" id="result-icon">🏆</div>
                 <h3 class="ss-completion-title" id="result-title"></h3>
+                <div id="score-badge" class="ss-score-badge" style="display:none;"></div>
                 <p class="ss-completion-desc" id="result-desc"></p>
 
                 <div class="ss-completion-actions">
@@ -1002,6 +1003,7 @@
                 document.getElementById('result-icon').innerText = "🏆";
                 document.getElementById('result-title').innerText = "ESCAPE STRATEGIST!";
                 document.getElementById('result-title').className = "ss-completion-title";
+                showScoreBadge(localState.quizScore || 5, 5);
                 document.getElementById('result-desc').innerText = "You have already completed this quiz!";
                 document.getElementById('btn-next-module').classList.remove('hidden');
                 const fq = document.getElementById('final-quiz');
@@ -1099,6 +1101,7 @@
                 icon.innerText = "🏆";
                 title.innerText = "ESCAPE STRATEGIST!";
                 title.className = "ss-completion-title";
+                showScoreBadge(correctCount, 5);
                 desc.innerText = `You scored ${correctCount}/5. You know how to make smart decisions under pressure.`;
                 nextBtn.classList.remove('hidden');
                 document.getElementById('btn-review').classList.remove('hidden');
@@ -1117,6 +1120,7 @@
                 icon.innerText = "⚠️";
                 title.innerText = "REVIEW THE PLAN";
                 title.className = "ss-completion-title !text-red-500";
+                showScoreBadge(correctCount, 5);
                 desc.innerText = `You scored ${correctCount}/5. You need 4/5 to pass.`;
                 retakeBtn.classList.remove('hidden');
             }
@@ -1136,6 +1140,13 @@
         }
 
         function scrollToQuiz() { document.getElementById('final-quiz').scrollIntoView({ behavior: 'smooth' }); }
+
+        function showScoreBadge(score, maxScore) {
+            const badge = document.getElementById('score-badge');
+            if (!badge) return;
+            badge.innerHTML = `<span class="ss-score-badge-label">Quiz Score</span><span class="ss-score-badge-value">${score} <span class="ss-score-badge-max">/ ${maxScore}</span></span>`;
+            badge.style.display = '';
+        }
 
         function showToast(type, message) {
             const container = document.getElementById('toast-container');

@@ -700,7 +700,7 @@ export default function ProfilePage() {
                     
                     <div className="flex-1 text-center sm:text-left">
                       <div className="flex flex-col sm:flex-row sm:items-center gap-2 mb-2">
-                        <span className="inline-block px-3 py-1 bg-blue-100 dark:bg-blue-900/40 text-blue-600 dark:text-blue-400 font-black text-[10px] uppercase tracking-widest rounded-full border border-blue-200 dark:border-blue-800 transition-colors">
+                        <span className="w-fit mx-auto sm:mx-0 inline-block px-3 py-1 bg-blue-100 dark:bg-blue-900/40 text-blue-600 dark:text-blue-400 font-black text-[10px] uppercase tracking-widest rounded-full border border-blue-200 dark:border-blue-800 transition-colors">
                           Baseline Test
                         </span>
                         <h3 className="text-2xl font-black text-slate-800 dark:text-white transition-colors">Pre-Test</h3>
@@ -777,7 +777,7 @@ export default function ProfilePage() {
                     
                     <div className="flex-1 text-center sm:text-left">
                       <div className="flex flex-col sm:flex-row sm:items-center gap-2 mb-2">
-                        <span className="inline-block px-3 py-1 bg-orange-100 dark:bg-orange-900/40 text-orange-600 dark:text-orange-400 font-black text-[10px] uppercase tracking-widest rounded-full border border-orange-200 dark:border-orange-800 transition-colors">
+                        <span className="w-fit mx-auto sm:mx-0 inline-block px-3 py-1 bg-orange-100 dark:bg-orange-900/40 text-orange-600 dark:text-orange-400 font-black text-[10px] uppercase tracking-widest rounded-full border border-orange-200 dark:border-orange-800 transition-colors">
                           Final Exam
                         </span>
                         <h3 className="text-2xl font-black text-slate-800 dark:text-white transition-colors">Post-Test</h3>

@@ -5,7 +5,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SafeScape | Module 5: Ultimate Defense</title>
-    <script src="https://cdn.tailwindcss.com"></script>
     <script>
         // Silence Tailwind production warning
         (function() {
@@ -15,7 +14,9 @@
                 originalWarn.apply(console, args);
             };
         })();
-
+    </script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
         tailwind.config = {
             darkMode: 'class',
             theme: {
@@ -55,7 +56,7 @@
     </script>
     <link href="https://fonts.googleapis.com/css2?family=Alice&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="../css/shared.css">
+    <link rel="stylesheet" href="../css/shared.css?v=3">
 
     <style>
         .fade-in {
@@ -886,6 +887,7 @@
             <div id="exam-result" class="hidden ss-completion-card success mx-auto mt-10">
                 <div class="ss-completion-icon" id="result-icon">🏆</div>
                 <h3 class="ss-completion-title" id="result-title"></h3>
+                <div id="score-badge" class="ss-score-badge" style="display:none;"></div>
                 <p class="ss-completion-desc" id="result-desc"></p>
 
                 <div class="ss-completion-actions">
@@ -1502,6 +1504,7 @@
                 document.getElementById('result-icon').innerText = "🏆";
                 document.getElementById('result-title').innerText = "CONGRATULATIONS, HERO!";
                 document.getElementById('result-title').className = "ss-completion-title";
+                showScoreBadge(localState.finalExamScore || 15, 15);
                 document.getElementById('result-desc').innerText = "You have proven yourself as a Fire Safety Hero!";
                 
                 document.getElementById('btn-view-cert').classList.remove('hidden');
@@ -1584,6 +1587,7 @@
                 icon.innerText = score >= 12 ? "🏆" : "🔥";
                 title.innerText = score >= 12 ? "CONGRATULATIONS!" : "KEEP TRAINING!";
                 title.className = "ss-completion-title";
+                showScoreBadge(score, 15);
                 desc.innerText = score >= 12 
                     ? `You scored ${score}/15. You are now a SafeScape certified Fire Safety Hero!`
                     : `You scored ${score}/15. You need at least 12/15 to pass. Try again!`;
@@ -1604,6 +1608,7 @@
                 icon.innerText = "📚";
                 title.innerText = "KEEP PRACTICING";
                 title.className = "ss-completion-title !text-orange-600";
+                showScoreBadge(score, 15);
                 desc.innerText = `You scored ${score}/15. Review the modules and try again!`;
                 document.getElementById('btn-retake').classList.remove('hidden');
             }
@@ -1619,6 +1624,13 @@
 
         function downloadCertificate() {
             // Deprecated
+        }
+
+        function showScoreBadge(score, maxScore) {
+            const badge = document.getElementById('score-badge');
+            if (!badge) return;
+            badge.innerHTML = `<span class="ss-score-badge-label">Quiz Score</span><span class="ss-score-badge-value">${score} <span class="ss-score-badge-max">/ ${maxScore}</span></span>`;
+            badge.style.display = '';
         }
 
         function showToast(type, message) {

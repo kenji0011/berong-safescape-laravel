@@ -81,7 +81,7 @@ export function Navigation() {
   if (user?.role === 'admin') accessibleItems.push({ name: 'ADMIN', href: '/admin', active: url.startsWith('/admin') });
 
   return (
-    <nav className="bg-primary fixed inset-x-0 top-0 z-[80] shadow-md dark:shadow-none dark:border-b dark:border-black/20 transition-colors duration-500 h-[64px] sm:h-[72px] flex items-center">
+    <nav className="bg-primary fixed inset-x-0 top-0 z-[80] shadow-md dark:shadow-none dark:border-b dark:border-black/20 transition-colors duration-500 h-16 sm:h-[4.5rem] flex items-center">
       {/* Background Image Layer - 10% opacity */}
       <div
         className="absolute inset-0 opacity-5 bg-cover bg-center"
@@ -116,11 +116,11 @@ export function Navigation() {
 
                 {/* Branding - Compact on mobile */}
                 <div className="min-w-0 max-w-[170px] sm:max-w-none shrink">
-                  <p className="text-white font-bold text-[12px] leading-none sm:text-sm truncate">Berong E-Learning</p>
-                  <h1 className="text-yellow-400 font-bold leading-tight text-[10px] xl:text-xs hidden sm:block truncate">
+                  <p className="text-white font-bold text-xs leading-none sm:text-sm truncate">Berong E-Learning</p>
+                  <h1 className="text-yellow-400 font-bold leading-tight text-[0.625rem] xl:text-xs hidden sm:block truncate">
                     Fire Safety Education Platform
                   </h1>
-                  <p className="text-white text-[9px] xl:text-[10px] hidden sm:block opacity-90 uppercase tracking-widest mt-0.5 truncate">
+                  <p className="text-white text-[0.5625rem] xl:text-[0.625rem] hidden sm:block opacity-90 uppercase tracking-widest mt-0.5 truncate">
                     <span className="hidden xl:inline">BUREAU OF FIRE PROTECTION STA CRUZ LAGUNA</span>
                     <span className="xl:hidden">BFP Sta. Cruz</span>
                   </p>
@@ -210,7 +210,7 @@ export function Navigation() {
                 {isAuthenticated && (
                   <div className="flex flex-col items-end whitespace-nowrap mt-0.5">
                     <p className="text-white font-extrabold text-sm leading-none drop-shadow-sm">{user?.name || 'Admin User'}</p>
-                    <p className="text-yellow-300 text-[10px] font-bold uppercase tracking-widest leading-tight mt-1 drop-shadow-sm opacity-90">{user?.role || 'Admin'}</p>
+                    <p className="text-yellow-300 text-[0.625rem] font-bold uppercase tracking-widest leading-tight mt-1 drop-shadow-sm opacity-90">{user?.role || 'Admin'}</p>
                   </div>
                 )}
               </div>
@@ -322,7 +322,7 @@ export function Navigation() {
 
               {/* Mobile Sign In Button - visible when not authenticated */}
               {!isAuthenticated && (
-                <Link href="/login" className="sm:hidden bg-yellow-400 border-[3px] border-white text-red-600 font-extrabold px-4 py-1.5 rounded-full shadow-[0_4px_0_#b45309] md:hover:-translate-y-0.5 md:hover:shadow-[0_6px_0_#b45309] active:translate-y-1 active:shadow-none transition-all duration-200 active:duration-75 text-[11px] tracking-wide shrink-0 whitespace-nowrap">
+                <Link href="/login" className="sm:hidden bg-yellow-400 border-[3px] border-white text-red-600 font-extrabold px-4 py-1.5 rounded-full shadow-[0_4px_0_#b45309] md:hover:-translate-y-0.5 md:hover:shadow-[0_6px_0_#b45309] active:translate-y-1 active:shadow-none transition-all duration-200 active:duration-75 text-[0.6875rem] tracking-wide shrink-0 whitespace-nowrap">
                   Sign In
                 </Link>
               )}
@@ -359,7 +359,7 @@ export function Navigation() {
           <div className="py-3 flex flex-col">
             <Link
               href="/"
-              className={`flex items-center gap-4 px-6 py-3.5 font-bold text-[15px] transition-colors ${url === '/' ? 'text-yellow-400 bg-white/5' : 'text-white hover:bg-white/5'}`}
+              className={`flex items-center gap-4 px-6 py-3.5 font-bold text-[0.9375rem] transition-colors ${url === '/' ? 'text-yellow-400 bg-white/5' : 'text-white hover:bg-white/5'}`}
               onClick={() => setMobileMenuOpen(false)}
             >
               <Home className="h-5 w-5 shrink-0" strokeWidth={2.5} />
@@ -416,7 +416,7 @@ export function Navigation() {
             {isAuthenticated && user?.role === "admin" && (
               <Link
                 href="/admin"
-                className={`flex items-center gap-4 px-6 py-3.5 font-bold text-[15px] transition-colors ${url.startsWith('/admin') ? 'text-yellow-400 bg-white/5' : 'text-white hover:bg-white/5'}`}
+                className={`flex items-center gap-4 px-6 py-3.5 font-bold text-[0.9375rem] transition-colors ${url.startsWith('/admin') ? 'text-yellow-400 bg-white/5' : 'text-white hover:bg-white/5'}`}
                 onClick={() => setMobileMenuOpen(false)}
               >
                 <Shield className="h-5 w-5 shrink-0" strokeWidth={2.5} />
@@ -449,8 +449,8 @@ export function Navigation() {
                     
                     {/* Dark Badge for role */}
                     <div className="bg-[#1e293b] rounded-lg px-3 py-1.5 flex flex-col justify-center border border-slate-700/50 shadow-inner">
-                      <p className="text-white font-bold text-[11px] sm:text-xs leading-tight drop-shadow-sm truncate max-w-[80px] sm:max-w-[100px]">{user?.name || "User"}</p>
-                      <p className="text-yellow-400 font-semibold text-[10px] sm:text-xs leading-tight capitalize drop-shadow-sm truncate">{user?.role || "Role"}</p>
+                      <p className="text-white font-bold text-[0.6875rem] sm:text-xs leading-tight drop-shadow-sm truncate max-w-[80px] sm:max-w-[100px]">{user?.name || "User"}</p>
+                      <p className="text-yellow-400 font-semibold text-[0.625rem] sm:text-xs leading-tight capitalize drop-shadow-sm truncate">{user?.role || "Role"}</p>
                     </div>
                   </div>
 
@@ -475,8 +475,8 @@ export function Navigation() {
       <Dialog open={showLogoutConfirm} onOpenChange={setShowLogoutConfirm}>
         <DialogContent aria-describedby={undefined} className="max-w-[90vw] sm:max-w-md bg-white dark:bg-slate-900 border-none rounded-[2rem] p-0 overflow-hidden shadow-2xl transition-colors duration-500">
           <div className="bg-primary p-6 text-center border-b-[6px] border-white/20">
-            <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center mx-auto mb-4 text-4xl shadow-xl transform rotate-3">
-              🤖
+            <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-xl transform rotate-3 overflow-hidden p-1">
+              <img src="/berong_logout.png" alt="Logout" className="w-full h-full object-contain" />
             </div>
             <DialogTitle className="text-2xl font-black text-white uppercase tracking-tight italic drop-shadow-md">Logging out?</DialogTitle>
           </div>

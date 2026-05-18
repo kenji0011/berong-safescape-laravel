@@ -15,32 +15,15 @@
             };
         })();
     </script>
-    <script>
-        // Suppress Tailwind CDN warning
-        console.warn = (function (originalWarn) {
-            return function (...args) {
-                if (args[0] && args[0].includes && args[0].includes('cdn.tailwindcss.com')) return;
-                originalWarn.apply(console, args);
-            };
-        })(console.warn);
-    </script>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
-        // Silence Tailwind production warning
-        (function() {
-            const originalWarn = console.warn;
-            console.warn = (...args) => {
-                if (args[0] && typeof args[0] === 'string' && (args[0].includes('cdn.tailwindcss.com') || args[0].includes('production'))) return;
-                originalWarn.apply(console, args);
-            };
-        })();
 
         tailwind.config = {
             darkMode: 'class',
         }
     </script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="../css/shared.css">
+    <link rel="stylesheet" href="../css/shared.css?v=3">
 
     <style>
         /* Custom Animations */
@@ -309,25 +292,25 @@
             <div class="ss-section-badge bg-green-500 border-[3px] border-white dark:border-slate-800 shadow-sm text-white transition-colors"><i class="fa-regular fa-circle-check"></i></div>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8 sm:gap-12 items-center">
                 <div class="space-y-4 sm:space-y-6">
-                    <div>
-                        <div class="flex items-center gap-2 sm:gap-3 mb-1 sm:mb-2">
-                            <span class="bg-orange-100 dark:bg-orange-900/50 text-orange-600 dark:text-orange-400 border-2 border-orange-200 dark:border-orange-800 shadow-sm px-2 py-0.5 sm:px-3 sm:py-1 rounded-lg sm:rounded-xl text-xs sm:text-sm font-black transition-colors">2.1</span>
-                            <h2 class="text-lg sm:text-3xl font-black text-slate-800 dark:text-white transition-colors">Recess vs. Emergency</h2>
+                    <div class="flex gap-3 sm:gap-4 items-start">
+                        <span class="shrink-0 mt-1 bg-orange-100 dark:bg-orange-900/50 text-orange-600 dark:text-orange-400 border-2 border-orange-200 dark:border-orange-800 shadow-sm px-2 py-0.5 sm:px-3 sm:py-1 rounded-lg sm:rounded-xl text-xs sm:text-sm font-black transition-colors">2.1</span>
+                        <div>
+                            <h2 class="text-lg sm:text-3xl font-black text-slate-800 dark:text-white transition-colors mb-1 sm:mb-2">Recess vs. Emergency</h2>
+                            <p class="text-slate-600 dark:text-slate-400 font-medium leading-relaxed text-xs sm:text-base transition-colors">
+                                A <strong class="text-slate-800 dark:text-white transition-colors">Fire Alarm</strong> is a <span class="text-red-500 font-black uppercase">long, continuous
+                                    ring</span>. It is an order: Stop what you are doing and evacuate.
+                            </p>
                         </div>
-                        <p class="text-slate-600 dark:text-slate-400 font-medium leading-relaxed text-xs sm:text-base transition-colors">
-                            A <strong class="text-slate-800 dark:text-white transition-colors">Fire Alarm</strong> is a <span class="text-red-500 font-black uppercase">long, continuous
-                                ring</span>. It is an order: Stop what you are doing and evacuate.
-                        </p>
                     </div>
-                    <div>
-                        <div class="flex items-center gap-2 sm:gap-3 mb-1 sm:mb-2">
-                            <span class="bg-orange-100 dark:bg-orange-900/50 text-orange-600 dark:text-orange-400 border-2 border-orange-200 dark:border-orange-800 shadow-sm px-2 py-0.5 sm:px-3 sm:py-1 rounded-lg sm:rounded-xl text-xs sm:text-sm font-black transition-colors">2.2</span>
-                            <h2 class="text-lg sm:text-3xl font-black text-slate-800 dark:text-white transition-colors">The Red Box</h2>
+                    <div class="flex gap-3 sm:gap-4 items-start">
+                        <span class="shrink-0 mt-1 bg-orange-100 dark:bg-orange-900/50 text-orange-600 dark:text-orange-400 border-2 border-orange-200 dark:border-orange-800 shadow-sm px-2 py-0.5 sm:px-3 sm:py-1 rounded-lg sm:rounded-xl text-xs sm:text-sm font-black transition-colors">2.2</span>
+                        <div>
+                            <h2 class="text-lg sm:text-3xl font-black text-slate-800 dark:text-white transition-colors mb-1 sm:mb-2">The Red Box</h2>
+                            <p class="text-slate-600 dark:text-slate-400 font-medium leading-relaxed text-xs sm:text-base transition-colors">
+                                The red box on the wall is a <strong class="text-slate-800 dark:text-white transition-colors">Manual Call Point</strong>. Inside is a switch that
+                                triggers the alarm for the <em class="font-bold text-slate-800 dark:text-white transition-colors">whole school</em>.
+                            </p>
                         </div>
-                        <p class="text-slate-600 dark:text-slate-400 font-medium leading-relaxed text-xs sm:text-base transition-colors">
-                            The red box on the wall is a <strong class="text-slate-800 dark:text-white transition-colors">Manual Call Point</strong>. Inside is a switch that
-                            triggers the alarm for the <em class="font-bold text-slate-800 dark:text-white transition-colors">whole school</em>.
-                        </p>
                     </div>
 
                     <button id="btn-content-read" onclick="markContentRead()" class="bg-orange-400 hover:bg-orange-500 text-white font-black py-2 px-4 sm:py-3 sm:px-6 rounded-full shadow-[0_4px_0_#c2410c] hover:-translate-y-0.5 active:translate-y-1 active:shadow-none transition-all uppercase tracking-wide mt-3 sm:mt-4 border-[3px] border-white text-xs sm:text-base">
@@ -390,17 +373,17 @@
                     class="order-2 md:order-1 bg-white dark:bg-slate-900 rounded-xl sm:rounded-[2rem] overflow-hidden shadow-sm border-[3px] sm:border-[4px] border-orange-200 dark:border-orange-900/30 h-48 sm:h-64 relative flex items-center justify-center p-2 sm:p-4 transform rotate-1 hover:rotate-0 transition-all duration-500">
                     <img src="../assets/images/line.png" alt="Line Up" class="w-full h-full object-contain dark:brightness-90">
                 </div>
-                <div class="order-1 md:order-2 space-y-3 sm:space-y-6">
-                    <div class="flex items-center gap-2 sm:gap-3 mb-1 sm:mb-2">
-                        <span class="bg-orange-100 dark:bg-orange-900/50 text-orange-600 dark:text-orange-400 border-2 border-orange-200 dark:border-orange-800 shadow-sm px-2 py-0.5 sm:px-3 sm:py-1 rounded-lg sm:rounded-xl text-xs sm:text-sm font-black transition-colors">2.3</span>
-                        <h2 class="text-lg sm:text-3xl font-black text-slate-800 dark:text-white transition-colors">The Buddy System</h2>
+                <div class="order-1 md:order-2 flex gap-3 sm:gap-4 items-start">
+                    <span class="shrink-0 mt-1 bg-orange-100 dark:bg-orange-900/50 text-orange-600 dark:text-orange-400 border-2 border-orange-200 dark:border-orange-800 shadow-sm px-2 py-0.5 sm:px-3 sm:py-1 rounded-lg sm:rounded-xl text-xs sm:text-sm font-black transition-colors">2.3</span>
+                    <div class="space-y-3 sm:space-y-6">
+                        <h2 class="text-lg sm:text-3xl font-black text-slate-800 dark:text-white transition-colors mb-1 sm:mb-2">The Buddy System</h2>
+                        <p class="text-slate-600 dark:text-slate-400 font-medium leading-relaxed text-xs sm:text-base transition-colors">
+                            The number one rule in a Philippine Fire Drill is: <strong class="text-slate-800 dark:text-white transition-colors">"Huwag Tumakbo"
+                                (Do Not Run)</strong>.
+                            We line up in pairs. Hold your buddy's hand. If your buddy is missing, tell the teacher
+                            immediately.
+                        </p>
                     </div>
-                    <p class="text-slate-600 dark:text-slate-400 font-medium leading-relaxed text-xs sm:text-base transition-colors">
-                        The number one rule in a Philippine Fire Drill is: <strong class="text-slate-800 dark:text-white transition-colors">"Huwag Tumakbo"
-                            (Do Not Run)</strong>.
-                        We line up in pairs. Hold your buddy's hand. If your buddy is missing, tell the teacher
-                        immediately.
-                    </p>
                 </div>
             </div>
         </section>
@@ -521,6 +504,7 @@
             <div id="quiz-result" class="hidden ss-completion-card success mx-auto mt-10">
                 <div class="ss-completion-icon" id="result-icon">🏆</div>
                 <h3 class="ss-completion-title" id="result-title"></h3>
+                <div id="score-badge" class="ss-score-badge" style="display:none;"></div>
                 <p class="ss-completion-desc" id="result-desc"></p>
 
                 <div class="ss-completion-actions">
@@ -911,6 +895,7 @@
                 document.getElementById('result-icon').innerText = "🏆";
                 document.getElementById('result-title').innerText = "MARSHAL CERTIFIED!";
                 document.getElementById('result-title').className = "ss-completion-title";
+                showScoreBadge(localState.quizScore || 5, 5);
                 document.getElementById('result-desc').innerText = "You have already completed this quiz!";
                 document.getElementById('btn-next-module').classList.remove('hidden');
                 const fq = document.getElementById('final-quiz');
@@ -1014,6 +999,7 @@
                 icon.innerText = "🏆";
                 title.innerText = "MARSHAL CERTIFIED!";
                 title.className = "ss-completion-title";
+                showScoreBadge(correctCount, 5);
                 desc.innerText = `You scored ${correctCount}/5. You are ready to lead!`;
 
                 nextBtn.classList.remove('hidden');
@@ -1033,12 +1019,20 @@
                 icon.innerText = "⚠️";
                 title.innerText = "KEEP PRACTICING";
                 title.className = "ss-completion-title !text-red-500";
+                showScoreBadge(correctCount, 5);
                 desc.innerText = `You scored ${correctCount}/5. You need 4/5 to pass.`;
                 retakeBtn.classList.remove('hidden');
             }
         }
 
         // --- TOAST ---
+        function showScoreBadge(score, maxScore) {
+            const badge = document.getElementById('score-badge');
+            if (!badge) return;
+            badge.innerHTML = `<span class="ss-score-badge-label">Quiz Score</span><span class="ss-score-badge-value">${score} <span class="ss-score-badge-max">/ ${maxScore}</span></span>`;
+            badge.style.display = '';
+        }
+
         function showToast(type, message) {
             const container = document.getElementById('toast-container');
             const toast = document.createElement('div');

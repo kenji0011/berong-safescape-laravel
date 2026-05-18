@@ -41,24 +41,37 @@ class School extends Model
         return $this->hasMany(User::class, 'school_id');
     }
 
-    /**
-     * Recalculate cached analytics from live user data.
-     */
     public function recalculateAnalytics(): void
     {
-        $users = $this->users;
+        // 1. Get basic aggregates in one database query
+        $stats = \App\Models\User::where('school_id', $this->id)
+            ->selectRaw('
+                COUNT(*) as total_students,
+                AVG("preTestScore") as avg_pre_test,
+                AVG("postTestScore") as avg_post_test
+            ')
+            ->first();
 
-        $this->totalStudents = $users->count();
-        $this->averagePreTestScore = $users->avg('preTestScore') ?? 0;
-        $this->averagePostTestScore = $users->avg('postTestScore') ?? 0;
+        $this->totalStudents = (int) ($stats->total_students ?? 0);
+        $this->averagePreTestScore = (float) ($stats->avg_pre_test ?? 0);
+        $this->averagePostTestScore = (float) ($stats->avg_post_test ?? 0);
 
-        // Calculate completion rate: users who completed at least 1 module / total users
+        // 2. Calculate completion rate (users with at least 1 completed module)
         if ($this->totalStudents > 0) {
-            $completedUsers = $users->filter(fn($u) => $u->progress()->where('completed', true)->exists())->count();
+            $completedUsers = \App\Models\User::where('school_id', $this->id)
+                ->whereHas('progress', function($q) {
+                    $q->where('completed', true);
+                })->count();
             $this->averageCompletionRate = round(($completedUsers / $this->totalStudents) * 100, 1);
+        } else {
+            $this->averageCompletionRate = 0;
         }
 
-        $this->totalModulesCompleted = $users->sum(fn($u) => $u->progress()->where('completed', true)->count());
+        // 3. Calculate total modules completed across the school
+        $this->totalModulesCompleted = \App\Models\UserProgress::join('users', 'user_progress.userId', '=', 'users.id')
+            ->where('users.school_id', $this->id)
+            ->where('user_progress.completed', true)
+            ->count();
 
         $this->save();
     }

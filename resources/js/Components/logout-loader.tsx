@@ -1,7 +1,7 @@
 'use client';
 import { motion, AnimatePresence } from 'motion/react';
 import { useAuth } from '@/lib/auth-context';
-import Image from '@/components/Image';
+import Image from '@/Components/Image';
 
 export function LogoutLoader() {
     const { isLoggingOut } = useAuth();
@@ -45,61 +45,61 @@ export function LogoutLoader() {
                         transition={{ type: "spring", damping: 20, stiffness: 100 }}
                         className="relative z-10 flex flex-col items-center"
                     >
-                        {/* Hero Logo with Spinning Ring */}
+                        {/* Hero Mascot with Bouncy Ring */}
                         <div className="relative mb-10">
                             {/* Outer Spinning Ring */}
                             <motion.div 
                                 animate={{ rotate: 360 }}
-                                transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
-                                className="absolute -inset-4 border-2 border-dashed border-orange-500/40 rounded-full"
+                                transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
+                                className="absolute -inset-6 border-[6px] border-dashed border-yellow-300 rounded-full"
                             />
                             {/* Inner Pulsing Glow */}
                             <motion.div 
-                                animate={{ scale: [1, 1.2, 1], opacity: [0.5, 0.8, 0.5] }}
+                                animate={{ scale: [1, 1.15, 1], opacity: [0.5, 0.8, 0.5] }}
                                 transition={{ duration: 2, repeat: Infinity }}
-                                className="absolute -inset-2 bg-orange-500/20 rounded-full"
+                                className="absolute -inset-2 bg-yellow-200/40 rounded-full"
                             />
                             
                             <motion.div
-                                animate={{ y: [0, -10, 0] }}
-                                transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
-                                className="relative w-24 h-24 sm:w-32 sm:h-32 rounded-3xl overflow-hidden border-4 border-white/20 shadow-[0_0_40px_rgba(249,115,22,0.4)]"
+                                animate={{ y: [0, -15, 0] }}
+                                transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+                                className="relative w-28 h-28 sm:w-36 sm:h-36 rounded-[2rem] overflow-hidden border-[6px] border-white shadow-[0_0_40px_rgba(250,204,21,0.5)] bg-white p-2"
                             >
                                 <Image
-                                    src="/berong-official-logo.jpg"
-                                    alt="Berong - Logging Out"
-                                    fill
-                                    className="object-cover"
-                                    priority
+                                    src="/berong_logout.png"
+                                    alt="Berong Logging Out"
+                                    className="w-full h-full object-contain drop-shadow-md"
+                                    priority={true}
                                 />
                             </motion.div>
                         </div>
 
                         {/* Text Content */}
-                        <div className="text-center">
+                        <div className="text-center mt-6">
                             <motion.h2
-                                className="text-3xl sm:text-4xl font-black text-white mb-2 tracking-tighter uppercase"
-                                animate={{ opacity: [0.8, 1, 0.8] }}
+                                className="text-4xl sm:text-5xl font-black text-white mb-3 tracking-wide uppercase"
+                                style={{ textShadow: '0 4px 12px rgba(0,0,0,0.1)' }}
+                                animate={{ opacity: [0.9, 1, 0.9], scale: [1, 1.02, 1] }}
                                 transition={{ duration: 2, repeat: Infinity }}
                             >
-                                Logging <span className="text-orange-500">Out</span>
+                                Logging <span className="text-yellow-300">Out!</span>
                             </motion.h2>
                             <motion.p 
                                 initial={{ opacity: 0 }}
                                 animate={{ opacity: 1 }}
                                 transition={{ delay: 0.3 }}
-                                className="text-white/60 font-bold tracking-widest text-xs sm:text-sm uppercase"
+                                className="text-white/90 font-bold tracking-wide text-sm sm:text-base bg-black/10 px-6 py-2 rounded-full backdrop-blur-sm uppercase"
                             >
                                 Stay Safe, Hero! See you next time.
                             </motion.p>
                         </div>
 
-                        {/* Modern Progress Line */}
-                        <div className="mt-8 w-48 h-1 bg-white/10 rounded-full overflow-hidden border border-white/5">
+                        {/* Fun Progress Line */}
+                        <div className="mt-8 w-56 h-3 bg-white/30 rounded-full overflow-hidden border-2 border-white/40 shadow-inner">
                             <motion.div 
-                                animate={{ x: [-200, 200] }}
+                                animate={{ x: [-250, 250] }}
                                 transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
-                                className="w-1/2 h-full bg-orange-500"
+                                className="w-1/2 h-full bg-yellow-400 rounded-full shadow-[0_0_10px_#facc15]"
                             />
                         </div>
                     </motion.div>

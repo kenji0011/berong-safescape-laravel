@@ -622,44 +622,42 @@ class AdminController extends Controller
         $todayStart = now()->startOfDay();
         $weekAgo = now()->subDays(7);
 
-        $totalUsers = User::where('role', '!=', 'admin')->count();
-        $profilesCompleted = User::where('role', '!=', 'admin')->where('profileCompleted', true)->count();
-        $preTestsTaken = User::where('role', '!=', 'admin')->whereNotNull('preTestScore')->count();
-        $postTestsTaken = User::where('role', '!=', 'admin')->whereNotNull('postTestScore')->count();
-
-        $avgPreTest = User::where('role', '!=', 'admin')->avg('preTestScore') ?? 0;
-        $avgPostTest = User::where('role', '!=', 'admin')->avg('postTestScore') ?? 0;
-
-        $totalEngagement = User::where('role', '!=', 'admin')->sum('engagementPoints') ?? 0;
-        $avgEngagement = User::where('role', '!=', 'admin')->avg('engagementPoints') ?? 0;
+        // Fetch all basic user aggregates in one single fast query
+        $stats = User::where('role', '!=', 'admin')
+            ->selectRaw('
+                COUNT(*) as total_users,
+                SUM(CASE WHEN "profileCompleted" = true THEN 1 ELSE 0 END) as profiles_completed,
+                SUM(CASE WHEN "preTestScore" IS NOT NULL THEN 1 ELSE 0 END) as pre_tests_taken,
+                SUM(CASE WHEN "postTestScore" IS NOT NULL THEN 1 ELSE 0 END) as post_tests_taken,
+                AVG("preTestScore") as avg_pre_test,
+                AVG("postTestScore") as avg_post_test,
+                SUM("engagementPoints") as total_engagement,
+                AVG("engagementPoints") as avg_engagement
+            ')
+            ->first();
 
         $activeToday = EngagementLog::where('loggedAt', '>=', $todayStart)->distinct('userId')->count('userId');
         $activeThisWeek = EngagementLog::where('loggedAt', '>=', $weekAgo)->distinct('userId')->count('userId');
 
-        $usersWithBoth = User::where('role', '!=', 'admin')
+        // Calculate average improvement directly in the database
+        $avgImprovementStats = User::where('role', '!=', 'admin')
             ->whereNotNull('preTestScore')
             ->whereNotNull('postTestScore')
-            ->get(['preTestScore', 'postTestScore']);
-
-        $avgImprovement = 0;
-        if ($usersWithBoth->count() > 0) {
-            $sum = 0;
-            foreach ($usersWithBoth as $u) {
-                $sum += ($u->postTestScore - $u->preTestScore);
-            }
-            $avgImprovement = $sum / $usersWithBoth->count();
-        }
+            ->selectRaw('AVG("postTestScore" - "preTestScore") as avg_improvement')
+            ->first();
+            
+        $avgImprovement = (float) ($avgImprovementStats->avg_improvement ?? 0);
 
         return [
-            'totalUsers' => $totalUsers,
-            'profilesCompleted' => $profilesCompleted,
-            'preTestsTaken' => $preTestsTaken,
-            'postTestsTaken' => $postTestsTaken,
-            'averagePreTestScore' => round($avgPreTest, 2),
-            'averagePostTestScore' => round($avgPostTest, 2),
+            'totalUsers' => (int) ($stats->total_users ?? 0),
+            'profilesCompleted' => (int) ($stats->profiles_completed ?? 0),
+            'preTestsTaken' => (int) ($stats->pre_tests_taken ?? 0),
+            'postTestsTaken' => (int) ($stats->post_tests_taken ?? 0),
+            'averagePreTestScore' => round((float) ($stats->avg_pre_test ?? 0), 2),
+            'averagePostTestScore' => round((float) ($stats->avg_post_test ?? 0), 2),
             'averageImprovement' => round($avgImprovement, 2),
-            'totalEngagementPoints' => $totalEngagement,
-            'avgEngagementPerUser' => round($avgEngagement, 2),
+            'totalEngagementPoints' => (int) ($stats->total_engagement ?? 0),
+            'avgEngagementPerUser' => round((float) ($stats->avg_engagement ?? 0), 2),
             'activeUsersToday' => $activeToday,
             'activeUsersThisWeek' => $activeThisWeek,
         ];

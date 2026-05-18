@@ -14,6 +14,7 @@ use App\Http\Controllers\BadgeController;
 Route::get('/', function () {
     return Inertia::render('Welcome', [
         'carouselImages' => CarouselImage::where('isActive', true)
+            ->select('id', 'title', 'imageUrl', 'altText')
             ->orderBy('order', 'asc')
             ->get()
     ]);
@@ -35,11 +36,11 @@ Route::get('/about', function () {
 
         Route::get('/dashboard', function () {
             /** @var \App\Models\User $user */
-            $user = request()->user();
+            $user = Auth::user();
             if ($user->role === 'admin') return redirect()->route('admin');
-        if ($user->role === 'professional') return redirect()->route('professional');
-        if ($user->role === 'kid') return redirect()->route('kids');
-        return redirect()->route('adult');
+            if ($user->role === 'professional') return redirect()->route('professional');
+            if ($user->role === 'kid') return redirect()->route('kids');
+            return redirect()->route('adult');
     })->name('dashboard');
 
     Route::get('/profile', function () {
@@ -96,6 +97,7 @@ Route::get('/about', function () {
         return Inertia::render('Kids/Videos', [
             'initialVideos' => \App\Models\Video::where('isActive', true)
                 ->where('category', 'kids')
+                ->select('id', 'title', 'description', 'youtubeId', 'duration', 'category')
                 ->orderBy('order', 'asc')
                 ->get(),
             'watchedVideoIds' => \App\Models\EngagementLog::where('userId', Auth::id())
@@ -170,7 +172,9 @@ Route::get('/about', function () {
         return Inertia::render('AdultDashboard', [
             'initialBlogs' => Inertia::defer(fn () => BlogPost::with('author:id,name')
                 ->where('isPublished', true)
+                ->select('id', 'title', 'excerpt', 'imageUrl', 'category', 'authorId', 'created_at')
                 ->orderBy('created_at', 'desc')
+                ->take(12)
                 ->get()),
         ]);
     })->name('adult');
@@ -186,7 +190,9 @@ Route::get('/about', function () {
         return Inertia::render('ProfessionalDashboard', [
             'initialVideos' => Inertia::defer(fn () => \App\Models\Video::where('isActive', true)
                 ->where('category', 'professional')
+                ->select('id', 'title', 'description', 'youtubeId', 'duration', 'category')
                 ->orderBy('created_at', 'desc')
+                ->take(12)
                 ->get()),
             'watchedVideoIds' => Inertia::defer(fn () => \App\Models\EngagementLog::where('userId', Auth::id())
                 ->where('eventType', 'VIDEO_WATCHED')

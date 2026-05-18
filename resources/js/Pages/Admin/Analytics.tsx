@@ -813,24 +813,61 @@ export default function AnalyticsDashboard({
                 </div>
 
                 {knowledgeData.length > 0 && (
-                  <div className="mt-6 sm:mt-8 bg-orange-50 dark:bg-orange-900/20 rounded-xl sm:rounded-2xl border-2 border-orange-200 dark:border-orange-800 p-4 sm:p-6">
-                    <div className="flex items-center gap-2 mb-3">
-                      <BarChart3 className="h-5 w-5 text-orange-500 dark:text-orange-400" strokeWidth={2.5} />
-                      <h4 className="font-black text-orange-700 dark:text-orange-300 text-sm sm:text-base uppercase tracking-tight">Insights</h4>
-                    </div>
-                    <div className="space-y-2">
-                      {(Array.isArray(knowledgeData) ? knowledgeData : []).filter(k => (k.avgScore || 0) < 50).length > 0 && (
-                        <p className="font-bold text-orange-600 text-xs sm:text-sm">
-                          <span className="text-orange-800">Priority Focus Areas:</span>{" "}
-                          {(Array.isArray(knowledgeData) ? knowledgeData : []).filter(k => (k.avgScore || 0) < 50).map(k => k.category).join(", ")}
-                        </p>
-                      )}
-                      {(Array.isArray(knowledgeData) ? knowledgeData : []).filter(k => (k.avgScore || 0) >= 70).length > 0 && (
-                        <p className="font-bold text-emerald-600 text-xs sm:text-sm">
-                          <span className="text-emerald-800">Strong Knowledge Areas:</span>{" "}
-                          {(Array.isArray(knowledgeData) ? knowledgeData : []).filter(k => (k.avgScore || 0) >= 70).map(k => k.category).join(", ")}
-                        </p>
-                      )}
+                  <div className="mt-8 space-y-4">
+                    <h4 className="font-black text-slate-800 dark:text-white text-lg sm:text-xl uppercase tracking-tight flex items-center gap-2">
+                      <Target className="h-6 w-6 text-yellow-500" strokeWidth={2.5} /> Actionable Insights
+                    </h4>
+                    
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {/* Priority Focus */}
+                      <div className="bg-white dark:bg-slate-800 rounded-2xl border-2 border-slate-200 dark:border-slate-700 border-b-[4px] p-5 sm:p-6 shadow-[0_4px_0_#cbd5e1] dark:shadow-[0_4px_0_#0f172a] relative overflow-hidden group hover:-translate-y-1 transition-transform">
+                        <div className="absolute -right-6 -top-6 w-20 h-20 bg-red-100 dark:bg-red-900/20 rounded-full blur-2xl transition-colors"></div>
+                        <div className="relative z-10 flex items-center gap-3 mb-4">
+                          <div className="p-2 bg-red-100 dark:bg-red-900/30 rounded-xl text-red-600 dark:text-red-400 border border-red-200 dark:border-red-800 shadow-sm shrink-0">
+                            <AlertTriangle className="h-5 w-5 sm:h-6 sm:w-6" strokeWidth={2.5} />
+                          </div>
+                          <div>
+                            <h5 className="font-black text-red-700 dark:text-red-400 text-base sm:text-lg uppercase tracking-tight">Priority Focus</h5>
+                            <p className="font-bold text-slate-400 dark:text-slate-500 text-[10px] sm:text-xs uppercase tracking-wide">Areas needing immediate attention (Below 60%)</p>
+                          </div>
+                        </div>
+                        <div className="relative z-10 flex flex-wrap gap-2">
+                          {(() => {
+                            const weak = (Array.isArray(knowledgeData) ? knowledgeData : []).filter(k => (k.avgScore || 0) < 60);
+                            if (weak.length === 0) return <span className="text-sm font-bold text-slate-400 dark:text-slate-500 bg-slate-100 dark:bg-slate-900 px-4 py-2 rounded-xl">No critical gaps identified! Great job!</span>;
+                            return weak.map(k => (
+                              <span key={k.category} className="bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-400 border-2 border-red-200 dark:border-red-800 px-3 py-1.5 rounded-xl text-xs sm:text-sm font-black shadow-sm uppercase tracking-wider flex items-center gap-1.5 hover:bg-red-100 dark:hover:bg-red-900/50 transition-colors">
+                                {k.category} <span className="opacity-75 bg-red-200 dark:bg-red-800 px-1.5 py-0.5 rounded-md">{k.avgScore}%</span>
+                              </span>
+                            ));
+                          })()}
+                        </div>
+                      </div>
+
+                      {/* Strengths */}
+                      <div className="bg-white dark:bg-slate-800 rounded-2xl border-2 border-slate-200 dark:border-slate-700 border-b-[4px] p-5 sm:p-6 shadow-[0_4px_0_#cbd5e1] dark:shadow-[0_4px_0_#0f172a] relative overflow-hidden group hover:-translate-y-1 transition-transform">
+                        <div className="absolute -right-6 -top-6 w-20 h-20 bg-emerald-100 dark:bg-emerald-900/20 rounded-full blur-2xl transition-colors"></div>
+                        <div className="relative z-10 flex items-center gap-3 mb-4">
+                          <div className="p-2 bg-emerald-100 dark:bg-emerald-900/30 rounded-xl text-emerald-600 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800 shadow-sm shrink-0">
+                            <Award className="h-5 w-5 sm:h-6 sm:w-6" strokeWidth={2.5} />
+                          </div>
+                          <div>
+                            <h5 className="font-black text-emerald-700 dark:text-emerald-400 text-base sm:text-lg uppercase tracking-tight">Strong Knowledge</h5>
+                            <p className="font-bold text-slate-400 dark:text-slate-500 text-[10px] sm:text-xs uppercase tracking-wide">Areas of high proficiency (70% and above)</p>
+                          </div>
+                        </div>
+                        <div className="relative z-10 flex flex-wrap gap-2">
+                          {(() => {
+                            const strong = (Array.isArray(knowledgeData) ? knowledgeData : []).filter(k => (k.avgScore || 0) >= 70);
+                            if (strong.length === 0) return <span className="text-sm font-bold text-slate-400 dark:text-slate-500 bg-slate-100 dark:bg-slate-900 px-4 py-2 rounded-xl">More data needed to determine strengths.</span>;
+                            return strong.map(k => (
+                              <span key={k.category} className="bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 border-2 border-emerald-200 dark:border-emerald-800 px-3 py-1.5 rounded-xl text-xs sm:text-sm font-black shadow-sm uppercase tracking-wider flex items-center gap-1.5 hover:bg-emerald-100 dark:hover:bg-emerald-900/50 transition-colors">
+                                {k.category} <span className="opacity-75 bg-emerald-200 dark:bg-emerald-800 px-1.5 py-0.5 rounded-md">{k.avgScore}%</span>
+                              </span>
+                            ));
+                          })()}
+                        </div>
+                      </div>
                     </div>
                   </div>
                 )}

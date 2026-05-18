@@ -25,7 +25,7 @@ export function SettingsPanel({ variant }: SettingsPanelProps) {
           onClick={toggleDarkMode}
           className="flex items-center justify-between px-6 py-3 cursor-pointer hover:bg-white/5 transition-colors"
         >
-          <span className="flex items-center gap-3 text-[15px] font-bold text-white">
+          <span className="flex items-center gap-3 text-[0.9375rem] font-bold text-white">
             {isDarkMode ? <Sun className="h-5 w-5 text-yellow-400 shrink-0" strokeWidth={2.5} /> : <Moon className="h-5 w-5 text-indigo-400 shrink-0" strokeWidth={2.5} />}
             Dark Mode
           </span>
@@ -39,7 +39,7 @@ export function SettingsPanel({ variant }: SettingsPanelProps) {
           onClick={toggleReduceMotion}
           className="flex items-center justify-between px-6 py-3 cursor-pointer hover:bg-white/5 transition-colors"
         >
-          <span className="flex items-center gap-3 text-[15px] font-bold text-white">
+          <span className="flex items-center gap-3 text-[0.9375rem] font-bold text-white">
             <Zap className="h-5 w-5 text-amber-400 shrink-0" strokeWidth={2.5} />
             Performance Mode
           </span>
@@ -52,7 +52,7 @@ export function SettingsPanel({ variant }: SettingsPanelProps) {
         <div className="px-6 py-3">
           <div className="flex items-center gap-3 mb-3">
             <Type className="h-5 w-5 text-blue-400 shrink-0" strokeWidth={2.5} />
-            <span className="text-[15px] font-bold text-white">Text Size</span>
+            <span className="text-[0.9375rem] font-bold text-white">Text Size</span>
           </div>
           <div className="flex bg-[#1e293b] rounded-lg p-1 border border-slate-700/50">
             <button
