@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 
 export type TextSize = 'normal' | 'large' | 'xlarge';
+export type ColorBlindness = 'none' | 'protanopia' | 'deuteranopia' | 'tritanopia';
 
 interface SettingsContextType {
   reduceMotion: boolean;
@@ -11,6 +12,14 @@ interface SettingsContextType {
   isDarkMode: boolean;
   setIsDarkMode: (value: boolean) => void;
   toggleDarkMode: () => void;
+  dyslexiaFont: boolean;
+  setDyslexiaFont: (value: boolean) => void;
+  toggleDyslexiaFont: () => void;
+  focusMode: boolean;
+  setFocusMode: (value: boolean) => void;
+  toggleFocusMode: () => void;
+  colorBlindness: ColorBlindness;
+  setColorBlindness: (value: ColorBlindness) => void;
 }
 
 const SettingsContext = createContext<SettingsContextType | undefined>(undefined);
@@ -19,6 +28,9 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
   const [reduceMotion, setReduceMotionState] = useState<boolean>(false);
   const [textSize, setTextSizeState] = useState<TextSize>('normal');
   const [isDarkMode, setIsDarkModeState] = useState<boolean>(false);
+  const [dyslexiaFont, setDyslexiaFontState] = useState<boolean>(false);
+  const [focusMode, setFocusModeState] = useState<boolean>(false);
+  const [colorBlindness, setColorBlindnessState] = useState<ColorBlindness>('none');
 
   useEffect(() => {
     // Check local storage or system preference on mount
@@ -42,6 +54,21 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
     } else {
       const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
       setIsDarkModeState(prefersDark);
+    }
+    
+    const savedDyslexia = localStorage.getItem("safescape-dyslexia-font");
+    if (savedDyslexia !== null) {
+      setDyslexiaFontState(savedDyslexia === "true");
+    }
+
+    const savedFocus = localStorage.getItem("safescape-focus-mode");
+    if (savedFocus !== null) {
+      setFocusModeState(savedFocus === "true");
+    }
+
+    const savedColorBlindness = localStorage.getItem("safescape-color-blindness") as ColorBlindness | null;
+    if (savedColorBlindness && ['none', 'protanopia', 'deuteranopia', 'tritanopia'].includes(savedColorBlindness)) {
+      setColorBlindnessState(savedColorBlindness);
     }
   }, []);
 
@@ -77,6 +104,37 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
     });
   }, []);
 
+  const setDyslexiaFont = React.useCallback((value: boolean) => {
+    setDyslexiaFontState(value);
+    setTimeout(() => localStorage.setItem("safescape-dyslexia-font", String(value)), 0);
+  }, []);
+
+  const toggleDyslexiaFont = React.useCallback(() => {
+    setDyslexiaFontState(prev => {
+      const newValue = !prev;
+      setTimeout(() => localStorage.setItem("safescape-dyslexia-font", String(newValue)), 0);
+      return newValue;
+    });
+  }, []);
+
+  const setFocusMode = React.useCallback((value: boolean) => {
+    setFocusModeState(value);
+    setTimeout(() => localStorage.setItem("safescape-focus-mode", String(value)), 0);
+  }, []);
+
+  const toggleFocusMode = React.useCallback(() => {
+    setFocusModeState(prev => {
+      const newValue = !prev;
+      setTimeout(() => localStorage.setItem("safescape-focus-mode", String(newValue)), 0);
+      return newValue;
+    });
+  }, []);
+
+  const setColorBlindness = React.useCallback((value: ColorBlindness) => {
+    setColorBlindnessState(value);
+    setTimeout(() => localStorage.setItem("safescape-color-blindness", value), 0);
+  }, []);
+
   // Sync the CSS class on <html> for global CSS animation kill-switch
   useEffect(() => {
     const root = document.documentElement;
@@ -96,6 +154,37 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
       root.classList.remove("dark");
     }
   }, [isDarkMode]);
+
+  // Sync dyslexia font class
+  useEffect(() => {
+    const root = document.documentElement;
+    if (dyslexiaFont) {
+      root.classList.add("dyslexia-mode");
+    } else {
+      root.classList.remove("dyslexia-mode");
+    }
+  }, [dyslexiaFont]);
+
+  // Sync focus mode class
+  useEffect(() => {
+    const root = document.documentElement;
+    if (focusMode) {
+      root.classList.add("focus-mode");
+    } else {
+      root.classList.remove("focus-mode");
+    }
+  }, [focusMode]);
+
+  // Sync color blindness filter classes
+  useEffect(() => {
+    const root = document.documentElement;
+    root.classList.remove("color-filter-protanopia", "color-filter-deuteranopia", "color-filter-tritanopia");
+    if (colorBlindness !== 'none') {
+      root.classList.add(`color-filter-${colorBlindness}`);
+    }
+  }, [colorBlindness]);
+
+
 
   // Sync text-size class on <html> for global CSS scaling
   useEffect(() => {
@@ -128,8 +217,16 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
     setTextSize,
     isDarkMode,
     setIsDarkMode,
-    toggleDarkMode
-  }), [reduceMotion, setReduceMotion, toggleReduceMotion, textSize, setTextSize, isDarkMode, setIsDarkMode, toggleDarkMode]);
+    toggleDarkMode,
+    dyslexiaFont,
+    setDyslexiaFont,
+    toggleDyslexiaFont,
+    focusMode,
+    setFocusMode,
+    toggleFocusMode,
+    colorBlindness,
+    setColorBlindness
+  }), [reduceMotion, setReduceMotion, toggleReduceMotion, textSize, setTextSize, isDarkMode, setIsDarkMode, toggleDarkMode, dyslexiaFont, setDyslexiaFont, toggleDyslexiaFont, focusMode, setFocusMode, toggleFocusMode, colorBlindness, setColorBlindness]);
 
   return (
     <SettingsContext.Provider value={value}>

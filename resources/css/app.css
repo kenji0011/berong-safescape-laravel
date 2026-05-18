@@ -237,6 +237,102 @@ html.text-size-xlarge {
 }
 
 /* ============================================
+   COLOR BLINDNESS ACCESSIBILITY FILTERS
+   ============================================
+   Applies GPU-accelerated SVG matrix filters 
+   globally to help protan, deutan, and tritan
+   users distinguish critical hazard colors.
+   ============================================ */
+html.color-filter-protanopia {
+  filter: url('#protanopia') !important;
+}
+html.color-filter-deuteranopia {
+  filter: url('#deuteranopia') !important;
+}
+html.color-filter-tritanopia {
+  filter: url('#tritanopia') !important;
+}
+
+/* ============================================
+   DYSLEXIA FONT MODE
+   ============================================
+   Overrides all fonts with universally available 
+   dyslexia-friendly alternatives like Comic Sans.
+   ============================================ */
+html.dyslexia-mode * {
+  font-family: "Comic Sans MS", "Comic Sans", "OpenDyslexic", cursive, sans-serif !important;
+  letter-spacing: 0.05em !important;
+  word-spacing: 0.1em !important;
+}
+
+/* ============================================
+   FOCUS MODE - Distraction-Free Reading
+   ============================================
+   Strips away decorative elements, background
+   patterns, blur effects, floating elements,
+   and complex shadows to create a clean,
+   distraction-free reading environment.
+   Ideal for users with ADHD, Autism, or
+   cognitive processing differences.
+   ============================================ */
+
+/* Remove dotted background patterns */
+html.focus-mode [style*="radial-gradient"],
+html.focus-mode [class*="radial-gradient"] {
+  background-image: none !important;
+}
+
+/* Remove decorative blur circles & floating elements */
+html.focus-mode .blur-2xl,
+html.focus-mode .blur-3xl,
+html.focus-mode .blur-xl {
+  display: none !important;
+}
+
+/* Remove backdrop blur effects */
+html.focus-mode .backdrop-blur-sm,
+html.focus-mode .backdrop-blur-md,
+html.focus-mode .backdrop-blur-lg,
+html.focus-mode .backdrop-blur-xl {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+/* Simplify shadows to minimal flat borders */
+html.focus-mode * {
+  text-shadow: none !important;
+}
+
+/* Remove decorative background images on containers */
+html.focus-mode [style*="backgroundImage"] {
+  background-image: none !important;
+}
+
+/* Remove glow/neon shadow effects */
+html.focus-mode [class*="shadow-\[0_0"] {
+  box-shadow: none !important;
+}
+
+/* Flatten opacity on decorative overlays */
+html.focus-mode .opacity-5,
+html.focus-mode .opacity-10,
+html.focus-mode .opacity-20 {
+  opacity: 0 !important;
+}
+
+/* Hide canvas-based effects (particles, splash cursor, etc.) */
+html.focus-mode canvas {
+  display: none !important;
+}
+
+/* Remove drop shadows from text */
+html.focus-mode .drop-shadow-sm,
+html.focus-mode .drop-shadow-md,
+html.focus-mode .drop-shadow-lg {
+  filter: none !important;
+}
+
+/* ============================================
    AUTOFILL DARK MODE FIX
    ============================================
    Prevents browsers from overriding input 

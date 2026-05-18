@@ -3,8 +3,9 @@
 import { Link, usePage } from '@inertiajs/react';
 import { useState, useEffect } from "react"
 import { useAuth } from "@/lib/auth-context"
+import { useSettings } from "@/lib/settings-context"
 import { Button } from "@/components/ui/button"
-import { LogOut, User, Menu, X, Home, Users, Briefcase, Baby, Shield, Info, Settings, ChevronDown, ArrowRight, Clock } from "lucide-react"
+import { LogOut, User, Menu, X, Home, Users, Briefcase, Baby, Shield, Info, Settings, ChevronDown, ArrowRight, Clock, Sliders, BookOpen, Eye, Focus, Type, Zap, Sun, Moon } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { NotificationPopover } from "@/components/ui/notification-popover"
 import { SettingsPanel } from "@/components/settings-panel"
@@ -73,6 +74,22 @@ export function Navigation() {
   const isDashboard = url === '/';
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false)
+  const [showAccessibilityModal, setShowAccessibilityModal] = useState(false)
+
+  const {
+    reduceMotion,
+    toggleReduceMotion,
+    textSize,
+    setTextSize,
+    isDarkMode,
+    toggleDarkMode,
+    dyslexiaFont,
+    toggleDyslexiaFont,
+    focusMode,
+    toggleFocusMode,
+    colorBlindness,
+    setColorBlindness
+  } = useSettings()
 
   const accessibleItems = [];
   if (user?.permissions?.accessProfessional) accessibleItems.push({ name: 'PROFESSIONAL', href: '/professional', active: url.startsWith('/professional') });
@@ -246,13 +263,23 @@ export function Navigation() {
                     
                     <DropdownMenuContent className="w-56 bg-white dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-800 shadow-xl rounded-[14px] p-1.5 z-[100] mt-2 mr-2 transition-colors" align="end" sideOffset={8}>
                       <div className="px-2 py-1.5 mb-1 border-b border-slate-100 dark:border-slate-800 transition-colors">
-                        <p className="text-sm font-semibold text-slate-800 dark:text-white transition-colors">Settings</p>
+                        <p className="text-sm font-semibold text-slate-800 dark:text-white transition-colors">Menu Options</p>
                       </div>
 
-                      <SettingsPanel variant="dropdown" />
+                      {/* Accessibility Settings Modal Trigger */}
+                      <DropdownMenuItem 
+                        onClick={(e) => { e.preventDefault(); setShowAccessibilityModal(true); }}
+                        className="cursor-pointer font-bold rounded-lg py-2.5 px-3 flex items-center justify-between hover:bg-slate-50 dark:hover:bg-slate-800 focus:bg-slate-50 dark:focus:bg-slate-800 transition-colors group"
+                      >
+                        <span className="flex items-center gap-2 text-sm text-slate-700 dark:text-slate-300">
+                          <Sliders className="h-4 w-4 text-emerald-500 group-hover:text-emerald-600 transition-colors" strokeWidth={2.5} />
+                          Accessibility Center
+                        </span>
+                        <ArrowRight className="h-3.5 w-3.5 text-slate-400 group-hover:translate-x-0.5 transition-transform" />
+                      </DropdownMenuItem>
                       
                       <div className="h-[1px] bg-slate-100 dark:bg-slate-800 my-1 transition-colors" />
-                      
+
                       {/* About Link */}
                       <Link href="/about" className="block w-full outline-none">
                         <DropdownMenuItem className="cursor-pointer font-bold rounded-lg py-2.5 px-3 flex items-center justify-between hover:bg-slate-50 dark:hover:bg-slate-800 focus:bg-slate-50 dark:focus:bg-slate-800 transition-colors group">
@@ -270,8 +297,8 @@ export function Navigation() {
                         onClick={(e) => { e.preventDefault(); setShowLogoutConfirm(true); }}
                         className="cursor-pointer font-bold rounded-lg py-2.5 px-3 flex items-center justify-between hover:bg-red-50 dark:hover:bg-red-950/30 focus:bg-red-50 dark:focus:bg-red-950/30 transition-colors group"
                       >
-                        <span className="flex items-center gap-2 text-sm text-red-600">
-                          <LogOut className="h-4 w-4 transition-transform group-hover:-translate-x-1" />
+                        <span className="flex items-center gap-2 text-sm text-red-600 font-bold">
+                          <LogOut className="h-4 w-4 transition-transform group-hover:-translate-x-1" strokeWidth={2.5} />
                           Log Out
                         </span>
                       </DropdownMenuItem>
@@ -289,10 +316,20 @@ export function Navigation() {
                     
                     <DropdownMenuContent className="w-56 bg-white dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-800 shadow-xl rounded-[14px] p-1.5 z-[100] mt-2 mr-2 transition-colors" align="end" sideOffset={8}>
                       <div className="px-2 py-1.5 mb-1 border-b border-slate-100 dark:border-slate-800">
-                        <p className="text-sm font-semibold text-slate-800 dark:text-white transition-colors">Settings</p>
+                        <p className="text-sm font-semibold text-slate-800 dark:text-white transition-colors">Menu Options</p>
                       </div>
 
-                      <SettingsPanel variant="dropdown" />
+                      {/* Accessibility Settings Modal Trigger */}
+                      <DropdownMenuItem 
+                        onClick={(e) => { e.preventDefault(); setShowAccessibilityModal(true); }}
+                        className="cursor-pointer font-bold rounded-lg py-2.5 px-3 flex items-center justify-between hover:bg-slate-50 dark:hover:bg-slate-800 focus:bg-slate-50 dark:focus:bg-slate-800 transition-colors group"
+                      >
+                        <span className="flex items-center gap-2 text-sm text-slate-700 dark:text-slate-300">
+                          <Sliders className="h-4 w-4 text-emerald-500 group-hover:text-emerald-600 transition-colors" strokeWidth={2.5} />
+                          Accessibility Center
+                        </span>
+                        <ArrowRight className="h-3.5 w-3.5 text-slate-400 group-hover:translate-x-0.5 transition-transform" />
+                      </DropdownMenuItem>
 
                       <div className="h-[1px] bg-slate-100 dark:bg-slate-800 my-1 transition-colors" />
 
@@ -356,7 +393,7 @@ export function Navigation() {
           {/* Caret pointing up to the hamburger */}
           <div className="absolute -top-2.5 right-[18px] w-6 h-6 bg-[#334155] rotate-45 rounded-[3px] z-[-1] border-l-2 border-t-2 border-[#1e293b]/50"></div>
           
-          <div className="py-3 flex flex-col">
+          <div className="max-h-[calc(100vh-120px)] overflow-y-auto py-3 flex flex-col scrollbar-thin scrollbar-thumb-slate-600 scrollbar-track-transparent">
             <Link
               href="/"
               className={`flex items-center gap-4 px-6 py-3.5 font-bold text-[0.9375rem] transition-colors ${url === '/' ? 'text-yellow-400 bg-white/5' : 'text-white hover:bg-white/5'}`}
@@ -432,7 +469,18 @@ export function Navigation() {
               <TimeDisplay mobile />
             </div>
 
-            <SettingsPanel variant="mobile" />
+            {/* Accessibility Settings link for all mobile users */}
+            <button
+              onClick={() => {
+                setMobileMenuOpen(false)
+                setShowAccessibilityModal(true)
+              }}
+              className="flex items-center gap-4 px-6 py-3.5 font-bold text-[0.9375rem] text-white hover:bg-white/5 transition-colors w-full text-left outline-none"
+            >
+              <Sliders className="h-5 w-5 text-emerald-400 shrink-0" strokeWidth={2.5} />
+              <span className="flex-1">Accessibility Settings</span>
+              <ArrowRight className="h-4 w-4 text-slate-400 shrink-0" />
+            </button>
 
             {/* Mobile User Info */}
             {isAuthenticated && (
@@ -501,6 +549,167 @@ export function Navigation() {
                 Sign Out
               </button>
             </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Immersive Accessibility Settings Modal */}
+      <Dialog open={showAccessibilityModal} onOpenChange={setShowAccessibilityModal}>
+        <DialogContent
+          onOpenAutoFocus={(e) => {
+            e.preventDefault();
+            const closeBtn = (e.currentTarget as HTMLElement).querySelector('[data-slot="dialog-close"]') as HTMLElement;
+            if (closeBtn) {
+              closeBtn.focus();
+            }
+          }}
+          aria-describedby={undefined}
+          className="max-w-[95vw] sm:max-w-lg bg-white dark:bg-[#0f172a] text-slate-800 dark:text-slate-100 border border-slate-200 dark:border-slate-800 rounded-[2rem] p-0 overflow-hidden shadow-2xl transition-colors duration-500"
+        >
+          <div className="bg-gradient-to-r from-emerald-500 to-teal-600 p-6 text-center border-b-[6px] border-white/20">
+            <div className="w-14 h-14 bg-white/10 rounded-2xl flex items-center justify-center mx-auto mb-3 shadow-inner">
+              <Sliders className="h-7 w-7 text-white" strokeWidth={2.5} />
+            </div>
+            <DialogTitle className="text-xl sm:text-2xl font-black text-white uppercase tracking-tight italic drop-shadow-md">Accessibility Center</DialogTitle>
+            <p className="text-emerald-100 text-xs sm:text-sm font-semibold mt-1">Customize your learning and dashboard environments</p>
+          </div>
+
+          <div className="p-6 max-h-[65vh] overflow-y-auto space-y-5 scrollbar-none [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+            {/* Visual Assists */}
+            <div className="bg-slate-50 dark:bg-slate-900/50 rounded-2xl p-4 border border-slate-200 dark:border-slate-800/80 space-y-4 transition-colors">
+              <h3 className="text-xs font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-widest">Visual Assists</h3>
+              
+              {/* Dark Mode */}
+              <div
+                onClick={() => toggleDarkMode()}
+                className="flex items-center justify-between cursor-pointer py-1.5"
+              >
+                <div className="flex flex-col">
+                  <span className="flex items-center gap-2 text-sm font-bold text-slate-800 dark:text-white">
+                    {isDarkMode ? <Sun className="h-4.5 w-4.5 text-yellow-500 shrink-0" /> : <Moon className="h-4.5 w-4.5 text-indigo-500 dark:text-indigo-400 shrink-0" />}
+                    Dark Mode
+                  </span>
+                  <span className="text-[11px] text-slate-500 dark:text-slate-400 font-medium">Switch between light and dark visual themes</span>
+                </div>
+                <div className={`relative w-10 h-6 rounded-full transition-colors duration-200 ${isDarkMode ? 'bg-yellow-500' : 'bg-slate-300 dark:bg-slate-600'}`}>
+                  <div className={`absolute top-1 left-1 w-4 h-4 bg-white rounded-full shadow transition-transform duration-200 ${isDarkMode ? 'translate-x-4' : 'translate-x-0'}`} />
+                </div>
+              </div>
+
+              {/* Color Blindness Segmented Filter */}
+              <div className="pt-2">
+                <div className="flex flex-col mb-2">
+                  <span className="flex items-center gap-2 text-sm font-bold text-slate-800 dark:text-white">
+                    <Eye className="h-4.5 w-4.5 text-emerald-500 dark:text-emerald-450 shrink-0" />
+                    Color Deficiency Filter
+                  </span>
+                  <span className="text-[11px] text-slate-500 dark:text-slate-400 font-medium">Enhance contrast and adjust color spaces for vision correction</span>
+                </div>
+                <div className="grid grid-cols-2 gap-1.5 bg-slate-200/50 dark:bg-slate-950 rounded-lg p-1 border border-slate-300/40 dark:border-slate-800/60 transition-colors">
+                  {(['none', 'protanopia', 'deuteranopia', 'tritanopia'] as const).map((type) => (
+                    <button
+                      key={type}
+                      onClick={() => setColorBlindness(type)}
+                      className={`py-2 rounded-md text-xs font-bold transition-all capitalize ${colorBlindness === type ? 'bg-emerald-500 text-white shadow-sm' : 'text-slate-600 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 hover:bg-white/60 dark:hover:bg-slate-900'}`}
+                    >
+                      {type === 'none' ? 'None' : type.replace('opia', '')}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* Cognitive Assists */}
+            <div className="bg-slate-50 dark:bg-slate-900/50 rounded-2xl p-4 border border-slate-200 dark:border-slate-800/80 space-y-4 transition-colors">
+              <h3 className="text-xs font-bold text-teal-600 dark:text-teal-400 uppercase tracking-widest">Cognitive & Reading Aids</h3>
+
+              {/* Dyslexia Font */}
+              <div
+                onClick={() => toggleDyslexiaFont()}
+                className="flex items-center justify-between cursor-pointer py-1.5"
+              >
+                <div className="flex flex-col">
+                  <span className="flex items-center gap-2 text-sm font-bold text-slate-800 dark:text-white">
+                    <BookOpen className="h-4.5 w-4.5 text-teal-600 dark:text-teal-400 shrink-0" />
+                    Dyslexia Font
+                  </span>
+                  <span className="text-[11px] text-slate-500 dark:text-slate-400 font-medium">Use specialized lettering designed to facilitate reading</span>
+                </div>
+                <div className={`relative w-10 h-6 rounded-full transition-colors duration-200 ${dyslexiaFont ? 'bg-emerald-500' : 'bg-slate-300 dark:bg-slate-600'}`}>
+                  <div className={`absolute top-1 left-1 w-4 h-4 bg-white rounded-full shadow transition-transform duration-200 ${dyslexiaFont ? 'translate-x-4' : 'translate-x-0'}`} />
+                </div>
+              </div>
+
+              {/* ADHD Focus Mode */}
+              <div
+                onClick={() => toggleFocusMode()}
+                className="flex items-center justify-between cursor-pointer py-1.5"
+              >
+                <div className="flex flex-col">
+                  <span className="flex items-center gap-2 text-sm font-bold text-slate-800 dark:text-white">
+                    <Focus className="h-4.5 w-4.5 text-teal-600 dark:text-teal-400 shrink-0" />
+                    Focus Mode
+                  </span>
+                  <span className="text-[11px] text-slate-500 dark:text-slate-400 font-medium">Dim peripheral areas to reduce visual distractions</span>
+                </div>
+                <div className={`relative w-10 h-6 rounded-full transition-colors duration-200 ${focusMode ? 'bg-teal-500' : 'bg-slate-300 dark:bg-slate-600'}`}>
+                  <div className={`absolute top-1 left-1 w-4 h-4 bg-white rounded-full shadow transition-transform duration-200 ${focusMode ? 'translate-x-4' : 'translate-x-0'}`} />
+                </div>
+              </div>
+            </div>
+
+            {/* Typography & Motion */}
+            <div className="bg-slate-50 dark:bg-slate-900/50 rounded-2xl p-4 border border-slate-200 dark:border-slate-800/80 space-y-4 transition-colors">
+              <h3 className="text-xs font-bold text-blue-600 dark:text-blue-400 uppercase tracking-widest">Sizing & Performance</h3>
+
+              {/* Text Size Control */}
+              <div>
+                <div className="flex flex-col mb-2">
+                  <span className="flex items-center gap-2 text-sm font-bold text-slate-800 dark:text-white">
+                    <Type className="h-4.5 w-4.5 text-blue-600 dark:text-blue-450 shrink-0" />
+                    Text Scaling
+                  </span>
+                  <span className="text-[11px] text-slate-500 dark:text-slate-400 font-medium">Adjust the scale of interface fonts for optimal reading comfort</span>
+                </div>
+                <div className="flex bg-slate-200/50 dark:bg-slate-950 rounded-lg p-1 border border-slate-300/40 dark:border-slate-800/60 transition-colors">
+                  {(['normal', 'large', 'xlarge'] as const).map((size) => (
+                    <button
+                      key={size}
+                      onClick={() => setTextSize(size)}
+                      className={`flex-1 py-2 rounded-md text-xs font-bold transition-all capitalize ${textSize === size ? 'bg-emerald-500 text-white shadow-sm' : 'text-slate-600 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 hover:bg-white/60 dark:hover:bg-slate-900'}`}
+                    >
+                      {size === 'xlarge' ? 'Extra Large' : size}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Reduce Motion */}
+              <div
+                onClick={() => toggleReduceMotion()}
+                className="flex items-center justify-between cursor-pointer py-1.5"
+              >
+                <div className="flex flex-col">
+                  <span className="flex items-center gap-2 text-sm font-bold text-slate-800 dark:text-white">
+                    <Zap className="h-4.5 w-4.5 text-blue-600 dark:text-blue-400 shrink-0" />
+                    Performance Mode
+                  </span>
+                  <span className="text-[11px] text-slate-500 dark:text-slate-400 font-medium">Reduce decorative motion and animations to speed up performance</span>
+                </div>
+                <div className={`relative w-10 h-6 rounded-full transition-colors duration-200 ${reduceMotion ? 'bg-emerald-500' : 'bg-slate-300 dark:bg-slate-600'}`}>
+                  <div className={`absolute top-1 left-1 w-4 h-4 bg-white rounded-full shadow transition-transform duration-200 ${reduceMotion ? 'translate-x-4' : 'translate-x-0'}`} />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="p-6 bg-slate-50 dark:bg-slate-950 border-t border-slate-200 dark:border-slate-800 flex justify-end transition-colors">
+            <button
+              onClick={() => setShowAccessibilityModal(false)}
+              className="bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white font-bold px-6 py-2.5 rounded-xl shadow-lg transition-all"
+            >
+              Done & Apply
+            </button>
           </div>
         </DialogContent>
       </Dialog>
