@@ -534,7 +534,7 @@ export function Chatbot() {
           {!isOpen ? (
             <motion.div
               key="chatbot-toggle"
-              className={`pointer-events-auto fixed ${useMiniButton ? 'right-6 bottom-6 sm:bottom-6' : 'right-0 bottom-0'}`}
+              className={`pointer-events-auto fixed ss-chatbot-toggle ${useMiniButton ? 'right-6 bottom-6 sm:bottom-6' : 'right-0 bottom-0'}`}
               onMouseEnter={handleMouseEnter}
               onMouseLeave={handleMouseLeave}
               drag
@@ -572,16 +572,16 @@ export function Chatbot() {
                   transition={{ type: "spring", stiffness: 500, damping: 30 }}
                   className="relative"
                 >
-                  <div className="relative h-14 w-14 sm:h-16 sm:w-16 rounded-full bg-orange-600 border-[3px] border-white shadow-lg cursor-pointer flex items-center justify-center overflow-hidden group">
+                  <div className="relative h-14 w-14 sm:h-16 sm:w-16 rounded-full bg-white border-[3px] border-orange-500 shadow-lg cursor-pointer flex items-center justify-center overflow-hidden group">
                     <Image
-                      src="/RD Logo.png"
+                      src="/berong_pr.png"
                       alt="Berong - BFP Assistant"
                       width={56}
                       height={56}
-                      className="h-10 w-10 sm:h-12 sm:w-12 object-contain select-none drop-shadow-md group-hover:scale-110 transition-transform duration-200"
+                      className="h-11 w-11 sm:h-13 sm:w-13 object-contain select-none drop-shadow-md group-hover:scale-110 transition-transform duration-200"
                       draggable={false}
                     />
-                    <div className="absolute inset-0 rounded-full border-2 border-white/30 animate-ping opacity-30 pointer-events-none" />
+                    <div className="absolute inset-0 rounded-full border-2 border-orange-500/30 animate-ping opacity-30 pointer-events-none" />
                   </div>
                 </motion.div>
               ) : (
@@ -636,7 +636,7 @@ export function Chatbot() {
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, scale: 0.8, transition: { duration: 0.1 } }}
               transition={{ type: "spring", stiffness: 600, damping: 35 }}
-              className={`chatbot-window-container fixed bottom-20 z-50 ${(useMiniButton ? miniIsOnLeft : isOnLeft) ? 'left-8' : 'right-6'}`}
+              className={`chatbot-window-container ss-chatbot-window fixed bottom-20 z-50 ${(useMiniButton ? miniIsOnLeft : isOnLeft) ? 'left-8' : 'right-6'}`}
               style={{
                 transformOrigin: (useMiniButton ? miniIsOnLeft : isOnLeft) ? 'bottom left' : 'bottom right',
                 willChange: 'transform, opacity',
@@ -650,11 +650,11 @@ export function Chatbot() {
               <div className="flex items-center justify-between px-4 py-3 bg-orange-600 text-white rounded-t-xl shrink-0">
                 <div className="flex items-center gap-3">
                   <Image
-                    src="/RD Logo.png"
+                    src="/berong_pr.png"
                     alt="BFP Assistant"
                     width={32}
                     height={32}
-                    className="h-8 w-8 object-contain rounded-full bg-white/20 p-0.5"
+                    className="h-8 w-8 object-contain rounded-full bg-white p-0.5"
                   />
                   <h3 className="font-black text-lg tracking-wide">BFP Assistant</h3>
                 </div>

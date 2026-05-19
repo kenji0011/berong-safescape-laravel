@@ -90,7 +90,24 @@ Route::get('/about', function () {
         ];
         $page = $pageMap[$moduleNum] ?? null;
         if (!$page) abort(404);
-        return Inertia::render($page, ['moduleNum' => $moduleNum]);
+
+        $user = Auth::user();
+        $records = \App\Models\SafeScapeProgress::where('userId', $user->id)->get();
+        $total = \App\Models\KidsModule::where('isActive', true)->count();
+        $completedCount = $records->where('completed', true)->count();
+
+        $initialProgress = [
+            'completedModules' => $records->where('completed', true)->pluck('moduleNum')->values()->all(),
+            'sectionData'      => $records->mapWithKeys(fn ($r) => [
+                "module{$r->moduleNum}" => json_decode($r->sectionData, true) ?? [],
+            ])->all(),
+            'totalProgress'    => $total > 0 ? (int) round(($completedCount / $total) * 100) : 0,
+        ];
+
+        return Inertia::render($page, [
+            'moduleNum' => $moduleNum,
+            'initialProgress' => $initialProgress
+        ]);
     })->name('kids.module');
 
     Route::get('/kids/videos', function () {

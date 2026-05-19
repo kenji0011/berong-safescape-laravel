@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import { Head, router } from '@inertiajs/react'
 import axios from 'axios'
 import { Button } from "@/components/ui/button"
@@ -11,6 +11,7 @@ import { ArrowLeft, Check, ChevronLeft, ChevronRight, Loader2, Shield, Star } fr
 import { motion, AnimatePresence } from 'motion/react'
 import { getScoreRating } from "@/lib/constants"
 import { useAuth } from "@/lib/auth-context"
+import { cn } from "@/lib/utils"
 
 interface AssessmentQuestion {
     id: number
@@ -32,12 +33,135 @@ export default function Assessment({ type }: AssessmentProps) {
     const [loading, setLoading] = useState(true)
     const [submitting, setSubmitting] = useState(false)
     const [error, setError] = useState("")
-    
     const [result, setResult] = useState<{
         success: boolean
         score?: number
         maxScore?: number
     } | null>(null)
+    const [timeLeft, setTimeLeft] = useState<number | null>(null)
+    const [showWarningModal, setShowWarningModal] = useState(type === 'postTest')
+    const [showRefreshWarning, setShowRefreshWarning] = useState(false)
+    const [showEscapeWarning, setShowEscapeWarning] = useState(false)
+    const answersRef = useRef<Record<number, number>>({})
+
+    const isPreTest = type === 'preTest'
+    const title = isPreTest ? "Pre-Test Assessment" : "Post-Test Assessment"
+    const description = isPreTest 
+        ? "Let's establish your baseline knowledge before you start learning."
+        : "Show us what you've learned! This is your final assessment."
+    const isTestStarted = !loading && questions.length > 0 && !result && !showWarningModal
+
+    useEffect(() => {
+        answersRef.current = answers
+    }, [answers])
+
+    // Auto Focus Mode and Fullscreen for Post-Test
+    useEffect(() => {
+        if (type === 'postTest' && !loading && questions.length > 0 && !result && !showWarningModal) {
+            // Auto enter focus mode
+            document.documentElement.classList.add("module-focus-mode")
+            
+            // Auto request fullscreen
+            const enterFullscreen = () => {
+                const docEl = document.documentElement
+                if (docEl.requestFullscreen) {
+                    docEl.requestFullscreen().catch(() => {})
+                }
+            }
+            enterFullscreen()
+        }
+
+        return () => {
+            document.documentElement.classList.remove("module-focus-mode")
+        }
+    }, [type, loading, questions.length, !!result, showWarningModal])
+
+    // Countdown Timer (20 Minutes) for Post-Test
+    useEffect(() => {
+        if (type !== 'postTest' || loading || questions.length === 0 || result || showWarningModal) return
+
+        // 20 minutes = 1200 seconds
+        setTimeLeft(1200)
+
+        const timer = setInterval(() => {
+            setTimeLeft(prev => {
+                if (prev === null) return null
+                if (prev <= 1) {
+                    clearInterval(timer)
+                    handleAutoSubmit()
+                    return 0
+                }
+                return prev - 1
+            })
+        }, 1000)
+
+        return () => clearInterval(timer)
+    }, [type, loading, questions.length, !!result, showWarningModal])
+
+    // Prevent Refresh / Navigation when Test is in progress
+    useEffect(() => {
+        const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+            if (isTestStarted) {
+                e.preventDefault()
+                e.returnValue = "Are you sure you want to leave? Your progress on this assessment will be lost."
+                return e.returnValue
+            }
+        }
+
+        window.addEventListener("beforeunload", handleBeforeUnload)
+        return () => {
+            window.removeEventListener("beforeunload", handleBeforeUnload)
+        }
+    }, [isTestStarted])
+
+    // Intercept F5 / Refresh keys and Escape key to block refresh/exiting and keep fullscreen active
+    useEffect(() => {
+        const handleKeyDown = (e: KeyboardEvent) => {
+            if (!isTestStarted) return
+
+            if (
+                e.key === "F5" || 
+                (e.ctrlKey && (e.key === "r" || e.key === "R")) || 
+                (e.metaKey && (e.key === "r" || e.key === "R"))
+            ) {
+                e.preventDefault()
+                setShowRefreshWarning(true)
+            }
+
+            if (e.key === "Escape" && type === "postTest") {
+                e.preventDefault()
+                setShowEscapeWarning(true)
+                // Force fullscreen back if exited
+                if (!document.fullscreenElement) {
+                    document.documentElement.requestFullscreen().catch(() => {})
+                }
+            }
+        }
+
+        window.addEventListener("keydown", handleKeyDown)
+        return () => {
+            window.removeEventListener("keydown", handleKeyDown)
+        }
+    }, [isTestStarted, type])
+
+    // Intercept fullscreenchange to prevent escaping fullscreen during Post-Test
+    useEffect(() => {
+        const handleFullscreenChange = () => {
+            if (isTestStarted && type === "postTest" && !document.fullscreenElement) {
+                setShowEscapeWarning(true)
+                // Instantly request fullscreen back
+                const docEl = document.documentElement
+                if (docEl.requestFullscreen) {
+                    docEl.requestFullscreen().catch(() => {})
+                }
+            }
+        }
+
+        document.addEventListener("fullscreenchange", handleFullscreenChange)
+        return () => {
+            document.removeEventListener("fullscreenchange", handleFullscreenChange)
+        }
+    }, [isTestStarted, type])
 
     // Embedded feedback state
     const [feedbackRating, setFeedbackRating] = useState(0)
@@ -46,11 +170,7 @@ export default function Assessment({ type }: AssessmentProps) {
     const [feedbackSuccess, setFeedbackSuccess] = useState(false)
     const [feedbackComment, setFeedbackComment] = useState("")
 
-    const isPreTest = type === 'preTest'
-    const title = isPreTest ? "Pre-Test Assessment" : "Post-Test Assessment"
-    const description = isPreTest 
-        ? "Let's establish your baseline knowledge before you start learning."
-        : "Show us what you've learned! This is your final assessment."
+
 
     useEffect(() => {
         if (!isAuthenticated) return
@@ -72,6 +192,7 @@ export default function Assessment({ type }: AssessmentProps) {
                             score: existingScore,
                             maxScore: fetchedQuestions.length
                         })
+                        setShowWarningModal(false)
                     }
                 } else {
                     setError("Failed to load assessment questions")
@@ -105,21 +226,15 @@ export default function Assessment({ type }: AssessmentProps) {
         }
     }
 
-    const handleSubmit = async () => {
-        // Validate all questions answered
-        if (Object.keys(answers).length < questions.length) {
-            setError("Please answer all questions before submitting.")
-            return
-        }
-
+    const submitAssessment = async (currentAnswers: Record<number, number>) => {
         setSubmitting(true)
         setError("")
 
         try {
-            // Format answers for the API
-            const formattedAnswers = Object.entries(answers).map(([qId, ansIdx]) => ({
-                questionId: parseInt(qId),
-                selectedAnswer: String(ansIdx)
+            // Format answers for the API, default to "-1" for unanswered ones
+            const formattedAnswers = questions.map(q => ({
+                questionId: q.id,
+                selectedAnswer: currentAnswers[q.id] !== undefined ? String(currentAnswers[q.id]) : "-1"
             }))
 
             const endpoint = isPreTest ? "/api/assessments/pre-test" : "/api/assessments/post-test"
@@ -129,7 +244,7 @@ export default function Assessment({ type }: AssessmentProps) {
                 // Play win sound
                 new Audio('/sounds/win.mp3').play().catch(e => console.warn("Audio playback failed:", e));
 
-                // Refresh the global user state to ensure scores are updated in auth-context
+                // Refresh the global user state
                 await refreshUser()
                 
                 setResult({
@@ -137,6 +252,12 @@ export default function Assessment({ type }: AssessmentProps) {
                     score: response.data.score,
                     maxScore: response.data.maxScore
                 })
+
+                // Turn off Focus Mode
+                document.documentElement.classList.remove("module-focus-mode")
+                if (document.fullscreenElement && document.exitFullscreen) {
+                    document.exitFullscreen().catch(() => {})
+                }
             } else {
                 setError("Failed to submit assessment")
             }
@@ -145,6 +266,19 @@ export default function Assessment({ type }: AssessmentProps) {
         } finally {
             setSubmitting(false)
         }
+    }
+
+    const handleAutoSubmit = () => {
+        submitAssessment(answersRef.current)
+    }
+
+    const handleSubmit = async () => {
+        // Validate all questions answered
+        if (Object.keys(answers).length < questions.length) {
+            setError("Please answer all questions before submitting.")
+            return
+        }
+        await submitAssessment(answers)
     }
 
     const handleFeedbackSubmit = async () => {
@@ -166,7 +300,7 @@ export default function Assessment({ type }: AssessmentProps) {
     }
 
     const handleContinue = () => {
-        if (user?.role === "kid") router.visit("/kids")
+        if (user?.role === "kid") router.visit("/kids/safescape")
         else if (user?.role === "adult") router.visit("/adult")
         else router.visit("/")
     }
@@ -326,13 +460,132 @@ export default function Assessment({ type }: AssessmentProps) {
         <div className="min-h-screen bg-background py-8 px-4 sm:px-6 lg:px-8 transition-colors duration-500 selection:bg-orange-500 selection:text-white">
             <Head title={`${title} - SafeScape`} />
             
+            {/* Post-Test Warning Modal */}
+            {showWarningModal && (
+                <div className="fixed inset-0 z-[300] bg-slate-950/85 backdrop-blur-md overflow-y-auto flex items-center justify-center p-4">
+                    <div className="bg-white dark:bg-slate-900 border-[4px] border-[#ff4b3e] rounded-[2rem] p-6 sm:p-10 max-w-lg w-full text-center shadow-2xl space-y-6 select-none my-auto">
+                        <div className="inline-flex h-16 w-16 items-center justify-center bg-red-50 dark:bg-red-950/30 rounded-2xl border-2 border-red-100 dark:border-red-900 mb-2">
+                            <Shield className="h-8 w-8 text-[#ff4b3e]" strokeWidth={2.5} />
+                        </div>
+                        
+                        <div className="space-y-2">
+                            <h2 className="text-2xl sm:text-3xl font-black text-slate-800 dark:text-white uppercase tracking-tight">
+                                Final Post-Test Notice
+                            </h2>
+                            <p className="text-xs sm:text-sm font-bold text-slate-500 dark:text-slate-400">
+                                Please review these critical rules before beginning your final assessment.
+                            </p>
+                        </div>
+
+                        <div className="bg-slate-50 dark:bg-slate-950 p-4 sm:p-5 rounded-2xl border-2 border-slate-100 dark:border-slate-800 text-left space-y-3.5 shadow-inner">
+                            <div className="flex gap-3">
+                                <span className="text-base sm:text-lg shrink-0 mt-0.5">⏱️</span>
+                                <p className="text-xs sm:text-sm font-bold text-slate-700 dark:text-slate-300 leading-normal">
+                                    <strong className="text-slate-900 dark:text-white">20-Minute Time Limit:</strong> You have exactly 20 minutes to complete the test. Once started, the countdown cannot be paused.
+                                </p>
+                            </div>
+                            
+                            <div className="flex gap-3">
+                                <span className="text-base sm:text-lg shrink-0 mt-0.5">🚫</span>
+                                <p className="text-xs sm:text-sm font-bold text-slate-700 dark:text-slate-300 leading-normal">
+                                    <strong className="text-slate-900 dark:text-white">No Review Backtracking:</strong> You cannot turn back or review module lessons once you begin taking this assessment.
+                                </p>
+                            </div>
+
+                            <div className="flex gap-3 pt-1 border-t border-slate-100 dark:border-slate-800/80">
+                                <span className="text-base sm:text-lg shrink-0 mt-0.5">❓</span>
+                                <p className="text-xs sm:text-sm font-bold text-[#ff4b3e] dark:text-red-400 leading-normal">
+                                    <strong>Have you thoroughly reviewed</strong> all fire safety lessons and materials before starting?
+                                </p>
+                            </div>
+                        </div>
+
+                        <div className="flex flex-col sm:flex-row gap-3 pt-2">
+                            <Button
+                                onClick={() => handleContinue()}
+                                className="flex-1 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-750 text-slate-700 dark:text-slate-200 font-black py-4 sm:py-5 rounded-full border-[3px] border-slate-200 dark:border-slate-700 shadow-[0_4px_0_#cbd5e1] dark:shadow-[0_4px_0_#0f172a] active:translate-y-[4px] active:shadow-none transition-all uppercase tracking-wider text-xs sm:text-sm"
+                            >
+                                No, Go Back
+                            </Button>
+                            <Button
+                                onClick={() => setShowWarningModal(false)}
+                                className="flex-1 bg-[#ff4b3e] hover:bg-[#e03a2f] text-white font-black py-4 sm:py-5 rounded-full border-[3px] border-red-700 shadow-[0_4px_0_#b91c1c] active:translate-y-[4px] active:shadow-none transition-all uppercase tracking-wider text-xs sm:text-sm flex items-center justify-center gap-1.5"
+                            >
+                                Yes, I am Ready!
+                            </Button>
+                        </div>
+                    </div>
+                </div>
+            )}
+            
+            {/* Custom F5 Refresh Warning Modal */}
+            {showRefreshWarning && (
+                <div className="fixed inset-0 z-[400] bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4">
+                    <div className="bg-white dark:bg-slate-900 border-[4px] border-amber-500 rounded-[2rem] p-6 sm:p-8 max-w-md w-full text-center shadow-2xl space-y-5 select-none my-auto">
+                        <div className="inline-flex h-14 w-14 items-center justify-center bg-amber-50 dark:bg-amber-950/30 rounded-2xl border-2 border-amber-250 dark:border-amber-900/50">
+                            <span className="text-2xl">⚠️</span>
+                        </div>
+                        
+                        <div className="space-y-1.5">
+                            <h3 className="text-xl sm:text-2xl font-black text-slate-800 dark:text-white uppercase tracking-tight">
+                                Refresh Disabled
+                            </h3>
+                            <p className="text-xs sm:text-sm font-bold text-slate-500 dark:text-slate-400 leading-normal">
+                                Refreshing is disabled to protect your active assessment progress. Please complete your questions and submit.
+                            </p>
+                        </div>
+
+                        <Button
+                            onClick={() => setShowRefreshWarning(false)}
+                            className="w-full bg-amber-500 hover:bg-amber-400 text-white font-black py-3.5 rounded-full border-[3px] border-amber-600 shadow-[0_4px_0_#d97706] active:translate-y-[4px] active:shadow-none transition-all uppercase tracking-wider text-xs sm:text-sm"
+                        >
+                            Return to Test
+                        </Button>
+                    </div>
+                </div>
+            )}
+            
+            {/* Custom ESC Escape Warning Modal */}
+            {showEscapeWarning && (
+                <div className="fixed inset-0 z-[400] bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4">
+                    <div className="bg-white dark:bg-slate-900 border-[4px] border-red-500 rounded-[2rem] p-6 sm:p-8 max-w-md w-full text-center shadow-2xl space-y-5 select-none my-auto">
+                        <div className="inline-flex h-14 w-14 items-center justify-center bg-red-50 dark:bg-red-950/30 rounded-2xl border-2 border-red-100 dark:border-red-900 mb-2">
+                            <span className="text-2xl">🚫</span>
+                        </div>
+                        
+                        <div className="space-y-1.5">
+                            <h3 className="text-xl sm:text-2xl font-black text-slate-800 dark:text-white uppercase tracking-tight">
+                                Fullscreen Required
+                            </h3>
+                            <p className="text-xs sm:text-sm font-bold text-slate-500 dark:text-slate-400 leading-normal">
+                                Exiting fullscreen mode is disabled during the Post-Test to keep you in focus. Please complete your questions inside fullscreen mode.
+                            </p>
+                        </div>
+
+                        <Button
+                            onClick={() => {
+                                setShowEscapeWarning(false)
+                                if (!document.fullscreenElement) {
+                                    document.documentElement.requestFullscreen().catch(() => {})
+                                }
+                            }}
+                            className="w-full bg-red-500 hover:bg-red-400 text-white font-black py-3.5 rounded-full border-[3px] border-red-600 shadow-[0_4px_0_#dc2626] active:translate-y-[4px] active:shadow-none transition-all uppercase tracking-wider text-xs sm:text-sm"
+                        >
+                            Return to Fullscreen
+                        </Button>
+                    </div>
+                </div>
+            )}
+            
             <div className="max-w-3xl mx-auto mb-6 flex items-center gap-4">
-                <button 
-                    onClick={() => router.visit('/')}
-                    className="h-10 w-10 sm:h-12 sm:w-12 bg-white dark:bg-slate-800 rounded-full border-2 border-slate-200 dark:border-slate-700 border-b-[4px] active:border-b-2 active:translate-y-[2px] shadow-sm flex items-center justify-center hover:bg-slate-50 dark:hover:bg-slate-700 transition-all shrink-0"
-                >
-                    <ArrowLeft className="h-5 w-5 sm:h-6 sm:w-6 text-slate-700 dark:text-slate-300" strokeWidth={3} />
-                </button>
+                {!isTestStarted && (
+                    <button 
+                        onClick={handleContinue}
+                        className="h-10 w-10 sm:h-12 sm:w-12 bg-white dark:bg-slate-800 rounded-full border-2 border-slate-200 dark:border-slate-700 border-b-[4px] active:border-b-2 active:translate-y-[2px] shadow-sm flex items-center justify-center hover:bg-slate-50 dark:hover:bg-slate-700 transition-all shrink-0"
+                    >
+                        <ArrowLeft className="h-5 w-5 sm:h-6 sm:w-6 text-slate-700 dark:text-slate-300" strokeWidth={3} />
+                    </button>
+                )}
                 <div>
                     <h1 className="text-2xl sm:text-3xl font-black text-slate-800 dark:text-white tracking-tight">{title}</h1>
                     <p className="text-sm text-slate-500 dark:text-slate-400 font-medium">{description}</p>
@@ -357,16 +610,28 @@ export default function Assessment({ type }: AssessmentProps) {
                 ) : (
                     <>
                         {/* Progress Header */}
-                        <div className="bg-slate-50 dark:bg-slate-900/80 px-6 pb-4 pt-6 border-b-[3px] border-slate-100 dark:border-slate-800">
-                            <div className="flex justify-between items-center mb-3">
-                                <span className="font-black text-slate-500 dark:text-slate-400 text-sm uppercase tracking-wider">
+                        <div className="bg-slate-50 dark:bg-slate-900/80 px-6 pb-5 pt-6 border-b-[3px] border-slate-100 dark:border-slate-800">
+                            <div className="flex flex-wrap justify-between items-center mb-4 gap-2">
+                                <span className="font-black text-slate-500 dark:text-slate-400 text-sm sm:text-base uppercase tracking-wider">
                                     Question {currentQuestionIndex + 1} of {questions.length}
                                 </span>
-                                <span className="font-black text-green-600 dark:text-green-400 bg-green-50 dark:bg-green-950/30 px-3 py-1 rounded-full text-xs border border-green-200 dark:border-green-900/50">
-                                    {Math.round(((currentQuestionIndex) / questions.length) * 100)}% Completed
-                                </span>
+                                <div className="flex items-center gap-2">
+                                    {timeLeft !== null && (
+                                        <span className={cn(
+                                            "font-black px-4 py-1.5 rounded-full text-sm sm:text-base border flex items-center gap-1.5 transition-all",
+                                            timeLeft < 120 
+                                                ? "bg-red-50 dark:bg-red-950/30 border-red-300 dark:border-red-900 text-red-655 dark:text-red-400"
+                                                : "bg-amber-50 dark:bg-amber-950/30 border-amber-250 dark:border-amber-900/50 text-amber-600 dark:text-amber-400"
+                                        )}>
+                                            ⏱️ {Math.floor(timeLeft / 60)}:{(timeLeft % 60) < 10 ? '0' : ''}{timeLeft % 60}
+                                        </span>
+                                    )}
+                                    <span className="font-black text-green-600 dark:text-green-400 bg-green-50 dark:bg-green-950/30 px-4 py-1.5 rounded-full text-sm sm:text-base border border-green-200 dark:border-green-900/50">
+                                        {Math.round(((currentQuestionIndex) / questions.length) * 100)}% Completed
+                                    </span>
+                                </div>
                             </div>
-                            <div className="w-full bg-slate-100 dark:bg-slate-800 rounded-full h-3 overflow-hidden border-2 border-slate-200 dark:border-slate-700 shadow-inner">
+                            <div className="w-full bg-slate-100 dark:bg-slate-800 rounded-full h-4 overflow-hidden border-2 border-slate-200 dark:border-slate-700 shadow-inner">
                                 <div
                                     className="bg-gradient-to-r from-green-500 to-emerald-400 h-full rounded-full transition-all duration-300 ease-out"
                                     style={{ width: `${((currentQuestionIndex) / questions.length) * 100}%` }}

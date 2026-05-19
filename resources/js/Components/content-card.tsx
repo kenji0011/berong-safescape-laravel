@@ -13,11 +13,13 @@ export interface ContentCardData {
   description?: string
   type: "game" | "video" | "activity" | "module" | "exam"
   imageUrl?: string
+  illustrationUrl?: string
   emoji?: string
   href: string
   isLocked?: boolean
   isCompleted?: boolean
   isNew?: boolean
+  shouldPulse?: boolean
   difficulty?: "easy" | "medium" | "hard"
   duration?: string
   category?: string
@@ -83,7 +85,7 @@ export const ContentCard = React.memo(({ content, onClick }: ContentCardProps) =
                {content.difficulty}
              </div>
            ) : null}
-        </div>
+         </div>
         <div className="absolute top-3 right-3 flex flex-col gap-1.5 z-20">
           {content.isNew && (
             <div className="bg-rose-500 text-white font-black text-[7px] sm:text-[10px] tracking-widest uppercase px-2 py-1 sm:px-3 sm:py-1.5 rounded-full shadow-[0_4px_12px_rgba(244,63,94,0.4)] sm:animate-bounce border-2 border-white/40 flex items-center gap-1 sm:gap-1.5 ring-2 ring-rose-500/20">
@@ -122,7 +124,11 @@ export const ContentCard = React.memo(({ content, onClick }: ContentCardProps) =
            "absolute inset-0 z-10 transition-all duration-700 flex items-center justify-center",
            !content.isLocked && "group-hover:scale-110"
         )}>
-          {content.emoji ? (
+          {content.illustrationUrl ? (
+            <div className="h-20 w-20 sm:h-36 sm:w-36 flex items-center justify-center drop-shadow-[0_10px_20px_rgba(0,0,0,0.15)] group-hover:-translate-y-2 transition-transform duration-500">
+              <img src={content.illustrationUrl} className="h-full w-full object-contain" alt={content.title} />
+            </div>
+          ) : content.emoji ? (
             <div className="text-5xl sm:text-8xl drop-shadow-2xl group-hover:-translate-y-2 transition-transform duration-500">{content.emoji}</div>
           ) : content.imageUrl && !imageError ? (
             <div className="relative w-full h-full">

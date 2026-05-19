@@ -63,10 +63,10 @@ const CertificatePage = () => {
     <div className="min-h-screen relative flex flex-col font-sans bg-background selection:bg-amber-300 selection:text-amber-900 transition-colors duration-500">
       <Head title="Your Certificate | SafeScape" />
       
-      {/* Decorative Background - Simplified */}
+      {/* Decorative Background - Premium Ambient Glows */}
       <div className="absolute top-0 right-0 w-full h-full overflow-hidden pointer-events-none z-0">
-        <div className="absolute top-10 -right-20 w-96 h-96 rounded-full bg-amber-400/10" />
-        <div className="absolute bottom-10 -left-20 w-80 h-80 rounded-full bg-orange-400/10" />
+        <div className="absolute top-10 -right-20 w-96 h-96 rounded-full bg-gradient-to-br from-amber-400/20 to-transparent blur-3xl pointer-events-none" />
+        <div className="absolute bottom-10 -left-20 w-80 h-80 rounded-full bg-gradient-to-tr from-orange-400/20 to-transparent blur-3xl pointer-events-none" />
       </div>
 
       <div className="relative z-10 w-full flex-1 flex flex-col py-4">
@@ -85,17 +85,17 @@ const CertificatePage = () => {
           
           <div className="text-center mb-8">
             <h1 className="text-4xl sm:text-5xl font-black text-amber-600 dark:text-amber-400 tracking-tight drop-shadow-sm flex items-center justify-center gap-3">
-              <Award className="h-10 w-10 text-amber-500" />
+              <Award className="h-10 w-10 text-amber-500 animate-bounce" />
               Congratulations, Hero!
             </h1>
-            <p className="text-amber-900/60 dark:text-slate-400 font-bold mt-2 text-lg">You've successfully completed your Fire Safety Training!</p>
+            <p className="text-amber-900/70 dark:text-amber-200/80 font-bold mt-2 text-lg transition-colors">You've successfully completed your Fire Safety Training!</p>
           </div>
 
-          <div className="w-full bg-white dark:bg-slate-900 border border-white/60 dark:border-slate-800 rounded-3xl sm:rounded-[2.5rem] p-3 sm:p-8 shadow-[0_25px_60px_rgba(245,158,11,0.15)] dark:shadow-[0_25px_60px_rgba(0,0,0,0.5)] flex flex-col items-center transition-all duration-500">
+          <div className="w-full bg-white dark:bg-slate-900/80 backdrop-blur-md border border-white/60 dark:border-amber-500/20 rounded-3xl sm:rounded-[2.5rem] p-3 sm:p-8 shadow-[0_25px_60px_rgba(245,158,11,0.15)] dark:shadow-[0_25px_60px_rgba(0,0,0,0.6)] flex flex-col items-center transition-all duration-500">
             
             <div 
               ref={certificateRef} 
-              className="relative w-full max-w-3xl select-none shadow-xl border border-amber-100 dark:border-slate-800 bg-white" 
+              className="relative w-full max-w-3xl select-none shadow-xl border border-amber-100 dark:border-slate-800/80 bg-white rounded-xl overflow-hidden" 
               style={{ aspectRatio: '1123/794', containerType: 'inline-size' }}
             >
               <img 
@@ -141,7 +141,9 @@ const CertificatePage = () => {
                 disabled={downloading}
                 className={cn(
                   "px-8 sm:px-12 py-4 rounded-full font-black text-lg transition-all duration-300 shadow-xl flex items-center justify-center gap-3",
-                  downloading ? "bg-amber-400 text-amber-900 cursor-wait opacity-80" : "bg-amber-500 text-white hover:shadow-lg hover:-translate-y-1 active:translate-y-0"
+                  downloading 
+                    ? "bg-amber-400 text-amber-900 cursor-wait opacity-80" 
+                    : "bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white hover:shadow-lg dark:shadow-amber-500/10 hover:shadow-orange-500/30 hover:-translate-y-1 active:translate-y-0"
                 )}
               >
                 {downloading ? (

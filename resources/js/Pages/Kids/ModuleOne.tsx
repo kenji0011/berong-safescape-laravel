@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useMemo, useRef } from "react"
 import { Link, router } from '@inertiajs/react'
-import { ArrowLeft, CheckCircle, Shield, BookOpen, Trophy, Flame, FlaskConical, RotateCcw } from "lucide-react"
+import { ArrowLeft, CheckCircle, Shield, BookOpen, Trophy, Flame, FlaskConical, RotateCcw, Info, Volume2, VolumeX, Eye, BellOff } from "lucide-react"
 import { useAuth } from "@/lib/auth-context"
 import DashboardLayout from "@/Layouts/DashboardLayout"
 import axios from "axios"
@@ -13,13 +13,13 @@ import { RotateCcw as RotateCcwIcon } from "lucide-react"
 // ─────────────────────────────────────────────
 // Types
 // ─────────────────────────────────────────────
-type LabItem = { id: string; label: string; role: string; bg: string; icon: string; correct: boolean }
+type LabItem = { id: string; label: string; role: string; bg: string; icon: string; image?: string; correct: boolean }
 
 const LAB_ITEMS: LabItem[] = [
-  { id: "wood",  label: "Wood",  role: "Fuel",    bg: "bg-amber-800 border-amber-600 hover:bg-amber-700", icon: "🌲", correct: true  },
-  { id: "spark", label: "Spark", role: "Heat",    bg: "bg-red-800   border-red-600   hover:bg-red-700",   icon: "✨", correct: true  },
-  { id: "fan",   label: "Fan",   role: "Oxygen",  bg: "bg-blue-800  border-blue-600  hover:bg-blue-700",  icon: "💨", correct: true  },
-  { id: "water", label: "Water", role: "Remover", bg: "bg-cyan-800  border-cyan-600  hover:bg-cyan-700",  icon: "🪣", correct: false },
+  { id: "wood",  label: "Wood",  role: "Fuel",    bg: "bg-amber-800 border-amber-600 hover:bg-amber-700", icon: "🪵", image: "/wood.png", correct: true  },
+  { id: "spark", label: "Spark", role: "Heat",    bg: "bg-red-800   border-red-600   hover:bg-red-700",   icon: "✨", image: "/spark.png", correct: true  },
+  { id: "fan",   label: "Fan",   role: "Oxygen",  bg: "bg-blue-800  border-blue-600  hover:bg-blue-700",  icon: "💨", image: "/fan.png", correct: true  },
+  { id: "water", label: "Water", role: "Remover", bg: "bg-cyan-800  border-cyan-600  hover:bg-cyan-700",  icon: "🪣", image: "/water.png", correct: false },
 ]
 
 const CORRECT_IDS = ["wood", "spark", "fan"]
@@ -27,34 +27,36 @@ const CORRECT_IDS = ["wood", "spark", "fan"]
 // ─────────────────────────────────────────────
 // ModuleOne Page
 // ─────────────────────────────────────────────
-const ModuleOnePage = () => {
+const ModuleOnePage = ({ initialProgress }: { initialProgress?: any }) => {
   const { user } = useAuth()
   const videoRef = useRef<HTMLVideoElement>(null)
   const reviewQuestionsRef = useRef<HTMLDivElement>(null)
   const resultCardRef = useRef<HTMLDivElement>(null)
 
+
   // ── Progress state ──
-  const [videoStarted,    setVideoStarted]    = useState(false)
-  const [section1Done,    setSection1Done]    = useState(false)
-  const [section2Done,    setSection2Done]    = useState(false)
-  const [pitItems,        setPitItems]        = useState<string[]>([])
-  const [labCompleted,    setLabCompleted]    = useState(false)
-  const [mixerEverCompleted, setMixerEverCompleted] = useState(false)
-  const [moduleCompleted, setModuleCompleted] = useState(false)
+  const [videoStarted,    setVideoStarted]    = useState(initialProgress?.sectionData?.module1?.videoWatched || false)
+  const [section1Done,    setSection1Done]    = useState(initialProgress?.sectionData?.module1?.section1Read || false)
+  const [section2Done,    setSection2Done]    = useState(initialProgress?.sectionData?.module1?.section2Read || false)
+  const [section3Done,    setSection3Done]    = useState(initialProgress?.sectionData?.module1?.section3Read || false)
+  const [labCompleted,    setLabCompleted]    = useState(initialProgress?.sectionData?.module1?.elementMixerCompleted || false)
+  const [mixerEverCompleted, setMixerEverCompleted] = useState(initialProgress?.sectionData?.module1?.elementMixerCompleted || false)
+  const [moduleCompleted, setModuleCompleted] = useState(initialProgress?.completedModules?.includes(1) || false)
   const [saving,          setSaving]          = useState(false)
   const [pitMessage,      setPitMessage]      = useState("The pit is empty.")
   const [pitWater,        setPitWater]        = useState(false)
   const [isDragOver,      setIsDragOver]      = useState(false)
   const [toast,           setToast]           = useState<{ msg: string; type: "success" | "info" } | null>(null)
   const [moduleLoading,   setModuleLoading]   = useState(true)
-  const [completedModules, setCompletedModules] = useState<number[]>([])
+  const [completedModules, setCompletedModules] = useState<number[]>(initialProgress?.completedModules || [])
 
   // Quiz state
-  const [quizAnswers,     setQuizAnswers]     = useState<(number | null)[]>([null, null, null, null, null])
-  const [quizSubmitted,   setQuizSubmitted]   = useState(false)
-  const [quizPassed,      setQuizPassed]      = useState(false)
+  const [quizAnswers,     setQuizAnswers]     = useState<(number | null)[]>(initialProgress?.sectionData?.module1?.quizAnswers || [null, null, null, null, null])
+  const [quizSubmitted,   setQuizSubmitted]   = useState(initialProgress?.sectionData?.module1?.quizPassed || false)
+  const [quizPassed,      setQuizPassed]      = useState(initialProgress?.sectionData?.module1?.quizPassed || false)
   const [reviewMode,      setReviewMode]      = useState(false)
-  const [loadedScore,     setLoadedScore]     = useState<number | null>(null)
+  const [loadedScore,     setLoadedScore]     = useState<number | null>(initialProgress?.sectionData?.module1?.quizScore !== undefined ? Number(initialProgress?.sectionData?.module1?.quizScore) : null)
+  const [pitItems,        setPitItems]        = useState<string[]>(initialProgress?.sectionData?.module1?.elementMixerCompleted ? CORRECT_IDS : [])
 
   const handleToggleReview = () => {
     const nextMode = !reviewMode
@@ -78,6 +80,26 @@ const ModuleOnePage = () => {
     return () => clearTimeout(timer)
   }, [])
 
+  // Play tap sound on button/link clicks
+  useEffect(() => {
+    const handleTap = (e: MouseEvent) => {
+      const target = e.target as HTMLElement
+      if (target.closest('[draggable]')) return // Don't play tap on draggable element mixer items
+      
+      const isClickable = target.closest('button') || 
+                          target.closest('a') || 
+                          target.closest('[role="button"]') || 
+                          target.closest('.cursor-pointer') ||
+                          target.closest('.ss-btn-premium')
+                          
+      if (isClickable) {
+        new Audio('/sounds/tap.mp3').play().catch(() => {})
+      }
+    }
+    document.addEventListener('click', handleTap)
+    return () => document.removeEventListener('click', handleTap)
+  }, [])
+
   // Load progress from backend on mount
   useEffect(() => {
     const load = async () => {
@@ -88,8 +110,10 @@ const ModuleOnePage = () => {
         if (m1.videoWatched)           setVideoStarted(true)
         if (m1.section1Read)           setSection1Done(true)
         if (m1.section2Read)           setSection2Done(true)
+        if (m1.section3Read)           setSection3Done(true)
         if (m1.elementMixerCompleted)  { setLabCompleted(true); setMixerEverCompleted(true); setPitItems(CORRECT_IDS) }
         if (m1.quizPassed)             { setQuizPassed(true); setQuizSubmitted(true) }
+        if (m1.quizAnswers)            { setQuizAnswers(m1.quizAnswers) }
         if (m1.quizScore !== undefined && m1.quizScore !== null) { setLoadedScore(Number(m1.quizScore)) }
         if (data.completedModules) setCompletedModules(data.completedModules)
         if (data.completedModules?.includes(1)) setModuleCompleted(true)
@@ -103,16 +127,17 @@ const ModuleOnePage = () => {
   // ── Progress bar ──
   const progress = useMemo(() => {
     let p = 0
-    if (videoStarted)   p += 20
-    if (section1Done)   p += 20
-    if (section2Done)   p += 20
+    if (videoStarted)   p += 15
+    if (section1Done)   p += 15
+    if (section2Done)   p += 15
+    if (section3Done)   p += 15
     if (labCompleted)   p += 20
     if (quizPassed)     p += 20
     return p
-  }, [videoStarted, section1Done, section2Done, labCompleted, quizPassed])
+  }, [videoStarted, section1Done, section2Done, section3Done, labCompleted, quizPassed])
 
   // ── Helper: save to backend ──
-  const saveSection = async (sectionData: Record<string, boolean>, completed: boolean) => {
+  const saveSection = async (sectionData: Record<string, any>, completed: boolean) => {
     try {
       await axios.post("/api/kids/safescape", { 
         moduleNum: 1, 
@@ -138,23 +163,30 @@ const ModuleOnePage = () => {
   const handleVideoPlay = () => {
     if (!videoStarted) {
       setVideoStarted(true)
-      saveSection({ videoWatched: true, section1Read: section1Done, section2Read: section2Done, elementMixerCompleted: labCompleted }, false)
-      showToast("Video started! Keep watching. 🎬", "info")
+      saveSection({ videoWatched: true, section1Read: section1Done, section2Read: section2Done, section3Read: section3Done, elementMixerCompleted: labCompleted }, false)
+      showToast("Video started! Keep watching.", "info")
     }
   }
 
   const handleSection1 = () => {
     if (section1Done) return
     setSection1Done(true)
-    saveSection({ videoWatched: videoStarted, section1Read: true, section2Read: section2Done, elementMixerCompleted: labCompleted }, false)
-    showToast("Great! Fire Triangle mastered! 🔥")
+    saveSection({ videoWatched: videoStarted, section1Read: true, section2Read: section2Done, section3Read: section3Done, elementMixerCompleted: labCompleted }, false)
+    showToast("Great! Fire Triangle mastered!")
   }
 
   const handleSection2 = () => {
     if (section2Done) return
     setSection2Done(true)
-    saveSection({ videoWatched: videoStarted, section1Read: section1Done, section2Read: true, elementMixerCompleted: labCompleted }, false)
-    showToast("You know the rules! Stay safe! ✅")
+    saveSection({ videoWatched: videoStarted, section1Read: section1Done, section2Read: true, section3Read: section3Done, elementMixerCompleted: labCompleted }, false)
+    showToast("You know the rules! Stay safe!")
+  }
+
+  const handleSection3 = () => {
+    if (section3Done) return
+    setSection3Done(true)
+    saveSection({ videoWatched: videoStarted, section1Read: section1Done, section2Read: section2Done, section3Read: true, elementMixerCompleted: labCompleted }, false)
+    showToast("You understand how fire travels!")
   }
 
   // ── Drag-and-drop handlers ──
@@ -181,6 +213,17 @@ const ModuleOnePage = () => {
   }
 
   const handleItemDrop = (item: LabItem) => {
+    // Play element-specific sound effect
+    const soundMap: Record<string, string> = {
+      wood: "/sounds/wood.mp3",
+      spark: "/sounds/spark.mp3",
+      fan: "/sounds/fan.mp3",
+      water: "/sounds/water.mp3",
+    }
+    if (soundMap[item.id]) {
+      new Audio(soundMap[item.id]).play().catch(e => console.warn("Failed to play element sound:", e))
+    }
+
     // Water can ALWAYS be used — even after the fire is lit
     if (item.id === "water") {
       if (pitItems.includes("spark")) {
@@ -213,7 +256,7 @@ const ModuleOnePage = () => {
       setLabCompleted(true)
       setMixerEverCompleted(true)
       setPitMessage("🔥 FIRE STARTED! The Triangle is complete!")
-      const sectionData = { videoWatched: videoStarted, section1Read: section1Done, section2Read: section2Done, elementMixerCompleted: true }
+      const sectionData = { videoWatched: videoStarted, section1Read: section1Done, section2Read: section2Done, section3Read: section3Done, elementMixerCompleted: true }
       saveSection(sectionData, false)
     } else {
       const missingLabels = missing.map(id => LAB_ITEMS.find(i => i.id === id)?.role ?? id)
@@ -239,7 +282,7 @@ const ModuleOnePage = () => {
 
       await axios.post("/api/kids/safescape", { 
         moduleNum: 1, 
-        sectionData: { videoWatched: true, section1Read: true, section2Read: true, elementMixerCompleted: true, quizPassed: true }, 
+        sectionData: { videoWatched: true, section1Read: true, section2Read: true, section3Read: true, elementMixerCompleted: true, quizPassed: true }, 
         completed: true 
       });
 
@@ -277,6 +320,43 @@ const ModuleOnePage = () => {
     return null
   }, [loadedScore, quizSubmitted, quizScore, quizPassed, quizAnswers])
 
+  const resultDetails = useMemo(() => {
+    const score = displayScore ?? 0
+    if (score === 5) {
+      return {
+        icon: "🏆",
+        title: "Fire Safety Champion!",
+        titleColor: "text-yellow-500 dark:text-yellow-400",
+        pillStyles: "border-yellow-500/30 bg-gradient-to-br from-yellow-500/10 to-amber-500/10 text-yellow-600 dark:text-yellow-400 shadow-[0_8px_32px_rgba(234,179,8,0.12)]",
+        desc: "A perfect score! You are an absolute master of fire safety rules!"
+      }
+    } else if (score >= 3) {
+      return {
+        icon: "🎉",
+        title: "Fire Safety Certified!",
+        titleColor: "text-green-500 dark:text-green-400",
+        pillStyles: "border-green-500/30 bg-gradient-to-br from-green-500/10 to-emerald-500/10 text-green-600 dark:text-green-400 shadow-[0_8px_32px_rgba(34,197,94,0.12)]",
+        desc: "Well done! You have successfully completed this module quiz!"
+      }
+    } else if (score >= 1) {
+      return {
+        icon: "👍",
+        title: "Great Effort!",
+        titleColor: "text-orange-500 dark:text-orange-400",
+        pillStyles: "border-orange-500/30 bg-gradient-to-br from-orange-500/10 to-amber-500/10 text-orange-600 dark:text-orange-400 shadow-[0_8px_32px_rgba(249,115,22,0.12)]",
+        desc: "You completed the quiz! Review your answers below to learn how to keep your home safe!"
+      }
+    } else {
+      return {
+        icon: "💡",
+        title: "Keep Learning!",
+        titleColor: "text-blue-500 dark:text-blue-400",
+        pillStyles: "border-blue-500/30 bg-gradient-to-br from-blue-500/10 to-indigo-500/10 text-blue-600 dark:text-blue-400 shadow-[0_8px_32px_rgba(59,130,246,0.12)]",
+        desc: "You completed the quiz! Click 'Review Answers' below to discover the correct fire safety tips."
+      }
+    }
+  }, [displayScore])
+
   const handleQuizAnswer = (qIdx: number, optIdx: number) => {
     if (quizSubmitted) return
     setQuizAnswers(prev => {
@@ -289,24 +369,29 @@ const ModuleOnePage = () => {
   const handleQuizSubmit = async () => {
     if (!allQuizAnswered || quizSubmitted) return
     setQuizSubmitted(true)
-    const passed = quizScore >= 4
-
-    if (passed) {
-      setQuizPassed(true)
-      setLoadedScore(quizScore)
-      try {
-        await saveSection({ videoWatched: true, section1Read: true, section2Read: true, elementMixerCompleted: true, quizPassed: true }, false)
-        await axios.post("/api/kids/quiz", { quizType: "module_1_quiz", score: quizScore, maxScore: 5 }).catch(() => {})
-      } catch {}
-      showToast("🎉 Fire Safety Certified! Module 2 unlocked!")
+    setQuizPassed(true)
+    setLoadedScore(quizScore)
+    
+    // Play celebratory or fail sounds based on score
+    if (quizScore >= 4) {
+      new Audio('/sounds/finish.mp3').play().catch(e => console.warn("Failed to play audio:", e))
     } else {
-      showToast(`You scored ${quizScore}/5. You need 4/5 to pass.`, "info")
+      new Audio('/sounds/failed.mp3').play().catch(e => console.warn("Failed to play audio:", e))
     }
+
+    try {
+      await saveSection({ videoWatched: true, section1Read: true, section2Read: true, section3Read: true, elementMixerCompleted: true, quizPassed: true, quizAnswers: quizAnswers, quizScore: quizScore }, false)
+      await axios.post("/api/kids/quiz", { quizType: "module_1_quiz", score: quizScore, maxScore: 5 }).catch(() => {})
+    } catch {}
+    showToast("Quiz completed! Module 2 unlocked!")
   }
 
   const handleQuizRetake = () => {
     setQuizAnswers([null, null, null, null, null])
     setQuizSubmitted(false)
+    setQuizPassed(false)
+    setLoadedScore(null)
+    setReviewMode(false)
   }
 
   // ─────────────────────────────────────────────
@@ -314,7 +399,7 @@ const ModuleOnePage = () => {
     <div className="min-h-screen bg-white dark:bg-slate-950 bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] dark:bg-[radial-gradient(#1e293b_1px,transparent_1px)] [background-size:16px_16px] font-sans flex flex-col transition-colors duration-500">
 
       {/* ── Sub Header ── */}
-      <div className="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 py-3 px-4 sm:px-6 lg:px-8 shadow-sm z-20 sticky top-[64px] sm:top-[72px] transition-colors">
+      <div className="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 py-3 px-4 sm:px-6 lg:px-8 shadow-sm z-[50] sticky top-[64px] sm:top-[72px] ss-sub-header transition-colors">
         <div className="max-w-7xl mx-auto flex flex-row items-center justify-between gap-2 sm:gap-4">
           <div className="flex items-center gap-2 sm:gap-4">
             <Link href="/kids/safescape" className="inline-flex items-center justify-center gap-2 p-2 sm:px-4 sm:py-2 bg-white dark:bg-slate-800 rounded-full text-slate-700 dark:text-slate-300 font-bold hover:text-slate-900 dark:hover:text-white border-[3px] border-slate-200 dark:border-slate-700 shadow-[0_3px_0_#cbd5e1] dark:shadow-[0_3px_0_#0f172a] hover:-translate-y-0.5 active:translate-y-1 active:shadow-none transition-all text-sm whitespace-nowrap">
@@ -331,7 +416,11 @@ const ModuleOnePage = () => {
             <ModuleNavigation currentModule={1} completedModules={completedModules} />
             {/* Progress */}
             <div className="text-sm font-bold text-slate-500 dark:text-slate-400 bg-slate-50 dark:bg-slate-900/50 px-4 py-2 rounded-xl border border-slate-200 dark:border-slate-800 whitespace-nowrap hidden lg:block transition-colors">
-              Progress: <span className="text-[#ff4b3e] font-black ml-1">{progress}%</span>
+              {progress === 100 ? (
+                <>Status: <span className="text-green-500 font-black ml-1">Completed ✓</span></>
+              ) : (
+                <>Progress: <span className="text-[#ff4b3e] font-black ml-1">{progress}%</span></>
+              )}
             </div>
           </div>
         </div>
@@ -379,7 +468,7 @@ const ModuleOnePage = () => {
           </div>
 
           {/* ── Video Section ── */}
-          <section className={cn("relative bg-white dark:bg-slate-900 rounded-[1.5rem] sm:rounded-[2rem] border-[3px] sm:border-[4px] border-blue-200 dark:border-blue-900/50 shadow-sm p-4 sm:p-6 md:p-10 text-center transition-all", videoStarted && "border-green-200 dark:border-green-900/50")}>
+          <section className={cn("relative bg-white dark:bg-slate-900 rounded-[1.5rem] sm:rounded-[2rem] border-[3px] sm:border-[4px] border-blue-200 dark:border-blue-900/50 shadow-sm p-4 sm:p-6 md:p-10 text-center transition-all", videoStarted && "!border-green-500")}>
             {videoStarted && (
               <div className="absolute top-3 right-3 sm:top-4 sm:right-4 z-10 h-8 w-8 sm:h-10 sm:w-10 rounded-full bg-green-500 border-[3px] border-white shadow-sm flex items-center justify-center">
                 <CheckCircle className="h-4 w-4 sm:h-5 sm:w-5 text-white" />
@@ -402,8 +491,8 @@ const ModuleOnePage = () => {
 
           {/* ── Section 1.1 — What Makes a Fire? (unlocked after video) ── */}
           <section className={cn(
-            "relative bg-orange-50/50 dark:bg-orange-950/20 rounded-[2rem] border-[4px] border-orange-200 dark:border-orange-900/30 p-5 sm:p-8 md:p-12 shadow-sm transition-all duration-500",
-            !videoStarted && "opacity-30 pointer-events-none select-none",
+            "relative bg-white dark:bg-slate-900 rounded-[2rem] border-[4px] border-orange-200 dark:border-orange-900/30 p-5 sm:p-8 md:p-12 shadow-sm transition-all duration-500 overflow-hidden",
+            !videoStarted && "pointer-events-none select-none",
             section1Done && "!border-green-500"
           )}>
             {section1Done && (
@@ -412,14 +501,14 @@ const ModuleOnePage = () => {
               </div>
             )}
             {!videoStarted && (
-              <div className="absolute inset-0 rounded-[2rem] bg-background/80 flex items-center justify-center z-10 transition-colors">
-                <p className="text-slate-500 dark:text-slate-300 font-bold text-lg bg-white dark:bg-slate-800 px-6 py-3 rounded-full border-2 border-slate-200 dark:border-slate-700 shadow-sm transition-colors">
-                  🎬 Watch the video first to unlock
+              <div className="absolute inset-0 rounded-[2rem] bg-slate-950/40 dark:bg-slate-950/60 backdrop-blur-[3px] flex items-center justify-center z-20 transition-all duration-300">
+                <p className="text-amber-600 dark:text-amber-400 font-black text-sm sm:text-base md:text-lg bg-white dark:bg-slate-800 px-6 py-3.5 sm:px-8 sm:py-4 rounded-full border-[3px] border-amber-500 shadow-2xl flex items-center gap-2.5 transition-all">
+                  🔒 Watch the video first to unlock
                 </p>
               </div>
             )}
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8 md:gap-12 items-center">
+            <div className={cn("grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8 md:gap-12 items-center transition-all duration-500", !videoStarted && "opacity-20 blur-[1px]")}>
               {/* Text content */}
               <div className="space-y-4 sm:space-y-6 order-2 md:order-1">
                 <div className="flex items-center gap-2 sm:gap-3 mb-1 sm:mb-2">
@@ -432,7 +521,7 @@ const ModuleOnePage = () => {
                     <strong className="text-slate-800 dark:text-white transition-colors">Fire is just like that!</strong> It needs three things to exist, and we call this the "fire triangle."
                     If you take any one of them away, the fire goes out.
                   </p>
-                  <ul className="space-y-3 sm:space-y-4 bg-white dark:bg-slate-900 p-4 sm:p-6 rounded-2xl border-[3px] border-orange-100 dark:border-orange-900/30 shadow-sm transition-colors">
+                  <ul className="space-y-3 sm:space-y-4 bg-slate-50 dark:bg-slate-950 p-4 sm:p-6 rounded-2xl border-[3px] border-orange-100 dark:border-orange-900/30 shadow-inner transition-colors">
                     <li className="flex gap-3 sm:gap-4 items-start">
                       <span className="text-red-400 text-lg sm:text-xl mt-0.5">🔥</span>
                       <div>
@@ -487,7 +576,7 @@ const ModuleOnePage = () => {
           {/* ── Section 1.2 — Grown-Up Tools (unlocked after section1) ── */}
           <section className={cn(
             "relative bg-white dark:bg-slate-900 rounded-[2rem] border-[4px] border-red-200 dark:border-red-900/30 p-5 sm:p-8 md:p-12 overflow-hidden shadow-sm transition-all duration-500",
-            !section1Done && "opacity-30 pointer-events-none select-none",
+            !section1Done && "pointer-events-none select-none",
             section2Done && "!border-green-500"
           )}>
             {section2Done && (
@@ -496,14 +585,14 @@ const ModuleOnePage = () => {
               </div>
             )}
             {!section1Done && (
-              <div className="absolute inset-0 rounded-[2rem] bg-background/80 flex items-center justify-center z-10 transition-colors">
-                <p className="text-slate-500 dark:text-slate-300 font-bold text-lg bg-white dark:bg-slate-800 px-6 py-3 rounded-full border-2 border-slate-200 dark:border-slate-700 shadow-sm transition-colors">
-                  ✅ Complete Section 1.1 first
+              <div className="absolute inset-0 rounded-[2rem] bg-slate-950/40 dark:bg-slate-950/60 backdrop-blur-[3px] flex items-center justify-center z-20 transition-all duration-300">
+                <p className="text-amber-600 dark:text-amber-400 font-black text-sm sm:text-base md:text-lg bg-white dark:bg-slate-800 px-6 py-3.5 sm:px-8 sm:py-4 rounded-full border-[3px] border-amber-500 shadow-2xl flex items-center gap-2.5 transition-all">
+                  🔒 Complete Section 1.1 first
                 </p>
               </div>
             )}
 
-            <div className="relative z-10">
+            <div className={cn("relative z-10 transition-all duration-500", !section1Done && "opacity-20 blur-[1px]")}>
               <div className="flex items-center gap-2 sm:gap-3 mb-5 sm:mb-8">
                 <span className="bg-red-100 dark:bg-red-900/50 text-red-600 dark:text-red-400 border-2 border-red-200 dark:border-red-800 shadow-sm px-2 py-0.5 sm:px-3 sm:py-1 rounded-xl text-xs sm:text-sm font-black transition-colors">1.2</span>
                 <h2 className="text-xl sm:text-2xl md:text-3xl font-black text-slate-800 dark:text-white transition-colors">Grown-Up Tools</h2>
@@ -552,26 +641,105 @@ const ModuleOnePage = () => {
             </div>
           </section>
 
-          {/* ── Element Mixer Lab (unlocked after section2) ── */}
+          {/* ── Section 1.3 — How a Fire Grows & Travels (unlocked after section2) ── */}
           <section className={cn(
-            "relative bg-purple-50 dark:bg-purple-950/20 rounded-[2rem] border-[4px] border-purple-200 dark:border-purple-900/30 p-5 sm:p-8 md:p-12 shadow-sm transition-all duration-500",
-            !section2Done && "opacity-30 pointer-events-none select-none",
-            labCompleted && "!border-green-500"
+            "relative bg-white dark:bg-slate-900 rounded-[2rem] border-[4px] border-rose-200 dark:border-rose-900/30 p-5 sm:p-8 md:p-12 shadow-sm transition-all duration-500 overflow-hidden",
+            !section2Done && "pointer-events-none select-none",
+            section3Done && "!border-green-500"
           )}>
-            {labCompleted && (
+            {section3Done && (
               <div className="absolute top-4 right-4 h-10 w-10 rounded-full bg-green-500 border-[3px] border-white shadow-sm flex items-center justify-center">
                 <CheckCircle className="h-5 w-5 text-white" />
               </div>
             )}
             {!section2Done && (
-              <div className="absolute inset-0 rounded-[2rem] bg-background/80 flex items-center justify-center z-10 transition-colors">
-                <p className="text-slate-500 dark:text-slate-300 font-bold text-lg bg-white dark:bg-slate-800 px-6 py-3 rounded-full border-2 border-slate-200 dark:border-slate-700 shadow-sm transition-colors">
-                  ✅ Complete Section 1.2 first
+              <div className="absolute inset-0 rounded-[2rem] bg-slate-950/40 dark:bg-slate-950/60 backdrop-blur-[3px] flex items-center justify-center z-20 transition-all duration-300">
+                <p className="text-amber-600 dark:text-amber-400 font-black text-sm sm:text-base md:text-lg bg-white dark:bg-slate-800 px-6 py-3.5 sm:px-8 sm:py-4 rounded-full border-[3px] border-amber-500 shadow-2xl flex items-center gap-2.5 transition-all">
+                  🔒 Complete Section 1.2 first
                 </p>
               </div>
             )}
 
-            <div className="text-center mb-6 sm:mb-8 md:mb-10">
+            <div className={cn("space-y-6 transition-all duration-500", !section2Done && "opacity-20 blur-[1px]")}>
+              {/* Header */}
+              <div className="flex items-center gap-2 sm:gap-3">
+                <span className="bg-rose-100 dark:bg-rose-900/50 text-rose-600 dark:text-rose-400 border-2 border-rose-200 dark:border-rose-800 shadow-sm px-2 py-0.5 sm:px-3 sm:py-1 rounded-xl text-xs sm:text-sm font-black transition-colors">1.3</span>
+                <h2 className="text-xl sm:text-2xl md:text-3xl font-black text-slate-800 dark:text-white transition-colors">How a Fire Grows & Travels</h2>
+              </div>
+              
+              <p className="text-slate-600 dark:text-slate-400 font-bold text-sm sm:text-base leading-relaxed transition-colors">
+                Fire is fast! See how a tiny spark uses household items to grow and fill a room with smoke.
+              </p>
+
+              {/* Centered, Larger Diagram Card at the Top */}
+              <div className="bg-slate-50 dark:bg-slate-950 rounded-[1.5rem] overflow-hidden border-[3px] border-rose-200 dark:border-rose-900/30 shadow-sm flex items-center justify-center p-3 sm:p-4 max-w-[760px] mx-auto w-full transition-all">
+                <img
+                  src="/module_1.3.png"
+                  alt="How a Fire Grows and Travels Diagram"
+                  className="w-full h-auto object-contain rounded-lg dark:brightness-95"
+                />
+              </div>
+
+              {/* Side-by-Side Descriptions at the Bottom */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 items-stretch">
+                {/* DON'T FIGHT IT Callout */}
+                <div className="bg-red-50 dark:bg-red-950/40 border-l-[6px] border-red-500 rounded-r-2xl p-4 sm:p-5 shadow-sm transition-colors flex flex-col justify-center">
+                  <h3 className="text-red-600 dark:text-red-400 font-black mb-1.5 text-sm sm:text-base uppercase tracking-wider">
+                    🚨 DON'T FIGHT IT!
+                  </h3>
+                  <p className="text-xs sm:text-sm font-semibold leading-relaxed text-slate-700 dark:text-slate-300">
+                    Fire grows too fast for kids to fight! If you see fire or smell smoke, don't try to hide. Get out! and tell a grown-up right away!
+                  </p>
+                </div>
+
+                {/* Simplified Metaphor */}
+                <div className="bg-amber-50/80 dark:bg-amber-950/20 border-l-[6px] border-amber-500 rounded-r-2xl p-4 sm:p-5 shadow-sm transition-colors flex flex-col justify-center">
+                  <p className="text-xs sm:text-sm text-slate-700 dark:text-slate-300 font-semibold leading-relaxed">
+                    "Fire is like a hungry little monster. It doesn't stay in one place—it eats wood, paper, and curtains to grow bigger, hotter, and faster every single second!"
+                  </p>
+                </div>
+              </div>
+
+              {/* Centered Completion Button */}
+              <div className="pt-2 flex justify-center">
+                <button
+                  onClick={handleSection3}
+                  disabled={section3Done}
+                  className={cn(
+                    "inline-flex items-center gap-2 font-black text-sm transition-all uppercase tracking-wide",
+                    section3Done
+                      ? "bg-green-500 text-white px-6 py-3 rounded-full border-[3px] border-green-600 shadow-[0_4px_0_#15803d] cursor-default"
+                      : "bg-rose-500 hover:bg-rose-600 text-white px-6 py-3 rounded-full border-[3px] border-white shadow-[0_4px_0_#be123c] hover:-translate-y-0.5 active:translate-y-1 active:shadow-none"
+                  )}
+                >
+                  <CheckCircle className="h-4 w-4" />
+                  {section3Done ? "Completed ✓" : "I understand how fire grows & travels"}
+                </button>
+              </div>
+            </div>
+          </section>
+
+          {/* ── Element Mixer Lab (unlocked after section3) ── */}
+          <section className={cn(
+            "relative bg-purple-50 dark:bg-purple-950/20 rounded-[2rem] border-[4px] border-purple-200 dark:border-purple-900/30 p-5 sm:p-8 md:p-12 shadow-sm transition-all duration-500 overflow-hidden",
+            !section3Done && "pointer-events-none select-none",
+            mixerEverCompleted && "!border-green-500"
+          )}>
+            {mixerEverCompleted && (
+              <div className="absolute top-4 right-4 h-10 w-10 rounded-full bg-green-500 border-[3px] border-white shadow-sm flex items-center justify-center">
+                <CheckCircle className="h-5 w-5 text-white" />
+              </div>
+            )}
+            {!section3Done && (
+              <div className="absolute inset-0 rounded-[2rem] bg-slate-950/40 dark:bg-slate-950/60 backdrop-blur-[3px] flex items-center justify-center z-20 transition-all duration-300">
+                <p className="text-amber-600 dark:text-amber-400 font-black text-sm sm:text-base md:text-lg bg-white dark:bg-slate-800 px-6 py-3.5 sm:px-8 sm:py-4 rounded-full border-[3px] border-amber-500 shadow-2xl flex items-center gap-2.5 transition-all">
+                  🔒 Complete Section 1.3 first
+                </p>
+              </div>
+            )}
+
+            <div className={cn("transition-all duration-500", !section3Done && "opacity-20 blur-[1px]")}>
+              <div className="text-center mb-6 sm:mb-8 md:mb-10">
               <div className="flex items-center justify-center gap-2 sm:gap-3 mb-2 sm:mb-3">
                 <FlaskConical className="h-5 w-5 sm:h-7 sm:w-7 text-purple-500 dark:text-purple-400 transition-colors" />
                 <h2 className="text-xl sm:text-2xl md:text-3xl font-black text-purple-900 dark:text-purple-300 transition-colors">The Element Mixer Lab</h2>
@@ -580,6 +748,18 @@ const ModuleOnePage = () => {
                 By understanding what fire needs to start, you are already taking a huge step in preventing fires.
                 <br />Prove your knowledge by building the Fire Triangle below!
               </p>
+              
+              <div className="bg-purple-100/50 dark:bg-purple-950/40 p-4 sm:p-6 rounded-2xl border-2 border-purple-200 dark:border-purple-900/40 text-left max-w-xl mx-auto space-y-2 mt-4 text-xs sm:text-sm">
+                <p className="font-extrabold text-purple-900 dark:text-purple-300 flex items-center gap-2">
+                  <Info className="h-4 w-4 text-purple-500" />
+                  🔬 How to Play:
+                </p>
+                <ul className="list-disc list-inside space-y-1 text-slate-700 dark:text-slate-300 font-bold">
+                  <li><strong>Tap</strong> or <strong>Drag & Drop</strong> the items into the Fire Pit.</li>
+                  <li>Mix the <strong>3 correct elements</strong> to complete the Fire Triangle and light the fire!</li>
+                  <li>Use <strong>Water</strong> anytime to douse the Heat (Spark) and experiment!</li>
+                </ul>
+              </div>
             </div>
 
             <div className="flex flex-col lg:flex-row gap-6 sm:gap-8 md:gap-10 items-center justify-center select-none">
@@ -600,7 +780,13 @@ const ModuleOnePage = () => {
                         inPit && item.correct ? "opacity-50" : ""
                       )}
                     >
-                      <div className="text-2xl sm:text-3xl mb-1.5 sm:mb-2 pointer-events-none">{item.icon}</div>
+                      <div className="text-2xl sm:text-3xl mb-1.5 sm:mb-2 pointer-events-none flex items-center justify-center h-8 sm:h-10">
+                        {item.image ? (
+                          <img src={item.image} alt={item.label} className="w-8 h-8 sm:w-10 sm:h-10 object-contain" />
+                        ) : (
+                          item.icon
+                        )}
+                      </div>
                       <p className="font-black text-white text-xs sm:text-sm pointer-events-none">{item.label}</p>
                       <p className="text-[10px] sm:text-xs text-white/60 mt-0.5 pointer-events-none">{item.role}</p>
                     </div>
@@ -653,7 +839,11 @@ const ModuleOnePage = () => {
                           <div key={id} className={cn("h-8 w-8 sm:h-10 sm:w-10 rounded-full border-2 flex items-center justify-center text-base sm:text-xl shadow-md", badgeColor)}
                             style={{ animation: "popIn 0.3s cubic-bezier(0.175,0.885,0.32,1.275)" }}
                           >
-                            {item.icon}
+                            {item.image ? (
+                              <img src={item.image} alt={item.label} className="w-5 h-5 sm:w-6 sm:h-6 object-contain" />
+                            ) : (
+                              item.icon
+                            )}
                           </div>
                         )
                       })}
@@ -684,33 +874,36 @@ const ModuleOnePage = () => {
                   {labCompleted ? "⚠️ FIRE STARTED! The Triangle is complete!" : pitMessage}
                 </p>
 
-                {/* Clear Pit link — always below */}
+                {/* Clear Pit Button — always below */}
                 <button
                   type="button"
                   onClick={resetPit}
-                  className="text-xs text-slate-400 hover:text-slate-700 underline transition-colors"
+                  className="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-slate-200 hover:bg-slate-300 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-white font-extrabold text-xs sm:text-sm rounded-full border-[3px] border-slate-300 dark:border-slate-700 shadow-[0_3px_0_#cbd5e1] dark:shadow-[0_3px_0_#0f172a] hover:-translate-y-0.5 active:translate-y-1 active:shadow-none transition-all cursor-pointer"
                 >
-                  Clear Pit &amp; Restart
+                  <RotateCcw className="h-4 w-4" />
+                  <span>Clear Pit &amp; Restart</span>
                 </button>
               </div>
             </div>
+            </div>
           </section>
 
-          {/* ── Fire Safety Certification Quiz (unlocked after lab) ── */}
           <section className={cn(
-            "relative rounded-[2rem] border-[4px] p-5 sm:p-8 md:p-12 shadow-sm transition-all duration-500",
+            "relative rounded-[2rem] border-[4px] shadow-sm transition-all duration-500 overflow-hidden",
             quizPassed
-              ? "bg-slate-50 dark:bg-slate-900/50 border-slate-200 dark:border-slate-800"
-              : "bg-yellow-50 dark:bg-yellow-950/20 border-yellow-300 dark:border-yellow-900/30",
-            !mixerEverCompleted && "opacity-30 pointer-events-none select-none"
+              ? "bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800/80 p-8 sm:p-14 text-center"
+              : "bg-yellow-50 dark:bg-yellow-950/20 border-yellow-300 dark:border-yellow-900/30 p-5 sm:p-8 md:p-12",
+            (!section3Done || !mixerEverCompleted) && "pointer-events-none select-none"
           )}>
-            {!mixerEverCompleted && (
-              <div className="absolute inset-0 rounded-[2rem] bg-background/80 flex items-center justify-center z-10 transition-colors">
-                <p className="text-slate-500 dark:text-slate-300 font-bold text-lg bg-white dark:bg-slate-800 px-6 py-3 rounded-full border-2 border-slate-200 dark:border-slate-700 shadow-sm transition-colors">
-                  🧪 Complete the Element Mixer first
+            {(!section3Done || !mixerEverCompleted) && (
+              <div className="absolute inset-0 rounded-[2rem] bg-slate-950/40 dark:bg-slate-950/60 backdrop-blur-[3px] flex items-center justify-center z-20 transition-all duration-300">
+                <p className="text-amber-600 dark:text-amber-400 font-black text-sm sm:text-base md:text-lg bg-white dark:bg-slate-800 px-6 py-3.5 sm:px-8 sm:py-4 rounded-full border-[3px] border-amber-500 shadow-2xl flex items-center gap-2.5 transition-all">
+                  🔒 {!section3Done ? "Complete Section 1.3 first" : "Complete the Element Mixer first"}
                 </p>
               </div>
             )}
+
+            <div className={cn("transition-all duration-500", (!section3Done || !mixerEverCompleted) && "opacity-20 blur-[1px]")}>
 
             {/* Header (hidden when quiz passed and not in review mode) */}
             {!(quizPassed && !reviewMode) && (
@@ -745,20 +938,37 @@ const ModuleOnePage = () => {
                       {qIdx + 1}. {question.q}
                     </h3>
                     <div className="grid grid-cols-1 gap-2 sm:gap-3">
-                      {question.options.map((opt, optIdx) => (
-                        <button
-                          key={optIdx}
-                          disabled
-                          className={cn(
-                            "w-full text-left p-3 sm:p-4 rounded-xl border-2 font-bold text-sm sm:text-base transition-colors",
-                            optIdx === question.correct
-                              ? "bg-green-500 border-green-600 text-white shadow-sm"
-                              : "border-slate-200 dark:border-slate-700 text-slate-400 dark:text-slate-500 bg-slate-50 dark:bg-slate-900 opacity-50 cursor-not-allowed"
-                          )}
-                        >
-                          {opt}
-                        </button>
-                      ))}
+                      {question.options.map((opt, optIdx) => {
+                        const isCorrect = optIdx === question.correct
+                        const isSelected = quizAnswers[qIdx] === optIdx
+                        
+                        return (
+                          <button
+                            key={optIdx}
+                            disabled
+                            className={cn(
+                              "w-full text-left p-3 sm:p-4 rounded-xl border-2 font-bold text-sm sm:text-base transition-all flex items-center justify-between",
+                              isCorrect
+                                ? "bg-green-500 border-green-600 text-white shadow-sm"
+                                : isSelected
+                                ? "bg-red-500 border-red-600 text-white shadow-sm"
+                                : "border-slate-200 dark:border-slate-700 text-slate-400 dark:text-slate-500 bg-slate-50 dark:bg-slate-900 opacity-50 cursor-not-allowed"
+                            )}
+                          >
+                            <span>{opt}</span>
+                            {isSelected && !isCorrect && (
+                              <span className="text-[10px] bg-red-700/50 px-2.5 py-1 rounded-lg font-black uppercase tracking-wider ml-2 shrink-0">
+                                Your Answer ✗
+                              </span>
+                            )}
+                            {isCorrect && (
+                              <span className="text-[10px] bg-green-700/50 px-2.5 py-1 rounded-lg font-black uppercase tracking-wider ml-2 shrink-0">
+                                Correct ✓
+                              </span>
+                            )}
+                          </button>
+                        )
+                      })}
                     </div>
                   </div>
                 ))}
@@ -769,24 +979,28 @@ const ModuleOnePage = () => {
             {quizPassed && (
               <div
                 ref={resultCardRef}
-                className="bg-white dark:bg-slate-800 rounded-[2rem] p-8 sm:p-14 border-4 border-slate-200 dark:border-slate-700 shadow-[0_25px_50px_-12px_rgba(0,0,0,0.1)] dark:shadow-[0_25px_50px_-12px_rgba(0,0,0,0.5)] text-center max-w-xl mx-auto transition-colors"
+                className="w-full text-center max-w-xl mx-auto transition-colors"
               >
-                <div className="text-5xl sm:text-7xl mb-5" style={{ filter: 'drop-shadow(0 10px 8px rgba(0,0,0,0.2))' }}>🏆</div>
-                <h3 className="text-2xl sm:text-[2.75rem] font-black text-green-600 dark:text-green-400 mb-2 uppercase leading-none tracking-tight">Fire Safety Certified!</h3>
+                <div className="text-5xl sm:text-7xl mb-5" style={{ filter: 'drop-shadow(0 10px 8px rgba(0,0,0,0.2))' }}>
+                  {resultDetails.icon}
+                </div>
+                <h3 className={cn("text-2xl sm:text-[2.75rem] font-black mb-2 uppercase leading-none tracking-tight", resultDetails.titleColor)}>
+                  {resultDetails.title}
+                </h3>
                 
                 {displayScore !== null && (
-                  <div className="my-6 inline-flex flex-col items-center justify-center bg-gradient-to-br from-green-500/10 to-emerald-500/10 dark:from-green-500/20 dark:to-emerald-500/20 border-2 border-green-500/30 dark:border-green-500/50 rounded-2xl px-8 py-3.5 shadow-[0_8px_32px_rgba(34,197,94,0.12)] backdrop-blur-sm">
-                    <span className="text-slate-500 dark:text-slate-400 text-[10px] font-black uppercase tracking-widest mb-0.5">
+                  <div className={cn("my-6 inline-flex flex-col items-center justify-center border-2 rounded-2xl px-8 py-3.5 backdrop-blur-sm", resultDetails.pillStyles)}>
+                    <span className="opacity-70 text-[10px] font-black uppercase tracking-widest mb-0.5">
                       Quiz Score
                     </span>
-                    <span className="text-green-600 dark:text-green-400 font-extrabold text-3xl sm:text-4xl tracking-tight font-mono">
-                      {displayScore} <span className="text-slate-400 dark:text-slate-500 text-xl font-normal">/ 5</span>
+                    <span className="font-extrabold text-3xl sm:text-4xl tracking-tight font-mono">
+                      {displayScore} <span className="opacity-50 text-xl font-normal">/ 5</span>
                     </span>
                   </div>
                 )}
 
                 <p className="text-slate-600 dark:text-slate-400 font-semibold text-base sm:text-lg mb-8 sm:mb-10">
-                  You have already completed this quiz!
+                  {resultDetails.desc}
                 </p>
                 <div className="flex flex-col sm:flex-row justify-center gap-3 sm:gap-5">
                   <button
@@ -898,6 +1112,7 @@ const ModuleOnePage = () => {
                 </div>
               </div>
             )}
+            </div>
           </section>
 
           {/* ── Footer ── */}
@@ -912,10 +1127,15 @@ const ModuleOnePage = () => {
       {/* ── Toast ── */}
       {toast && (
         <div className={cn(
-          "fixed bottom-6 right-6 z-[200] flex items-center gap-3 px-5 py-3 rounded-2xl shadow-2xl text-white font-bold text-sm transition-all animate-in slide-in-from-bottom-4",
-          toast.type === "success" ? "bg-green-600" : "bg-blue-600"
+          "fixed top-20 left-1/2 -translate-x-1/2 right-auto bottom-auto md:top-28 md:right-8 md:left-auto md:translate-x-0 z-[200] flex items-center gap-3 px-5 py-3.5 rounded-2xl shadow-2xl text-slate-800 dark:text-white font-extrabold text-xs sm:text-sm transition-all animate-in fade-in slide-in-from-top-4 duration-300 bg-white dark:bg-slate-900 border-[3px] shadow-slate-200 dark:shadow-slate-950",
+          toast.type === "success" ? "border-emerald-500" : "border-blue-500"
         )}>
-          {toast.type === "success" ? "✅" : "ℹ️"} {toast.msg}
+          {toast.type === "success" ? (
+            <CheckCircle className="h-5 w-5 text-emerald-500 dark:text-emerald-400 shrink-0" />
+          ) : (
+            <Info className="h-5 w-5 text-blue-500 dark:text-blue-400 shrink-0" />
+          )}
+          <span>{toast.msg}</span>
         </div>
       )}
 

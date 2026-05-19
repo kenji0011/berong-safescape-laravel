@@ -30,33 +30,43 @@
         }
     </script>
     <script>
-        // Theme sync logic
+        // Parent class sync logic (Theme & Accessibility)
         (function() {
-            const syncTheme = () => {
+            const syncParentClasses = () => {
                 try {
-                    const isDark = window.parent.document.documentElement.classList.contains('dark') || 
-                                 window.parent.document.body.classList.contains('dark');
+                    const parentDoc = window.parent.document.documentElement || window.parent.document.body;
+                    
+                    // Sync Dark Mode
+                    const isDark = parentDoc.classList.contains('dark');
                     if (isDark) {
                         document.documentElement.classList.add('dark');
                     } else {
                         document.documentElement.classList.remove('dark');
+                    }
+                    
+                    // Sync Dyslexia Font
+                    const isDyslexia = parentDoc.classList.contains('dyslexia-mode');
+                    if (isDyslexia) {
+                        document.documentElement.classList.add('dyslexia-mode');
+                    } else {
+                        document.documentElement.classList.remove('dyslexia-mode');
                     }
                 } catch (e) {
                     // Fallback
                 }
             };
             
-            syncTheme();
+            syncParentClasses();
             try {
-                const observer = new MutationObserver(syncTheme);
+                const observer = new MutationObserver(syncParentClasses);
                 observer.observe(window.parent.document.documentElement, { attributes: true, attributeFilter: ['class'] });
             } catch (e) {}
-            setInterval(syncTheme, 1000);
+            setInterval(syncParentClasses, 1000);
         })();
     </script>
     <link href="https://fonts.googleapis.com/css2?family=Alice&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="../css/shared.css?v=3">
+    <link rel="stylesheet" href="../css/shared.css?v=4">
 
     <style>
         .fade-in {
@@ -194,15 +204,25 @@
             transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        .quiz-option:hover {
-            transform: translateY(-2px);
-            border-color: #fb923c;
-            background-color: #fff7ed;
+        .quiz-option:hover:not(:disabled) {
+            transform: translateX(5px);
+            border-color: #fb923c !important;
+            background-color: #fff7ed !important;
         }
 
-        .dark .quiz-option:hover {
-            background-color: #7c2d12/20;
-            border-color: #ea580c;
+        .dark .quiz-option:hover:not(:disabled) {
+            background-color: rgba(124, 45, 18, 0.2) !important;
+            border-color: #ea580c !important;
+        }
+
+        .quiz-option:has(input:checked):hover:not(:disabled) {
+            background-color: #ffedd5 !important;
+            border-color: #f97316 !important;
+        }
+
+        .dark .quiz-option:has(input:checked):hover:not(:disabled) {
+            background-color: rgba(124, 45, 18, 0.3) !important;
+            border-color: #f97316 !important;
         }
 
         /* Styling for when the radio inside is checked */
@@ -371,12 +391,14 @@
         }
 
         .round-dot.active {
-            background: #f59e0b;
+            background: #f59e0b !important;
             transform: scale(1.2);
+            box-shadow: 0 0 8px #f59e0b;
         }
 
         .round-dot.complete {
-            background: #22c55e;
+            background: #22c55e !important;
+            box-shadow: 0 0 8px #22c55e;
         }
 
         .sequence-tracker {
@@ -391,17 +413,10 @@
             border-radius: 0.75rem;
             font-weight: 900;
             font-size: 0.65rem;
-            background: #334155;
-            color: #475569;
             transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             text-transform: uppercase;
             letter-spacing: 0.1em;
             border: 2px solid transparent;
-        }
-
-        html:not(.dark) .seq-step {
-            background: #e2e8f0;
-            color: #94a3b8;
         }
 
         @media (min-width: 640px) {
@@ -413,32 +428,72 @@
             }
         }
 
+        /* Solid, dark-mode compatible themed colors for STOP, DROP, ROLL */
+        .seq-step[data-step="stop"] {
+            background: #fee2e2 !important;
+            color: #991b1b !important;
+            border: 2px solid #fca5a5 !important;
+        }
+        .dark .seq-step[data-step="stop"] {
+            background: #7f1d1d !important;
+            color: #fecaca !important;
+            border: 2px solid #b91c1c !important;
+        }
+
+        .seq-step[data-step="drop"] {
+            background: #fef3c7 !important;
+            color: #92400e !important;
+            border: 2px solid #fcd34d !important;
+        }
+        .dark .seq-step[data-step="drop"] {
+            background: #78350f !important;
+            color: #fde68a !important;
+            border: 2px solid #d97706 !important;
+        }
+
+        .seq-step[data-step="roll"] {
+            background: #dcfce7 !important;
+            color: #166534 !important;
+            border: 2px solid #86efac !important;
+        }
+        .dark .seq-step[data-step="roll"] {
+            background: #14532d !important;
+            color: #bbf7d0 !important;
+            border: 2px solid #15803d !important;
+        }
+
+        /* Pulsing Next Active step style */
         .seq-step.next {
-            background: #fbbf24;
-            color: #451a03;
-            box-shadow: 0 4px 10px -2px rgba(251, 191, 36, 0.2);
-            transform: translateY(-1px);
-            border-color: #f59e0b;
+            transform: scale(1.08) translateY(-2px);
+            animation: pulseActive 1.5s infinite alternate;
         }
 
-        @media (min-width: 640px) {
-            .seq-step.next {
-                box-shadow: 0 10px 15px -3px rgba(251, 191, 36, 0.3);
-                transform: translateY(-2px);
-            }
+        .seq-step[data-step="stop"].next {
+            border-color: #ef4444 !important;
+            box-shadow: 0 0 15px rgba(239, 68, 68, 0.4) !important;
+        }
+        .seq-step[data-step="drop"].next {
+            border-color: #f59e0b !important;
+            box-shadow: 0 0 15px rgba(245, 158, 11, 0.4) !important;
+        }
+        .seq-step[data-step="roll"].next {
+            border-color: #10b981 !important;
+            box-shadow: 0 0 15px rgba(16, 185, 129, 0.4) !important;
         }
 
+        /* Completed done state override */
         .seq-step.done {
-            background: #22c55e;
-            color: white;
-            box-shadow: 0 4px 10px -2px rgba(34, 197, 94, 0.2);
-            border-color: #16a34a;
+            background: #22c55e !important;
+            color: white !important;
+            border-color: #16a34a !important;
+            box-shadow: 0 4px 10px -2px rgba(34, 197, 94, 0.2) !important;
+            transform: none !important;
+            animation: none !important;
         }
 
-        @media (min-width: 640px) {
-            .seq-step.done {
-                box-shadow: 0 10px 15px -3px rgba(34, 197, 94, 0.3);
-            }
+        @keyframes pulseActive {
+            0% { transform: scale(1.04) translateY(-1px); }
+            100% { transform: scale(1.1) translateY(-3px); }
         }
     </style>
 </head>
@@ -475,35 +530,35 @@
         </div>
     </nav>
 
-    <main class="max-w-5xl mx-auto p-4 sm:p-6 space-y-10 sm:space-y-24">
+    <main class="max-w-5xl mx-auto p-4 sm:p-6 space-y-6 sm:space-y-12 pt-4 sm:pt-8">
 
-        <!-- HEADER -->
-        <section class="fade-in text-center max-w-3xl mx-auto space-y-2 sm:space-y-4" style="animation-delay: 0.1s;">
-            <h1
-                class="text-2xl sm:text-4xl md:text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-red-500 to-orange-500 drop-shadow-sm">
-                The Ultimate Defense
-            </h1>
-            <p class="text-xs sm:text-lg text-slate-600 dark:text-slate-300 font-bold leading-relaxed max-w-2xl mx-auto transition-colors">
-                React to danger. Prevent the spark. Prove your knowledge. <br>
-                This is your final training before becoming a certified hero.
-            </p>
-        </section>
+        <div class="space-y-6 sm:space-y-8 mt-2 sm:mt-4">
+            <!-- HEADER -->
+            <section class="fade-in text-center max-w-3xl mx-auto space-y-2 sm:space-y-4" style="animation-delay: 0.1s;">
+                <h1
+                    class="text-2xl sm:text-4xl md:text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-red-500 to-orange-500 drop-shadow-sm">
+                    The Ultimate Defense
+                </h1>
+                <p class="text-xs sm:text-lg text-slate-600 dark:text-slate-300 font-bold leading-relaxed max-w-2xl mx-auto transition-colors">
+                    React to danger. Prevent the spark. Prove your knowledge. <br>
+                    This is your final training before becoming a certified hero.
+                </p>
+            </section>
 
-        <!-- VIDEO -->
-        <section id="section-video" class="fade-in ss-section bg-white dark:bg-slate-900/50 border-[3px] sm:border-[4px] border-red-200 dark:border-red-900/30 shadow-sm p-4 sm:p-10 text-center transition-colors" style="animation-delay: 0.2s;">
-            <div class="ss-section-badge bg-green-500 border-[3px] border-white dark:border-slate-800 shadow-sm text-white transition-colors"><i class="fa-regular fa-circle-check"></i></div>
-            <h2 class="text-lg sm:text-3xl font-black text-red-500 mb-4 sm:mb-6 drop-shadow-sm">Watch the Intro Video</h2>
-            <div class="w-full aspect-video bg-slate-100 dark:bg-slate-950 rounded-[2rem] sm:rounded-[3rem] overflow-hidden shadow-sm border-[3px] sm:border-[4px] border-red-200 dark:border-red-900/30 relative group transition-colors">
-                <video id="module-video" controls class="w-full h-full object-cover" onplay="onVideoPlay()" onended="onVideoEnd()">
-                    <source src="../assets/videos/m5.mp4" type="video/mp4">
-                </video>
-            </div>
-            <p class="text-center text-yellow-600 dark:text-yellow-500 font-bold text-xs sm:text-sm mt-4 sm:mt-6 uppercase tracking-widest transition-colors"><i class="fa-solid fa-expand mr-1"></i> Watch in Fullscreen for best viewing</p>
-            <p class="text-center text-slate-500 dark:text-slate-400 font-bold text-xs sm:text-sm mt-2 pt-4 sm:pt-6 border-t-2 border-slate-100 dark:border-slate-800 uppercase tracking-widest transition-colors">Watch the video until the end to continue</p>
-        </section>
+            <section id="section-video" class="fade-in ss-section bg-white dark:bg-slate-900 border-[3px] sm:border-[4px] border-red-200 dark:border-red-900/30 shadow-sm p-4 sm:p-10 text-center transition-colors" style="animation-delay: 0.2s;">
+                <div class="ss-section-badge bg-green-500 border-[3px] border-white dark:border-slate-800 shadow-sm text-white transition-colors"><i class="fa-regular fa-circle-check"></i></div>
+                <h2 class="text-lg sm:text-3xl font-black text-red-500 mb-4 sm:mb-6 drop-shadow-sm">Watch the Intro Video</h2>
+                <div class="w-full aspect-video bg-slate-100 dark:bg-slate-950 rounded-[2rem] sm:rounded-[3rem] overflow-hidden shadow-sm border-[3px] sm:border-[4px] border-red-200 dark:border-red-900/30 relative group transition-colors">
+                    <video id="module-video" controls class="w-full h-full object-cover" onplay="onVideoPlay()" onended="onVideoEnd()">
+                        <source src="../assets/videos/m5.mp4" type="video/mp4">
+                    </video>
+                </div>
+                <p class="text-center text-yellow-600 dark:text-yellow-500 font-bold text-xs sm:text-sm mt-4 sm:mt-6 uppercase tracking-widest transition-colors"><i class="fa-solid fa-expand mr-1"></i> Watch in Fullscreen for best viewing</p>
+            </section>
+        </div>
 
         <!-- PART 1: STOP DROP ROLL -->
-        <section id="section-sdr" class="fade-in ss-section bg-white/40 dark:bg-slate-900/40 backdrop-blur-sm border-[3px] border-slate-100 dark:border-slate-800 p-6 sm:p-10 lg:p-12 shadow-sm relative transition-colors" style="animation-delay: 0.3s;">
+        <section id="section-sdr" class="fade-in ss-section bg-white dark:bg-slate-900 border-[3px] border-slate-100 dark:border-slate-800 p-6 sm:p-10 lg:p-12 shadow-sm relative transition-colors" data-lock-text="Complete Section 5.1 first" style="animation-delay: 0.3s;">
             <div class="ss-section-badge bg-green-500 border-[3px] border-white dark:border-slate-800 shadow-sm text-white transition-colors"><i class="fa-regular fa-circle-check"></i></div>
             
             <!-- Subtle background decorative element -->
@@ -643,7 +698,7 @@
             </div>
         </section>
 
-        <section id="section-sdr-trap" class="fade-in ss-section max-w-5xl mx-auto bg-white/60 dark:bg-slate-900/60 backdrop-blur-md border-[3px] border-slate-100 dark:border-slate-800 shadow-xl p-6 sm:p-10 relative transition-colors" style="animation-delay: 0.35s;">
+        <section id="section-sdr-trap" class="fade-in ss-section max-w-5xl mx-auto bg-white dark:bg-slate-900 border-[3px] border-slate-100 dark:border-slate-800 shadow-xl p-6 sm:p-10 relative transition-colors" data-lock-text="Complete Section 5.2 first" style="animation-delay: 0.35s;">
             <div class="ss-section-badge bg-green-500 border-[3px] border-white dark:border-slate-800 shadow-sm text-white transition-colors"><i class="fa-regular fa-circle-check"></i></div>
 
             <div>
@@ -696,7 +751,7 @@
                             </div>
                         </div>
 
-                        <div id="trap-game-result" class="hidden absolute inset-0 z-40 bg-white/95 dark:bg-slate-900/98 flex items-center justify-center p-4 sm:p-8 text-center transition-colors">
+                        <div id="trap-game-result" class="hidden absolute inset-0 z-40 bg-white/95 dark:bg-slate-900/95 flex items-center justify-center p-4 sm:p-8 text-center transition-colors">
                             <div class="space-y-4 sm:space-y-6">
                                 <div id="trap-result-icon" class="text-5xl sm:text-7xl mb-1 sm:mb-2"></div>
                                 <div class="space-y-1 sm:space-y-2">
@@ -721,96 +776,112 @@
         </section>
 
         <!-- PART 2: HAZARD HUNT (2-COLUMN PREMIUM LAYOUT) -->
-        <section id="section-hazard" class="fade-in ss-section max-w-6xl mx-auto" style="animation-delay: 0.4s;">
+        <section id="section-hazard" class="fade-in ss-section max-w-6xl mx-auto" data-lock-text="Complete Section 5.3 first" style="animation-delay: 0.4s;">
             <div class="ss-section-badge bg-green-500 border-[3px] border-white dark:border-slate-800 shadow-sm text-white transition-colors"><i class="fa-regular fa-circle-check"></i></div>
             
-            <div class="flex flex-col gap-8">
-                <!-- Top: Briefing & Checklist -->
-                <div class="w-full">
-                    <div id="hazard-protocol-card" class="bg-white dark:bg-slate-900/60 p-6 sm:p-10 rounded-[2.5rem] sm:rounded-[3.5rem] border-[3px] border-slate-100 dark:border-slate-800 shadow-sm transition-all duration-300">
-                        <div class="space-y-4 mb-8">
-                            <h2 class="text-2xl sm:text-4xl font-black text-slate-800 dark:text-white leading-tight transition-colors">Protocol 2: <span class="text-green-500">Prevention</span></h2>
-                            <p class="text-slate-500 dark:text-slate-400 font-bold text-sm sm:text-lg transition-colors">
-                                Heroes stop fires before they start. Use your <strong class="text-slate-800 dark:text-white">Safety Scanning</strong> skills!
-                            </p>
-                        </div>
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:items-stretch">
+                <!-- Left: Briefing & Checklist (5/12 width) -->
+                <div class="lg:col-span-5 flex flex-col">
+                    <div id="hazard-protocol-card" class="bg-white dark:bg-slate-900 p-6 sm:p-8 rounded-[2rem] sm:rounded-[2.5rem] border-[3px] border-slate-100 dark:border-slate-800 shadow-sm transition-all duration-300 h-full flex flex-col justify-between">
+                        <div>
+                            <div class="space-y-3 mb-6">
+                                <h2 class="text-2xl sm:text-3xl font-black text-slate-800 dark:text-white leading-tight transition-colors">Protocol 2: <span class="text-green-500">Prevention</span></h2>
+                                <p class="text-slate-500 dark:text-slate-400 font-bold text-xs sm:text-sm transition-colors">
+                                    Heroes stop fires before they start. Use your <strong class="text-slate-800 dark:text-white">Safety Scanning</strong> skills!
+                                </p>
+                            </div>
 
-                        <h3 class="text-sm font-black text-slate-400 uppercase tracking-[0.2em] mb-6 flex items-center gap-2 border-b dark:border-slate-800 pb-2 transition-colors">
-                            <i class="fa-solid fa-clipboard-check text-green-500"></i>
-                            Hero Checklist
-                        </h3>
+                            <h3 class="text-xs font-black text-slate-400 uppercase tracking-[0.2em] mb-4 flex items-center gap-2 border-b dark:border-slate-800 pb-2 transition-colors">
+                                <i class="fa-solid fa-clipboard-check text-green-500"></i>
+                                Hero Checklist
+                            </h3>
+                            
+                            <ul class="space-y-3 sm:space-y-4">
+                                <li class="group flex gap-3 sm:gap-4 p-3 rounded-xl sm:rounded-2xl hover:bg-slate-50 dark:hover:bg-slate-800/30 transition-all border border-transparent hover:border-slate-150 dark:hover:border-slate-700 hover:translate-x-1">
+                                    <div class="w-8 h-8 sm:w-10 sm:h-10 shrink-0 bg-blue-100 dark:bg-blue-900/30 rounded-lg sm:rounded-xl flex items-center justify-center text-blue-600 dark:text-blue-400 font-black text-xs sm:text-base transition-colors shadow-sm">1</div>
+                                    <span class="text-slate-600 dark:text-slate-300 font-bold text-xs sm:text-sm leading-snug transition-colors">Keep toys <strong class="text-slate-800 dark:text-white">3 feet away</strong> <span class="inline-flex items-center text-blue-500 ml-0.5"><i class="fa-solid fa-arrows-left-right text-[10px]"></i></span> from heaters and stoves.</span>
+                                </li>
+                                <li class="group flex gap-3 sm:gap-4 p-3 rounded-xl sm:rounded-2xl hover:bg-slate-50 dark:hover:bg-slate-800/30 transition-all border border-transparent hover:border-slate-150 dark:hover:border-slate-700 hover:translate-x-1">
+                                    <div class="w-8 h-8 sm:w-10 sm:h-10 shrink-0 bg-red-100 dark:bg-red-900/30 rounded-lg sm:rounded-xl flex items-center justify-center text-red-600 dark:text-red-400 font-black text-xs sm:text-base transition-colors shadow-sm">2</div>
+                                    <span class="text-slate-600 dark:text-slate-300 font-bold text-xs sm:text-sm leading-snug transition-colors">Report <strong class="text-slate-800 dark:text-white">broken cords</strong> <span class="inline-flex items-center text-red-500 ml-0.5"><i class="fa-solid fa-triangle-exclamation text-[10px]"></i></span> to a grown-up immediately.</span>
+                                </li>
+                                <li class="group flex gap-3 sm:gap-4 p-3 rounded-xl sm:rounded-2xl hover:bg-slate-50 dark:hover:bg-slate-800/30 transition-all border border-transparent hover:border-slate-150 dark:hover:border-slate-700 hover:translate-x-1">
+                                    <div class="w-8 h-8 sm:w-10 sm:h-10 shrink-0 bg-orange-100 dark:bg-orange-900/30 rounded-lg sm:rounded-xl flex items-center justify-center text-orange-600 dark:text-orange-400 font-black text-xs sm:text-base transition-colors shadow-sm">3</div>
+                                    <span class="text-slate-600 dark:text-slate-300 font-bold text-xs sm:text-sm leading-snug transition-colors">Remind adults to <strong class="text-slate-800 dark:text-white">blow out candles</strong> <span class="inline-flex items-center text-orange-500 ml-0.5"><i class="fa-solid fa-wind text-[10px]"></i></span> before leaving.</span>
+                                </li>
+                            </ul>
+                        </div>
                         
-                        <ul class="space-y-3 sm:space-y-4">
-                            <li class="group flex gap-3 sm:gap-4 p-3 sm:p-4 rounded-xl sm:rounded-2xl hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors border border-transparent hover:border-slate-100 dark:hover:border-slate-700">
-                                <div class="w-8 h-8 sm:w-10 sm:h-10 shrink-0 bg-blue-100 dark:bg-blue-900/30 rounded-lg sm:rounded-xl flex items-center justify-center text-blue-600 dark:text-blue-400 font-black text-xs sm:text-base transition-colors">1</div>
-                                <span class="text-slate-600 dark:text-slate-300 font-bold text-xs sm:text-base leading-snug transition-colors">Keep toys <strong class="text-slate-800 dark:text-white">3 feet away</strong> from heaters and stoves.</span>
-                            </li>
-                            <li class="group flex gap-3 sm:gap-4 p-3 sm:p-4 rounded-xl sm:rounded-2xl hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors border border-transparent hover:border-slate-100 dark:hover:border-slate-700">
-                                <div class="w-8 h-8 sm:w-10 sm:h-10 shrink-0 bg-red-100 dark:bg-red-900/30 rounded-lg sm:rounded-xl flex items-center justify-center text-red-600 dark:text-red-400 font-black text-xs sm:text-base transition-colors">2</div>
-                                <span class="text-slate-600 dark:text-slate-300 font-bold text-xs sm:text-base leading-snug transition-colors">Report <strong class="text-slate-800 dark:text-white">broken cords</strong> to a grown-up immediately.</span>
-                            </li>
-                            <li class="group flex gap-3 sm:gap-4 p-3 sm:p-4 rounded-xl sm:rounded-2xl hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors border border-transparent hover:border-slate-100 dark:hover:border-slate-700">
-                                <div class="w-8 h-8 sm:w-10 sm:h-10 shrink-0 bg-orange-100 dark:bg-orange-900/30 rounded-lg sm:rounded-xl flex items-center justify-center text-orange-600 dark:text-orange-400 font-black text-xs sm:text-base transition-colors">3</div>
-                                <span class="text-slate-600 dark:text-slate-300 font-bold text-xs sm:text-base leading-snug transition-colors">Remind adults to <strong class="text-slate-800 dark:text-white">blow out candles</strong> before leaving.</span>
-                            </li>
-                            <li class="group flex gap-3 sm:gap-4 p-3 sm:p-4 bg-red-50 dark:bg-red-950/40 rounded-xl sm:rounded-2xl border border-red-100 dark:border-red-900/30 mt-4 transition-colors">
-                                <div class="w-8 h-8 sm:w-10 sm:h-10 shrink-0 bg-red-500 rounded-lg sm:rounded-xl flex items-center justify-center text-white shadow-lg shadow-red-200 dark:shadow-red-950/40 transition-colors"><i class="fa-solid fa-ban text-[10px] sm:text-sm"></i></div>
-                                <span class="text-red-700 dark:text-red-400 font-black text-xs sm:text-base leading-snug underline decoration-red-200 dark:decoration-red-900 decoration-2 transition-colors">NEVER put objects into electrical sockets!</span>
-                            </li>
-                        </ul>
+                        <div class="mt-4">
+                            <div class="group flex gap-3 sm:gap-4 p-3 sm:p-4 bg-gradient-to-r from-red-50 to-red-100/50 dark:from-red-950/20 dark:to-red-900/10 rounded-xl sm:rounded-2xl border-2 border-red-100 dark:border-red-900/30 transition-all duration-300 hover:shadow-md hover:scale-[1.02]">
+                                <div class="w-8 h-8 sm:w-10 sm:h-10 shrink-0 bg-red-500 rounded-lg sm:rounded-xl flex items-center justify-center text-white shadow-lg shadow-red-500/30 transition-colors"><i class="fa-solid fa-ban text-xs sm:text-sm"></i></div>
+                                <span class="text-red-700 dark:text-red-400 font-extrabold text-xs sm:text-sm leading-snug transition-colors">NEVER put objects into electrical sockets!</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
-                <!-- Bottom: Hazard Hunt Arena -->
-                <div class="w-full">
-                    <div class="bg-slate-100 dark:bg-slate-900 p-2 sm:p-6 rounded-[2rem] sm:rounded-[3rem] shadow-2xl border-[4px] sm:border-[6px] border-slate-200 dark:border-slate-800 relative overflow-hidden group transition-colors">
-                        <div class="absolute top-8 left-8 z-20 pointer-events-none">
-                            <div class="flex items-center gap-3 text-green-600 dark:text-green-400 font-black text-[10px] tracking-[0.3em] uppercase animate-pulse transition-colors">
-                                <span class="w-2 h-2 bg-green-500 rounded-full"></span>
+                <!-- Right: Hazard Hunt Arena (7/12 width) -->
+                <div class="lg:col-span-7 flex flex-col">
+                    <div class="bg-slate-100 dark:bg-slate-900 p-4 sm:p-6 rounded-[2rem] sm:rounded-[3rem] shadow-2xl border-[4px] sm:border-[6px] border-slate-200 dark:border-slate-800 relative overflow-hidden group transition-colors flex flex-col justify-between h-full gap-4">
+                        
+                        <!-- Top Header: Active Scanning -->
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-3 text-green-600 dark:text-green-400 font-black text-[10px] sm:text-xs tracking-[0.2em] uppercase animate-pulse transition-colors">
+                                <span class="w-2 sm:w-2.5 h-2 sm:h-2.5 bg-green-500 rounded-full shadow-lg shadow-green-500/50"></span>
                                 Active Scanning: Area Alpha
                             </div>
                         </div>
 
-                        <div class="bg-black rounded-[1.5rem] sm:rounded-[2.5rem] overflow-hidden relative aspect-video w-full">
-                            <img src="../assets/images/hazard_room.png" alt="Room with hazards"
-                                class="w-full h-full object-contain transition-all duration-700"
-                                onerror="this.classList.add('hidden'); this.nextElementSibling.classList.remove('hidden');">
-                            
-                            <!-- Placeholder -->
-                            <div class="w-full h-full bg-slate-800 dark:bg-slate-900 flex items-center justify-center text-slate-400 dark:text-slate-500 hidden font-black tracking-widest uppercase text-center p-12 transition-colors">
-                                <div>
-                                    <i class="fa-solid fa-camera text-4xl mb-4 text-slate-700"></i>
-                                    <p class="text-xs">Hazard Room Interface Loading...</p>
+                        <!-- Middle: Centering Wrapper -->
+                        <div class="flex-1 flex flex-col items-center justify-center w-full gap-3">
+                            <!-- Image Arena (Strict 16:9 Aspect Ratio) -->
+                            <div class="bg-black rounded-[1.5rem] sm:rounded-[2.5rem] overflow-hidden relative aspect-video w-full border-2 border-slate-200 dark:border-slate-800 shadow-inner">
+                                <img src="../assets/images/hazard_room.png" alt="Room with hazards"
+                                    class="w-full h-full object-cover transition-all duration-700"
+                                    onerror="this.classList.add('hidden'); this.nextElementSibling.classList.remove('hidden');">
+                                
+                                <!-- Placeholder -->
+                                <div class="w-full h-full bg-slate-800 dark:bg-slate-900 flex items-center justify-center text-slate-400 dark:text-slate-500 hidden font-black tracking-widest uppercase text-center p-12 transition-colors">
+                                    <div>
+                                        <i class="fa-solid fa-camera text-4xl mb-4 text-slate-700"></i>
+                                        <p class="text-xs">Hazard Room Interface Loading...</p>
+                                    </div>
+                                </div>
+
+                                <!-- Hazard Targets -->
+                                <div id="hazard-targets-container">
+                                    <!-- Candle -->
+                                    <div onclick="foundHazard(this, 'Candle')" class="hazard-box w-17 h-14" style="top: 50%; left: 11%;">
+                                        <div class="hazard-label bg-green-500 shadow-sm">CANDLE</div>
+                                    </div>
+                                    <!-- Power Strip -->
+                                    <div onclick="foundHazard(this, 'Power Strip')" class="hazard-box w-15 h-12" style="bottom: 6%; left: 50%;">
+                                        <div class="hazard-label bg-green-500 shadow-sm">POWER STRIP</div>
+                                    </div>
+                                    <!-- Heater -->
+                                    <div onclick="foundHazard(this, 'Heater')" class="hazard-box w-20 h-20" style="bottom: 20%; right: 25%;">
+                                        <div class="hazard-label bg-green-500 shadow-sm">HEATER</div>
+                                    </div>
+                                    <!-- Fireplace -->
+                                    <div onclick="foundHazard(this, 'Fireplace')" class="hazard-box w-20 h-20" style="top: 45%; right: 9%;">
+                                        <div class="hazard-label bg-green-500 shadow-sm">FIREPLACE</div>
+                                    </div>
                                 </div>
                             </div>
 
-                            <!-- Hazard Targets -->
-                            <div id="hazard-targets-container">
-                                <!-- Candle -->
-                                <div onclick="foundHazard(this, 'Candle')" class="hazard-box w-17 h-14" style="top: 50%; left: 11%;">
-                                    <div class="hazard-label bg-green-500 shadow-sm">CANDLE</div>
-                                </div>
-                                <!-- Power Strip -->
-                                <div onclick="foundHazard(this, 'Power Strip')" class="hazard-box w-15 h-12" style="bottom: 6%; left: 50%;">
-                                    <div class="hazard-label bg-green-500 shadow-sm">POWER STRIP</div>
-                                </div>
-                                <!-- Heater -->
-                                <div onclick="foundHazard(this, 'Heater')" class="hazard-box w-20 h-20" style="bottom: 20%; right: 25%;">
-                                    <div class="hazard-label bg-green-500 shadow-sm">HEATER</div>
-                                </div>
-                                <!-- Fireplace -->
-                                <div onclick="foundHazard(this, 'Fireplace')" class="hazard-box w-20 h-20" style="top: 45%; right: 9%;">
-                                    <div class="hazard-label bg-green-500 shadow-sm">FIREPLACE</div>
-                                </div>
+                            <!-- Interactive Scanning Instructions -->
+                            <div class="text-center py-3 px-4 bg-white/60 dark:bg-slate-950/20 rounded-2xl border border-slate-200/50 dark:border-slate-800/30 w-full transition-colors shadow-sm">
+                                <p class="text-slate-600 dark:text-slate-400 font-bold text-xs sm:text-sm transition-colors text-center">
+                                    <i class="fa-solid fa-magnifying-glass text-orange-500 animate-pulse mr-2"></i>Scan the room above! Tap on all <strong class="text-slate-800 dark:text-white font-extrabold">4 fire hazards</strong> to secure the area.
+                                </p>
                             </div>
                         </div>
 
-
-
-                        <!-- Progress HUD -->
-                        <div class="absolute bottom-3 sm:bottom-6 left-3 sm:left-6 right-3 sm:right-6 z-30 flex justify-between items-center pointer-events-none">
-                            <div class="bg-green-500 text-white px-4 sm:px-6 py-2 sm:py-3 rounded-xl sm:rounded-2xl text-[10px] sm:text-sm font-black shadow-lg shadow-green-900/40 pointer-events-auto">
-                                HAZARDS FOUND: <span id="hazard-count">0</span>/4
+                        <!-- Bottom: HUD Progress indicator outside the image -->
+                        <div class="flex justify-between items-center bg-white dark:bg-slate-950/40 p-3 rounded-2xl border border-slate-200/50 dark:border-slate-800/50 transition-colors">
+                            <div class="bg-green-500 text-white px-4 py-2 rounded-xl text-[10px] sm:text-xs font-black shadow-lg shadow-green-900/40 pointer-events-auto">
+                                HAZARDS FOUND: <span id="hazard-count" class="font-extrabold">0</span>/4
                             </div>
                             <div class="flex gap-2">
                                 <div class="w-12 h-1.5 bg-green-500 rounded-full opacity-20"></div>
@@ -840,8 +911,9 @@
         </section>
 
         <!-- HERO SUMMARY -->
-        <section
+        <section id="section-summary"
             class="fade-in mt-8 sm:mt-24 bg-gradient-to-br from-blue-500 to-indigo-600 p-4 sm:p-12 ss-section border-[3px] sm:border-[4px] border-blue-400 shadow-xl text-center relative"
+            data-lock-text="Complete Section 5.4 first"
             style="animation-delay: 0.5s;">
             <div class="absolute inset-0 overflow-hidden rounded-[inherit] pointer-events-none opacity-10">
                 <i class="fa-solid fa-shield-cat text-7xl sm:text-9xl absolute -top-4 sm:-top-10 -left-4 sm:-left-10 text-white"></i>
@@ -872,19 +944,19 @@
             </div>
         </section>
 
-        <!-- FINAL EXAM -->
         <section id="final-exam"
-            class="fade-in ss-section bg-yellow-50 dark:bg-yellow-950/20 p-6 sm:p-12 border-[4px] border-yellow-300 dark:border-yellow-900/50 shadow-sm mt-12 sm:mt-24 transition-colors"
+            class="fade-in ss-section bg-white dark:bg-slate-900 rounded-[2rem] p-8 sm:p-14 text-center border-[4px] border-yellow-300 dark:border-yellow-900/50 shadow-sm mt-12 sm:mt-24 transition-all duration-500"
+            data-lock-text="Complete Section 5.4 first"
             style="animation-delay: 0.6s;">
             
             <div id="final-exam-header" class="text-center mb-6 sm:mb-12">
-                <h2 class="text-3xl sm:text-5xl font-black text-yellow-900 dark:text-yellow-400 mb-2 sm:mb-4 drop-shadow-sm uppercase tracking-widest transition-colors">The Final Exam</h2>
+                <h2 class="text-3xl sm:text-5xl font-sans font-black text-yellow-900 dark:text-yellow-400 mb-2 sm:mb-4 drop-shadow-sm uppercase tracking-normal transition-colors">The Final Exam</h2>
                 <p class="text-slate-600 dark:text-slate-400 font-bold text-xs sm:text-lg transition-colors">15 Questions. Module 1 - 5. Prove you are a SafeScape Hero.</p>
             </div>
 
             <div id="quiz-container" class="space-y-6 max-w-3xl mx-auto"></div>
 
-            <div id="exam-result" class="hidden ss-completion-card success mx-auto mt-10">
+            <div id="exam-result" class="hidden w-full text-center max-w-xl mx-auto mt-6 sm:mt-10 transition-all duration-500 ease-in-out">
                 <div class="ss-completion-icon" id="result-icon">🏆</div>
                 <h3 class="ss-completion-title" id="result-title"></h3>
                 <div id="score-badge" class="ss-score-badge" style="display:none;"></div>
@@ -1019,6 +1091,31 @@
                 window.location.href = '../index.html';
                 return;
             }
+
+            // Video orientation lock logic
+            const videoEl = document.getElementById('module-video');
+            if (videoEl) {
+                const lockLandscape = () => {
+                    if (screen.orientation && screen.orientation.lock) {
+                        screen.orientation.lock('landscape').catch(e => {});
+                    }
+                };
+                const unlockOrientation = () => {
+                    if (screen.orientation && screen.orientation.unlock) {
+                        screen.orientation.unlock();
+                    }
+                };
+                document.addEventListener('fullscreenchange', () => {
+                    if (document.fullscreenElement === videoEl) {
+                        lockLandscape();
+                    } else {
+                        unlockOrientation();
+                    }
+                });
+                videoEl.addEventListener('webkitbeginfullscreen', lockLandscape);
+                videoEl.addEventListener('webkitendfullscreen', unlockOrientation);
+            }
+
             loadProgress();
             updateSectionStates();
             loadExam();
@@ -1094,6 +1191,10 @@
             const secHazard = document.getElementById('section-hazard');
             if (!localState.sdrTrapCompleted) secHazard.classList.add('locked');
             else secHazard.classList.remove('locked');
+
+            const secSummary = document.getElementById('section-summary');
+            if (!localState.hazardHuntCompleted) secSummary.classList.add('locked');
+            else secSummary.classList.remove('locked');
 
             const secExam = document.getElementById('final-exam');
             if (!localState.hazardHuntCompleted) secExam.classList.add('locked');
@@ -1278,7 +1379,7 @@
             trapGameState.sequenceIndex = 0;
             updateSequenceTracker();
 
-            document.getElementById('trap-game-status').textContent = `Round ${trapGameState.currentRound + 1}: ${config.name} - Find the sequence!`;
+            document.getElementById('trap-game-status').textContent = '';
 
             // Clear any existing words
             clearAllWords();
@@ -1386,7 +1487,7 @@
                         // Next round
                         playSound('roundUp');
                         trapGameState.currentRound++;
-                        document.getElementById('trap-game-status').textContent = `Round ${trapGameState.currentRound} complete! Get ready...`;
+                        document.getElementById('trap-game-status').textContent = '';
 
                         setTimeout(() => {
                             clearAllWords();
@@ -1433,7 +1534,8 @@
                 resultDiv.classList.remove('hidden');
 
                 if (won) {
-                    icon.textContent = '🏆';
+                    icon.textContent = '';
+                    icon.style.display = 'none';
                     title.textContent = 'SEQUENCE MASTER!';
                     title.className = 'text-3xl font-black text-green-600 mb-2 drop-shadow-sm';
                     desc.textContent = message;
@@ -1446,6 +1548,7 @@
                     }
                 } else {
                     icon.textContent = '💥';
+                    icon.style.display = '';
                     title.textContent = 'GAME OVER';
                     title.className = 'text-3xl font-black text-red-600 mb-2 drop-shadow-sm';
                     desc.textContent = message;
@@ -1511,7 +1614,7 @@
                 document.getElementById('btn-retake').classList.add('hidden');
                 
                 const fe = document.getElementById('final-exam');
-                fe.className = "fade-in ss-section bg-slate-50 dark:bg-slate-900 rounded-[2rem] p-6 sm:p-12 border-[4px] border-slate-200 dark:border-slate-800 shadow-sm mt-12 sm:mt-24 transition-colors duration-500";
+                fe.className = "fade-in ss-section bg-white dark:bg-slate-900 rounded-[2rem] p-8 sm:p-14 text-center border-[4px] border-slate-200 dark:border-slate-800 shadow-sm mt-12 sm:mt-24 transition-colors duration-500";
                 
                 return;
             }
@@ -1524,9 +1627,9 @@
 
             finalQuestions.forEach((item, idx) => {
                 const div = document.createElement('div');
-                div.className = "bg-white dark:bg-slate-900 p-5 sm:p-8 rounded-[2rem] border-[3px] border-yellow-200 dark:border-yellow-900/30 shadow-sm relative overflow-hidden transition-colors";
+                div.id = `question-card-${idx}`;
+                div.className = "bg-white dark:bg-slate-950/60 p-5 sm:p-8 rounded-[2rem] border-[3px] border-yellow-200 dark:border-yellow-900/30 shadow-sm relative overflow-hidden transition-colors";
                 div.innerHTML = `
-                    <div class="absolute top-0 left-0 w-1 h-full bg-yellow-400"></div>
                     <p class="font-black text-slate-800 dark:text-white text-base sm:text-xl mb-6 pl-2 tracking-tight transition-colors">${item.q}</p>
                 `;
 
@@ -1535,9 +1638,9 @@
 
                 item.o.forEach((opt, optIdx) => {
                     opts.innerHTML += `
-                        <label class="quiz-option bg-slate-50 dark:bg-slate-950 border-2 border-slate-200 dark:border-slate-800 p-4 sm:p-5 rounded-2xl cursor-pointer flex items-center gap-4 transition-all shadow-sm group">
+                        <label class="quiz-option bg-slate-50 dark:bg-slate-900/80 border-2 border-slate-200 dark:border-slate-800 p-4 sm:p-5 rounded-2xl cursor-pointer flex items-center gap-4 transition-all shadow-sm group">
                             <div class="relative flex items-center justify-center w-6 h-6 sm:w-7 sm:h-7 rounded-full border-2 border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 shrink-0 group-hover:border-orange-400 transition-colors">
-                                <input type="radio" name="q${idx}" value="${optIdx}" class="peer absolute inset-0 opacity-0 cursor-pointer">
+                                <input type="radio" name="q${idx}" value="${optIdx}" onchange="scrollToNextQuestion(${idx})" class="peer absolute inset-0 opacity-0 cursor-pointer">
                                 <div class="w-3 h-3 sm:w-4 sm:h-4 rounded-full bg-orange-500 scale-0 peer-checked:scale-100 transition-transform"></div>
                             </div>
                             <span class="text-xs sm:text-sm font-black text-slate-600 dark:text-slate-400 tracking-tight group-hover:text-slate-800 dark:group-hover:text-slate-200 transition-colors">${opt}</span>
@@ -1547,6 +1650,20 @@
                 div.appendChild(opts);
                 container.appendChild(div);
             });
+        }
+
+        function scrollToNextQuestion(currentIdx) {
+            setTimeout(() => {
+                const nextQuestionCard = document.getElementById(`question-card-${currentIdx + 1}`);
+                if (nextQuestionCard) {
+                    nextQuestionCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                } else {
+                    const submitBtn = document.getElementById('exam-submit');
+                    if (submitBtn) {
+                        submitBtn.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }
+                }
+            }, 300);
         }
 
         async function submitFinalExam() {
@@ -1594,14 +1711,14 @@
                 document.getElementById('btn-view-cert').classList.remove('hidden');
                 
                 const fe = document.getElementById('final-exam');
-                fe.className = "fade-in ss-section bg-slate-50 dark:bg-slate-900 rounded-[2rem] p-6 sm:p-12 border-[4px] border-slate-200 dark:border-slate-800 shadow-sm mt-12 sm:mt-24 transition-colors duration-500";
+                fe.className = "fade-in ss-section bg-white dark:bg-slate-900 rounded-[2rem] p-8 sm:p-14 text-center border-[4px] border-slate-200 dark:border-slate-800 shadow-sm mt-12 sm:mt-24 transition-colors duration-500";
 
                 if (!localState.finalExamPassed) {
                     localState.finalExamPassed = true;
                     localState.certified = true;
                     saveLocalProgress();
                     SafeScapeProgress.awardCertificate(score);
-                    showToast('success', '🎉 Certificate earned! Congratulations!');
+                    showToast('success', 'Certificate earned! Congratulations!');
                     new Audio('../../sounds/win.mp3').play().catch(e => {});
                 }
             } else {
@@ -1634,16 +1751,28 @@
         }
 
         function showToast(type, message) {
+            try {
+                window.parent.postMessage({
+                    type: 'SAFESCAPE_SHOW_TOAST',
+                    toastType: type,
+                    message: message
+                }, '*');
+            } catch (e) {
+                console.error(e);
+            }
+
             const container = document.getElementById('toast-container');
-            const toast = document.createElement('div');
-            toast.className = `ss-toast ${type}`;
-            const icons = { success: 'fa-check-circle', error: 'fa-exclamation-circle', info: 'fa-info-circle' };
-            toast.innerHTML = `<i class="fa-solid ${icons[type] || 'fa-info-circle'}"></i> ${message}`;
-            container.appendChild(toast);
-            setTimeout(() => {
-                toast.style.animation = 'slideIn 0.3s ease-out reverse';
-                setTimeout(() => toast.remove(), 300);
-            }, 3000);
+            if (container) {
+                const toast = document.createElement('div');
+                toast.className = `ss-toast ${type}`;
+                const icons = { success: 'fa-check-circle', error: 'fa-exclamation-circle', info: 'fa-info-circle' };
+                toast.innerHTML = `<i class="fa-solid ${icons[type] || 'fa-info-circle'}"></i> ${message}`;
+                container.appendChild(toast);
+                setTimeout(() => {
+                    toast.style.animation = 'slideIn 0.3s ease-out reverse';
+                    setTimeout(() => toast.remove(), 300);
+                }, 3000);
+            }
         }
     </script>
 </body>

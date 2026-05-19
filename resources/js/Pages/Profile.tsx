@@ -48,8 +48,8 @@ export default function ProfilePage() {
   // Avatars Configuration
   const AVATAR_OPTIONS = [
     { id: 'cow', icon: '/berong_pr.png', label: 'Berong', category: 'Special' },
-    { id: 'ff1', icon: '👨‍🚒', label: 'Hero Jack', category: 'Firefighter' },
-    { id: 'ff2', icon: '👩‍🚒', label: 'Hero Sarah', category: 'Firefighter' },
+    { id: 'ff1', icon: '/hero_jack.png', label: 'Hero Jack', category: 'Firefighter' },
+    { id: 'ff2', icon: '/hero_sarah.png', label: 'Hero Sarah', category: 'Firefighter' },
     { id: 'kid1', icon: '🧒', label: 'Safety Scout', category: 'Kid' },
     { id: 'kid2', icon: '👧', label: 'Explorer', category: 'Kid' },
     { id: 'adult1', icon: '👨', label: 'Guardian', category: 'Adult' },
@@ -1028,7 +1028,7 @@ export default function ProfilePage() {
               ))}
             </div>
 
-            <div className="flex gap-2 sm:gap-4 sticky bottom-0 bg-white dark:bg-slate-800 p-2 rounded-2xl border-t border-slate-100 dark:border-slate-700 mt-2 sm:mt-0 transition-colors">
+            <div className="flex gap-2 sm:gap-4 sticky bottom-0 bg-transparent mt-6 transition-colors">
               <Button
                 variant="outline"
                 onClick={() => setShowAvatarModal(false)}

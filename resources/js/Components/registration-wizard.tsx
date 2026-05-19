@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect, useRef } from "react"
+import { useState, useEffect, useRef, useMemo } from "react"
 import { router, usePage } from '@inertiajs/react';
 import axios from 'axios';
 import { Button } from "@/components/ui/button"
@@ -134,6 +134,50 @@ export function RegistrationWizard({ onBackToLogin }: RegistrationWizardProps) {
   
   // Ref for password container to ensure visibility on mobile
   const passwordContainerRef = useRef<HTMLDivElement>(null);
+
+  // Memoized lists for selects to prevent costly re-renders on hover
+  const genderOptionsList = useMemo(() => {
+    return GENDER_OPTIONS.map((option) => (
+      <SelectItem key={option} value={option} className="rounded-lg font-bold text-slate-700 dark:text-slate-300 focus:bg-orange-50 dark:focus:bg-slate-800 focus:text-orange-600 dark:focus:text-orange-400 cursor-pointer py-2.5">
+        {option}
+      </SelectItem>
+    ))
+  }, [])
+
+  const barangaysList = useMemo(() => {
+    return BARANGAYS_SANTA_CRUZ.map((brgy) => (
+      <SelectItem key={brgy} value={brgy} className="rounded-lg font-bold text-slate-700 dark:text-slate-300 focus:bg-orange-50 dark:focus:bg-slate-800 focus:text-orange-600 dark:focus:text-orange-400 cursor-pointer py-2.5">
+        {brgy}
+      </SelectItem>
+    ))
+  }, [])
+
+  const schoolsList = useMemo(() => {
+    return ALL_SCHOOLS.map((school) => (
+      <SelectItem key={school} value={school} className="rounded-lg font-bold text-slate-700 dark:text-slate-300 focus:bg-orange-50 dark:focus:bg-slate-800 focus:text-orange-600 dark:focus:text-orange-400 cursor-pointer py-2.5">
+        {school}
+      </SelectItem>
+    ))
+  }, [])
+
+  const occupationsList = useMemo(() => {
+    return OCCUPATION_CATEGORIES.map((occ) => (
+      <SelectItem key={occ} value={occ} className="rounded-lg font-bold text-slate-700 dark:text-slate-300 focus:bg-orange-50 dark:focus:bg-slate-800 focus:text-orange-600 dark:focus:text-orange-400 cursor-pointer py-2.5">
+        {occ}
+      </SelectItem>
+    ))
+  }, [])
+
+  const gradeLevelsList = useMemo(() => {
+    const levels = COLLEGES_WITH_YEARS.includes(data.school as any)
+      ? ["Grade 11", "Grade 12", "1st Year", "2nd Year", "3rd Year", "4th Year"]
+      : GRADE_LEVELS;
+    return levels.map((level) => (
+      <SelectItem key={level} value={level} className="rounded-lg font-bold text-slate-700 dark:text-slate-300 focus:bg-orange-50 dark:focus:bg-slate-800 focus:text-orange-600 dark:focus:text-orange-400 cursor-pointer py-2.5">
+        {level}
+      </SelectItem>
+    ))
+  }, [data.school])
 
   // Fetch pre-test questions when reaching step 4
   useEffect(() => {
@@ -433,7 +477,7 @@ export function RegistrationWizard({ onBackToLogin }: RegistrationWizardProps) {
     const rating = getScoreRating(percentage)
 
     return (
-      <Card className="w-full min-h-full sm:min-h-0 sm:max-w-md mx-auto rounded-none sm:rounded-[2rem] border-none sm:border border-slate-100 dark:border-slate-800/80 shadow-none sm:shadow-2xl bg-white dark:bg-slate-900 overflow-hidden transition-colors duration-500 flex flex-col py-0 sm:py-6 gap-0 sm:gap-6">
+      <Card className="w-full h-full sm:h-auto sm:max-h-[90vh] sm:max-w-md mx-auto rounded-none sm:rounded-[2rem] border-none sm:border border-slate-100 dark:border-slate-800/80 shadow-none sm:shadow-2xl bg-white dark:bg-slate-900 overflow-hidden transition-colors duration-500 flex flex-col py-0 sm:py-6 gap-0 sm:gap-6">
         {/* Header Section */}
         <div className="bg-red-600 px-6 pt-[calc(1.25rem+env(safe-area-inset-top,0px))] pb-6 sm:pt-6 sm:pb-6 text-center rounded-none sm:rounded-t-[2rem] relative overflow-hidden shrink-0">
           {/* Decorative faint circles in background */}
@@ -493,7 +537,7 @@ export function RegistrationWizard({ onBackToLogin }: RegistrationWizardProps) {
   }
 
   return (
-    <Card className="w-full min-h-full sm:min-h-0 sm:max-w-3xl mx-auto rounded-none sm:rounded-[2rem] border-none sm:border border-slate-100 dark:border-slate-800/80 shadow-none sm:shadow-2xl bg-white dark:bg-slate-900 overflow-hidden transition-colors duration-500 flex flex-col justify-between sm:justify-start py-0 sm:py-6 gap-0 sm:gap-6">
+    <Card className="w-full h-full sm:h-auto sm:max-h-[90vh] sm:max-w-3xl mx-auto rounded-none sm:rounded-[2rem] border-none sm:border border-slate-100 dark:border-slate-800/80 shadow-none sm:shadow-2xl bg-white dark:bg-slate-900 overflow-hidden transition-colors duration-500 flex flex-col justify-between sm:justify-start py-0 sm:py-4 gap-0 sm:gap-3">
       {/* Colorful Gradient Header */}
       <div className="bg-primary px-4 sm:px-8 pt-[calc(1.25rem+env(safe-area-inset-top,0px))] sm:pt-6 pb-5 sm:pb-6 rounded-none sm:rounded-t-[1.85rem]">
         <div className="flex items-center gap-2 mb-2 sm:mb-3">
@@ -547,7 +591,7 @@ export function RegistrationWizard({ onBackToLogin }: RegistrationWizardProps) {
         <CardTitle>Create Your Account</CardTitle>
       </CardHeader>
 
-      <CardContent className="p-5 sm:p-8 flex-1 flex flex-col justify-between sm:justify-start">
+      <CardContent className="pt-3 px-5 pb-5 sm:pt-3 sm:px-8 sm:pb-6 flex-1 overflow-y-auto flex flex-col justify-between sm:justify-start">
         {error && (
           <div className="mb-4 p-3 bg-red-50 dark:bg-red-500/10 border-2 border-red-200 dark:border-red-500/20 rounded-2xl flex items-start gap-2 transition-colors">
             <AlertCircle className="h-5 w-5 text-red-500 flex-shrink-0 mt-0.5" />
@@ -558,21 +602,6 @@ export function RegistrationWizard({ onBackToLogin }: RegistrationWizardProps) {
         {/* Step 1: Basic Info */}
         {currentStep === 1 && (
           <div className="space-y-5">
-            <div>
-              <Label htmlFor="lastName" className="text-sm font-bold text-slate-700 dark:text-slate-300 transition-colors">Last Name *</Label>
-              <Input
-                id="lastName"
-                autoComplete="family-name"
-                placeholder="Enter your last name"
-                value={data.lastName}
-                onChange={(e) => updateField("lastName", e.target.value)}
-                className={`rounded-xl border-2 h-11 text-base focus:border-orange-400 focus:ring-orange-400 dark:bg-slate-950 dark:text-white dark:border-slate-800 ${validationErrors.lastName ? "border-red-400 bg-red-50 dark:bg-red-500/10" : "border-gray-200"}`}
-              />
-              {validationErrors.lastName && (
-                <p className="text-sm text-red-500 mt-1 font-medium">⚠️ {validationErrors.lastName}</p>
-              )}
-            </div>
-
             <div>
               <Label htmlFor="firstName" className="text-sm font-bold text-slate-700 dark:text-slate-300 transition-colors">First Name *</Label>
               <Input
@@ -585,6 +614,21 @@ export function RegistrationWizard({ onBackToLogin }: RegistrationWizardProps) {
               />
               {validationErrors.firstName && (
                 <p className="text-sm text-red-500 mt-1 font-medium">⚠️ {validationErrors.firstName}</p>
+              )}
+            </div>
+
+            <div>
+              <Label htmlFor="lastName" className="text-sm font-bold text-slate-700 dark:text-slate-300 transition-colors">Last Name *</Label>
+              <Input
+                id="lastName"
+                autoComplete="family-name"
+                placeholder="Enter your last name"
+                value={data.lastName}
+                onChange={(e) => updateField("lastName", e.target.value)}
+                className={`rounded-xl border-2 h-11 text-base focus:border-orange-400 focus:ring-orange-400 dark:bg-slate-950 dark:text-white dark:border-slate-800 ${validationErrors.lastName ? "border-red-400 bg-red-50 dark:bg-red-500/10" : "border-gray-200"}`}
+              />
+              {validationErrors.lastName && (
+                <p className="text-sm text-red-500 mt-1 font-medium">⚠️ {validationErrors.lastName}</p>
               )}
             </div>
 
@@ -632,11 +676,7 @@ export function RegistrationWizard({ onBackToLogin }: RegistrationWizardProps) {
                   <SelectValue placeholder="Select your gender" />
                 </SelectTrigger>
                 <SelectContent className="rounded-xl border-2 border-slate-200 dark:border-slate-800 dark:bg-slate-900 shadow-xl p-1">
-                  {GENDER_OPTIONS.map((option) => (
-                    <SelectItem key={option} value={option} className="rounded-lg font-bold text-slate-700 dark:text-slate-300 focus:bg-orange-50 dark:focus:bg-slate-800 focus:text-orange-600 dark:focus:text-orange-400 transition-colors cursor-pointer py-2.5">
-                      {option}
-                    </SelectItem>
-                  ))}
+                  {genderOptionsList}
                 </SelectContent>
               </Select>
               {validationErrors.gender && (
@@ -656,11 +696,7 @@ export function RegistrationWizard({ onBackToLogin }: RegistrationWizardProps) {
                   <SelectValue placeholder="Select your barangay" />
                 </SelectTrigger>
                 <SelectContent className="rounded-xl border-2 border-slate-200 dark:border-slate-800 dark:bg-slate-900 shadow-xl p-1">
-                  {BARANGAYS_SANTA_CRUZ.map((brgy) => (
-                    <SelectItem key={brgy} value={brgy} className="rounded-lg font-bold text-slate-700 dark:text-slate-300 focus:bg-orange-50 dark:focus:bg-slate-800 focus:text-orange-600 dark:focus:text-orange-400 transition-colors cursor-pointer py-2.5">
-                      {brgy}
-                    </SelectItem>
-                  ))}
+                  {barangaysList}
                 </SelectContent>
               </Select>
               {validationErrors.barangay && (
@@ -677,11 +713,7 @@ export function RegistrationWizard({ onBackToLogin }: RegistrationWizardProps) {
                       <SelectValue placeholder="Select your school" />
                     </SelectTrigger>
                     <SelectContent className="rounded-xl border-2 border-slate-200 dark:border-slate-800 dark:bg-slate-900 shadow-xl p-1">
-                      {ALL_SCHOOLS.map((school) => (
-                        <SelectItem key={school} value={school} className="rounded-lg font-bold text-slate-700 dark:text-slate-300 focus:bg-orange-50 dark:focus:bg-slate-800 focus:text-orange-600 dark:focus:text-orange-400 transition-colors cursor-pointer py-2.5">
-                          {school}
-                        </SelectItem>
-                      ))}
+                      {schoolsList}
                     </SelectContent>
                   </Select>
                   {validationErrors.school && (
@@ -712,14 +744,7 @@ export function RegistrationWizard({ onBackToLogin }: RegistrationWizardProps) {
                       <SelectValue placeholder="Select your grade level" />
                     </SelectTrigger>
                     <SelectContent className="rounded-xl border-2 border-slate-200 dark:border-slate-800 dark:bg-slate-900 shadow-xl p-1">
-                      {(COLLEGES_WITH_YEARS.includes(data.school as any)
-                        ? ["Grade 11", "Grade 12", "1st Year", "2nd Year", "3rd Year", "4th Year"]
-                        : GRADE_LEVELS
-                      ).map((level) => (
-                        <SelectItem key={level} value={level} className="rounded-lg font-bold text-slate-700 dark:text-slate-300 focus:bg-orange-50 dark:focus:bg-slate-800 focus:text-orange-600 dark:focus:text-orange-400 transition-colors cursor-pointer py-2.5">
-                          {level}
-                        </SelectItem>
-                      ))}
+                      {gradeLevelsList}
                     </SelectContent>
                   </Select>
                   {validationErrors.gradeLevel && (
@@ -736,11 +761,7 @@ export function RegistrationWizard({ onBackToLogin }: RegistrationWizardProps) {
                       <SelectValue placeholder="Select your occupation" />
                     </SelectTrigger>
                     <SelectContent className="rounded-xl border-2 border-slate-200 dark:border-slate-800 dark:bg-slate-900 shadow-xl p-1">
-                      {OCCUPATION_CATEGORIES.map((occ) => (
-                        <SelectItem key={occ} value={occ} className="rounded-lg font-bold text-slate-700 dark:text-slate-300 focus:bg-orange-50 dark:focus:bg-slate-800 focus:text-orange-600 dark:focus:text-orange-400 transition-colors cursor-pointer py-2.5">
-                          {occ}
-                        </SelectItem>
-                      ))}
+                      {occupationsList}
                     </SelectContent>
                   </Select>
                   {validationErrors.occupation && (
@@ -772,11 +793,7 @@ export function RegistrationWizard({ onBackToLogin }: RegistrationWizardProps) {
                         <SelectValue placeholder="Select your school" />
                       </SelectTrigger>
                       <SelectContent className="rounded-xl border-2 border-slate-200 dark:border-slate-800 dark:bg-slate-900 shadow-xl p-1">
-                        {ALL_SCHOOLS.map((school) => (
-                          <SelectItem key={school} value={school} className="rounded-lg font-bold text-slate-700 dark:text-slate-300 focus:bg-orange-50 dark:focus:bg-slate-800 focus:text-orange-600 dark:focus:text-orange-400 transition-colors cursor-pointer py-2.5">
-                            {school}
-                          </SelectItem>
-                        ))}
+                        {schoolsList}
                       </SelectContent>
                     </Select>
                   </div>
@@ -807,7 +824,7 @@ export function RegistrationWizard({ onBackToLogin }: RegistrationWizardProps) {
                   3-20 characters, letters, numbers, and underscores only
                 </p>
               </div>
-
+ 
               <div className="space-y-2">
                 <Label htmlFor="email" className="text-sm font-bold text-slate-700 dark:text-slate-300 ml-1 transition-colors">Email *</Label>
                 <Input
@@ -824,7 +841,7 @@ export function RegistrationWizard({ onBackToLogin }: RegistrationWizardProps) {
                 )}
               </div>
             </div>
-
+ 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-2" ref={passwordContainerRef}>
                 <Label htmlFor="password" className="text-sm font-bold text-slate-700 dark:text-slate-300 ml-1 transition-colors">Password *</Label>
@@ -855,31 +872,8 @@ export function RegistrationWizard({ onBackToLogin }: RegistrationWizardProps) {
                 {validationErrors.password && (
                   <p className="text-sm text-red-500 mt-1 font-medium">⚠️ {validationErrors.password}</p>
                 )}
-
-                {/* Password Requirements Checklist */}
-                <div className="bg-slate-50 dark:bg-slate-950 border-2 border-slate-100 dark:border-slate-800 rounded-2xl p-4 transition-colors mt-3">
-                  <p className="text-xs font-black text-slate-700 dark:text-slate-300 mb-3 uppercase tracking-wider transition-colors">Password Requirements:</p>
-                  <div className="flex flex-col gap-2">
-                    {[
-                      { label: "At least 8 characters", met: data.password.length >= 8 },
-                      { label: "One uppercase letter", met: /[A-Z]/.test(data.password) },
-                      { label: "One lowercase letter", met: /[a-z]/.test(data.password) },
-                      { label: "One number (0-9)", met: /[0-9]/.test(data.password) },
-                      { label: "One special character (!@#...)", met: /[^A-Za-z0-9]/.test(data.password) },
-                    ].map((req, i) => (
-                      <div key={i} className="flex items-center gap-2">
-                        <div className={`h-4 w-4 rounded-full flex items-center justify-center transition-colors shrink-0 ${req.met ? "bg-green-500" : "bg-slate-200 dark:bg-slate-800"}`}>
-                          <Check className={`h-2.5 w-2.5 text-white transition-opacity ${req.met ? "opacity-100" : "opacity-0"}`} strokeWidth={4} />
-                        </div>
-                        <span className={`text-[11px] font-bold transition-colors ${req.met ? "text-green-700 dark:text-green-400" : "text-slate-500 dark:text-slate-400"}`}>
-                          {req.label}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
               </div>
-
+ 
               <div className="space-y-2">
                 <Label htmlFor="confirmPassword" className="text-sm font-bold text-slate-700 dark:text-slate-300 ml-1 transition-colors">Confirm Password *</Label>
                 <Input
@@ -896,9 +890,30 @@ export function RegistrationWizard({ onBackToLogin }: RegistrationWizardProps) {
                 )}
               </div>
             </div>
-
-
-
+ 
+            {/* Password Requirements Checklist - Now Full Width and Horizontally Grid-aligned */}
+            <div className="bg-slate-50 dark:bg-slate-950 border-2 border-slate-100 dark:border-slate-800 rounded-2xl p-4 transition-colors w-full">
+              <p className="text-xs font-black text-slate-700 dark:text-slate-300 mb-3 uppercase tracking-wider transition-colors">Password Requirements:</p>
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
+                {[
+                  { label: "At least 8 characters", met: data.password.length >= 8 },
+                  { label: "One uppercase letter", met: /[A-Z]/.test(data.password) },
+                  { label: "One lowercase letter", met: /[a-z]/.test(data.password) },
+                  { label: "One number (0-9)", met: /[0-9]/.test(data.password) },
+                  { label: "One special character (!@#...)", met: /[^A-Za-z0-9]/.test(data.password) },
+                ].map((req, i) => (
+                  <div key={i} className="flex items-center gap-2">
+                    <div className={`h-4 w-4 rounded-full flex items-center justify-center transition-colors shrink-0 ${req.met ? "bg-green-500" : "bg-slate-200 dark:bg-slate-800"}`}>
+                      <Check className={`h-2.5 w-2.5 text-white transition-opacity ${req.met ? "opacity-100" : "opacity-0"}`} strokeWidth={4} />
+                    </div>
+                    <span className={`text-[11px] font-bold transition-colors ${req.met ? "text-green-700 dark:text-green-400" : "text-slate-500 dark:text-slate-400"}`}>
+                      {req.label}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+ 
             <div className="flex items-start space-x-3 pt-2 group cursor-pointer" onClick={() => updateField("dataPrivacyConsent", !data.dataPrivacyConsent)}>
               <div className={`mt-0.5 shrink-0 h-5 w-5 rounded-md border-2 flex items-center justify-center transition-all ${data.dataPrivacyConsent ? "bg-orange-500 border-orange-500 shadow-[0_2px_0_#ca8a04]" : "bg-white dark:bg-slate-950 border-slate-200 dark:border-slate-800"}`}>
                 {data.dataPrivacyConsent && <Check className="h-3.5 w-3.5 text-white" strokeWidth={4} />}
@@ -988,27 +1003,6 @@ export function RegistrationWizard({ onBackToLogin }: RegistrationWizardProps) {
                       );
                     })}
                   </RadioGroup>
-                </div>                {/* Question dots for quick navigation */}
-                <div className="flex flex-wrap justify-center gap-2 sm:gap-2.5 mt-6">
-                  {questions.map((q, idx) => {
-                    const isAnswered = data.preTestAnswers[q.id] !== undefined;
-                    const isCurrent = currentQuestionIndex === idx;
-                    return (
-                      <button
-                        key={q.id}
-                        onClick={() => setCurrentQuestionIndex(idx)}
-                        className={`w-10 h-10 sm:w-11 sm:h-11 rounded-full text-xs sm:text-sm font-black transition-all border-[3px] flex items-center justify-center ${
-                          isCurrent
-                            ? "bg-orange-500 text-white border-orange-400 shadow-[0_3px_0_#ca8a04] scale-110"
-                            : isAnswered
-                              ? "bg-green-500 text-white border-green-400 shadow-[0_2px_0_#15803d]"
-                              : "bg-white dark:bg-slate-900 text-slate-400 dark:text-slate-500 border-slate-200 dark:border-slate-800 shadow-[0_2px_0_#e2e8f0] dark:shadow-[0_2px_0_#1e293b]"
-                        }`}
-                      >
-                        {isAnswered && !isCurrent ? <Check className="h-3.5 w-3.5" strokeWidth={4} /> : (idx + 1)}
-                      </button>
-                    );
-                  })}
                 </div>
 
                 {validationErrors.preTest && (

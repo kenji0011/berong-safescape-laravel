@@ -5,6 +5,7 @@ import { PageLoader } from "@/components/page-loader";
 import { LogoutLoader } from "@/components/logout-loader";
 import { LoginLoader } from "@/components/login-loader";
 import { ProfileCheckWrapper } from "@/components/profile-check-wrapper";
+import { FocusModeManager } from "@/Components/focus-mode-manager";
 import { usePage } from '@inertiajs/react';
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -44,6 +45,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           {(!isAuthPage && !isMiniGame) && <Chatbot />}
           <LoginLoader />
           <LogoutLoader />
+          <FocusModeManager />
         </div>
       </div>
     </AuthProvider>

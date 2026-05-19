@@ -1,3 +1,4 @@
+@import url('https://fonts.cdnfonts.com/css/open-dyslexic');
 @import "tailwindcss";
 @plugin "tailwindcss-animate";
 
@@ -257,10 +258,11 @@ html.color-filter-tritanopia {
    DYSLEXIA FONT MODE
    ============================================
    Overrides all fonts with universally available 
-   dyslexia-friendly alternatives like Comic Sans.
+   dyslexia-friendly alternatives like OpenDyslexic 
+   or Comic Sans.
    ============================================ */
 html.dyslexia-mode * {
-  font-family: "Comic Sans MS", "Comic Sans", "OpenDyslexic", cursive, sans-serif !important;
+  font-family: "Open-Dyslexic", "OpenDyslexic", "Comic Sans MS", "Comic Sans", sans-serif !important;
   letter-spacing: 0.05em !important;
   word-spacing: 0.1em !important;
 }
@@ -278,14 +280,19 @@ html.dyslexia-mode * {
 
 /* Remove dotted background patterns */
 html.focus-mode [style*="radial-gradient"],
-html.focus-mode [class*="radial-gradient"] {
+html.focus-mode [class*="radial-gradient"],
+html.module-focus-mode [style*="radial-gradient"],
+html.module-focus-mode [class*="radial-gradient"] {
   background-image: none !important;
 }
 
 /* Remove decorative blur circles & floating elements */
 html.focus-mode .blur-2xl,
 html.focus-mode .blur-3xl,
-html.focus-mode .blur-xl {
+html.focus-mode .blur-xl,
+html.module-focus-mode .blur-2xl,
+html.module-focus-mode .blur-3xl,
+html.module-focus-mode .blur-xl {
   display: none !important;
 }
 
@@ -293,43 +300,107 @@ html.focus-mode .blur-xl {
 html.focus-mode .backdrop-blur-sm,
 html.focus-mode .backdrop-blur-md,
 html.focus-mode .backdrop-blur-lg,
-html.focus-mode .backdrop-blur-xl {
+html.focus-mode .backdrop-blur-xl,
+html.module-focus-mode .backdrop-blur-sm,
+html.module-focus-mode .backdrop-blur-md,
+html.module-focus-mode .backdrop-blur-lg,
+html.module-focus-mode .backdrop-blur-xl {
   backdrop-filter: none !important;
   -webkit-backdrop-filter: none !important;
 }
 
 /* Simplify shadows to minimal flat borders */
-html.focus-mode * {
+html.focus-mode *,
+html.module-focus-mode * {
   text-shadow: none !important;
 }
 
 /* Remove decorative background images on containers */
-html.focus-mode [style*="backgroundImage"] {
+html.focus-mode [style*="backgroundImage"],
+html.module-focus-mode [style*="backgroundImage"] {
   background-image: none !important;
 }
 
 /* Remove glow/neon shadow effects */
-html.focus-mode [class*="shadow-\[0_0"] {
+html.focus-mode [class*="shadow-\[0_0"],
+html.module-focus-mode [class*="shadow-\[0_0"] {
   box-shadow: none !important;
 }
 
 /* Flatten opacity on decorative overlays */
 html.focus-mode .opacity-5,
 html.focus-mode .opacity-10,
-html.focus-mode .opacity-20 {
+html.focus-mode .opacity-20,
+html.module-focus-mode .opacity-5,
+html.module-focus-mode .opacity-10,
+html.module-focus-mode .opacity-20 {
   opacity: 0 !important;
 }
 
 /* Hide canvas-based effects (particles, splash cursor, etc.) */
-html.focus-mode canvas {
+html.focus-mode canvas,
+html.module-focus-mode canvas {
   display: none !important;
 }
 
 /* Remove drop shadows from text */
 html.focus-mode .drop-shadow-sm,
 html.focus-mode .drop-shadow-md,
-html.focus-mode .drop-shadow-lg {
+html.focus-mode .drop-shadow-lg,
+html.module-focus-mode .drop-shadow-sm,
+html.module-focus-mode .drop-shadow-md,
+html.module-focus-mode .drop-shadow-lg {
   filter: none !important;
+}
+
+/* Hide floating distraction elements globally in both Focus Modes */
+html.focus-mode .chatbot-window-container,
+html.focus-mode .chatbot-berong-image,
+html.focus-mode .ss-chatbot-toggle,
+html.focus-mode .ss-chatbot-window,
+html.focus-mode .ss-feedback-widget,
+html.focus-mode [class*="FeedbackWidget"],
+html.focus-mode [id*="feedback-widget"],
+html.module-focus-mode .chatbot-window-container,
+html.module-focus-mode .chatbot-berong-image,
+html.module-focus-mode .ss-chatbot-toggle,
+html.module-focus-mode .ss-chatbot-window,
+html.module-focus-mode .ss-feedback-widget,
+html.module-focus-mode [class*="FeedbackWidget"],
+html.module-focus-mode [id*="feedback-widget"] {
+  display: none !important;
+}
+
+/* Hide standard headers, navbars, and footers EXCLUSIVELY in Module Focus Mission */
+html.module-focus-mode nav,
+html.module-focus-mode header,
+html.module-focus-mode footer,
+html.module-focus-mode .ss-nav {
+  display: none !important;
+}
+
+html.module-focus-mode .text-scalable {
+  padding-top: 0 !important;
+  margin-top: 0 !important;
+}
+
+html.module-focus-mode .ss-sub-header {
+  top: 0 !important;
+  padding-top: calc(env(safe-area-inset-top) + 0.75rem) !important;
+}
+
+/* Shift sticky sub-headers and layouts up EXCLUSIVELY in Module Focus Mission since parent navbar is hidden */
+html.module-focus-mode [class*="sticky top-["],
+html.module-focus-mode [class*="top-["] {
+}
+
+/* Dotted background pattern for Focus Mode accessibility */
+.ss-dotted-grid {
+  background-image: radial-gradient(#cbd5e1 1.2px, transparent 1.2px) !important;
+  background-size: 16px 16px !important;
+}
+.dark .ss-dotted-grid {
+  background-image: radial-gradient(#1e293b 1.2px, transparent 1.2px) !important;
 }
 
 /* ============================================

@@ -23,6 +23,13 @@ import {
   DialogDescription,
   DialogFooter,
 } from "@/Components/ui/dialog"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/Components/ui/select"
 
 function TimeDisplay({ mobile = false }: { mobile?: boolean }) {
   const [currentTime, setCurrentTime] = useState<string>("")
@@ -558,84 +565,97 @@ export function Navigation() {
         <DialogContent
           onOpenAutoFocus={(e) => {
             e.preventDefault();
-            const closeBtn = (e.currentTarget as HTMLElement).querySelector('[data-slot="dialog-close"]') as HTMLElement;
-            if (closeBtn) {
-              closeBtn.focus();
-            }
+            (e.currentTarget as HTMLElement)?.focus();
           }}
+          tabIndex={-1}
           aria-describedby={undefined}
-          className="max-w-[95vw] sm:max-w-lg bg-white dark:bg-[#0f172a] text-slate-800 dark:text-slate-100 border border-slate-200 dark:border-slate-800 rounded-[2rem] p-0 overflow-hidden shadow-2xl transition-colors duration-500"
+          className="max-w-[95vw] sm:max-w-lg bg-white dark:bg-[#0f172a] text-slate-800 dark:text-slate-100 border border-slate-200 dark:border-slate-800 rounded-[2rem] p-0 overflow-hidden shadow-2xl transition-colors duration-500 focus:outline-none"
         >
-          <div className="bg-gradient-to-r from-emerald-500 to-teal-600 p-6 text-center border-b-[6px] border-white/20">
-            <div className="w-14 h-14 bg-white/10 rounded-2xl flex items-center justify-center mx-auto mb-3 shadow-inner">
-              <Sliders className="h-7 w-7 text-white" strokeWidth={2.5} />
+          <div className="bg-gradient-to-r from-emerald-500 to-teal-600 p-3.5 sm:p-4.5 text-left border-b-[6px] border-white/20 flex items-center gap-3 sm:gap-4">
+            <div className="w-10 h-10 sm:w-12 sm:h-12 bg-white/10 rounded-xl flex items-center justify-center shadow-inner shrink-0">
+              <Sliders className="h-5 w-5 sm:h-6 sm:w-6 text-white" strokeWidth={2.5} />
             </div>
-            <DialogTitle className="text-xl sm:text-2xl font-black text-white uppercase tracking-tight italic drop-shadow-md">Accessibility Center</DialogTitle>
-            <p className="text-emerald-100 text-xs sm:text-sm font-semibold mt-1">Customize your learning and dashboard environments</p>
+            <div className="flex flex-col min-w-0 pr-6 sm:pr-8">
+              <DialogTitle className="text-sm sm:text-xl font-black text-white uppercase tracking-tight italic drop-shadow-md text-left leading-tight">Accessibility Center</DialogTitle>
+              <p className="text-emerald-100 text-[10px] sm:text-xs font-semibold leading-tight mt-0.5 text-left">Customize your learning and dashboard environments</p>
+            </div>
           </div>
 
-          <div className="p-6 max-h-[65vh] overflow-y-auto space-y-5 scrollbar-none [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+          <div className="p-3 sm:p-5 pt-3 sm:pt-4 max-h-[55vh] sm:max-h-[65vh] overflow-y-auto space-y-2.5 sm:space-y-4 scrollbar-none [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
             {/* Visual Assists */}
-            <div className="bg-slate-50 dark:bg-slate-900/50 rounded-2xl p-4 border border-slate-200 dark:border-slate-800/80 space-y-4 transition-colors">
-              <h3 className="text-xs font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-widest">Visual Assists</h3>
+            <div className="bg-slate-50 dark:bg-slate-900/50 rounded-2xl p-3 sm:p-4 border border-slate-200 dark:border-slate-800/80 space-y-3 sm:space-y-4 transition-colors">
+              <h3 className="text-xs sm:text-sm font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-widest">Visual Assists</h3>
               
               {/* Dark Mode */}
               <div
                 onClick={() => toggleDarkMode()}
-                className="flex items-center justify-between cursor-pointer py-1.5"
+                className="flex items-center justify-between cursor-pointer py-1"
               >
-                <div className="flex flex-col">
-                  <span className="flex items-center gap-2 text-sm font-bold text-slate-800 dark:text-white">
-                    {isDarkMode ? <Sun className="h-4.5 w-4.5 text-yellow-500 shrink-0" /> : <Moon className="h-4.5 w-4.5 text-indigo-500 dark:text-indigo-400 shrink-0" />}
+                <div className="flex flex-col min-w-0 pr-2">
+                  <span className="flex items-center gap-1.5 sm:gap-2 text-sm sm:text-base font-bold text-slate-800 dark:text-white">
+                    {isDarkMode ? <Sun className="h-4 w-4 sm:h-4.5 sm:w-4.5 text-yellow-500 shrink-0" /> : <Moon className="h-4 w-4 sm:h-4.5 sm:w-4.5 text-indigo-500 dark:text-indigo-400 shrink-0" />}
                     Dark Mode
                   </span>
-                  <span className="text-[11px] text-slate-500 dark:text-slate-400 font-medium">Switch between light and dark visual themes</span>
+                  <span className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 font-medium leading-normal mt-1">Switch between light and dark visual themes</span>
                 </div>
-                <div className={`relative w-10 h-6 rounded-full transition-colors duration-200 ${isDarkMode ? 'bg-yellow-500' : 'bg-slate-300 dark:bg-slate-600'}`}>
+                <div className={`relative w-10 h-6 shrink-0 rounded-full transition-colors duration-200 ${isDarkMode ? 'bg-yellow-500' : 'bg-slate-300 dark:bg-slate-600'}`}>
                   <div className={`absolute top-1 left-1 w-4 h-4 bg-white rounded-full shadow transition-transform duration-200 ${isDarkMode ? 'translate-x-4' : 'translate-x-0'}`} />
                 </div>
               </div>
 
               {/* Color Blindness Segmented Filter */}
-              <div className="pt-2">
-                <div className="flex flex-col mb-2">
-                  <span className="flex items-center gap-2 text-sm font-bold text-slate-800 dark:text-white">
-                    <Eye className="h-4.5 w-4.5 text-emerald-500 dark:text-emerald-450 shrink-0" />
+              <div className="pt-1">
+                <div className="flex flex-col mb-1.5">
+                  <span className="flex items-center gap-1.5 sm:gap-2 text-sm sm:text-base font-bold text-slate-800 dark:text-white">
+                    <Eye className="h-4 w-4 sm:h-4.5 sm:w-4.5 text-emerald-500 dark:text-emerald-450 shrink-0" />
                     Color Deficiency Filter
                   </span>
-                  <span className="text-[11px] text-slate-500 dark:text-slate-400 font-medium">Enhance contrast and adjust color spaces for vision correction</span>
+                  <span className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 font-medium leading-normal mt-1">Enhance contrast and adjust color spaces for vision correction</span>
                 </div>
-                <div className="grid grid-cols-2 gap-1.5 bg-slate-200/50 dark:bg-slate-950 rounded-lg p-1 border border-slate-300/40 dark:border-slate-800/60 transition-colors">
-                  {(['none', 'protanopia', 'deuteranopia', 'tritanopia'] as const).map((type) => (
-                    <button
-                      key={type}
-                      onClick={() => setColorBlindness(type)}
-                      className={`py-2 rounded-md text-xs font-bold transition-all capitalize ${colorBlindness === type ? 'bg-emerald-500 text-white shadow-sm' : 'text-slate-600 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 hover:bg-white/60 dark:hover:bg-slate-900'}`}
-                    >
-                      {type === 'none' ? 'None' : type.replace('opia', '')}
-                    </button>
-                  ))}
+                <div className="mt-2">
+                  <Select
+                    value={colorBlindness}
+                    onValueChange={(val) => setColorBlindness(val as any)}
+                  >
+                    <SelectTrigger className="w-full h-10 sm:h-11 rounded-xl border-2 border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 font-bold text-slate-700 dark:text-slate-300 focus:ring-emerald-400 focus:border-emerald-400 transition-all hover:border-slate-300 dark:hover:border-slate-700">
+                      <SelectValue placeholder="Select color filter" />
+                    </SelectTrigger>
+                    <SelectContent className="rounded-xl border-2 border-slate-200 dark:border-slate-800 dark:bg-slate-900 shadow-xl p-1 z-[1000]">
+                      <SelectItem value="none" className="rounded-lg font-bold text-slate-700 dark:text-slate-300 focus:bg-emerald-50 dark:focus:bg-slate-800 focus:text-emerald-600 dark:focus:text-emerald-400 transition-colors cursor-pointer py-2 sm:py-2.5">
+                        None (Default)
+                      </SelectItem>
+                      <SelectItem value="protanopia" className="rounded-lg font-bold text-slate-700 dark:text-slate-300 focus:bg-emerald-50 dark:focus:bg-slate-800 focus:text-emerald-600 dark:focus:text-emerald-400 transition-colors cursor-pointer py-2 sm:py-2.5">
+                        Protanopia (Red-blind)
+                      </SelectItem>
+                      <SelectItem value="deuteranopia" className="rounded-lg font-bold text-slate-700 dark:text-slate-300 focus:bg-emerald-50 dark:focus:bg-slate-800 focus:text-emerald-600 dark:focus:text-emerald-400 transition-colors cursor-pointer py-2 sm:py-2.5">
+                        Deuteranopia (Green-blind)
+                      </SelectItem>
+                      <SelectItem value="tritanopia" className="rounded-lg font-bold text-slate-700 dark:text-slate-300 focus:bg-emerald-50 dark:focus:bg-slate-800 focus:text-emerald-600 dark:focus:text-emerald-400 transition-colors cursor-pointer py-2 sm:py-2.5">
+                        Tritanopia (Blue-blind)
+                      </SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
               </div>
             </div>
 
             {/* Cognitive Assists */}
-            <div className="bg-slate-50 dark:bg-slate-900/50 rounded-2xl p-4 border border-slate-200 dark:border-slate-800/80 space-y-4 transition-colors">
-              <h3 className="text-xs font-bold text-teal-600 dark:text-teal-400 uppercase tracking-widest">Cognitive & Reading Aids</h3>
+            <div className="bg-slate-50 dark:bg-slate-900/50 rounded-2xl p-3 sm:p-4 border border-slate-200 dark:border-slate-800/85 space-y-3 sm:space-y-4 transition-colors">
+              <h3 className="text-xs sm:text-sm font-bold text-teal-600 dark:text-teal-400 uppercase tracking-widest">Cognitive & Reading Aids</h3>
 
               {/* Dyslexia Font */}
               <div
                 onClick={() => toggleDyslexiaFont()}
-                className="flex items-center justify-between cursor-pointer py-1.5"
+                className="flex items-center justify-between cursor-pointer py-1"
               >
-                <div className="flex flex-col">
-                  <span className="flex items-center gap-2 text-sm font-bold text-slate-800 dark:text-white">
-                    <BookOpen className="h-4.5 w-4.5 text-teal-600 dark:text-teal-400 shrink-0" />
+                <div className="flex flex-col min-w-0 pr-2">
+                  <span className="flex items-center gap-1.5 sm:gap-2 text-sm sm:text-base font-bold text-slate-800 dark:text-white">
+                    <BookOpen className="h-4 w-4 sm:h-4.5 sm:w-4.5 text-teal-600 dark:text-teal-400 shrink-0" />
                     Dyslexia Font
                   </span>
-                  <span className="text-[11px] text-slate-500 dark:text-slate-400 font-medium">Use specialized lettering designed to facilitate reading</span>
+                  <span className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 font-medium leading-normal mt-1">Use specialized lettering designed to facilitate reading</span>
                 </div>
-                <div className={`relative w-10 h-6 rounded-full transition-colors duration-200 ${dyslexiaFont ? 'bg-emerald-500' : 'bg-slate-300 dark:bg-slate-600'}`}>
+                <div className={`relative w-10 h-6 shrink-0 rounded-full transition-colors duration-200 ${dyslexiaFont ? 'bg-emerald-500' : 'bg-slate-300 dark:bg-slate-600'}`}>
                   <div className={`absolute top-1 left-1 w-4 h-4 bg-white rounded-full shadow transition-transform duration-200 ${dyslexiaFont ? 'translate-x-4' : 'translate-x-0'}`} />
                 </div>
               </div>
@@ -643,40 +663,40 @@ export function Navigation() {
               {/* ADHD Focus Mode */}
               <div
                 onClick={() => toggleFocusMode()}
-                className="flex items-center justify-between cursor-pointer py-1.5"
+                className="flex items-center justify-between cursor-pointer py-1"
               >
-                <div className="flex flex-col">
-                  <span className="flex items-center gap-2 text-sm font-bold text-slate-800 dark:text-white">
-                    <Focus className="h-4.5 w-4.5 text-teal-600 dark:text-teal-400 shrink-0" />
+                <div className="flex flex-col min-w-0 pr-2">
+                  <span className="flex items-center gap-1.5 sm:gap-2 text-sm sm:text-base font-bold text-slate-800 dark:text-white">
+                    <Focus className="h-4 w-4 sm:h-4.5 sm:w-4.5 text-teal-600 dark:text-teal-400 shrink-0" />
                     Focus Mode
                   </span>
-                  <span className="text-[11px] text-slate-500 dark:text-slate-400 font-medium">Dim peripheral areas to reduce visual distractions</span>
+                  <span className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 font-medium leading-normal mt-1">Dim peripheral areas to reduce visual distractions</span>
                 </div>
-                <div className={`relative w-10 h-6 rounded-full transition-colors duration-200 ${focusMode ? 'bg-teal-500' : 'bg-slate-300 dark:bg-slate-600'}`}>
+                <div className={`relative w-10 h-6 shrink-0 rounded-full transition-colors duration-200 ${focusMode ? 'bg-teal-500' : 'bg-slate-300 dark:bg-slate-600'}`}>
                   <div className={`absolute top-1 left-1 w-4 h-4 bg-white rounded-full shadow transition-transform duration-200 ${focusMode ? 'translate-x-4' : 'translate-x-0'}`} />
                 </div>
               </div>
             </div>
 
             {/* Typography & Motion */}
-            <div className="bg-slate-50 dark:bg-slate-900/50 rounded-2xl p-4 border border-slate-200 dark:border-slate-800/80 space-y-4 transition-colors">
-              <h3 className="text-xs font-bold text-blue-600 dark:text-blue-400 uppercase tracking-widest">Sizing & Performance</h3>
+            <div className="bg-slate-50 dark:bg-slate-900/50 rounded-2xl p-3 sm:p-4 border border-slate-200 dark:border-slate-800/80 space-y-3 sm:space-y-4 transition-colors">
+              <h3 className="text-xs sm:text-sm font-bold text-blue-600 dark:text-blue-400 uppercase tracking-widest">Sizing & Performance</h3>
 
               {/* Text Size Control */}
-              <div>
-                <div className="flex flex-col mb-2">
-                  <span className="flex items-center gap-2 text-sm font-bold text-slate-800 dark:text-white">
-                    <Type className="h-4.5 w-4.5 text-blue-600 dark:text-blue-450 shrink-0" />
+              <div className="pt-1">
+                <div className="flex flex-col mb-1.5">
+                  <span className="flex items-center gap-1.5 sm:gap-2 text-sm sm:text-base font-bold text-slate-800 dark:text-white">
+                    <Type className="h-4 w-4 sm:h-4.5 sm:w-4.5 text-blue-600 dark:text-blue-455 shrink-0" />
                     Text Scaling
                   </span>
-                  <span className="text-[11px] text-slate-500 dark:text-slate-400 font-medium">Adjust the scale of interface fonts for optimal reading comfort</span>
+                  <span className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 font-medium leading-normal mt-1">Adjust the scale of interface fonts for optimal reading comfort</span>
                 </div>
                 <div className="flex bg-slate-200/50 dark:bg-slate-950 rounded-lg p-1 border border-slate-300/40 dark:border-slate-800/60 transition-colors">
                   {(['normal', 'large', 'xlarge'] as const).map((size) => (
                     <button
                       key={size}
                       onClick={() => setTextSize(size)}
-                      className={`flex-1 py-2 rounded-md text-xs font-bold transition-all capitalize ${textSize === size ? 'bg-emerald-500 text-white shadow-sm' : 'text-slate-600 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 hover:bg-white/60 dark:hover:bg-slate-900'}`}
+                      className={`flex-1 py-2 sm:py-2.5 rounded-md text-xs sm:text-sm font-bold transition-all capitalize ${textSize === size ? 'bg-emerald-500 text-white shadow-sm' : 'text-slate-600 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 hover:bg-white/60 dark:hover:bg-slate-900'}`}
                     >
                       {size === 'xlarge' ? 'Extra Large' : size}
                     </button>
@@ -687,29 +707,20 @@ export function Navigation() {
               {/* Reduce Motion */}
               <div
                 onClick={() => toggleReduceMotion()}
-                className="flex items-center justify-between cursor-pointer py-1.5"
+                className="flex items-center justify-between cursor-pointer py-1"
               >
-                <div className="flex flex-col">
-                  <span className="flex items-center gap-2 text-sm font-bold text-slate-800 dark:text-white">
-                    <Zap className="h-4.5 w-4.5 text-blue-600 dark:text-blue-400 shrink-0" />
+                <div className="flex flex-col min-w-0 pr-2">
+                  <span className="flex items-center gap-1.5 sm:gap-2 text-sm sm:text-base font-bold text-slate-800 dark:text-white">
+                    <Zap className="h-4 w-4 sm:h-4.5 sm:w-4.5 text-blue-600 dark:text-blue-455 shrink-0" />
                     Performance Mode
                   </span>
-                  <span className="text-[11px] text-slate-500 dark:text-slate-400 font-medium">Reduce decorative motion and animations to speed up performance</span>
+                  <span className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 font-medium leading-normal mt-1">Reduce decorative motion and animations to speed up performance</span>
                 </div>
-                <div className={`relative w-10 h-6 rounded-full transition-colors duration-200 ${reduceMotion ? 'bg-emerald-500' : 'bg-slate-300 dark:bg-slate-600'}`}>
+                <div className={`relative w-10 h-6 shrink-0 rounded-full transition-colors duration-200 ${reduceMotion ? 'bg-emerald-500' : 'bg-slate-300 dark:bg-slate-600'}`}>
                   <div className={`absolute top-1 left-1 w-4 h-4 bg-white rounded-full shadow transition-transform duration-200 ${reduceMotion ? 'translate-x-4' : 'translate-x-0'}`} />
                 </div>
               </div>
             </div>
-          </div>
-
-          <div className="p-6 bg-slate-50 dark:bg-slate-950 border-t border-slate-200 dark:border-slate-800 flex justify-end transition-colors">
-            <button
-              onClick={() => setShowAccessibilityModal(false)}
-              className="bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white font-bold px-6 py-2.5 rounded-xl shadow-lg transition-all"
-            >
-              Done & Apply
-            </button>
           </div>
         </DialogContent>
       </Dialog>

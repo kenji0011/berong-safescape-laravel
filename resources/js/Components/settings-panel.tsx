@@ -93,19 +93,19 @@ export function SettingsPanel({ variant }: SettingsPanelProps) {
               onClick={() => setColorBlindness('protanopia')}
               className={`py-2 rounded-md text-xs font-bold transition-all ${colorBlindness === 'protanopia' ? 'bg-yellow-400 text-black shadow-xs' : 'text-slate-300 hover:text-white'}`}
             >
-              Protan (Red-weak)
+              Protan (Red-blind)
             </button>
             <button
               onClick={() => setColorBlindness('deuteranopia')}
               className={`py-2 rounded-md text-xs font-bold transition-all ${colorBlindness === 'deuteranopia' ? 'bg-yellow-400 text-black shadow-xs' : 'text-slate-300 hover:text-white'}`}
             >
-              Deutan (Green-weak)
+              Deutan (Green-blind)
             </button>
             <button
               onClick={() => setColorBlindness('tritanopia')}
               className={`py-2 rounded-md text-xs font-bold transition-all ${colorBlindness === 'tritanopia' ? 'bg-yellow-400 text-black shadow-xs' : 'text-slate-300 hover:text-white'}`}
             >
-              Tritan (Blue-weak)
+              Tritan (Blue-blind)
             </button>
           </div>
         </div>

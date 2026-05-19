@@ -27,7 +27,7 @@ interface KidsPageProps {
 
 const KidsDashboardPage = ({ modules, progress }: KidsPageProps) => {
   const { user, isAuthenticated, isLoading } = useAuth()
-  const { reduceMotion } = useSettings()
+  const { reduceMotion, focusMode } = useSettings()
   const [isMobile, setIsMobile] = useState(false)
 
   const [showFirstTimeTutorial, setShowFirstTimeTutorial] = useState(false)
@@ -43,8 +43,10 @@ const KidsDashboardPage = ({ modules, progress }: KidsPageProps) => {
   useEffect(() => {
     // Show tutorial only for Kids, on their first visit, when they haven't completed any modules yet
     if (user && (!progress?.completedModules || progress.completedModules.length === 0)) {
-      const tutorialSeen = localStorage.getItem('safescape_kid_tutorial_seen')
-      const firstModuleClicked = localStorage.getItem('safescape_first_module_clicked')
+      const tutorialSeenKey = `safescape_kid_tutorial_seen_${user.id}`
+      const firstModuleClickedKey = `safescape_first_module_clicked_${user.id}`
+      const tutorialSeen = localStorage.getItem(tutorialSeenKey)
+      const firstModuleClicked = localStorage.getItem(firstModuleClickedKey)
       if (!tutorialSeen) {
         const timer = setTimeout(() => {
           setShowFirstTimeTutorial(true)
@@ -58,9 +60,12 @@ const KidsDashboardPage = ({ modules, progress }: KidsPageProps) => {
   }, [user, progress])
 
   const dismissTutorial = () => {
-    localStorage.setItem('safescape_kid_tutorial_seen', 'true')
+    if (!user) return
+    const tutorialSeenKey = `safescape_kid_tutorial_seen_${user.id}`
+    const firstModuleClickedKey = `safescape_first_module_clicked_${user.id}`
+    localStorage.setItem(tutorialSeenKey, 'true')
     setShowFirstTimeTutorial(false)
-    const firstModuleClicked = localStorage.getItem('safescape_first_module_clicked')
+    const firstModuleClicked = localStorage.getItem(firstModuleClickedKey)
     if (!firstModuleClicked) {
       setPulseFirstModule(true)
     }
@@ -72,7 +77,7 @@ const KidsDashboardPage = ({ modules, progress }: KidsPageProps) => {
       title: "SafeScape Fire Safety Course",
       description: "Complete 5 exciting modules to become a Fire Safety Hero! Learn about the Fire Triangle, escape plans, and more!",
       type: "module",
-      emoji: "🛡️",
+      illustrationUrl: "/module.png",
       href: "/kids/safescape",
       category: "modules",
       isCompleted: completedIds.length >= 5,
@@ -83,7 +88,7 @@ const KidsDashboardPage = ({ modules, progress }: KidsPageProps) => {
       title: "EDITH Simulation",
       description: "Practice your Home Fire Escape Plan! Save your family from the spreading fire in this realistic 3D simulation.",
       type: "game",
-      emoji: "🏠",
+      illustrationUrl: "/edith.png",
       href: "/kids/simulation",
       isLocked: completedIds.length < 5,
       category: "games",
@@ -118,7 +123,7 @@ const KidsDashboardPage = ({ modules, progress }: KidsPageProps) => {
       title: "Fire Safety Videos",
       description: "Watch exciting videos and learn how to be a Fire Safety Hero! New videos added every week.",
       type: "video",
-      emoji: "📺",
+      illustrationUrl: "/videos.png",
       href: "/kids/videos",
       duration: "Full Library",
       category: "videos"
@@ -128,7 +133,7 @@ const KidsDashboardPage = ({ modules, progress }: KidsPageProps) => {
       title: "Mini Games",
       description: "Play fun quizzes and memory games! Earn extra points and show off your knowledge.",
       type: "activity",
-      emoji: "🏆",
+      illustrationUrl: "/games.png",
       href: "/kids/challenges",
       difficulty: "medium",
       category: "activities"
@@ -151,8 +156,9 @@ const KidsDashboardPage = ({ modules, progress }: KidsPageProps) => {
       return
     }
 
-    if (content.id === "safescape-course") {
-      localStorage.setItem('safescape_first_module_clicked', 'true')
+    if (content.id === "safescape-course" && user) {
+      const firstModuleClickedKey = `safescape_first_module_clicked_${user.id}`
+      localStorage.setItem(firstModuleClickedKey, 'true')
       setPulseFirstModule(false)
     }
 
@@ -163,17 +169,21 @@ const KidsDashboardPage = ({ modules, progress }: KidsPageProps) => {
 
   return (
     <div className="min-h-screen relative bg-background transition-colors duration-500">
-      {/* Optimized Background - Using fixed div instead of bg-fixed to prevent scroll repaints */}
-      <div 
-        className="fixed inset-0 z-0 bg-cover bg-center pointer-events-none transform-gpu"
-        style={{ 
-          backgroundImage: "url('/challenges-bg.png')",
-          backfaceVisibility: 'hidden',
-          WebkitBackfaceVisibility: 'hidden'
-        }}
-      >
-        <div className="absolute inset-0 bg-white/10 dark:bg-slate-900/60"></div>
-      </div>
+      {/* Optimized Background */}
+      {focusMode ? (
+        <div className="fixed inset-0 z-0 pointer-events-none transition-colors duration-500 bg-white dark:bg-slate-950 ss-dotted-grid" />
+      ) : (
+        <div 
+          className="fixed inset-0 z-0 bg-cover bg-center pointer-events-none transform-gpu"
+          style={{ 
+            backgroundImage: "url('/challenges-bg.png')",
+            backfaceVisibility: 'hidden',
+            WebkitBackfaceVisibility: 'hidden'
+          }}
+        >
+          <div className="absolute inset-0 bg-white/10 dark:bg-slate-900/60"></div>
+        </div>
+      )}
 
       {!isMobile && !reduceMotion && (
         <Particles 

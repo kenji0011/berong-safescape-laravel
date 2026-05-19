@@ -225,7 +225,7 @@ class KidsController extends Controller
         $moduleNum = isset($matches[1]) ? (int)$matches[1] : null;
 
         if ($moduleNum) {
-            $passed = ($validated['score'] / $validated['maxScore']) >= 0.8; // 80% passing grade
+            $passed = true; // Any quiz submission is a pass/completion
 
             // Update SafeScape progress automatically
             $existing = SafeScapeProgress::where('userId', $user->id)
@@ -239,6 +239,9 @@ class KidsController extends Controller
             
             $sectionData['quizScore'] = $validated['score'];
             $sectionData['quizPassed'] = $passed;
+            if ($moduleNum === 4) {
+                $sectionData['finalCheckPassed'] = true;
+            }
 
             $isCompleted = $passed;
             if ($existing && $existing->completed) {

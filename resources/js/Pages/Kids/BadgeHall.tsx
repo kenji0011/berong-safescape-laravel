@@ -11,17 +11,17 @@ interface BadgeHallProps {
 }
 
 const ALL_BADGES = [
-  { id: 'module_1', moduleNum: 1, name: "Fire Triangle", source: "Module 1", icon: "🔥", hint: "Complete Module 1: Fire is a Tool, Not a Toy and pass the quiz.", target: "/kids/safescape/1" },
-  { id: 'module_2', moduleNum: 2, name: "Safety Leader", source: "Module 2", icon: "🛡️", hint: "Master the Fire Drill in Module 2 to earn this badge.", target: "/kids/safescape/2" },
-  { id: 'module_3', moduleNum: 3, name: "Plan Master", source: "Module 3", icon: "📢", hint: "Create your Family Escape Plan in Module 3.", target: "/kids/safescape/3" },
-  { id: 'module_4', moduleNum: 4, name: "Low & Go!", source: "Module 4", icon: "🏃", hint: "Learn the Smoke Crawling technique in Module 4.", target: "/kids/safescape/4" },
-  { id: 'module_5', moduleNum: 5, name: "Home Guard", source: "Module 5", icon: "🏘️", hint: "Complete the final Module 5 training session.", target: "/kids/safescape/5" },
-  { id: 'quiz_hero', name: "Quiz Hero", source: "Fire Quiz", icon: "🏆", hint: "Score 100% on any Fire Safety Quiz.", target: "/kids/quiz" },
-  { id: 'memory_master', name: "Memory Master", source: "Memory Game", icon: "🧠", hint: "Finish the Memory Match game with zero mistakes.", target: "/kids/memory-game" },
-  { id: 'smoke_scout', name: "Smoke Scout", source: "Smoke Crawl", icon: "🔦", hint: "Stay low and find your way out of the smoke-filled maze!", target: "/kids/smoke-crawl" },
-  { id: 'safety_scout', name: "Safety Scout", source: "Hot or Not", icon: "🤖", hint: "Correcty identify all hazards in the Hazard House.", target: "/kids/hot-or-not" },
-  { id: 'hazard_hero', name: "Hazard Hero", source: "Hazard Blitz", icon: "⚡", hint: "Neutralize hazards and reach 500 points in Hazard Blitz.", target: "/kids/hazard-blitz" },
-  { id: 'intel_analyst', name: "Intel Analyst", source: "Videos", icon: "🎬", hint: "Watch all fire safety training videos.", target: "/kids/videos" }
+  { id: 'module_1', moduleNum: 1, name: "Fire Triangle", source: "Module 1", image: "/fire_hall.png", hint: "Complete Module 1: Fire is a Tool, Not a Toy and pass the quiz.", target: "/kids/safescape/1" },
+  { id: 'module_2', moduleNum: 2, name: "Safety Leader", source: "Module 2", image: "/shield_hall.png", hint: "Master the Fire Drill in Module 2 to earn this badge.", target: "/kids/safescape/2" },
+  { id: 'module_3', moduleNum: 3, name: "Plan Master", source: "Module 3", image: "/plan_hall.png", hint: "Create your Family Escape Plan in Module 3.", target: "/kids/safescape/3" },
+  { id: 'module_4', moduleNum: 4, name: "Low & Go!", source: "Module 4", image: "/low_hall.png", hint: "Learn the Smoke Crawling technique in Module 4.", target: "/kids/safescape/4" },
+  { id: 'module_5', moduleNum: 5, name: "Home Guard", source: "Module 5", image: "/home_hall.png", hint: "Complete the final Module 5 training session.", target: "/kids/safescape/5" },
+  { id: 'quiz_hero', name: "Quiz Hero", source: "Fire Quiz", image: "/quiz_hall.png", hint: "Score 100% on any Fire Safety Quiz.", target: "/kids/quiz" },
+  { id: 'memory_master', name: "Memory Master", source: "Memory Game", image: "/memory_hall.png", hint: "Finish the Memory Match game with zero mistakes.", target: "/kids/memory-game" },
+  { id: 'smoke_scout', name: "Smoke Scout", source: "Smoke Crawl", image: "/smoke_hall.png", hint: "Stay low and find your way out of the smoke-filled maze!", target: "/kids/smoke-crawl" },
+  { id: 'safety_scout', name: "Safety Scout", source: "Hot or Not", image: "/safety_hall.png", hint: "Correcty identify all hazards in the Hazard House.", target: "/kids/hot-or-not" },
+  { id: 'hazard_hero', name: "Hazard Hero", source: "Hazard Blitz", image: "/hazard_hall.png", hint: "Neutralize hazards and reach 500 points in Hazard Blitz.", target: "/kids/hazard-blitz" },
+  { id: 'intel_analyst', name: "Intel Analyst", source: "Videos", image: "/intel_hall.png", hint: "Watch all fire safety training videos.", target: "/kids/videos" }
 ]
 
 const BadgeHallPage = ({ completedModules = [], earnedBadges = [] }: BadgeHallProps) => {
@@ -51,8 +51,8 @@ const BadgeHallPage = ({ completedModules = [], earnedBadges = [] }: BadgeHallPr
           </Link>
 
           <div className="flex flex-row items-center gap-6 sm:gap-12">
-            <div className="h-24 w-24 sm:h-44 sm:w-44 bg-white/20 rounded-[2rem] sm:rounded-[3rem] flex items-center justify-center text-5xl sm:text-8xl shadow-2xl border-2 sm:border-4 border-white/30 shrink-0 transform -rotate-3">
-               {earnedCount >= 5 ? '🏆' : '🎖️'}
+            <div className="h-24 w-24 sm:h-44 sm:w-44 bg-white/20 rounded-[2rem] sm:rounded-[3rem] flex items-center justify-center shadow-2xl border-2 sm:border-4 border-white/30 shrink-0 transform -rotate-3 overflow-hidden">
+               <img src="/badge_hall.png" className="h-full w-full object-contain p-2 sm:p-4" alt="Badge Hall" />
             </div>
             
             <div className="text-left flex-1">
@@ -90,16 +90,33 @@ const BadgeHallPage = ({ completedModules = [], earnedBadges = [] }: BadgeHallPr
                 >
                   {/* Badge Graphic Row - Larger Icons */}
                   <div className={cn("flex items-start justify-between mb-4 sm:mb-6 shrink-0", !state.isEarned && "opacity-50")}>
-                    <div className={cn(
-                      "h-12 w-12 sm:h-20 sm:w-20 rounded-xl sm:rounded-3xl flex items-center justify-center text-3xl sm:text-6xl shadow-lg relative transform group-hover:scale-110 transition-transform duration-500",
-                      state.isEarned 
-                        ? "bg-yellow-400 border-2 sm:border-[4px] border-white/20" 
-                        : "bg-slate-200 dark:bg-slate-900 border border-slate-300 dark:border-slate-800"
-                    )}>
-                      {state.isEarned ? badge.icon : <Lock className="h-5 w-5 sm:h-8 sm:w-8 text-slate-400 dark:text-slate-700" />}
+                    <div className="relative">
+                      {/* Badge Graphic (Overflow Hidden for Grayscale Overlay) */}
+                      <div className={cn(
+                        "h-12 w-12 sm:h-20 sm:w-20 rounded-xl sm:rounded-3xl flex items-center justify-center shadow-lg relative transform group-hover:scale-110 transition-transform duration-500 overflow-hidden",
+                        state.isEarned 
+                          ? "bg-gradient-to-br from-yellow-300 to-amber-500 border-2 sm:border-[4px] border-white/20" 
+                          : "bg-slate-200 dark:bg-slate-900 border border-slate-300 dark:border-slate-800"
+                      )}>
+                        <img 
+                          src={badge.image} 
+                          className={cn(
+                            "h-full w-full object-contain p-1 sm:p-2",
+                            !state.isEarned && "filter grayscale opacity-30 contrast-75 brightness-75"
+                          )} 
+                          alt={badge.name} 
+                        />
+                        {!state.isEarned && (
+                          <div className="absolute inset-0 flex items-center justify-center bg-black/10">
+                            <Lock className="h-4 w-4 sm:h-7 sm:w-7 text-slate-500 dark:text-slate-400 drop-shadow-md" />
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Checkmark Floating Outside (Safe from Overflow Hidden clipping) */}
                       {state.isEarned && (
-                        <div className="absolute -top-1.5 -right-1.5 bg-green-500 rounded-full p-1 border-2 sm:border-[4px] border-white dark:border-slate-800 shadow-md">
-                           <CheckCircle className="h-2 w-2 sm:h-3 sm:w-3 text-white" />
+                        <div className="absolute -top-1.5 -right-1.5 z-20 bg-green-500 rounded-full p-1 border-2 border-white dark:border-slate-800 shadow-md">
+                           <CheckCircle className="h-2.5 w-2.5 sm:h-3.5 sm:w-3.5 text-white" />
                         </div>
                       )}
                     </div>

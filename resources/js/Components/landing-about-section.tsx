@@ -74,7 +74,7 @@ const teamMembers = [
     {
         name: "Prince Genel R. Umali",
         roles: ["AI Engineer", "Developer", "Data Scientist"],
-        image: "/umali_pr.png",
+        image: "/umali_pr.jpg",
         socials: [
             { icon: Github, url: "#", label: "GitHub" },
             { icon: Linkedin, url: "#", label: "LinkedIn" },
@@ -107,7 +107,7 @@ const teamMembers = [
     {
         name: "Axcel Andrei V. Delos Reyes",
         roles: ["Game Designer", "Game Developer"],
-        image: "/delosreyes_pr.png",
+        image: "/delosreyes_pr.jpg",
         socials: [
             { icon: Github, url: "#", label: "GitHub" },
             { icon: Linkedin, url: "#", label: "LinkedIn" },
@@ -118,7 +118,7 @@ const teamMembers = [
     {
         name: "Zyril G. Dela Paz",
         roles: ["Game Designer", "Game Developer"],
-        image: "/delapaz_pr .png",
+        image: "/delapaz_pr.jpg",
         socials: [
             { icon: Github, url: "#", label: "GitHub" },
             { icon: Linkedin, url: "#", label: "LinkedIn" },

@@ -16,11 +16,16 @@
         })();
     </script>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <script>
         tailwind.config = {
             darkMode: 'class',
             theme: {
                 extend: {
+                    fontFamily: {
+                        sans: ['Figtree', 'sans-serif'],
+                    },
                     colors: {
                         primary: '#ff4b3e',
                         secondary: '#ff8235',
@@ -30,32 +35,42 @@
         }
     </script>
     <script>
-        // Theme sync logic
+        // Parent class sync logic (Theme & Accessibility)
         (function() {
-            const syncTheme = () => {
+            const syncParentClasses = () => {
                 try {
-                    const isDark = window.parent.document.documentElement.classList.contains('dark') || 
-                                 window.parent.document.body.classList.contains('dark');
+                    const parentDoc = window.parent.document.documentElement || window.parent.document.body;
+                    
+                    // Sync Dark Mode
+                    const isDark = parentDoc.classList.contains('dark');
                     if (isDark) {
                         document.documentElement.classList.add('dark');
                     } else {
                         document.documentElement.classList.remove('dark');
+                    }
+                    
+                    // Sync Dyslexia Font
+                    const isDyslexia = parentDoc.classList.contains('dyslexia-mode');
+                    if (isDyslexia) {
+                        document.documentElement.classList.add('dyslexia-mode');
+                    } else {
+                        document.documentElement.classList.remove('dyslexia-mode');
                     }
                 } catch (e) {
                     // Fallback
                 }
             };
             
-            syncTheme();
+            syncParentClasses();
             try {
-                const observer = new MutationObserver(syncTheme);
+                const observer = new MutationObserver(syncParentClasses);
                 observer.observe(window.parent.document.documentElement, { attributes: true, attributeFilter: ['class'] });
             } catch (e) {}
-            setInterval(syncTheme, 1000);
+            setInterval(syncParentClasses, 1000);
         })();
     </script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="../css/shared.css?v=3">
+    <link rel="stylesheet" href="../css/shared.css?v=4">
 
     <style>
         .fade-in {
@@ -95,8 +110,32 @@
             transition: all 0.2s;
         }
 
-        .quiz-option:hover {
+        .quiz-option:hover:not(:disabled) {
             transform: translateX(5px);
+            background-color: #f8fafc !important;
+            color: #334155 !important;
+            border-color: #cbd5e1 !important;
+        }
+
+        .dark .quiz-option:hover:not(:disabled) {
+            background-color: #1e293b !important;
+            color: #f1f5f9 !important;
+            border-color: #475569 !important;
+        }
+
+        /* Ensure selected yellow state overrides standard hover */
+        .quiz-option.border-yellow-500:hover:not(:disabled),
+        .quiz-option.border-yellow-400:hover:not(:disabled) {
+            background-color: #fef9c3 !important;
+            color: #a16207 !important;
+            border-color: #eab308 !important;
+        }
+
+        .dark .quiz-option.border-yellow-500:hover:not(:disabled),
+        .dark .quiz-option.border-yellow-400:hover:not(:disabled) {
+            background-color: rgba(66, 32, 6, 0.4) !important;
+            color: #fde047 !important;
+            border-color: #eab308 !important;
         }
 
         .option-correct {
@@ -259,10 +298,10 @@
         </div>
     </nav>
 
-    <main class="max-w-5xl mx-auto p-4 sm:p-6 space-y-12 sm:space-y-24">
+    <main class="max-w-5xl mx-auto p-4 sm:p-6 space-y-6 sm:space-y-12 pt-4 sm:pt-8">
 
         <!-- HEADER -->
-        <section class="fade-in text-center max-w-3xl mx-auto space-y-3 sm:space-y-4" style="animation-delay: 0.1s;">
+        <section class="fade-in text-center max-w-3xl mx-auto space-y-3 sm:space-y-4 mt-2 sm:mt-4" style="animation-delay: 0.1s;">
             <h1
                 class="text-3xl sm:text-4xl md:text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-green-500 drop-shadow-sm">
                 Get Out & Stay Out!
@@ -273,8 +312,7 @@
             </p>
         </section>
 
-        <!-- VIDEO -->
-        <section id="section-video" class="fade-in ss-section bg-white dark:bg-slate-900/50 border-[3px] sm:border-[4px] border-blue-200 dark:border-blue-900/30 shadow-sm p-4 sm:p-10 text-center transition-colors" style="animation-delay: 0.2s;">
+        <section id="section-video" class="fade-in ss-section bg-white dark:bg-slate-900 border-[3px] sm:border-[4px] border-blue-200 dark:border-blue-900/30 shadow-sm p-4 sm:p-10 text-center transition-colors" style="animation-delay: 0.2s;">
             <div class="ss-section-badge bg-green-500 border-[3px] border-white dark:border-slate-800 shadow-sm text-white transition-colors"><i class="fa-regular fa-circle-check"></i></div>
             <h2 class="text-2xl sm:text-3xl font-black text-blue-600 mb-4 sm:mb-6 drop-shadow-sm">Watch the Intro Video</h2>
             <div
@@ -284,11 +322,9 @@
                 </video>
             </div>
             <p class="text-center text-yellow-600 dark:text-yellow-500 font-bold text-xs sm:text-sm mt-4 sm:mt-6 uppercase tracking-widest"><i class="fa-solid fa-expand mr-1"></i> Watch in Fullscreen for best viewing</p>
-            <p class="text-center text-slate-500 dark:text-slate-400 font-bold text-xs sm:text-sm mt-2 pt-4 sm:pt-6 border-t-2 border-slate-100 dark:border-slate-800 uppercase tracking-widest">Watch the video until the end to continue</p>
         </section>
 
-        <!-- PART 1: STRATEGIC CONTENT -->
-        <section id="section-content" class="fade-in ss-section bg-slate-50 dark:bg-slate-900/50 p-5 sm:p-8 md:p-12 border-[4px] border-slate-200 dark:border-slate-800 shadow-sm transition-colors" style="animation-delay: 0.3s;">
+        <section id="section-content" class="fade-in ss-section bg-white dark:bg-slate-900 p-5 sm:p-8 md:p-12 border-[4px] border-slate-200 dark:border-slate-800 shadow-sm transition-colors" data-lock-text="Complete Section 3.1 first" style="animation-delay: 0.3s;">
             <div class="ss-section-badge bg-green-500 border-[3px] border-white dark:border-slate-800 shadow-sm text-white transition-colors"><i class="fa-regular fa-circle-check"></i></div>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-12 items-center">
                 <div class="space-y-4 sm:space-y-6">
@@ -357,48 +393,60 @@
             </div>
         </section>
 
-        <!-- PART 2: THE CANVAS GAME -->
+        <!-- SECTION 3.3: SMOKE CRAWL SAFETY -->
+        <section id="section-3-3"
+            class="fade-in ss-section bg-white dark:bg-slate-900 border-[3px] sm:border-[4px] border-orange-200 dark:border-orange-900/30 p-4 sm:p-8 md:p-12 shadow-sm relative transition-colors animate-lock"
+            data-lock-text="Complete Section 3.2 first"
+            style="animation-delay: 0.4s;">
+            <div class="ss-section-badge bg-green-500 border-[3px] border-white dark:border-slate-800 shadow-sm text-white transition-colors"><i class="fa-regular fa-circle-check"></i></div>
+            
+            <!-- Header -->
+            <div class="flex gap-3 sm:gap-4 items-start mb-4 sm:mb-6">
+                <span class="shrink-0 mt-1 bg-orange-100 dark:bg-orange-900/50 text-orange-600 dark:text-orange-400 border-2 border-orange-200 dark:border-orange-800 shadow-sm px-2 py-0.5 sm:px-3 sm:py-1 rounded-lg sm:rounded-xl text-xs sm:text-sm font-black transition-colors">3.3</span>
+                <div class="text-left">
+                    <h2 class="text-lg sm:text-3xl font-black text-slate-800 dark:text-white transition-colors mb-1 sm:mb-2">Smoke Crawl Safety</h2>
+                    <p class="text-slate-600 dark:text-slate-400 font-medium leading-relaxed text-xs sm:text-base transition-colors">
+                        Smoke rises to the ceiling during a fire, leaving clean air near the floor. Learn the crawl technique!
+                    </p>
+                </div>
+            </div>
+
+            <!-- Large Image -->
+            <div class="bg-white dark:bg-slate-900 rounded-xl sm:rounded-[2rem] overflow-hidden shadow-sm border-[3px] sm:border-[4px] border-orange-200 dark:border-orange-900/30 relative flex items-center justify-center p-2 sm:p-4 mb-4 sm:mb-8 transition-colors">
+                <img src="../../module_3.3.png" alt="Smoke Crawl Safety" class="w-full h-auto object-contain rounded-lg sm:rounded-xl dark:brightness-90">
+            </div>
+
+            <!-- Content Below Image -->
+            <div class="bg-red-50 dark:bg-red-950/30 border-2 border-red-200 dark:border-red-900/50 rounded-xl sm:rounded-2xl p-3 sm:p-5 mb-4 sm:mb-6 text-left transition-colors">
+                <h3 class="text-base sm:text-xl font-black text-slate-800 dark:text-white transition-colors mb-1 sm:mb-2">
+                    <i class="fa-solid fa-person-running fa-flip-horizontal text-red-500 mr-1 sm:mr-2"></i>GET LOW & GO!
+                </h3>
+                <p class="text-slate-600 dark:text-slate-400 font-medium leading-relaxed text-xs sm:text-base transition-colors">
+                    Always crawl under the smoke! Keep your <strong class="text-slate-800 dark:text-white font-black">head 12 to 24 inches</strong> above the floor where the air is cleanest and easiest to breathe.
+                </p>
+            </div>
+
+            <button id="btn-twoways-read" onclick="markTwoWaysRead()" class="bg-orange-400 hover:bg-orange-500 text-white font-black py-2 px-4 sm:py-3 sm:px-6 rounded-full shadow-[0_4px_0_#c2410c] hover:-translate-y-0.5 active:translate-y-1 active:shadow-none transition-all uppercase tracking-wide border-[3px] border-white text-xs sm:text-base">
+                <i class="fa-solid fa-check"></i> I understand smoke crawl safety
+            </button>
+        </section>
+
         <section id="section-game"
-            class="fade-in ss-section bg-slate-50 dark:bg-slate-900/50 p-4 sm:p-6 md:p-8 lg:p-10 shadow-sm border-[3px] sm:border-[4px] border-slate-200 dark:border-slate-800 text-center transition-colors"
+            class="fade-in ss-section bg-slate-50 dark:bg-slate-900 p-4 sm:p-6 md:p-8 lg:p-10 shadow-sm border-[3px] sm:border-[4px] border-slate-200 dark:border-slate-800 text-center transition-colors animate-lock"
+            data-lock-text="Complete Section 3.3 first"
             style="animation-delay: 0.5s;">
             <div class="ss-section-badge bg-green-500 border-[3px] border-white dark:border-slate-800 shadow-sm text-white transition-colors"><i class="fa-regular fa-circle-check"></i></div>
             <div class="mb-4 sm:mb-6">
                 <h2 class="text-xl sm:text-2xl md:text-3xl font-black text-slate-800 dark:text-white mb-1.5 sm:mb-2 drop-shadow-sm transition-colors"><i
                         class="fa-solid fa-compass-drafting text-blue-500 dark:text-blue-400 mr-1.5 sm:mr-2 text-base sm:text-xl"></i> The Smoke Labyrinth</h2>
-                <p class="text-slate-600 dark:text-slate-300 font-bold text-xs sm:text-sm md:text-base transition-colors">Use <strong class="text-slate-800 dark:text-slate-200 border-[2px] sm:border-[3px] border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-850 px-1.5 py-0.5 sm:px-2 rounded shadow-sm text-xs sm:text-sm font-black transition-colors">ARROW
+                <p class="text-slate-600 dark:text-slate-300 font-bold text-xs sm:text-sm md:text-base transition-colors">Use <strong class="text-slate-800 dark:text-slate-200 border-[2px] sm:border-[3px] border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 px-1.5 py-0.5 sm:px-2 rounded shadow-sm text-xs sm:text-sm font-black transition-colors">ARROW
                         KEYS</strong> to find your way through the smoke.</p>
             </div>
 
             <div class="flex flex-col xl:flex-row gap-4 sm:gap-6 md:gap-8 justify-center items-start">
                 <div class="relative w-full max-w-[600px] mx-auto">
-                    <div id="game-container" class="rounded-[2rem] sm:rounded-[3rem] border-[3px] sm:border-[4px] border-slate-300 dark:border-slate-850 shadow-xl overflow-hidden relative bg-slate-950 cursor-crosshair transition-colors">
+                    <div id="game-container" class="rounded-[2rem] sm:rounded-[3rem] border-[3px] sm:border-[4px] border-slate-300 dark:border-slate-800 shadow-xl overflow-hidden relative bg-slate-950 cursor-crosshair transition-colors">
                         <canvas id="gameCanvas" width="600" height="400" class="w-full h-auto block"></canvas>
-                        <div class="absolute top-2 left-2 sm:top-4 sm:left-4 text-left pointer-events-none hidden md:block">
-                            <div class="text-green-400 font-black tracking-widest text-[10px] sm:text-xs mb-0.5 sm:mb-1 uppercase">VISIBILITY: LOW</div>
-                            <div class="text-slate-400 font-bold tracking-wider text-[10px] sm:text-xs mb-2 uppercase">OBJECTIVE: ESCAPE</div>
-                            <div class="inline-flex items-center gap-1.5 bg-blue-500/20 text-blue-300 px-2 py-1 rounded-md border border-blue-500/30 text-[9px] sm:text-[10px] font-black uppercase animate-pulse">
-                                <i class="fa-solid fa-person-running fa-flip-horizontal" style="font-size: 8px;"></i>
-                                Crawling under smoke...
-                            </div>
-                        </div>
-
-                        <!-- Integrity Modal (Moved here to be an overlay) -->
-                        <div id="integrity-modal"
-                            class="hidden absolute inset-0 z-40 bg-slate-900/90 backdrop-blur-md flex flex-col items-center justify-center p-6 text-center animate-in fade-in zoom-in duration-300">
-                            <div class="max-w-xs space-y-4">
-                                <div class="w-16 h-16 bg-orange-500 rounded-full flex items-center justify-center mx-auto mb-2 shadow-[0_0_20px_rgba(249,115,22,0.4)] animate-pulse">
-                                    <i class="fa-solid fa-triangle-exclamation text-white text-2xl"></i>
-                                </div>
-                                <h3 class="text-orange-400 font-black text-xl uppercase tracking-wider">⚠️ TEMPTATION ALERT!</h3>
-                                <p class="text-sm font-bold text-slate-300">You are safe outside. But you left your tablet inside!</p>
-                                <div class="grid gap-3 w-full">
-                                    <button onclick="handleIntegrity(false)"
-                                        class="bg-slate-700 hover:bg-slate-600 border-[3px] border-slate-500 text-white shadow-sm hover:-translate-y-0.5 active:translate-y-1 py-3 rounded-xl font-bold uppercase tracking-wide text-xs transition-all">Go Back For It</button>
-                                    <button onclick="handleIntegrity(true)"
-                                        class="bg-green-500 hover:bg-green-400 text-white border-[3px] border-green-600 shadow-[0_4px_0_#15803d] hover:-translate-y-0.5 active:translate-y-1 active:shadow-none py-3 rounded-xl font-black uppercase tracking-wide text-xs transition-all">Stay Out (Integrity)</button>
-                                </div>
-                            </div>
-                        </div>
                     </div>
                 </div>
 
@@ -445,18 +493,46 @@
                 </div>
             </div>
 
-            <div id="door-check-overlay" class="hidden fixed inset-0 bg-slate-900/80 backdrop-blur-sm flex items-center justify-center z-50">
+            <div id="door-check-overlay" class="hidden absolute inset-0 rounded-[2rem] sm:rounded-[3rem] bg-slate-900/80 backdrop-blur-sm flex items-center justify-center z-50">
                 <div class="bg-white dark:bg-slate-900 p-8 rounded-[2rem] border-[4px] border-orange-300 dark:border-orange-900/30 max-w-sm text-center shadow-2xl transition-colors">
                     <i class="fa-solid fa-hand-back-fist text-6xl text-orange-400 mb-4 drop-shadow-sm"></i>
                     <h3 class="text-2xl font-black text-slate-800 dark:text-white mb-2 transition-colors">Closed Door Detected</h3>
                     <p class="text-slate-600 dark:text-slate-400 font-bold mb-8 text-sm transition-colors">You must check for heat before proceeding.</p>
                     <div class="grid gap-4">
                         <button onclick="resolveDoor(false)"
-                            class="bg-red-100 hover:bg-red-200 text-red-600 font-bold border-[3px] border-red-300 shadow-sm py-3 rounded-xl hover:-translate-y-0.5 active:translate-y-1 uppercase tracking-wide text-xs">Open
+                            class="w-full bg-red-600 hover:bg-red-500 text-white font-black border-[3px] border-red-700 shadow-sm py-3 rounded-xl hover:-translate-y-0.5 active:translate-y-1 uppercase tracking-wide text-xs transition-all">Open
                             Immediately</button>
                         <button onclick="resolveDoor(true)"
-                            class="bg-blue-500 hover:bg-blue-400 text-white font-black border-[3px] border-blue-600 shadow-[0_4px_0_#1d4ed8] py-4 rounded-xl hover:-translate-y-0.5 active:translate-y-1 active:shadow-none uppercase tracking-wide text-sm">Touch with Back of
+                            class="w-full bg-blue-600 hover:bg-blue-500 text-white font-black border-[3px] border-blue-700 shadow-sm py-3 rounded-xl hover:-translate-y-0.5 active:translate-y-1 uppercase tracking-wide text-xs transition-all">Touch with Back of
                             Hand</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="door-hot-overlay" class="hidden absolute inset-0 rounded-[2rem] sm:rounded-[3rem] bg-slate-900/80 backdrop-blur-sm flex items-center justify-center z-50">
+                <div class="bg-white dark:bg-slate-900 p-8 rounded-[2rem] border-[4px] border-red-500 max-w-sm text-center shadow-2xl transition-colors mx-4">
+                    <div class="w-16 h-16 bg-red-500 rounded-full flex items-center justify-center mx-auto mb-4 shadow-[0_0_20px_rgba(239,68,68,0.4)] animate-bounce">
+                        <i class="fa-solid fa-fire text-white text-2xl"></i>
+                    </div>
+                    <h3 class="text-2xl font-black text-red-600 mb-2 uppercase tracking-wide">Danger! Door is Hot</h3>
+                    <p class="text-slate-600 dark:text-slate-400 font-bold mb-8 text-sm transition-colors">Opening this door is extremely dangerous. There is a fire on the other side. You must find another way out!</p>
+                    <button onclick="closeDoorHotOverlay()"
+                        class="w-full bg-blue-600 hover:bg-blue-500 text-white font-black border-[3px] border-blue-700 shadow-sm py-3 rounded-xl hover:-translate-y-0.5 active:translate-y-1 uppercase tracking-wide text-xs transition-all">Find Another Exit</button>
+                </div>
+            </div>
+
+            <div id="integrity-modal" class="hidden absolute inset-0 rounded-[2rem] sm:rounded-[3rem] bg-slate-900/80 backdrop-blur-sm flex items-center justify-center z-50">
+                <div class="bg-white dark:bg-slate-900 p-8 rounded-[2rem] border-[4px] border-orange-300 dark:border-orange-900/30 max-w-sm text-center shadow-2xl transition-colors mx-4">
+                    <div class="w-16 h-16 bg-orange-500 rounded-full flex items-center justify-center mx-auto mb-4 shadow-[0_0_20px_rgba(249,115,22,0.4)]">
+                        <i class="fa-solid fa-triangle-exclamation text-white text-2xl"></i>
+                    </div>
+                    <h3 class="text-2xl font-black text-slate-800 dark:text-white mb-2 uppercase tracking-wide transition-colors">TEMPTATION ALERT!</h3>
+                    <p class="text-slate-600 dark:text-slate-400 font-bold mb-8 text-sm transition-colors">You are safe outside. But you left your tablet inside!</p>
+                    <div class="grid gap-4">
+                        <button onclick="handleIntegrity(false)"
+                            class="bg-red-500 hover:bg-red-400 text-white font-black border-[3px] border-red-600 shadow-[0_4px_0_#b91c1c] py-4 rounded-xl hover:-translate-y-0.5 active:translate-y-1 active:shadow-none uppercase tracking-wide text-sm">Go Back For It</button>
+                        <button onclick="handleIntegrity(true)"
+                            class="bg-green-500 hover:bg-green-400 text-white font-black border-[3px] border-green-600 shadow-[0_4px_0_#15803d] py-4 rounded-xl hover:-translate-y-0.5 active:translate-y-1 active:shadow-none uppercase tracking-wide text-sm">Stay Out (Integrity)</button>
                     </div>
                 </div>
             </div>
@@ -471,9 +547,9 @@
             </div>
         </section>
 
-        <!-- QUIZ SECTION -->
         <section id="final-quiz"
-            class="fade-in ss-section bg-yellow-50 dark:bg-yellow-950/20 p-4 sm:p-8 md:p-12 border-[3px] sm:border-[4px] border-yellow-300 dark:border-yellow-900/30 shadow-sm transition-colors"
+            class="fade-in ss-section bg-white dark:bg-slate-900 rounded-[2rem] p-8 sm:p-14 text-center border-[3px] sm:border-[4px] border-yellow-300 dark:border-yellow-900/30 shadow-sm max-w-5xl mx-auto transition-colors"
+            data-lock-text="Complete Section 3.3 first"
             style="animation-delay: 0.6s;">
             
             <div class="text-center mb-4 sm:mb-10">
@@ -483,7 +559,7 @@
 
             <div id="quiz-container" class="max-w-2xl mx-auto space-y-6 transition-all duration-500 ease-in-out transform-gpu overflow-hidden"></div>
 
-            <div id="quiz-result" class="hidden ss-completion-card success mx-auto mt-10">
+            <div id="quiz-result" class="hidden w-full text-center max-w-xl mx-auto mt-6 sm:mt-10 transition-all duration-500 ease-in-out">
                 <div class="ss-completion-icon" id="result-icon">🏆</div>
                 <h3 class="ss-completion-title" id="result-title"></h3>
                 <div id="score-badge" class="ss-score-badge" style="display:none;"></div>
@@ -516,10 +592,12 @@
         window.localState = {
             videoWatched: false,
             scannerInteracted: false,
+            twoWaysOutRead: false,
             labyrinthEscaped: false,
             integrityPassed: false,
             quizScore: 0,
-            quizPassed: false
+            quizPassed: false,
+            quizAnswers: [null, null, null, null, null]
         };
 
         // --- INITIALIZATION ---
@@ -533,6 +611,31 @@
                 window.location.href = '../index.html';
                 return;
             }
+
+            // Video orientation lock logic
+            const videoEl = document.getElementById('module-video');
+            if (videoEl) {
+                const lockLandscape = () => {
+                    if (screen.orientation && screen.orientation.lock) {
+                        screen.orientation.lock('landscape').catch(e => {});
+                    }
+                };
+                const unlockOrientation = () => {
+                    if (screen.orientation && screen.orientation.unlock) {
+                        screen.orientation.unlock();
+                    }
+                };
+                document.addEventListener('fullscreenchange', () => {
+                    if (document.fullscreenElement === videoEl) {
+                        lockLandscape();
+                    } else {
+                        unlockOrientation();
+                    }
+                });
+                videoEl.addEventListener('webkitbeginfullscreen', lockLandscape);
+                videoEl.addEventListener('webkitendfullscreen', unlockOrientation);
+            }
+
             loadProgress();
 
             // Listen for updates from API sync
@@ -559,7 +662,7 @@
         // logic is now reactive via SafeScapeProgress events
 
         function updateModuleProgress() {
-            const keys = ['videoWatched', 'scannerInteracted', 'labyrinthEscaped', 'integrityPassed', 'quizPassed'];
+            const keys = ['videoWatched', 'scannerInteracted', 'twoWaysOutRead', 'labyrinthEscaped', 'integrityPassed', 'quizPassed'];
             const completed = keys.filter(k => localState[k] === true).length;
             const percent = Math.round((completed / keys.length) * 100);
             document.getElementById('module-progress').textContent = `${percent}%`;
@@ -577,6 +680,15 @@
                     btn.onclick = null;
                 }
             }
+            if (localState.twoWaysOutRead) {
+                document.getElementById('section-3-3').classList.add('completed');
+                const btn = document.getElementById('btn-twoways-read');
+                if (btn) {
+                    btn.innerHTML = '<i class="fa-solid fa-check-circle"></i> Completed';
+                    btn.className = "ss-btn ss-btn-success mt-4 cursor-default";
+                    btn.onclick = null;
+                }
+            }
             if (localState.labyrinthEscaped && localState.integrityPassed) document.getElementById('section-game').classList.add('completed');
 
             // Locked states (sequential)
@@ -584,8 +696,12 @@
             if (!localState.videoWatched) secContent.classList.add('locked');
             else secContent.classList.remove('locked');
 
+            const sec33 = document.getElementById('section-3-3');
+            if (!localState.scannerInteracted) sec33.classList.add('locked');
+            else sec33.classList.remove('locked');
+
             const secGame = document.getElementById('section-game');
-            if (!localState.scannerInteracted) secGame.classList.add('locked');
+            if (!localState.twoWaysOutRead) secGame.classList.add('locked');
             else secGame.classList.remove('locked');
 
             const secQuiz = document.getElementById('final-quiz');
@@ -629,6 +745,13 @@
             }
         }
 
+        function markTwoWaysRead() {
+            if (!localState.twoWaysOutRead) {
+                SafeScapeProgress.completeSection(moduleNum, 'twoWaysOutRead', true);
+                showToast('success', 'Smoke crawl safety plan understood!');
+            }
+        }
+
         // --- CANVAS GAME ENGINE ---
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
@@ -644,6 +767,7 @@
         let exits = [];
         let doorIsHot = true;
         let animFrameId = null;
+        let modalOpenedTime = 0;
 
         const CELL_SIZE = 20;
         const COLS = Math.floor(canvas.width / CELL_SIZE);
@@ -726,8 +850,7 @@
             gameState = 'playing';
             document.getElementById('completion-msg').classList.add('hidden');
             document.getElementById('integrity-modal').classList.add('hidden');
-            log("Procedural Map Generated. Escape!");
-            doorIsHot = Math.random() > 0.3;
+            doorIsHot = true;
             gameLoop();
         }
 
@@ -814,22 +937,18 @@
 
         function handleDoorCollision(door) {
             gameState = 'paused';
+            modalOpenedTime = Date.now();
             document.getElementById('door-check-overlay').classList.remove('hidden');
         }
 
         function resolveDoor(checkedHeat) {
+            if (Date.now() - modalOpenedTime < 500) return;
             document.getElementById('door-check-overlay').classList.add('hidden');
             if (checkedHeat) {
                 if (doorIsHot) {
                     log("CHECK: Door is HOT! Find the Window.");
-                    fogCtx.globalCompositeOperation = 'destination-out';
-                    fogCtx.beginPath();
-                    fogCtx.arc(exits[0].x + 10, exits[0].y + 10, 40, 0, Math.PI * 2);
-                    fogCtx.fill();
-                    fogCtx.globalCompositeOperation = 'source-over';
-                    player.x -= 10;
-                    gameState = 'playing';
-                    gameLoop();
+                    document.getElementById('door-hot-overlay').classList.remove('hidden');
+                    gameState = 'paused';
                 } else {
                     log("CHECK: Door is Cool. Opening...");
                     gameWin();
@@ -838,6 +957,18 @@
                 alert("GAME OVER! You opened a door without checking. Backdraft!");
                 initGame();
             }
+        }
+
+        function closeDoorHotOverlay() {
+            document.getElementById('door-hot-overlay').classList.add('hidden');
+            fogCtx.globalCompositeOperation = 'destination-out';
+            fogCtx.beginPath();
+            fogCtx.arc(exits[0].x + 10, exits[0].y + 10, 40, 0, Math.PI * 2);
+            fogCtx.fill();
+            fogCtx.globalCompositeOperation = 'source-over';
+            player.x -= 20;
+            gameState = 'playing';
+            gameLoop();
         }
 
         function handleWindowCollision() {
@@ -853,10 +984,12 @@
             if (!localState.labyrinthEscaped) {
                 SafeScapeProgress.completeSection(moduleNum, 'labyrinthEscaped', true);
             }
+            modalOpenedTime = Date.now();
             document.getElementById('integrity-modal').classList.remove('hidden');
         }
 
         function handleIntegrity(stayOut) {
+            if (Date.now() - modalOpenedTime < 500) return;
             document.getElementById('integrity-modal').classList.add('hidden');
             if (stayOut) {
                 document.getElementById('completion-msg').classList.remove('hidden');
@@ -968,6 +1101,7 @@
 
         let correctCount = 0;
         let answeredCount = 0;
+        let quizSubmitted = false;
 
         let reviewMode = false;
         function toggleReview() {
@@ -994,20 +1128,47 @@
         }
 
         function renderQuiz() {
+            // Guard: don't re-render if quiz was just submitted (prevents reactive event from wiping results)
+            if (quizSubmitted) return;
+
             const container = document.getElementById('quiz-container');
             
             if (localState.quizPassed) {
                 document.getElementById('quiz-result').classList.remove('hidden');
                 document.getElementById('btn-retake').classList.add('hidden');
                 document.getElementById('btn-review').classList.remove('hidden');
-                document.getElementById('result-icon').innerText = "🏆";
-                document.getElementById('result-title').innerText = "ESCAPE STRATEGIST!";
-                document.getElementById('result-title').className = "ss-completion-title";
-                showScoreBadge(localState.quizScore || 5, 5);
-                document.getElementById('result-desc').innerText = "You have already completed this quiz!";
+                
+                const score = localState.quizScore || 0;
+                const icon = document.getElementById('result-icon');
+                const title = document.getElementById('result-title');
+                const desc = document.getElementById('result-desc');
+
+                if (score === 5) {
+                    icon.innerText = "🏆";
+                    title.innerText = "ESCAPE CHAMPION!";
+                    title.className = "ss-completion-title !text-yellow-500";
+                    desc.innerText = "You have already completed this quiz with a perfect score!";
+                } else if (score === 4) {
+                    icon.innerText = "🎉";
+                    title.innerText = "ESCAPE CERTIFIED!";
+                    title.className = "ss-completion-title !text-green-500";
+                    desc.innerText = "You have already completed this quiz!";
+                } else if (score >= 1) {
+                    icon.innerText = "👍";
+                    title.innerText = "GREAT EFFORT!";
+                    title.className = "ss-completion-title !text-orange-500";
+                    desc.innerText = "You have already completed this quiz! Review your answers below to keep practicing.";
+                } else {
+                    icon.innerText = "💡";
+                    title.innerText = "KEEP LEARNING!";
+                    title.className = "ss-completion-title !text-blue-500";
+                    desc.innerText = "You have already completed this quiz! Discover the correct tips below.";
+                }
+
+                showScoreBadge(score, 5);
                 document.getElementById('btn-next-module').classList.remove('hidden');
                 const fq = document.getElementById('final-quiz');
-                fq.className = "fade-in ss-section bg-slate-50 dark:bg-slate-900 rounded-[2rem] p-4 sm:p-8 md:p-12 border-[4px] border-slate-200 dark:border-slate-800 shadow-sm transition-all duration-500";
+                fq.className = "fade-in ss-section bg-white dark:bg-slate-900 rounded-[2rem] p-8 sm:p-14 text-center border-[4px] border-slate-200 dark:border-slate-800/80 shadow-sm transition-all duration-500";
                 // Render questions with correct answers for review
                 container.innerHTML = '';
                 quizData.forEach((item, idx) => {
@@ -1016,14 +1177,23 @@
                     qDiv.innerHTML = `<h3 class="text-slate-800 dark:text-white font-black mb-3 sm:mb-4 text-sm sm:text-lg transition-colors">${idx + 1}. ${item.q}</h3>`;
                     const optionsDiv = document.createElement('div');
                     optionsDiv.className = "grid grid-cols-1 gap-3";
+                    
+                    const userAnswers = localState.quizAnswers || [null, null, null, null, null];
+                    const selectedIdx = userAnswers[idx];
+                    const correctIdx = item.correct;
+
                     item.options.forEach((opt, optIdx) => {
                         const btn = document.createElement('button');
                         btn.disabled = true;
-                        btn.innerText = opt;
-                        if (optIdx === item.correct) {
-                            btn.className = "quiz-option w-full text-left p-3 sm:p-4 rounded-xl border-2 font-bold text-sm sm:text-base transition-all bg-green-500 border-green-600 text-white shadow-sm";
+                        if (optIdx === correctIdx) {
+                            btn.className = "quiz-option w-full text-left p-3 sm:p-4 rounded-xl border-2 font-bold text-sm sm:text-base transition-all bg-green-500 border-green-600 text-white shadow-sm flex items-center justify-between gap-4";
+                            btn.innerHTML = `<span>${opt}</span><span class="shrink-0 bg-green-700/50 text-white border border-green-400/30 text-[10px] sm:text-xs font-black px-2.5 py-0.5 sm:px-3 sm:py-1 rounded-full uppercase tracking-wider">CORRECT ✓</span>`;
+                        } else if (selectedIdx !== null && optIdx === selectedIdx) {
+                            btn.className = "quiz-option w-full text-left p-3 sm:p-4 rounded-xl border-2 font-bold text-sm sm:text-base transition-all bg-red-500 border-red-600 text-white shadow-sm flex items-center justify-between gap-4";
+                            btn.innerHTML = `<span>${opt}</span><span class="shrink-0 bg-red-700/50 text-white border border-red-400/30 text-[10px] sm:text-xs font-black px-2.5 py-0.5 sm:px-3 sm:py-1 rounded-full uppercase tracking-wider">YOUR ANSWER ✗</span>`;
                         } else {
                             btn.className = "quiz-option w-full text-left p-3 sm:p-4 rounded-xl border-2 font-bold text-sm sm:text-base border-slate-200 dark:border-slate-700 text-slate-400 dark:text-slate-500 bg-slate-50 dark:bg-slate-900 opacity-50 cursor-not-allowed transition-colors";
+                            btn.innerHTML = `<span>${opt}</span>`;
                         }
                         optionsDiv.appendChild(btn);
                     });
@@ -1043,10 +1213,13 @@
             container.innerHTML = '';
             
             // Remove collapse classes and show normally
-            container.classList.remove('hidden', 'max-h-0', 'opacity-0', 'mb-0', 'translate-y-4', 'scale-95', 'pointer-events-none');
-            container.classList.add('max-h-none', 'opacity-100', 'translate-y-0', 'scale-100');
+            container.classList.remove('hidden', 'max-h-0', 'opacity-0', 'mb-0', 'translate-y-4', 'scale-95', 'pointer-events-none', 'overflow-hidden');
+            container.classList.add('max-h-none', 'opacity-100', 'translate-y-0', 'scale-100', 'overflow-visible');
+            
             correctCount = 0;
             answeredCount = 0;
+            quizSubmitted = false;
+            selectedAnswers = [null, null, null, null, null];
 
             quizData.forEach((item, idx) => {
                 const qDiv = document.createElement('div');
@@ -1058,32 +1231,103 @@
                     const btn = document.createElement('button');
                     btn.className = "quiz-option w-full text-left p-3 sm:p-4 rounded-xl border-2 border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 font-bold bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800 shadow-sm hover:-translate-y-0.5 active:translate-y-1 active:shadow-none transition-all text-sm sm:text-base";
                     btn.innerText = opt;
-                    btn.onclick = () => checkQuizAnswer(btn, optIdx, item.correct, idx);
+                    btn.onclick = () => selectQuizOption(idx, optIdx);
                     optionsDiv.appendChild(btn);
                 });
                 qDiv.appendChild(optionsDiv);
                 container.appendChild(qDiv);
             });
+
+            // Append submit button at the bottom of quiz-container
+            const submitBtnContainer = document.createElement('div');
+            submitBtnContainer.id = "submit-btn-container";
+            submitBtnContainer.className = "flex justify-center pt-6";
+            submitBtnContainer.innerHTML = `
+                <button id="btn-submit-quiz" onclick="submitQuizAnswers()" disabled 
+                    class="font-black px-8 sm:px-10 py-3 sm:py-4 rounded-full uppercase tracking-wide text-sm sm:text-base transition-all flex items-center gap-2 bg-slate-200 dark:bg-slate-800 text-slate-400 dark:text-slate-600 cursor-not-allowed border-[3px] border-slate-300 dark:border-slate-700">
+                    <i class="fa-solid fa-shield"></i> Submit Answers
+                </button>
+            `;
+            container.appendChild(submitBtnContainer);
         }
 
-        function checkQuizAnswer(btn, selectedIdx, correctIdx, qIdx) {
-            const parent = btn.parentElement;
-            const allBtns = parent.querySelectorAll('button');
-            allBtns.forEach(b => b.disabled = true);
-            if (selectedIdx === correctIdx) {
-                btn.classList.add('option-correct');
-                correctCount++;
-            } else {
-                btn.classList.add('option-wrong');
-                allBtns[correctIdx].classList.add('option-correct');
+        let selectedAnswers = [null, null, null, null, null];
+
+        function selectQuizOption(qIdx, optIdx) {
+            selectedAnswers[qIdx] = optIdx;
+            
+            // Re-render options only for this question
+            const qDivs = document.getElementById('quiz-container').children;
+            const qDiv = qDivs[qIdx];
+            const buttons = qDiv.querySelectorAll('.quiz-option');
+            
+            buttons.forEach((btn, idx) => {
+                if (idx === optIdx) {
+                    btn.className = "quiz-option w-full text-left p-3 sm:p-4 rounded-xl border-2 border-yellow-500 dark:border-yellow-400 text-yellow-700 dark:text-yellow-300 font-bold bg-yellow-50 dark:bg-yellow-950/40 shadow-sm hover:-translate-y-0.5 active:translate-y-1 active:shadow-none transition-all text-sm sm:text-base ring-2 ring-yellow-400/30";
+                } else {
+                    btn.className = "quiz-option w-full text-left p-3 sm:p-4 rounded-xl border-2 border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 font-bold bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800 shadow-sm hover:-translate-y-0.5 active:translate-y-1 active:shadow-none transition-all text-sm sm:text-base";
+                }
+            });
+
+            // Update submit button state
+            const submitBtn = document.getElementById('btn-submit-quiz');
+            if (submitBtn) {
+                const allAnswered = selectedAnswers.every(ans => ans !== null);
+                if (allAnswered) {
+                    submitBtn.disabled = false;
+                    submitBtn.className = "font-black px-8 sm:px-10 py-3 sm:py-4 rounded-full uppercase tracking-wide text-sm sm:text-base transition-all flex items-center gap-2 bg-yellow-400 text-red-600 shadow-[0_4px_0_#b45309] hover:-translate-y-0.5 active:translate-y-1 active:shadow-none border-[3px] border-white cursor-pointer";
+                } else {
+                    submitBtn.disabled = true;
+                    submitBtn.className = "font-black px-8 sm:px-10 py-3 sm:py-4 rounded-full uppercase tracking-wide text-sm sm:text-base transition-all flex items-center gap-2 bg-slate-200 dark:bg-slate-800 text-slate-400 dark:text-slate-600 cursor-not-allowed border-[3px] border-slate-300 dark:border-slate-700";
+                }
             }
-            answeredCount++;
-            if (answeredCount === quizData.length) {
-                setTimeout(() => {
-                    showQuizResult();
-                    SafeScapeProgress.submitQuizResult(moduleNum, correctCount, 5);
-                }, 1000);
-            }
+        }
+
+        function submitQuizAnswers() {
+            quizSubmitted = true;
+
+            // Disable all options
+            const allButtons = document.getElementById('quiz-container').querySelectorAll('.quiz-option');
+            allButtons.forEach(btn => btn.disabled = true);
+
+            // Hide the submit button container
+            const submitContainer = document.getElementById('submit-btn-container');
+            if (submitContainer) submitContainer.classList.add('hidden');
+
+            correctCount = 0;
+
+            quizData.forEach((item, qIdx) => {
+                const selectedIdx = selectedAnswers[qIdx];
+                const correctIdx = item.correct;
+                
+                const qDivs = document.getElementById('quiz-container').children;
+                const qDiv = qDivs[qIdx];
+                const buttons = qDiv.querySelectorAll('.quiz-option');
+
+                buttons.forEach((btn, optIdx) => {
+                    btn.className = "quiz-option w-full text-left p-3 sm:p-4 rounded-xl border-2 font-bold text-sm sm:text-base cursor-not-allowed transition-colors flex items-center justify-between gap-4";
+                    
+                    if (optIdx === correctIdx) {
+                        btn.classList.add('bg-green-500', 'border-green-600', 'text-white', 'shadow-sm');
+                        btn.innerHTML = `<span>${item.options[optIdx]}</span><span class="shrink-0 bg-green-700/50 text-white border border-green-400/30 text-[10px] sm:text-xs font-black px-2.5 py-0.5 sm:px-3 sm:py-1 rounded-full uppercase tracking-wider">CORRECT ✓</span>`;
+                    } else if (optIdx === selectedIdx) {
+                        btn.classList.add('bg-red-500', 'border-red-600', 'text-white', 'shadow-sm');
+                        btn.innerHTML = `<span>${item.options[optIdx]}</span><span class="shrink-0 bg-red-700/50 text-white border border-red-400/30 text-[10px] sm:text-xs font-black px-2.5 py-0.5 sm:px-3 sm:py-1 rounded-full uppercase tracking-wider">YOUR ANSWER ✗</span>`;
+                    } else {
+                        btn.classList.add('border-slate-200', 'dark:border-slate-700', 'text-slate-400', 'dark:text-slate-500', 'bg-slate-50', 'dark:bg-slate-900', 'opacity-50');
+                        btn.innerHTML = `<span>${item.options[optIdx]}</span>`;
+                    }
+                });
+
+                if (selectedIdx === correctIdx) {
+                    correctCount++;
+                }
+            });
+
+            setTimeout(() => {
+                showQuizResult();
+                SafeScapeProgress.submitQuizResult(moduleNum, correctCount, 5);
+            }, 1000);
         }
 
         function showQuizResult() {
@@ -1096,33 +1340,51 @@
 
             resultDiv.classList.remove('hidden');
             localState.quizScore = correctCount;
+            localState.quizAnswers = selectedAnswers;
 
-            if (correctCount >= 4) {
+            // Hide questions, show result card
+            document.getElementById('quiz-container').classList.add('hidden');
+            document.getElementById('final-quiz').querySelector('.text-center').classList.add('hidden');
+            const fq = document.getElementById('final-quiz');
+            fq.className = "fade-in ss-section bg-white dark:bg-slate-900 rounded-[2rem] p-8 sm:p-14 text-center border-[4px] border-slate-200 dark:border-slate-800/80 shadow-sm transition-all duration-500";
+
+            showScoreBadge(correctCount, 5);
+
+            // Always show next module and review, never show retake
+            nextBtn.classList.remove('hidden');
+            document.getElementById('btn-review').classList.remove('hidden');
+            retakeBtn.classList.add('hidden');
+
+            if (correctCount === 5) {
                 icon.innerText = "🏆";
-                title.innerText = "ESCAPE STRATEGIST!";
-                title.className = "ss-completion-title";
-                showScoreBadge(correctCount, 5);
-                desc.innerText = `You scored ${correctCount}/5. You know how to make smart decisions under pressure.`;
-                nextBtn.classList.remove('hidden');
-                document.getElementById('btn-review').classList.remove('hidden');
-                // Hide questions, show result card
-                document.getElementById('quiz-container').classList.add('hidden');
-                document.getElementById('final-quiz').querySelector('.text-center').classList.add('hidden');
-                const fq = document.getElementById('final-quiz');
-                fq.className = "fade-in ss-section bg-slate-50 dark:bg-slate-900 rounded-[2rem] p-4 sm:p-8 md:p-12 border-[4px] border-slate-200 dark:border-slate-800 shadow-sm transition-all duration-500";
-
-                if (!localState.quizPassed) {
-                    SafeScapeProgress.completeSection(moduleNum, 'quizPassed', true);
-                    showToast('success', '🎉 Module 3 complete! Module 4 unlocked!');
-                    new Audio('../../sounds/win.mp3').play().catch(e => {});
-                }
+                title.innerText = "ESCAPE CHAMPION!";
+                title.className = "ss-completion-title !text-yellow-500";
+                desc.innerText = `You scored 5/5. A perfect score! You are a master strategist!`;
+            } else if (correctCount >= 3) {
+                icon.innerText = "🎉";
+                title.innerText = "ESCAPE CERTIFIED!";
+                title.className = "ss-completion-title !text-green-500";
+                desc.innerText = `You scored ${correctCount}/5. Well done! You have successfully completed this module quiz!`;
+            } else if (correctCount >= 1) {
+                icon.innerText = "👍";
+                title.innerText = "GREAT EFFORT!";
+                title.className = "ss-completion-title !text-orange-500";
+                desc.innerText = `You scored ${correctCount}/5. Review your answers below to keep learning!`;
             } else {
-                icon.innerText = "⚠️";
-                title.innerText = "REVIEW THE PLAN";
-                title.className = "ss-completion-title !text-red-500";
-                showScoreBadge(correctCount, 5);
-                desc.innerText = `You scored ${correctCount}/5. You need 4/5 to pass.`;
-                retakeBtn.classList.remove('hidden');
+                icon.innerText = "💡";
+                title.innerText = "KEEP LEARNING!";
+                title.className = "ss-completion-title !text-blue-500";
+                desc.innerText = `You scored 0/5. Click 'Review Answers' below to discover the correct fire safety tips.`;
+            }
+
+            // Always save answers and mark quiz as passed
+            SafeScapeProgress.completeSection(moduleNum, 'quizAnswers', selectedAnswers);
+            SafeScapeProgress.completeSection(moduleNum, 'quizScore', correctCount);
+
+            if (!localState.quizPassed) {
+                SafeScapeProgress.completeSection(moduleNum, 'quizPassed', true);
+                showToast('success', 'Module 3 complete! Module 4 unlocked!');
+                new Audio('../../sounds/win.mp3').play().catch(e => {});
             }
         }
 
@@ -1149,16 +1411,28 @@
         }
 
         function showToast(type, message) {
+            try {
+                window.parent.postMessage({
+                    type: 'SAFESCAPE_SHOW_TOAST',
+                    toastType: type,
+                    message: message
+                }, '*');
+            } catch (e) {
+                console.error(e);
+            }
+
             const container = document.getElementById('toast-container');
-            const toast = document.createElement('div');
-            toast.className = `ss-toast ${type}`;
-            const icon = type === 'success' ? 'fa-check-circle' : 'fa-info-circle';
-            toast.innerHTML = `<i class="fa-solid ${icon}"></i> ${message}`;
-            container.appendChild(toast);
-            setTimeout(() => {
-                toast.style.animation = 'slideIn 0.3s ease-out reverse';
-                setTimeout(() => toast.remove(), 300);
-            }, 3000);
+            if (container) {
+                const toast = document.createElement('div');
+                toast.className = `ss-toast ${type}`;
+                const icon = type === 'success' ? 'fa-check-circle' : 'fa-info-circle';
+                toast.innerHTML = `<i class="fa-solid ${icon}"></i> ${message}`;
+                container.appendChild(toast);
+                setTimeout(() => {
+                    toast.style.animation = 'slideIn 0.3s ease-out reverse';
+                    setTimeout(() => toast.remove(), 300);
+                }, 3000);
+            }
         }
     </script>
 </body>

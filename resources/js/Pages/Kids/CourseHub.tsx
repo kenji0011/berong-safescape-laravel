@@ -26,14 +26,14 @@ interface CourseHubProps {
 }
 
 // Static metadata per module (game names, icons, badges) since these are hardcoded per module
-const MODULE_META: Record<number, { title: string; gameIcon: string; gameLabel: string; bgImage: string; description: string; badge: { name: string; icon: string } }> = {
+const MODULE_META: Record<number, { title: string; gameIcon: string; gameLabel: string; bgImage: string; description: string; badge: { name: string; image: string } }> = {
   1: { 
     title: "Fire is a Tool, Not a Toy",
     gameIcon: "🎮", 
     gameLabel: "Element Mixer Lab", 
     bgImage: "/images/kids/module1.png", 
     description: "Learn what fire needs to burn with the Fire Triangle. Understand why matches and lighters are tools for grown-ups only.",
-    badge: { name: "Fire Triangle", icon: "🔥" } 
+    badge: { name: "Fire Triangle", image: "/fire_hall.png" } 
   },
   2: { 
     title: "The School Drill",
@@ -41,7 +41,7 @@ const MODULE_META: Record<number, { title: string; gameIcon: string; gameLabel: 
     gameLabel: "Rhythm Marshal Game", 
     bgImage: "/images/kids/module2.png", 
     description: "Master the fire drill! Learn to recognize alarms, find the Red Box, and lead your classmates to safety.",
-    badge: { name: "Safety Leader", icon: "🛡️" } 
+    badge: { name: "Safety Leader", image: "/shield_hall.png" } 
   },
   3: { 
     title: "The Escape Plan",
@@ -49,7 +49,7 @@ const MODULE_META: Record<number, { title: string; gameIcon: string; gameLabel: 
     gameLabel: "Smoke Labyrinth Game", 
     bgImage: "/images/kids/module3.png", 
     description: "Create your family escape plan with two ways out. Learn to check doors and find your meeting spot.",
-    badge: { name: "Plan Master", icon: "📢" } 
+    badge: { name: "Plan Master", image: "/plan_hall.png" } 
   },
   4: { 
     title: "Get Low and Go!",
@@ -57,7 +57,7 @@ const MODULE_META: Record<number, { title: string; gameIcon: string; gameLabel: 
     gameLabel: "Smoke Physics", 
     bgImage: "/images/kids/module4.png", 
     description: "Discover why smoke is dangerous and learn the life-saving crawling technique to escape safely.",
-    badge: { name: "Low & Go!", icon: "🏃" } 
+    badge: { name: "Low & Go!", image: "/low_hall.png" } 
   },
   5: { 
     title: "The Ultimate Defense",
@@ -65,7 +65,7 @@ const MODULE_META: Record<number, { title: string; gameIcon: string; gameLabel: 
     gameLabel: "Hero Certificate", 
     bgImage: "/images/kids/module5.png", 
     description: "Master Stop, Drop & Roll! Take the final exam and earn your official Fire Safety Hero Certificate!",
-    badge: { name: "Home Guard", icon: "🏘️" } 
+    badge: { name: "Home Guard", image: "/home_hall.png" } 
   },
 }
 
@@ -313,7 +313,11 @@ const CourseHubPage = ({ initialModules }: CourseHubProps) => {
                                 ? "bg-amber-50 border-amber-100 text-amber-700 dark:bg-amber-950/20 dark:border-amber-900/30 dark:text-amber-500" 
                                 : "bg-slate-50 border-slate-100 text-slate-400 dark:bg-slate-900/30 dark:border-slate-800 dark:text-slate-600"
                             )}>
-                              <span>{meta.badge.icon}</span>
+                              <img 
+                                src={meta.badge.image} 
+                                className={cn("h-4 w-4 object-contain", !module.isCompleted && "filter grayscale opacity-45")} 
+                                alt="Badge" 
+                              />
                               <span>{meta.badge.name} Badge</span>
                             </div>
                           )}

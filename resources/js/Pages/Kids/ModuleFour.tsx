@@ -1,22 +1,31 @@
-import React, { useEffect, useState } from "react"
-import { Head, Link } from '@inertiajs/react'
+import React, { useEffect, useState, useMemo } from "react"
+import { Head, Link, router } from '@inertiajs/react'
 import DashboardLayout from "@/Layouts/DashboardLayout"
-import { ArrowLeft, BookOpen, Flame, Trophy } from "lucide-react"
+import { ArrowLeft, BookOpen, Flame, Trophy, CheckCircle, Info } from "lucide-react"
 import axios from "axios"
 import { cn } from "@/lib/utils"
 import { ModuleNavigation } from "@/Components/module-navigation"
 
-const ModuleFourPage = ({ moduleNum }: { moduleNum: number }) => {
+const ModuleFourPage = ({ moduleNum, initialProgress }: { moduleNum: number; initialProgress?: any }) => {
   const currentModule = moduleNum || 4
   const [iframeLoading, setIframeLoading] = useState(true)
-  const [moduleCompleted, setModuleCompleted] = useState(false)
+  const [moduleCompleted, setModuleCompleted] = useState(initialProgress?.completedModules?.includes(currentModule) || false)
   const [saving, setSaving] = useState(false)
-  const [fullProgress, setFullProgress] = useState<any>(null)
+  const [fullProgress, setFullProgress] = useState<any>(initialProgress || null)
   const completedRef = React.useRef(moduleCompleted)
   const badgeAwardedRef = React.useRef(false)
   const quizSubmittedRef = React.useRef(false)
   const syncingRef = React.useRef(false)
   const iframeRef = React.useRef<HTMLIFrameElement>(null)
+  const [toast, setToast] = useState<{ msg: string; type: "success" | "info" } | null>(null)
+
+  // Automatically clear toast
+  useEffect(() => {
+    if (toast) {
+      const timer = setTimeout(() => setToast(null), 3000)
+      return () => clearTimeout(timer)
+    }
+  }, [toast])
 
   useEffect(() => {
     completedRef.current = moduleCompleted
@@ -66,7 +75,7 @@ const ModuleFourPage = ({ moduleNum }: { moduleNum: number }) => {
         progress: fullProgress
       }, '*');
     }
-  }, [fullProgress, iframeLoading]);
+  }, [iframeLoading]);
 
   useEffect(() => {
     const handleMessage = async (e: MessageEvent) => {
@@ -87,12 +96,10 @@ const ModuleFourPage = ({ moduleNum }: { moduleNum: number }) => {
 
       // 2. Section completed - sync to backend
       if (data.type === 'SAFESCAPE_SECTION_COMPLETE' && data.moduleNum === currentModule) {
-        if (syncingRef.current) return;
         try {
           // Prevent redundant sync if already marked completed locally
           if (data.completed && completedRef.current) return;
 
-          syncingRef.current = true;
           console.log("Syncing section complete:", data);
           const response = await axios.post("/api/kids/safescape", {
             moduleNum: data.moduleNum,
@@ -105,12 +112,10 @@ const ModuleFourPage = ({ moduleNum }: { moduleNum: number }) => {
           if (data.completed && !completedRef.current) {
             console.log(`Module ${currentModule} marked as completed!`);
             setModuleCompleted(true)
-            loadState() // Sync full state
           }
+          loadState() // Sync full state in real-time for progress bar & checkboxes
         } catch (error: any) {
           console.error("Failed to sync progress:", error.response?.data || error.message)
-        } finally {
-          syncingRef.current = false;
         }
       }
 
@@ -142,11 +147,32 @@ const ModuleFourPage = ({ moduleNum }: { moduleNum: number }) => {
           quizSubmittedRef.current = false;
         }
       }
+
+      // 4. Show Toast notification
+      if (data.type === 'SAFESCAPE_SHOW_TOAST') {
+        setToast({ msg: data.message, type: data.toastType });
+      }
     };
 
     window.addEventListener('message', handleMessage);
     return () => window.removeEventListener('message', handleMessage);
   }, [fullProgress, currentModule]);
+
+  const progressPercent = useMemo(() => {
+    if (moduleCompleted) return 100;
+    const moduleData = fullProgress?.sectionData?.module4 || {};
+    
+    const cardsCompleted = Array.isArray(moduleData.cardsCompleted) 
+      ? moduleData.cardsCompleted.filter(Boolean).length 
+      : (moduleData.allCardsCompleted ? 5 : 0);
+      
+    const tfCompleted = Array.isArray(moduleData.tfAnswers)
+      ? moduleData.tfAnswers.filter(val => val !== null && val !== undefined && val !== '').length
+      : (moduleData.finalCheckPassed ? 5 : 0);
+      
+    const percent = (cardsCompleted + tfCompleted) * 10;
+    return Math.min(Math.max(percent, 0), 100);
+  }, [fullProgress, moduleCompleted]);
 
   // Sync theme reactively
   useEffect(() => {
@@ -212,11 +238,12 @@ const ModuleFourPage = ({ moduleNum }: { moduleNum: number }) => {
         iframeAny.localState.quizPassed = true;
         iframeAny.localState.videoWatched = true;
         iframeAny.localState.isExamPassed = true;
+        iframeAny.localState.finalCheckPassed = true;
       }
       
       const examResult = iframeDoc.getElementById('exam-result') || iframeDoc.getElementById('check-result');
-      if (examResult && typeof iframeAny.renderQuiz === 'function') {
-        iframeAny.renderQuiz();
+      if (examResult && typeof iframeAny.renderTFQuestions === 'function') {
+        iframeAny.renderTFQuestions();
       }
       
       if (typeof iframeAny.updateSectionStates === 'function') {
@@ -245,33 +272,56 @@ const ModuleFourPage = ({ moduleNum }: { moduleNum: number }) => {
       iframeDoc.body.style.backgroundColor = 'transparent'; 
       iframeDoc.documentElement.style.overflow = 'hidden';
 
+      // Play tap sound on button/link clicks inside iframe
+      iframeDoc.addEventListener('click', (ev) => {
+        const target = ev.target as HTMLElement;
+        const isClickable = target.closest('button') || 
+                            target.closest('a') || 
+                            target.closest('[role="button"]') || 
+                            target.closest('.cursor-pointer') ||
+                            target.closest('.ss-btn-premium') ||
+                            target.closest('.hazard-box') ||
+                            target.closest('.sdr-word');
+                            
+        if (isClickable) {
+          new Audio('/sounds/tap.mp3').play().catch(() => {});
+        }
+      });
+
       const nav = iframeDoc.querySelector('.ss-nav') as HTMLElement;
       if (nav) nav.style.display = 'none';
       
       // Dynamically resize iframe to content height without breaking scroll momentum
       const resizeIframe = () => {
-        if (!iframeDoc.documentElement) return;
-        
-        const main = iframeDoc.querySelector('main');
-        const footer = iframeDoc.querySelector('footer');
-        
-        if (main && footer) {
-          const winScroll = iframeDoc.defaultView?.scrollY || 0;
-          const bottom = Math.max(
-            main.getBoundingClientRect().bottom + winScroll,
-            footer.getBoundingClientRect().bottom + winScroll
-          );
+        try {
+          const body = iframeDoc.body;
+          if (!body) return;
           
-          const newHeight = bottom + 20; // 20px safety buffer
+          let maxBottom = 300; // Safe default minimum
+          
+          // Calculate natural page boundary based on flowable elements
+          for (let i = 0; i < body.children.length; i++) {
+            const child = body.children[i] as HTMLElement;
+            if (!child) continue;
+            
+            // Skip absolute/fixed elements like overlays, modals, and toast notifications
+            const style = iframeDoc.defaultView?.getComputedStyle(child);
+            if (style && (style.position === 'absolute' || style.position === 'fixed')) {
+              continue;
+            }
+            
+            const bottom = child.offsetTop + child.offsetHeight;
+            if (bottom > maxBottom) {
+              maxBottom = bottom;
+            }
+          }
+          
+          const newHeight = maxBottom + 24; // 24px safety buffer
           const currentHeight = parseInt(iframe.style.height) || 0;
-          
-          if (Math.abs(newHeight - currentHeight) > 10) {
+          if (newHeight > 0 && Math.abs(newHeight - currentHeight) > 15) {
             iframe.style.height = `${newHeight}px`;
           }
-        } else {
-          // Fallback if structure is missing
-          iframe.style.height = `${iframeDoc.body.scrollHeight}px`;
-        }
+        } catch (e) {}
       };
 
       const checkForCompletion = () => {
@@ -292,13 +342,6 @@ const ModuleFourPage = ({ moduleNum }: { moduleNum: number }) => {
 
       checkForCompletion();
 
-      const resizeInterval = setInterval(() => {
-        resizeIframe();
-        checkForCompletion();
-      }, 1000);
-
-      iframe.addEventListener('beforeunload', () => clearInterval(resizeInterval), { once: true });
-
       const links = iframeDoc.querySelectorAll('a');
       links.forEach(link => {
         link.addEventListener('click', (ev) => {
@@ -314,9 +357,9 @@ const ModuleFourPage = ({ moduleNum }: { moduleNum: number }) => {
             ev.preventDefault();
             const match = href.match(/module_(\d+)/);
             if (match) {
-              window.parent.location.href = `/kids/safescape/${match[1]}`;
+              router.visit(`/kids/safescape/${match[1]}`);
             } else {
-              window.parent.location.href = '/kids/safescape';
+              router.visit('/kids/safescape');
             }
           }
         });
@@ -331,7 +374,7 @@ const ModuleFourPage = ({ moduleNum }: { moduleNum: number }) => {
       <Head title={`Module ${currentModule} | SafeScape`} />
 
       {/* ── Sub Header ── */}
-      <div className="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 py-3 px-4 sm:px-6 lg:px-8 shadow-sm z-20 sticky top-[64px] sm:top-[72px] transition-colors">
+      <div className="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 py-3 px-4 sm:px-6 lg:px-8 shadow-sm z-[50] sticky top-[64px] sm:top-[72px] ss-sub-header transition-colors">
         <div className="max-w-7xl mx-auto flex flex-row items-center justify-between gap-2 sm:gap-4">
           <div className="flex items-center gap-2 sm:gap-4">
             <Link href="/kids/safescape" className="inline-flex items-center justify-center gap-2 p-2 sm:px-4 sm:py-2 bg-white dark:bg-slate-800 rounded-full text-slate-700 dark:text-slate-300 font-bold hover:text-slate-900 dark:hover:text-white border-[3px] border-slate-200 dark:border-slate-700 shadow-[0_3px_0_#cbd5e1] dark:shadow-[0_3px_0_#0f172a] hover:-translate-y-0.5 active:translate-y-1 active:shadow-none transition-all text-sm whitespace-nowrap"><ArrowLeft className="h-4 w-4" /><span className="hidden sm:inline">Back to Dashboard</span></Link>
@@ -345,7 +388,11 @@ const ModuleFourPage = ({ moduleNum }: { moduleNum: number }) => {
             <ModuleNavigation currentModule={currentModule} completedModules={fullProgress?.completedModules || []} />
             {/* Progress */}
             <div className="text-sm font-bold text-slate-500 dark:text-slate-400 bg-slate-50 dark:bg-slate-900/50 px-4 py-2 rounded-xl border border-slate-200 dark:border-slate-800 whitespace-nowrap hidden lg:block transition-colors">
-              Status: <span className={cn("font-black ml-1", moduleCompleted ? "text-green-500" : "text-[#ff4b3e]")}>{moduleCompleted ? "Completed ✓" : "In Progress"}</span>
+              {progressPercent === 100 ? (
+                <>Status: <span className="text-green-500 font-black ml-1">Completed ✓</span></>
+              ) : (
+                <>Progress: <span className="text-[#ff4b3e] font-black ml-1">{progressPercent}%</span></>
+              )}
             </div>
           </div>
         </div>
@@ -375,12 +422,12 @@ const ModuleFourPage = ({ moduleNum }: { moduleNum: number }) => {
 
         <iframe 
           ref={iframeRef}
-          src={`/modules/module_${currentModule}/index.html`}
+          src={`/modules/module_${currentModule}/index.html?v=4`}
           className={cn(
             "w-full border-none m-0 p-0 transition-opacity duration-700",
             iframeLoading ? "opacity-0" : "opacity-100"
           )}
-          style={{ minHeight: '800px' }}
+          style={{ minHeight: '300px' }}
           onLoad={handleIframeLoad}
           loading="eager"
           allow="fullscreen; autoplay; encrypted-media"
@@ -388,6 +435,22 @@ const ModuleFourPage = ({ moduleNum }: { moduleNum: number }) => {
         />
 
       </div>
+
+      {/* ── Toast ── */}
+      {toast && (
+        <div className={cn(
+          "fixed top-20 left-1/2 -translate-x-1/2 right-auto bottom-auto md:top-28 md:right-8 md:left-auto md:translate-x-0 z-[200] flex items-center gap-3 px-5 py-3.5 rounded-2xl shadow-2xl text-slate-800 dark:text-white font-extrabold text-xs sm:text-sm transition-all animate-in fade-in slide-in-from-top-4 duration-300 bg-white dark:bg-slate-900 border-[3px] shadow-slate-200 dark:shadow-slate-950",
+          toast.type === "success" ? "border-emerald-500" : "border-blue-500"
+        )}>
+          {toast.type === "success" ? (
+            <CheckCircle className="h-5 w-5 text-emerald-500 dark:text-emerald-400 shrink-0" />
+          ) : (
+            <Info className="h-5 w-5 text-blue-500 dark:text-blue-400 shrink-0" />
+          )}
+          <span>{toast.msg}</span>
+        </div>
+      )}
+
     </div>
   )
 }

@@ -231,12 +231,13 @@ const VideosPage = ({ initialVideos, watchedVideoIds }: VideosPageProps) => {
           
           {/* Premium Header Section */}
           <div className="relative mb-12 group">
-            <div className="absolute -inset-2 bg-primary/20 rounded-[2.5rem] group-hover:opacity-30 transition-opacity duration-500"></div>
+            {/* Background Glow */}
+            <div className="absolute -inset-2 bg-red-500/10 rounded-[2.5rem] opacity-20 group-hover:opacity-30 transition-opacity duration-500"></div>
             
             <div className="relative bg-white dark:bg-slate-800 rounded-[2rem] p-5 sm:p-8 shadow-xl border-2 border-slate-50 dark:border-slate-700 overflow-hidden transition-colors duration-500">
                {/* Decorative floating elements */}
                <div className="hidden sm:block absolute top-0 right-0 p-8 opacity-10 rotate-12 group-hover:rotate-0 transition-transform duration-700">
-                  <div className="text-8xl sm:text-9xl font-black">🎬</div>
+                  <img src="/intel_hall.png" className="h-24 w-24 sm:h-36 sm:w-36 object-contain" alt="" />
                </div>
                <div className="absolute -bottom-4 -left-4 w-24 h-24 bg-red-50 dark:bg-red-900/10 rounded-full blur-2xl opacity-60"></div>
                
@@ -261,8 +262,10 @@ const VideosPage = ({ initialVideos, watchedVideoIds }: VideosPageProps) => {
                      <h1 className="text-2xl sm:text-4xl font-black text-slate-800 dark:text-white tracking-tight mb-1 sm:mb-2 uppercase">
                         Fire Safety <span className="text-primary">Videos</span>
                      </h1>
-                     <p className="text-slate-500 dark:text-slate-400 font-bold text-sm sm:text-base max-w-lg leading-relaxed">
-                        Watch all fire safety videos to the end to earn your <span className="text-red-600 font-black">Intel Analyst Badge</span>! 🎬
+                     <p className="text-slate-500 dark:text-slate-400 font-bold text-sm sm:text-base max-w-lg leading-relaxed flex items-center flex-wrap gap-1.5">
+                        <span>Watch all fire safety videos to the end to earn your</span>
+                        <span className="text-red-600 font-black">Intel Analyst Badge</span>!
+                        <img src="/intel_hall.png" className="h-5 w-5 object-contain inline-block align-middle" alt="Intel Analyst" />
                      </p>
                   </div>
                </div>

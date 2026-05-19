@@ -15,8 +15,48 @@
         })(console.warn);
     </script>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+        }
+    </script>
+    <script>
+        // Parent class sync logic (Theme & Accessibility)
+        (function() {
+            const syncParentClasses = () => {
+                try {
+                    const parentDoc = window.parent.document.documentElement || window.parent.document.body;
+                    
+                    // Sync Dark Mode
+                    const isDark = parentDoc.classList.contains('dark');
+                    if (isDark) {
+                        document.documentElement.classList.add('dark');
+                    } else {
+                        document.documentElement.classList.remove('dark');
+                    }
+                    
+                    // Sync Dyslexia Font
+                    const isDyslexia = parentDoc.classList.contains('dyslexia-mode');
+                    if (isDyslexia) {
+                        document.documentElement.classList.add('dyslexia-mode');
+                    } else {
+                        document.documentElement.classList.remove('dyslexia-mode');
+                    }
+                } catch (e) {
+                    // Fallback
+                }
+            };
+            
+            syncParentClasses();
+            try {
+                const observer = new MutationObserver(syncParentClasses);
+                observer.observe(window.parent.document.documentElement, { attributes: true, attributeFilter: ['class'] });
+            } catch (e) {}
+            setInterval(syncParentClasses, 1000);
+        })();
+    </script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="../css/shared.css?v=3">
+    <link rel="stylesheet" href="../css/shared.css?v=4">
 
     <style>
         /* --- Custom Animations --- */
@@ -113,8 +153,32 @@
             transition: all 0.2s;
         }
 
-        .quiz-option:hover {
+        .quiz-option:hover:not(:disabled) {
             transform: translateX(5px);
+            background-color: #f8fafc !important;
+            color: #334155 !important;
+            border-color: #cbd5e1 !important;
+        }
+
+        .dark .quiz-option:hover:not(:disabled) {
+            background-color: #1e293b !important;
+            color: #f1f5f9 !important;
+            border-color: #475569 !important;
+        }
+
+        /* Ensure selected yellow state overrides standard hover */
+        .quiz-option.border-yellow-500:hover:not(:disabled),
+        .quiz-option.border-yellow-400:hover:not(:disabled) {
+            background-color: #fef9c3 !important;
+            color: #a16207 !important;
+            border-color: #eab308 !important;
+        }
+
+        .dark .quiz-option.border-yellow-500:hover:not(:disabled),
+        .dark .quiz-option.border-yellow-400:hover:not(:disabled) {
+            background-color: rgba(66, 32, 6, 0.4) !important;
+            color: #fde047 !important;
+            border-color: #eab308 !important;
         }
 
         .option-correct {
@@ -430,11 +494,36 @@
             section2Read: false,
             elementMixerCompleted: false,
             quizScore: 0,
-            quizPassed: false
+            quizPassed: false,
+            quizAnswers: [null, null, null, null, null]
         };
 
         // --- INITIALIZATION ---
         document.addEventListener('DOMContentLoaded', () => {
+            // Video orientation lock logic
+            const videoEl = document.getElementById('module-video');
+            if (videoEl) {
+                const lockLandscape = () => {
+                    if (screen.orientation && screen.orientation.lock) {
+                        screen.orientation.lock('landscape').catch(e => {});
+                    }
+                };
+                const unlockOrientation = () => {
+                    if (screen.orientation && screen.orientation.unlock) {
+                        screen.orientation.unlock();
+                    }
+                };
+                document.addEventListener('fullscreenchange', () => {
+                    if (document.fullscreenElement === videoEl) {
+                        lockLandscape();
+                    } else {
+                        unlockOrientation();
+                    }
+                });
+                videoEl.addEventListener('webkitbeginfullscreen', lockLandscape);
+                videoEl.addEventListener('webkitendfullscreen', unlockOrientation);
+            }
+
             loadProgress();
 
             // Listen for updates from API sync
@@ -615,7 +704,7 @@
                 // Mark game as completed
                 if (!localState.elementMixerCompleted) {
                     SafeScapeProgress.completeSection(moduleNum, 'elementMixerCompleted', true);
-                    showToast('success', '🎉 Element Mixer completed! Take the quiz to finish Module 1.');
+                    showToast('success', 'Element Mixer completed! Take the quiz to finish Module 1.');
                 }
             } else {
                 flame.classList.remove('active');
@@ -687,10 +776,34 @@
                 document.getElementById('quiz-result').classList.remove('hidden');
                 document.getElementById('btn-retake').classList.add('hidden');
                 document.getElementById('btn-review').classList.remove('hidden');
-                document.getElementById('result-icon').innerText = "🏆";
-                document.getElementById('result-title').innerText = "FIRE SAFETY CERTIFIED!";
-                document.getElementById('result-title').className = "ss-completion-title";
-                document.getElementById('result-desc').innerText = "You have already completed this quiz!";
+                
+                const score = localState.quizScore || 0;
+                const icon = document.getElementById('result-icon');
+                const title = document.getElementById('result-title');
+                const desc = document.getElementById('result-desc');
+
+                if (score === 5) {
+                    icon.innerText = "🏆";
+                    title.innerText = "FIRE SAFETY CHAMPION!";
+                    title.className = "ss-completion-title !text-yellow-500";
+                    desc.innerText = "You have already completed this quiz with a perfect score!";
+                } else if (score === 4) {
+                    icon.innerText = "🎉";
+                    title.innerText = "FIRE SAFETY CERTIFIED!";
+                    title.className = "ss-completion-title !text-green-500";
+                    desc.innerText = "You have already completed this quiz!";
+                } else if (score >= 1) {
+                    icon.innerText = "👍";
+                    title.innerText = "GREAT EFFORT!";
+                    title.className = "ss-completion-title !text-orange-500";
+                    desc.innerText = "You have already completed this quiz! Review your answers below to keep practicing.";
+                } else {
+                    icon.innerText = "💡";
+                    title.innerText = "KEEP LEARNING!";
+                    title.className = "ss-completion-title !text-blue-500";
+                    desc.innerText = "You have already completed this quiz! Discover the correct tips below.";
+                }
+
                 document.getElementById('btn-next-module').classList.remove('hidden');
                 // Render questions with correct answers for review
                 container.innerHTML = '';
@@ -700,14 +813,23 @@
                     qDiv.innerHTML = `<h3 class="text-slate-800 dark:text-white font-black mb-4 text-lg transition-colors">${idx + 1}. ${item.q}</h3>`;
                     const optionsDiv = document.createElement('div');
                     optionsDiv.className = "grid grid-cols-1 gap-3";
+                    
+                    const userAnswers = localState.quizAnswers || [null, null, null, null, null];
+                    const selectedIdx = userAnswers[idx];
+                    const correctIdx = item.correct;
+
                     item.options.forEach((opt, optIdx) => {
                         const btn = document.createElement('button');
                         btn.disabled = true;
-                        btn.innerText = opt;
-                        if (optIdx === item.correct) {
-                            btn.className = "quiz-option w-full text-left p-4 rounded-xl border-2 font-bold transition-all bg-green-500 border-green-600 text-white shadow-sm";
+                        if (optIdx === correctIdx) {
+                            btn.className = "quiz-option w-full text-left p-4 rounded-xl border-2 font-bold transition-all bg-green-500 border-green-600 text-white shadow-sm flex items-center justify-between gap-4";
+                            btn.innerHTML = `<span>${opt}</span><span class="shrink-0 bg-green-700/50 text-white border border-green-400/30 text-[10px] sm:text-xs font-black px-2.5 py-0.5 sm:px-3 sm:py-1 rounded-full uppercase tracking-wider">CORRECT ✓</span>`;
+                        } else if (selectedIdx !== null && optIdx === selectedIdx) {
+                            btn.className = "quiz-option w-full text-left p-4 rounded-xl border-2 font-bold transition-all bg-red-800 border-red-600 text-white opacity-70 flex items-center justify-between gap-4";
+                            btn.innerHTML = `<span>${opt}</span><span class="shrink-0 bg-red-900/50 text-white border border-red-500/30 text-[10px] sm:text-xs font-black px-2.5 py-0.5 sm:px-3 sm:py-1 rounded-full uppercase tracking-wider">YOUR ANSWER ✗</span>`;
                         } else {
                             btn.className = "quiz-option w-full text-left p-4 rounded-xl border-2 border-slate-200 dark:border-slate-800 text-slate-400 dark:text-slate-600 font-bold bg-white dark:bg-slate-950 opacity-50 cursor-not-allowed transition-colors";
+                            btn.innerHTML = `<span>${opt}</span>`;
                         }
                         optionsDiv.appendChild(btn);
                     });
@@ -724,8 +846,10 @@
             document.getElementById('btn-next-module').classList.add('hidden');
             container.innerHTML = '';
             container.classList.remove('hidden');
+            
             correctCount = 0;
             answeredCount = 0;
+            selectedAnswers = [null, null, null, null, null];
 
             quizData.forEach((item, idx) => {
                 const qDiv = document.createElement('div');
@@ -739,36 +863,102 @@
                     const btn = document.createElement('button');
                     btn.className = "quiz-option w-full text-left p-4 rounded-xl border-2 border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 font-bold bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800 shadow-sm hover:-translate-y-0.5 active:translate-y-1 active:shadow-none transition-all";
                     btn.innerText = opt;
-                    btn.onclick = () => checkQuizAnswer(btn, optIdx, item.correct, idx);
+                    btn.onclick = () => selectQuizOption(idx, optIdx);
                     optionsDiv.appendChild(btn);
                 });
 
                 qDiv.appendChild(optionsDiv);
                 container.appendChild(qDiv);
             });
+
+            // Append submit button at the bottom of quiz-container
+            const submitBtnContainer = document.createElement('div');
+            submitBtnContainer.id = "submit-btn-container";
+            submitBtnContainer.className = "flex justify-center pt-6";
+            submitBtnContainer.innerHTML = `
+                <button id="btn-submit-quiz" onclick="submitQuizAnswers()" disabled 
+                    class="font-black px-8 sm:px-10 py-3 sm:py-4 rounded-full uppercase tracking-wide text-sm sm:text-base transition-all flex items-center gap-2 bg-slate-200 dark:bg-slate-800 text-slate-400 dark:text-slate-600 cursor-not-allowed border-[3px] border-slate-300 dark:border-slate-700">
+                    <i class="fa-solid fa-shield"></i> Submit Answers
+                </button>
+            `;
+            container.appendChild(submitBtnContainer);
         }
 
-        function checkQuizAnswer(btn, selectedIdx, correctIdx, qIdx) {
-            const parent = btn.parentElement;
-            const allBtns = parent.querySelectorAll('button');
-            allBtns.forEach(b => b.disabled = true);
+        let selectedAnswers = [null, null, null, null, null];
 
-            if (selectedIdx === correctIdx) {
-                btn.classList.add('option-correct');
-                correctCount++;
-            } else {
-                btn.classList.add('option-wrong');
-                allBtns[correctIdx].classList.add('option-correct');
-            }
+        function selectQuizOption(qIdx, optIdx) {
+            selectedAnswers[qIdx] = optIdx;
+            
+            // Re-render options only for this question
+            const qDivs = document.getElementById('quiz-container').children;
+            const qDiv = qDivs[qIdx];
+            const buttons = qDiv.querySelectorAll('.quiz-option');
+            
+            buttons.forEach((btn, idx) => {
+                if (idx === optIdx) {
+                    btn.className = "quiz-option w-full text-left p-4 rounded-xl border-2 border-yellow-500 dark:border-yellow-400 text-yellow-700 dark:text-yellow-300 font-bold bg-yellow-50 dark:bg-yellow-950/40 shadow-sm hover:-translate-y-0.5 active:translate-y-1 active:shadow-none transition-all ring-2 ring-yellow-400/30";
+                } else {
+                    btn.className = "quiz-option w-full text-left p-4 rounded-xl border-2 border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 font-bold bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800 shadow-sm hover:-translate-y-0.5 active:translate-y-1 active:shadow-none transition-all";
+                }
+            });
 
-            answeredCount++;
-            if (answeredCount === quizData.length) {
-                setTimeout(() => {
-                    showQuizResult();
-                    // Save quiz result to database
-                    SafeScapeProgress.submitQuizResult(moduleNum, correctCount, 5);
-                }, 1000);
+            // Update submit button state
+            const submitBtn = document.getElementById('btn-submit-quiz');
+            if (submitBtn) {
+                const allAnswered = selectedAnswers.every(ans => ans !== null);
+                if (allAnswered) {
+                    submitBtn.disabled = false;
+                    submitBtn.className = "font-black px-8 sm:px-10 py-3 sm:py-4 rounded-full uppercase tracking-wide text-sm sm:text-base transition-all flex items-center gap-2 bg-yellow-400 text-red-600 shadow-[0_4px_0_#b45309] hover:-translate-y-0.5 active:translate-y-1 active:shadow-none border-[3px] border-white cursor-pointer";
+                } else {
+                    submitBtn.disabled = true;
+                    submitBtn.className = "font-black px-8 sm:px-10 py-3 sm:py-4 rounded-full uppercase tracking-wide text-sm sm:text-base transition-all flex items-center gap-2 bg-slate-200 dark:bg-slate-800 text-slate-400 dark:text-slate-600 cursor-not-allowed border-[3px] border-slate-300 dark:border-slate-700";
+                }
             }
+        }
+
+        function submitQuizAnswers() {
+            // Disable all options
+            const allButtons = document.getElementById('quiz-container').querySelectorAll('.quiz-option');
+            allButtons.forEach(btn => btn.disabled = true);
+
+            // Hide the submit button container
+            const submitContainer = document.getElementById('submit-btn-container');
+            if (submitContainer) submitContainer.classList.add('hidden');
+
+            correctCount = 0;
+
+            quizData.forEach((item, qIdx) => {
+                const selectedIdx = selectedAnswers[qIdx];
+                const correctIdx = item.correct;
+                
+                const qDivs = document.getElementById('quiz-container').children;
+                const qDiv = qDivs[qIdx];
+                const buttons = qDiv.querySelectorAll('.quiz-option');
+
+                buttons.forEach((btn, optIdx) => {
+                    btn.className = "quiz-option w-full text-left p-4 rounded-xl border-2 font-bold cursor-not-allowed transition-colors flex items-center justify-between gap-4";
+                    
+                    if (optIdx === correctIdx) {
+                        btn.classList.add('bg-green-500', 'border-green-600', 'text-white', 'shadow-sm');
+                        btn.innerHTML = `<span>${item.options[optIdx]}</span><span class="shrink-0 bg-green-700/50 text-white border border-green-400/30 text-[10px] sm:text-xs font-black px-2.5 py-0.5 sm:px-3 sm:py-1 rounded-full uppercase tracking-wider">CORRECT ✓</span>`;
+                    } else if (optIdx === selectedIdx) {
+                        btn.classList.add('bg-red-800', 'border-red-600', 'text-white', 'opacity-70');
+                        btn.innerHTML = `<span>${item.options[optIdx]}</span><span class="shrink-0 bg-red-900/50 text-white border border-red-500/30 text-[10px] sm:text-xs font-black px-2.5 py-0.5 sm:px-3 sm:py-1 rounded-full uppercase tracking-wider">YOUR ANSWER ✗</span>`;
+                    } else {
+                        btn.classList.add('border-slate-200', 'dark:border-slate-700', 'text-slate-400', 'dark:text-slate-500', 'bg-slate-50', 'dark:bg-slate-900', 'opacity-50');
+                        btn.innerHTML = `<span>${item.options[optIdx]}</span>`;
+                    }
+                });
+
+                if (selectedIdx === correctIdx) {
+                    correctCount++;
+                }
+            });
+
+            setTimeout(() => {
+                showQuizResult();
+                SafeScapeProgress.submitQuizResult(moduleNum, correctCount, 5);
+            }, 1000);
         }
 
         function showQuizResult() {
@@ -782,29 +972,60 @@
             resultDiv.classList.remove('hidden');
             localState.quizScore = correctCount;
 
-            if (correctCount >= 4) {
-                icon.innerText = "🏆";
-                title.innerText = "FIRE SAFETY CERTIFIED!";
-                title.className = "ss-completion-title";
-                desc.innerText = `You scored ${correctCount}/5. You are a true Fire Safety Hero!`;
+            // Hide questions, show result card
+            document.getElementById('quiz-container').classList.add('hidden');
+            document.getElementById('final-quiz').querySelector('.text-center').classList.add('hidden');
 
+            if (correctCount === 5) {
+                icon.innerText = "🏆";
+                title.innerText = "FIRE SAFETY CHAMPION!";
+                title.className = "ss-completion-title !text-yellow-500";
+                desc.innerText = `You scored 5/5. A perfect score! You are an absolute master of fire safety rules!`;
                 nextBtn.classList.remove('hidden');
                 document.getElementById('btn-review').classList.remove('hidden');
-                // Hide questions, show result card
-                document.getElementById('quiz-container').classList.add('hidden');
-                document.getElementById('final-quiz').querySelector('.text-center').classList.add('hidden');
+                retakeBtn.classList.add('hidden');
+                
+                SafeScapeProgress.completeSection(moduleNum, 'quizAnswers', selectedAnswers);
+                SafeScapeProgress.completeSection(moduleNum, 'quizScore', correctCount);
 
                 if (!localState.quizPassed) {
                     SafeScapeProgress.completeSection(moduleNum, 'quizPassed', true);
-                    showToast('success', '🎉 Module 1 complete! Module 2 unlocked!');
+                    showToast('success', 'Module 1 complete! Module 2 unlocked!');
                     new Audio('../../sounds/win.mp3').play().catch(e => {});
                 }
-            } else {
-                icon.innerText = "⚠️";
-                title.innerText = "KEEP PRACTICING";
-                title.className = "ss-completion-title !text-red-500";
-                desc.innerText = `You scored ${correctCount}/5. You need 4/5 to pass.`;
+            } else if (correctCount === 4) {
+                icon.innerText = "🎉";
+                title.innerText = "FIRE SAFETY CERTIFIED!";
+                title.className = "ss-completion-title !text-green-500";
+                desc.innerText = `You scored 4/5. Well done! You have successfully completed this module quiz!`;
+                nextBtn.classList.remove('hidden');
+                document.getElementById('btn-review').classList.remove('hidden');
+                retakeBtn.classList.add('hidden');
+
+                SafeScapeProgress.completeSection(moduleNum, 'quizAnswers', selectedAnswers);
+                SafeScapeProgress.completeSection(moduleNum, 'quizScore', correctCount);
+
+                if (!localState.quizPassed) {
+                    SafeScapeProgress.completeSection(moduleNum, 'quizPassed', true);
+                    showToast('success', 'Module 1 complete! Module 2 unlocked!');
+                    new Audio('../../sounds/win.mp3').play().catch(e => {});
+                }
+            } else if (correctCount >= 1) {
+                icon.innerText = "👍";
+                title.innerText = "GREAT EFFORT!";
+                title.className = "ss-completion-title !text-orange-500";
+                desc.innerText = `You scored ${correctCount}/5. You need 4/5 to pass. Review your answers below to keep practicing!`;
                 retakeBtn.classList.remove('hidden');
+                document.getElementById('btn-review').classList.remove('hidden');
+                nextBtn.classList.add('hidden');
+            } else {
+                icon.innerText = "💡";
+                title.innerText = "KEEP LEARNING!";
+                title.className = "ss-completion-title !text-blue-500";
+                desc.innerText = `You scored 0/5. You need 4/5 to pass. Click 'Review Answers' below to discover the correct fire safety tips.`;
+                retakeBtn.classList.remove('hidden');
+                document.getElementById('btn-review').classList.remove('hidden');
+                nextBtn.classList.add('hidden');
             }
         }
 

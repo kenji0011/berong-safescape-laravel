@@ -41,7 +41,7 @@ export const FeedbackWidget = () => {
     }
 
     return (
-        <div className="fixed bottom-6 left-6 sm:left-8 z-50">
+        <div className="fixed bottom-6 left-6 sm:left-8 z-50 ss-feedback-widget">
             {/* Toggle Button */}
             {!isOpen && (
                 <button

@@ -15,6 +15,46 @@
         })(console.warn);
     </script>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+        }
+    </script>
+    <script>
+        // Parent class sync logic (Theme & Accessibility)
+        (function() {
+            const syncParentClasses = () => {
+                try {
+                    const parentDoc = window.parent.document.documentElement || window.parent.document.body;
+                    
+                    // Sync Dark Mode
+                    const isDark = parentDoc.classList.contains('dark');
+                    if (isDark) {
+                        document.documentElement.classList.add('dark');
+                    } else {
+                        document.documentElement.classList.remove('dark');
+                    }
+                    
+                    // Sync Dyslexia Font
+                    const isDyslexia = parentDoc.classList.contains('dyslexia-mode');
+                    if (isDyslexia) {
+                        document.documentElement.classList.add('dyslexia-mode');
+                    } else {
+                        document.documentElement.classList.remove('dyslexia-mode');
+                    }
+                } catch (e) {
+                    // Fallback
+                }
+            };
+            
+            syncParentClasses();
+            try {
+                const observer = new MutationObserver(syncParentClasses);
+                observer.observe(window.parent.document.documentElement, { attributes: true, attributeFilter: ['class'] });
+            } catch (e) {}
+            setInterval(syncParentClasses, 1000);
+        })();
+    </script>
     <link href="https://fonts.googleapis.com/css2?family=Alice&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="css/shared.css">

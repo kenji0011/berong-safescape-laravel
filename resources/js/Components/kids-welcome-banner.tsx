@@ -27,16 +27,17 @@ export function KidsWelcomeBanner({ completedModules = [], earnedBadges = [] }: 
   
   // All possible badges for summary - Synchronized with BadgeHall.tsx
   const ALL_BADGES = [
-    { id: 'module_1', moduleNum: 1, icon: "🔥" },
-    { id: 'module_2', moduleNum: 2, icon: "🛡️" },
-    { id: 'module_3', moduleNum: 3, icon: "📢" },
-    { id: 'module_4', moduleNum: 4, icon: "🏃" },
-    { id: 'module_5', moduleNum: 5, icon: "🏘️" },
-    { id: 'quiz_hero', icon: "🏆" },
-    { id: 'memory_master', icon: "🧠" },
-    { id: 'smoke_scout', icon: "🔦" },
-    { id: 'safety_scout', icon: "🤖" },
-    { id: 'intel_analyst', icon: "🎬" }
+    { id: 'module_1', moduleNum: 1, image: "/fire_hall.png" },
+    { id: 'module_2', moduleNum: 2, image: "/shield_hall.png" },
+    { id: 'module_3', moduleNum: 3, image: "/plan_hall.png" },
+    { id: 'module_4', moduleNum: 4, image: "/low_hall.png" },
+    { id: 'module_5', moduleNum: 5, image: "/home_hall.png" },
+    { id: 'quiz_hero', image: "/quiz_hall.png" },
+    { id: 'memory_master', image: "/memory_hall.png" },
+    { id: 'smoke_scout', image: "/smoke_hall.png" },
+    { id: 'safety_scout', image: "/safety_hall.png" },
+    { id: 'hazard_hero', image: "/hazard_hall.png" },
+    { id: 'intel_analyst', image: "/intel_hall.png" }
   ]
 
   const totalBadges = ALL_BADGES.length
@@ -58,17 +59,17 @@ export function KidsWelcomeBanner({ completedModules = [], earnedBadges = [] }: 
 
   // Ranking Logic
   const getHeroRank = (count: number) => {
-    if (count >= 8) return { name: "Legendary Hero", color: "text-yellow-300", bg: "bg-yellow-400/30", icon: Star }
-    if (count >= 5) return { name: "Master Hero", color: "text-orange-300", bg: "bg-orange-400/30", icon: Trophy }
-    if (count >= 3) return { name: "Safety Elite", color: "text-blue-300", bg: "bg-blue-400/30", icon: Shield }
+    if (count >= 10) return { name: "Legendary Hero", color: "text-yellow-300", bg: "bg-yellow-400/30", icon: Star }
+    if (count >= 7) return { name: "Master Hero", color: "text-orange-300", bg: "bg-orange-400/30", icon: Trophy }
+    if (count >= 4) return { name: "Safety Elite", color: "text-blue-300", bg: "bg-blue-400/30", icon: Shield }
     if (count >= 1) return { name: "Fire Scout", color: "text-green-300", bg: "bg-green-400/30", icon: Flame }
     return { name: "Recruit", color: "text-slate-300", bg: "bg-slate-400/30", icon: Zap }
   }
 
   const RANKS = [
-    { name: "Legendary Hero", count: 8, color: "text-yellow-400", bg: "bg-yellow-400/10", icon: Star, desc: "The ultimate protector of the city! You've mastered almost everything." },
-    { name: "Master Hero", count: 5, color: "text-orange-400", bg: "bg-orange-400/10", icon: Trophy, desc: "A true expert in fire safety. You lead by example." },
-    { name: "Safety Elite", count: 3, color: "text-blue-400", bg: "bg-blue-400/10", icon: Shield, desc: "A highly skilled responder. You know exactly what to do." },
+    { name: "Legendary Hero", count: 10, color: "text-yellow-400", bg: "bg-yellow-400/10", icon: Star, desc: "The ultimate protector of the city! You've mastered almost everything." },
+    { name: "Master Hero", count: 7, color: "text-orange-400", bg: "bg-orange-400/10", icon: Trophy, desc: "A true expert in fire safety. You lead by example." },
+    { name: "Safety Elite", count: 4, color: "text-blue-400", bg: "bg-blue-400/10", icon: Shield, desc: "A highly skilled responder. You know exactly what to do." },
     { name: "Fire Scout", count: 1, color: "text-emerald-400", bg: "bg-emerald-400/10", icon: Flame, desc: "A brave beginner. You've taken your first steps to safety." },
     { name: "Recruit", count: 0, color: "text-slate-400", bg: "bg-slate-400/10", icon: Zap, desc: "A new hero in training. Start a module to earn your first badge!" }
   ]
@@ -288,12 +289,19 @@ export function KidsWelcomeBanner({ completedModules = [], earnedBadges = [] }: 
                       const earned = isBadgeEarned(badge.id, badge.moduleNum)
                       return (
                         <div key={i} className={cn(
-                          "h-10 w-10 sm:h-12 sm:w-12 rounded-xl flex items-center justify-center text-xl sm:text-2xl transition-all shadow-lg border-2",
+                          "h-10 w-10 sm:h-12 sm:w-12 rounded-xl flex items-center justify-center transition-all shadow-lg border-2 relative overflow-hidden",
                           earned 
                             ? "bg-yellow-400 border-white/30" 
                             : "bg-black/30 border-white/5 opacity-30"
                         )}>
-                          {earned ? badge.icon : <Lock className="h-3 w-3 text-white/20" />}
+                          {earned ? (
+                            <img src={badge.image} className="h-full w-full object-contain p-1" alt="Badge" />
+                          ) : (
+                            <div className="relative w-full h-full flex items-center justify-center">
+                              <img src={badge.image} className="h-full w-full object-contain p-1 filter grayscale opacity-20" alt="Locked Badge" />
+                              <Lock className="absolute inset-0 m-auto h-3 w-3 text-white/40" />
+                            </div>
+                          )}
                         </div>
                       )
                     });
@@ -357,15 +365,6 @@ export function KidsWelcomeBanner({ completedModules = [], earnedBadges = [] }: 
               transition={{ type: "spring", bounce: 0.5 }}
               className="bg-slate-900 border-[6px] border-yellow-400 rounded-[2.5rem] p-8 sm:p-12 max-w-sm w-full text-center relative overflow-hidden shadow-2xl"
             >
-              {/* Spinning background effect */}
-              <motion.div 
-                animate={{ rotate: 360 }}
-                transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
-                className="absolute -inset-[150%] opacity-20 pointer-events-none"
-              >
-                <div className="w-full h-full bg-[conic-gradient(from_0deg,transparent_0_340deg,white_360deg)]"></div>
-              </motion.div>
-
               <div className="relative z-10">
                 <h3 className="text-sm font-black text-yellow-400/80 uppercase tracking-widest mb-4">Rank Up!</h3>
                 <motion.div 

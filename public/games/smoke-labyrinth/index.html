@@ -6,6 +6,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>The Smoke Labyrinth - Fire Safety Game</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Figtree', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
@@ -244,12 +257,25 @@
                 <p class="text-slate-300 mb-6 text-sm">You must check for heat before proceeding.</p>
                 <div class="grid gap-3">
                     <button onclick="resolveDoor(false)"
-                        class="bg-red-900 hover:bg-red-800 p-3 rounded border border-red-700 text-sm">Open
+                        class="w-full bg-red-600 hover:bg-red-500 text-white font-black border-[3px] border-red-700 shadow-sm py-3 rounded-xl hover:-translate-y-0.5 active:translate-y-1 uppercase tracking-wide text-xs transition-all">Open
                         Immediately</button>
                     <button onclick="resolveDoor(true)"
-                        class="bg-blue-600 hover:bg-blue-500 p-3 rounded font-bold text-sm">Touch with Back of
+                        class="w-full bg-blue-600 hover:bg-blue-500 text-white font-black border-[3px] border-blue-700 shadow-sm py-3 rounded-xl hover:-translate-y-0.5 active:translate-y-1 uppercase tracking-wide text-xs transition-all">Touch with Back of
                         Hand</button>
                 </div>
+            </div>
+        </div>
+
+        <!-- Door hot overlay -->
+        <div id="door-hot-overlay" class="hidden fixed inset-0 bg-black/80 flex items-center justify-center z-50">
+            <div class="bg-slate-800 p-8 rounded-2xl border-2 border-red-500 max-w-sm text-center shadow-2xl">
+                <div class="w-16 h-16 bg-red-500 rounded-full flex items-center justify-center mx-auto mb-4 shadow-[0_0_20px_rgba(239,68,68,0.4)] animate-bounce">
+                    <i class="fa-solid fa-fire text-white text-2xl"></i>
+                </div>
+                <h3 class="text-xl font-bold text-white mb-2 uppercase tracking-wide">Danger! Door is Hot</h3>
+                <p class="text-slate-300 mb-8 text-sm">Opening this door is extremely dangerous. There is a fire on the other side. You must find another way out!</p>
+                <button onclick="closeDoorHotOverlay()"
+                    class="w-full bg-blue-600 hover:bg-blue-500 text-white font-black border-[3px] border-blue-700 shadow-sm py-3 rounded-xl hover:-translate-y-0.5 active:translate-y-1 uppercase tracking-wide text-xs transition-all">Find Another Exit</button>
             </div>
         </div>
 
@@ -373,8 +399,7 @@
             gameState = 'playing';
             document.getElementById('completion-msg').classList.add('hidden');
             document.getElementById('integrity-modal').classList.add('hidden');
-            log("Procedural Map Generated. Escape!");
-            doorIsHot = Math.random() > 0.3;
+            doorIsHot = true;
             gameLoop();
         }
 
@@ -469,14 +494,8 @@
             if (checkedHeat) {
                 if (doorIsHot) {
                     log("CHECK: Door is HOT! Find the Window.");
-                    fogCtx.globalCompositeOperation = 'destination-out';
-                    fogCtx.beginPath();
-                    fogCtx.arc(exits[0].x + 10, exits[0].y + 10, 40, 0, Math.PI * 2);
-                    fogCtx.fill();
-                    fogCtx.globalCompositeOperation = 'source-over';
-                    player.x -= 10;
-                    gameState = 'playing';
-                    gameLoop();
+                    document.getElementById('door-hot-overlay').classList.remove('hidden');
+                    gameState = 'paused';
                 } else {
                     log("CHECK: Door is Cool. Opening...");
                     gameWin();
@@ -485,6 +504,18 @@
                 alert("GAME OVER! You opened a door without checking. Backdraft!");
                 initGame();
             }
+        }
+
+        function closeDoorHotOverlay() {
+            document.getElementById('door-hot-overlay').classList.add('hidden');
+            fogCtx.globalCompositeOperation = 'destination-out';
+            fogCtx.beginPath();
+            fogCtx.arc(exits[0].x + 10, exits[0].y + 10, 40, 0, Math.PI * 2);
+            fogCtx.fill();
+            fogCtx.globalCompositeOperation = 'source-over';
+            player.x -= 20;
+            gameState = 'playing';
+            gameLoop();
         }
 
         function handleWindowCollision() {

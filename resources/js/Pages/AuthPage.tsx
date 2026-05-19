@@ -282,8 +282,8 @@ function AuthContent() {
 
       {/* Registration Wizard Modal - Full screen overlay */}
       {showRegistrationWizard && (
-        <div className="fixed inset-0 z-50 bg-white dark:bg-slate-900 overflow-y-auto overscroll-y-contain sm:bg-slate-950 sm:bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] sm:dark:bg-[radial-gradient(#1e293b_1px,transparent_1px)] sm:[background-size:16px_16px] sm:flex sm:items-start sm:justify-center sm:py-8">
-          <div className="w-full max-w-3xl flex flex-col min-h-full sm:min-h-0">
+        <div className="fixed inset-0 z-50 bg-white dark:bg-slate-900 overflow-hidden sm:bg-slate-950 sm:bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] sm:dark:bg-[radial-gradient(#1e293b_1px,transparent_1px)] sm:[background-size:16px_16px] sm:flex sm:items-center sm:justify-center sm:p-4">
+          <div className="w-full max-w-3xl flex flex-col h-full sm:h-auto sm:max-h-[90vh]">
             <RegistrationWizard onBackToLogin={() => setShowRegistrationWizard(false)} />
           </div>
         </div>
