@@ -16,25 +16,20 @@ export function LogoutLoader() {
                     transition={{ duration: 0.4 }}
                     className="fixed inset-0 z-[999999] flex items-center justify-center overflow-hidden"
                 >
-                    {/* Cinematic Fire Background */}
-                    <div className="absolute inset-0 bg-[#450a0a]">
+                    {/* Fun Warm Background */}
+                    <div className="absolute inset-0 bg-gradient-to-br from-red-500 to-orange-400">
                         <motion.div 
                             animate={{ 
-                                scale: [1, 1.2, 1],
+                                scale: [1, 1.1, 1],
                                 opacity: [0.1, 0.2, 0.1]
                             }}
                             transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-                            className="absolute inset-0 bg-[#ef4444]/20"
+                            className="absolute inset-0 bg-white/20"
                         />
                         <div 
                             className="absolute inset-0 opacity-20"
-                            style={{ 
-                                backgroundImage: "url('/web-background-image.jpg')", 
-                                backgroundSize: 'cover', 
-                                backgroundPosition: 'center' 
-                            }}
+                            style={{ backgroundImage: "radial-gradient(circle at 2px 2px, white 1px, transparent 0)", backgroundSize: "32px 32px" }}
                         />
-                        <div className="absolute inset-0 bg-black/60" />
                     </div>
 
                     {/* Loader content */}
