@@ -1,6 +1,5 @@
-"use client"
-
 import { useState, useEffect, useRef } from "react"
+import { motion, useInView, useReducedMotion } from "motion/react"
 import { router } from '@inertiajs/react';
 import axios from 'axios';
 import { Button } from "@/components/ui/button"
@@ -74,6 +73,9 @@ export function LandingAssessmentSection({ serverUser }: LandingAssessmentProps 
     const [eligibility, setEligibility] = useState<EligibilityData | null>(null)
     const [showCertificate, setShowCertificate] = useState(false)
     const certificateRef = useRef<HTMLDivElement>(null)
+    const sectionRef = useRef<HTMLDivElement>(null)
+    const isInView = useInView(sectionRef, { once: true, margin: "-100px" })
+    const prefersReducedMotion = useReducedMotion()
 
     // Format date properly
     const formatDate = (dateString?: string) => {
@@ -177,20 +179,57 @@ export function LandingAssessmentSection({ serverUser }: LandingAssessmentProps 
     }
 
     return (
-        <div className="w-full bg-[#f1f5f9] dark:bg-slate-900 rounded-[2.5rem] py-16 px-6 sm:px-12 border border-slate-200 dark:border-slate-800 shadow-sm relative overflow-hidden transition-colors duration-500">
+        <motion.div
+            ref={sectionRef}
+            initial={{ opacity: 0, y: 40 }}
+            animate={isInView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94] }}
+            className="w-full bg-gradient-to-br from-slate-100 via-slate-50 to-orange-50 dark:from-slate-900 dark:via-slate-900 dark:to-slate-800 rounded-[2.5rem] py-16 px-6 sm:px-12 border border-slate-200/80 dark:border-slate-700/50 shadow-sm relative overflow-hidden transition-colors duration-500"
+        >
             {/* Background Decorations */}
-            <div className="absolute top-0 right-0 w-64 h-64 bg-slate-200/50 dark:bg-slate-800/20 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
-            <div className="absolute bottom-0 left-0 w-80 h-80 bg-slate-200/50 dark:bg-slate-800/20 rounded-full blur-3xl translate-y-1/2 -translate-x-1/4" />
+            <div className="absolute top-0 right-0 w-64 h-64 bg-orange-200/30 dark:bg-orange-900/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
+            <div className="absolute bottom-0 left-0 w-80 h-80 bg-red-200/20 dark:bg-red-900/10 rounded-full blur-3xl translate-y-1/2 -translate-x-1/4" />
+            {/* Dot pattern */}
+            <div className="absolute inset-0 opacity-[0.03]" style={{
+                backgroundImage: "radial-gradient(circle at 2px 2px, rgba(0,0,0,0.4) 1px, transparent 0)",
+                backgroundSize: "24px 24px",
+            }} />
             
             <div className="max-w-4xl mx-auto relative z-10">
                 <div className="text-center mb-12 sm:mb-16">
-                    <h2 className="text-4xl sm:text-5xl font-black text-slate-800 dark:text-white mb-4 sm:mb-6">Final Assessment</h2>
-                    <p className="text-lg sm:text-xl text-slate-600 dark:text-slate-400 font-medium max-w-2xl mx-auto">
+                    <motion.div
+                        initial={{ opacity: 0, y: 15 }}
+                        animate={isInView ? { opacity: 1, y: 0 } : {}}
+                        transition={{ duration: 0.5, delay: 0.15 }}
+                        className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-900/30 mb-4"
+                    >
+                        <Trophy className="h-3.5 w-3.5 text-red-500" strokeWidth={2.5} />
+                        <span className="text-xs font-bold text-red-600 dark:text-red-400 uppercase tracking-widest">Certification</span>
+                    </motion.div>
+                    <motion.h2
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={isInView ? { opacity: 1, y: 0 } : {}}
+                        transition={{ duration: 0.5, delay: 0.25 }}
+                        className="text-4xl sm:text-5xl font-black text-slate-800 dark:text-white mb-4 sm:mb-6"
+                    >
+                        Final Assessment
+                    </motion.h2>
+                    <motion.p
+                        initial={{ opacity: 0, y: 15 }}
+                        animate={isInView ? { opacity: 1, y: 0 } : {}}
+                        transition={{ duration: 0.5, delay: 0.35 }}
+                        className="text-lg sm:text-xl text-slate-600 dark:text-slate-400 font-medium max-w-2xl mx-auto"
+                    >
                         Completed your training? Take the official post-test to certify your knowledge and become a SafeScape Hero.
-                    </p>
+                    </motion.p>
                 </div>
 
-                <div className="max-w-3xl mx-auto shadow-xl rounded-3xl hover:shadow-2xl transition-shadow duration-300">
+                <motion.div
+                    initial={{ opacity: 0, y: 30, scale: 0.97 }}
+                    animate={isInView ? { opacity: 1, y: 0, scale: 1 } : {}}
+                    transition={{ duration: 0.5, delay: 0.45 }}
+                    className="max-w-3xl mx-auto shadow-xl rounded-3xl hover:shadow-2xl transition-shadow duration-300"
+                >
                     <div className="overflow-hidden rounded-3xl bg-white dark:bg-slate-800">
                         <div className="md:flex">
                             <div className="md:w-5/12 bg-[#fb5656] p-8 text-white flex flex-col justify-center items-center text-center rounded-3xl md:rounded-r-none relative z-10 shadow-[4px_0_24px_rgba(0,0,0,0.1)]">
@@ -329,9 +368,9 @@ export function LandingAssessmentSection({ serverUser }: LandingAssessmentProps 
                                 </div>
                             )}
                         </div>
+                        </div>
                     </div>
-                </div>
-            </div>
+                </motion.div>
             
             {/* End of max-w-4xl wrapper */}
             </div>
@@ -380,7 +419,7 @@ export function LandingAssessmentSection({ serverUser }: LandingAssessmentProps 
                     </div>
                 </DialogContent>
             </Dialog>
-        </div>
+        </motion.div>
         // </section>
     )
 }

@@ -156,6 +156,56 @@ const features = [
     },
 ];
 
+// Animated Counter Component
+function AnimatedCounter({ value, suffix = "", label, icon: Icon, delay = 0 }: { value: number; suffix?: string; label: string; icon: any; delay?: number }) {
+    const ref = useRef(null);
+    const isInView = useInView(ref, { once: true, margin: "-50px" });
+    const [count, setCount] = useState(0);
+
+    useEffect(() => {
+        if (!isInView) return;
+        const timer = setTimeout(() => {
+            const duration = 1500;
+            const steps = 40;
+            const increment = value / steps;
+            let current = 0;
+            const interval = setInterval(() => {
+                current += increment;
+                if (current >= value) {
+                    setCount(value);
+                    clearInterval(interval);
+                } else {
+                    setCount(Math.floor(current));
+                }
+            }, duration / steps);
+            return () => clearInterval(interval);
+        }, delay);
+        return () => clearTimeout(timer);
+    }, [isInView, value, delay]);
+
+    return (
+        <motion.div
+            ref={ref}
+            initial={{ opacity: 0, y: 20 }}
+            animate={isInView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.5, delay: delay / 1000 }}
+            className="flex flex-col items-center gap-2 sm:gap-3 p-4 sm:p-6"
+        >
+            <div className="h-10 w-10 sm:h-12 sm:w-12 rounded-xl sm:rounded-2xl bg-white/10 border border-white/20 flex items-center justify-center mb-1">
+                <Icon className="h-5 w-5 sm:h-6 sm:w-6 text-yellow-400" strokeWidth={2.5} />
+            </div>
+            <span className="text-3xl sm:text-5xl font-black text-white tabular-nums">
+                {count}{suffix}
+            </span>
+            <span className="text-xs sm:text-sm font-bold text-white/70 uppercase tracking-widest text-center">
+                {label}
+            </span>
+        </motion.div>
+    );
+}
+
+
+
 // Animated Feature Card Component
 function FeatureCard({
     feature,
@@ -329,10 +379,12 @@ function PartnershipCard({ children, delay = 0, reduceMotion = false }: { childr
                 scale: 1.02,
                 transition: { duration: 0.15, ease: "easeOut" }
             }}
-            className="bg-[#1e293b] rounded-2xl p-5 sm:p-8 border border-slate-700 hover:border-slate-500 transition-colors duration-300 h-full flex flex-col transform-gpu will-change-transform"
+            className="bg-[#1e293b] rounded-2xl p-5 sm:p-8 border border-slate-700 hover:border-slate-500 transition-all duration-300 h-full flex flex-col transform-gpu will-change-transform relative overflow-hidden group/partner"
             style={{ backfaceVisibility: "hidden" }}
         >
-            {children}
+            {/* Animated gradient glow on hover */}
+            <div className="absolute -inset-[1px] bg-gradient-to-r from-yellow-500/0 via-yellow-500/20 to-yellow-500/0 opacity-0 group-hover/partner:opacity-100 transition-opacity duration-500 rounded-2xl pointer-events-none" />
+            <div className="relative z-10">{children}</div>
         </motion.div>
     );
 }
@@ -507,6 +559,32 @@ export function LandingAboutSection() {
                     </div>
                 </div>
             </motion.section>
+
+            {/* Animated Stats Counter Strip */}
+            <motion.section
+                className="py-8 sm:py-12 bg-gradient-to-r from-red-700 via-red-600 to-orange-600 dark:from-red-950 dark:via-red-900 dark:to-orange-900 rounded-[2rem] sm:rounded-[2.5rem] shadow-sm mx-2 sm:mx-0 relative overflow-hidden transition-colors duration-500"
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.6 }}
+            >
+                <div className="absolute inset-0 opacity-10">
+                    <div className="absolute inset-0" style={{
+                        backgroundImage: "radial-gradient(circle at 2px 2px, rgba(255,255,255,0.3) 1px, transparent 0)",
+                        backgroundSize: "24px 24px",
+                    }} />
+                </div>
+                <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-4">
+                        <AnimatedCounter value={5} suffix="+" label="Learning Modules" icon={BookOpen} delay={0} />
+                        <AnimatedCounter value={3} suffix="" label="User Roles" icon={Shield} delay={150} />
+                        <AnimatedCounter value={6} suffix="+" label="Mini Games" icon={Gamepad2} delay={300} />
+                        <AnimatedCounter value={1} suffix="" label="AI Chatbot" icon={Brain} delay={450} />
+                    </div>
+                </div>
+            </motion.section>
+
+
 
             {/* Platform Overview Section */}
             <motion.section
