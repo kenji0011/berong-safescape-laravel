@@ -33,17 +33,17 @@ export function FooterDialogContent({ isOpen, onClose, contentType }: FooterDial
 
   const data = DIALOG_DATA[contentType];
 
-  // Bypassing Radix UI completely for a "Zero-Overhead" native modal
+  // Bypassing Radix UI completely for a "Zero-Overhead" native modal with hardware acceleration
   return (
     <div className="fixed inset-0 z-[999] flex items-center justify-center p-4 animate-in fade-in duration-200">
-      {/* Backdrop - Hardware accelerated */}
+      {/* Backdrop - Hardware accelerated to prevent layout repaint & input lag */}
       <div 
-        className="absolute inset-0 bg-slate-950/60 backdrop-blur-sm" 
+        className="absolute inset-0 bg-slate-950/60 backdrop-blur-sm transition-opacity duration-150 will-change-[backdrop-filter,opacity] transform translate-z-0" 
         onClick={onClose}
       />
       
-      {/* Modal Body - Simple Div, no complex portal logic */}
-      <div className="relative w-full max-w-lg bg-white dark:bg-slate-900 rounded-3xl shadow-2xl border border-slate-200 dark:border-slate-800 overflow-hidden transform animate-in zoom-in-95 duration-200">
+      {/* Modal Body - Hardware accelerated zoom-in transition */}
+      <div className="relative w-full max-w-lg bg-white dark:bg-slate-900 rounded-3xl shadow-2xl border border-slate-200 dark:border-slate-800 overflow-hidden transform animate-in zoom-in-95 duration-200 will-change-[transform,opacity] translate-z-0">
         {/* Header */}
         <div className="p-6 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
           <div className="flex items-center gap-3">

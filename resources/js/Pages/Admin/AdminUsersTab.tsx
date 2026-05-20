@@ -27,11 +27,12 @@ export const AdminUsersTab: React.FC<UsersTabProps> = ({
           </div>
           <div className="relative group w-full md:w-72">
             <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 group-focus-within:text-[#d60000] transition-colors" />
-            <Input
+            <input
+              type="text"
               placeholder="Search users..."
               value={userSearchQuery}
               onChange={(e) => setUserSearchQuery(e.target.value)}
-              className="pl-10 h-11 border-2 border-slate-200 dark:border-slate-700 rounded-xl bg-white/50 dark:bg-slate-900/50 backdrop-blur-sm focus-visible:ring-red-500 font-bold transition-all hover:border-slate-300 dark:hover:border-slate-600"
+              className="w-full pl-10 h-11 text-sm text-slate-800 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 border-2 border-slate-200 dark:border-slate-700 rounded-xl bg-white/50 dark:bg-slate-900/50 backdrop-blur-sm focus:outline-none focus:border-red-500 focus:ring-4 focus:ring-red-500/20 font-bold transition-all hover:border-slate-300 dark:hover:border-slate-600"
             />
           </div>
         </div>

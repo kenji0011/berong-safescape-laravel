@@ -324,10 +324,10 @@ export default function Assessment({ type }: AssessmentProps) {
         const rating = getScoreRating(percentage)
 
         return (
-            <div className="min-h-screen bg-slate-50 dark:bg-slate-950 py-12 px-4 selection:bg-orange-500 selection:text-white transition-colors duration-500">
+            <div className="min-h-screen bg-slate-50 dark:bg-slate-950 py-6 sm:py-12 px-3 sm:px-4 selection:bg-orange-500 selection:text-white transition-colors duration-500">
                 <Head title={`${title} Results - SafeScape`} />
-                <Card className="w-full max-w-3xl mx-auto border-[4px] border-slate-200 dark:border-slate-800 shadow-[0_8px_0_#e2e8f0] dark:shadow-[0_8px_0_#0f172a] rounded-[2rem] overflow-hidden p-0 bg-white dark:bg-slate-900">
-                    <div className="bg-red-600 p-4 sm:p-6 text-center border-b-[4px] sm:border-b-[5px] border-orange-600 relative overflow-hidden">
+                <Card className="w-full max-w-3xl mx-auto border-[3px] sm:border-[4px] border-slate-200 dark:border-slate-800 shadow-[0_6px_0_#e2e8f0] sm:shadow-[0_8px_0_#e2e8f0] dark:shadow-[0_6px_0_#0f172a] sm:dark:shadow-[0_8px_0_#0f172a] rounded-[1.5rem] sm:rounded-[2rem] overflow-hidden p-0 bg-white dark:bg-slate-900">
+                    <div className="bg-red-600 p-4 sm:p-6 text-center border-b-[3px] sm:border-b-[5px] border-orange-600 relative overflow-hidden">
                         {/* Decorative background pattern - hidden on very small screens */}
                         <div className="absolute inset-0 opacity-10 hidden sm:flex flex-wrap gap-4 pointer-events-none p-4">
                             {[...Array(12)].map((_, i) => (
@@ -339,28 +339,28 @@ export default function Assessment({ type }: AssessmentProps) {
                             initial={{ scale: 0, rotate: -20 }}
                             animate={{ scale: 1, rotate: 0 }}
                             transition={{ type: "spring", stiffness: 260, damping: 20 }}
-                            className="mx-auto w-14 h-14 sm:w-16 sm:h-16 bg-white rounded-full flex items-center justify-center mb-2 sm:mb-3 shadow-[0_4px_0_rgba(0,0,0,0.15)] sm:shadow-[0_5px_0_rgba(0,0,0,0.15)] border-[3px] sm:border-[4px] border-white relative z-10"
+                            className="mx-auto w-12 h-12 sm:w-16 sm:h-16 bg-white rounded-full flex items-center justify-center mb-2 sm:mb-3 shadow-[0_3px_0_rgba(0,0,0,0.15)] sm:shadow-[0_5px_0_rgba(0,0,0,0.15)] border-[2.5px] sm:border-[4px] border-white relative z-10"
                         >
-                            <Check className="w-7 h-7 sm:w-8 sm:h-8 text-green-500" strokeWidth={5} />
+                            <Check className="w-6 h-6 sm:w-8 sm:h-8 text-green-500" strokeWidth={5} />
                         </motion.div>
-                        <h2 className="text-xl sm:text-2xl font-black text-white tracking-tight drop-shadow-md relative z-10 italic uppercase">
+                        <h2 className="text-lg sm:text-2xl font-black text-white tracking-tight drop-shadow-md relative z-10 italic uppercase">
                             Assessment <span className="text-yellow-300">Complete!</span>
                         </h2>
-                        <p className="text-white/90 text-[10px] sm:text-xs font-black mt-0.5 uppercase tracking-[0.1em] sm:tracking-[0.15em] relative z-10">{title}</p>
+                        <p className="text-white/90 text-[9px] sm:text-xs font-black mt-0.5 uppercase tracking-[0.08em] sm:tracking-[0.15em] relative z-10">{title}</p>
                     </div>
                     
-                    <CardContent className="p-5 sm:p-6 space-y-6">
-                        <div className="grid grid-cols-1 md:grid-cols-5 gap-5 items-stretch">
+                    <CardContent className="p-4 sm:p-6 space-y-4 sm:space-y-6">
+                        <div className="grid grid-cols-1 md:grid-cols-5 gap-4 sm:gap-5 items-stretch">
                             {/* Score Box - 2/5 width */}
-                            <div className="md:col-span-2 text-center p-5 sm:p-6 bg-white dark:bg-slate-800 rounded-3xl border-[3px] sm:border-[4px] border-slate-100 dark:border-slate-700 shadow-[0_6px_0_#f1f5f9] dark:shadow-[0_6px_0_#0f172a] flex flex-col justify-center relative overflow-hidden transition-colors">
+                            <div className="md:col-span-2 text-center p-4 sm:p-6 bg-white dark:bg-slate-800 rounded-[1.25rem] sm:rounded-3xl border-[2.5px] sm:border-[4px] border-slate-100 dark:border-slate-700 shadow-[0_4px_0_#f1f5f9] sm:shadow-[0_6px_0_#f1f5f9] dark:shadow-[0_4px_0_#0f172a] sm:dark:shadow-[0_4px_0_#0f172a] flex flex-col justify-center relative overflow-hidden transition-colors">
                                 {/* Subtle decorative bg */}
-                                <div className="absolute top-0 right-0 w-24 h-24 bg-slate-50 dark:bg-slate-700 rounded-full -mr-12 -mt-12"></div>
+                                <div className="absolute top-0 right-0 w-20 h-20 sm:w-24 sm:h-24 bg-slate-50 dark:bg-slate-700 rounded-full -mr-10 -mt-10 sm:-mr-12 sm:-mt-12"></div>
                                 
-                                <p className="text-[10px] sm:text-[11px] text-slate-400 dark:text-slate-500 font-black tracking-widest uppercase mb-1 sm:mb-2 relative z-10">Final Score</p>
-                                <div className="text-5xl sm:text-6xl font-black mb-1 sm:mb-2 drop-shadow-sm flex items-center justify-center gap-1 relative z-10" style={{ color: rating.color }}>
-                                    {result.score} <span className="text-slate-200 dark:text-slate-700 text-2xl sm:text-3xl">/</span> {result.maxScore}
+                                <p className="text-[9px] sm:text-[11px] text-slate-400 dark:text-slate-500 font-black tracking-widest uppercase mb-1 sm:mb-2 relative z-10">Final Score</p>
+                                <div className="text-4xl sm:text-6xl font-black mb-1 sm:mb-2 drop-shadow-sm flex items-center justify-center gap-1 relative z-10" style={{ color: rating.color }}>
+                                    {result.score} <span className="text-slate-200 dark:text-slate-700 text-xl sm:text-3xl">/</span> {result.maxScore}
                                 </div>
-                                <div className={`inline-block px-4 sm:px-5 py-1 rounded-full text-sm sm:text-lg font-black uppercase tracking-wider mb-2 border-2 mx-auto relative z-10`} style={{ backgroundColor: `${rating.color}15`, color: rating.color, borderColor: `${rating.color}30` }}>
+                                <div className={`inline-block px-3 sm:px-5 py-0.5 sm:py-1 rounded-full text-xs sm:text-lg font-black uppercase tracking-wider mb-2 border-2 mx-auto relative z-10`} style={{ backgroundColor: `${rating.color}15`, color: rating.color, borderColor: `${rating.color}30` }}>
                                     {rating.label}
                                 </div>
                                 <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 font-bold max-w-[200px] mx-auto leading-tight sm:leading-snug relative z-10">
@@ -373,31 +373,31 @@ export default function Assessment({ type }: AssessmentProps) {
                             {/* Feedback Section - 3/5 width */}
                             <div className="md:col-span-3">
                                 {!isPreTest ? (
-                                    <div className="bg-white dark:bg-slate-800 border-[3px] sm:border-[4px] border-slate-100 dark:border-slate-700 rounded-3xl p-5 sm:p-6 text-center h-full shadow-[0_6px_0_#f1f5f9] dark:shadow-[0_6px_0_#0f172a] relative overflow-hidden flex flex-col justify-center transition-colors">
+                                    <div className="bg-white dark:bg-slate-800 border-[2.5px] sm:border-[4px] border-slate-100 dark:border-slate-700 rounded-[1.25rem] sm:rounded-3xl p-4 sm:p-6 text-center h-full shadow-[0_4px_0_#f1f5f9] sm:shadow-[0_6px_0_#f1f5f9] dark:shadow-[0_4px_0_#0f172a] sm:dark:shadow-[0_4px_0_#0f172a] relative overflow-hidden flex flex-col justify-center transition-colors">
                                         {feedbackSuccess ? (
                                             <div className="flex flex-col items-center py-2 sm:py-4">
-                                                <div className="w-12 h-12 sm:w-16 sm:h-16 bg-green-100 dark:bg-emerald-950/30 rounded-full flex items-center justify-center mb-3 border-4 border-green-200 dark:border-emerald-900/30 shadow-inner">
-                                                    <Check className="h-6 w-6 sm:h-8 sm:w-8 text-green-500" strokeWidth={5} />
+                                                <div className="w-10 h-10 sm:w-16 sm:h-16 bg-green-100 dark:bg-emerald-950/30 rounded-full flex items-center justify-center mb-3 border-4 border-green-200 dark:border-emerald-900/30 shadow-inner">
+                                                    <Check className="h-5 w-5 sm:h-8 sm:w-8 text-green-500" strokeWidth={5} />
                                                 </div>
-                                                <h3 className="text-lg sm:text-xl font-black text-slate-800 dark:text-white mb-1">Thank You!</h3>
+                                                <h3 className="text-base sm:text-xl font-black text-slate-800 dark:text-white mb-1">Thank You!</h3>
                                                 <p className="text-xs sm:text-sm font-bold text-slate-500 dark:text-slate-400">Your feedback helps!</p>
                                             </div>
                                         ) : (
                                             <>
-                                                <h3 className="text-lg sm:text-xl font-black text-slate-800 dark:text-white mb-1">Help Us Improve</h3>
-                                                <p className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-3">Rate your Experience</p>
+                                                <h3 className="text-base sm:text-xl font-black text-slate-800 dark:text-white mb-1">Help Us Improve</h3>
+                                                <p className="text-[9px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-2 sm:mb-3">Rate your Experience</p>
                                                 
-                                                <div className="flex justify-center gap-2 mb-4 bg-slate-50 dark:bg-slate-900 py-2 sm:py-3 rounded-2xl sm:rounded-3xl border-2 border-slate-100 dark:border-slate-700 w-fit mx-auto px-4 sm:px-6 shadow-inner">
+                                                <div className="flex justify-center gap-1.5 sm:gap-2 mb-3 sm:mb-4 bg-slate-50 dark:bg-slate-900 py-1.5 sm:py-3 rounded-2xl sm:rounded-3xl border-2 border-slate-100 dark:border-slate-700 w-fit mx-auto px-3 sm:px-6 shadow-inner">
                                                     {[1, 2, 3, 4, 5].map((star) => (
                                                         <button
                                                             key={star}
                                                             onClick={() => !feedbackSubmitting && setFeedbackRating(star)}
                                                             onMouseEnter={() => !feedbackSubmitting && setFeedbackHover(star)}
                                                             onMouseLeave={() => !feedbackSubmitting && setFeedbackHover(0)}
-                                                            className="p-1 transition-transform hover:scale-125 hover:-translate-y-1 active:scale-90 outline-none"
+                                                            className="p-0.5 transition-transform hover:scale-125 hover:-translate-y-1 active:scale-90 outline-none"
                                                         >
                                                             <Star 
-                                                                className={`h-6 w-6 sm:h-8 sm:w-8 transition-colors ${
+                                                                className={`h-5 w-5 sm:h-8 sm:h-8 transition-colors ${
                                                                     (feedbackHover || feedbackRating) >= star 
                                                                         ? "text-yellow-400 fill-yellow-400 drop-shadow-sm" 
                                                                         : "text-slate-200 dark:text-slate-700 fill-slate-100 dark:fill-slate-800"
@@ -408,9 +408,9 @@ export default function Assessment({ type }: AssessmentProps) {
                                                 </div>
                                                 
                                                 {feedbackRating > 0 && (
-                                                    <div className="mt-2 space-y-3 animate-in fade-in slide-in-from-top-4 duration-300">
+                                                    <div className="mt-2 space-y-2 sm:space-y-3 animate-in fade-in slide-in-from-top-4 duration-300">
                                                         <textarea
-                                                            className="w-full text-xs sm:text-sm bg-slate-50 dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-700 rounded-xl p-3 focus:outline-none focus:border-blue-400 focus:bg-white dark:focus:bg-slate-800 transition-all resize-none font-bold text-slate-700 dark:text-slate-300 placeholder:text-slate-300 dark:placeholder:text-slate-600 shadow-inner"
+                                                            className="w-full text-xs sm:text-sm bg-slate-50 dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-700 rounded-xl p-2.5 sm:p-3 focus:outline-none focus:border-blue-400 focus:bg-white dark:focus:bg-slate-800 transition-all resize-none font-bold text-slate-700 dark:text-slate-300 placeholder:text-slate-300 dark:placeholder:text-slate-600 shadow-inner"
                                                             rows={1}
                                                             placeholder="Any thoughts?"
                                                             value={feedbackComment}
@@ -420,9 +420,9 @@ export default function Assessment({ type }: AssessmentProps) {
                                                         <Button 
                                                             onClick={handleFeedbackSubmit}
                                                             disabled={feedbackSubmitting}
-                                                            className="w-full bg-blue-500 hover:bg-blue-600 text-white rounded-full font-black text-xs sm:text-sm py-3 sm:py-5 shadow-[0_4px_0_#1e40af] sm:shadow-[0_5px_0_#1e40af] active:translate-y-[4px] active:shadow-none transition-all flex items-center justify-center gap-2 border-[2px] sm:border-[3px] border-blue-700"
+                                                            className="w-full bg-blue-500 hover:bg-blue-600 text-white rounded-full font-black text-xs sm:text-sm py-2.5 sm:py-5 shadow-[0_3px_0_#1e40af] sm:shadow-[0_5px_0_#1e40af] active:translate-y-[3px] sm:active:translate-y-[5px] active:shadow-none transition-all flex items-center justify-center gap-2 border-[2px] sm:border-[3px] border-blue-700"
                                                         >
-                                                            {feedbackSubmitting ? <Loader2 className="h-4 w-4 animate-spin" /> : "Submit"}
+                                                            {feedbackSubmitting ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : "Submit"}
                                                         </Button>
                                                     </div>
                                                 )}
@@ -430,11 +430,11 @@ export default function Assessment({ type }: AssessmentProps) {
                                         )}
                                     </div>
                                 ) : (
-                                    <div className="bg-blue-50 dark:bg-blue-900/20 border-[3px] sm:border-[4px] border-blue-100 dark:border-blue-800 rounded-3xl p-5 sm:p-6 text-center h-full shadow-[0_6px_0_#dbeafe] dark:shadow-[0_6px_0_#0f172a] flex flex-col justify-center items-center text-blue-800 dark:text-blue-300 transition-colors">
-                                        <div className="w-12 h-12 sm:w-14 sm:h-14 bg-blue-100 dark:bg-blue-800 rounded-full flex items-center justify-center mb-2 sm:mb-3">
-                                            <Shield className="w-6 h-6 sm:w-7 sm:h-7 text-blue-500" />
+                                    <div className="bg-blue-50 dark:bg-blue-900/20 border-[2.5px] sm:border-[4px] border-blue-100 dark:border-blue-800 rounded-[1.25rem] sm:rounded-3xl p-4 sm:p-6 text-center h-full shadow-[0_4px_0_#dbeafe] sm:shadow-[0_6px_0_#dbeafe] dark:shadow-[0_4px_0_#0f172a] sm:dark:shadow-[0_4px_0_#0f172a] flex flex-col justify-center items-center text-blue-800 dark:text-blue-300 transition-colors">
+                                        <div className="w-10 h-10 sm:w-14 sm:h-14 bg-blue-100 dark:bg-blue-800 rounded-full flex items-center justify-center mb-2 sm:mb-3">
+                                            <Shield className="w-5 h-5 sm:w-7 sm:h-7 text-blue-500" />
                                         </div>
-                                        <h3 className="text-lg sm:text-xl font-black mb-1 italic">Ready to Learn?</h3>
+                                        <h3 className="text-base sm:text-xl font-black mb-1 italic">Ready to Learn?</h3>
                                         <p className="text-xs sm:text-sm font-bold opacity-80 leading-tight">Complete modules and earn your badge!</p>
                                     </div>
                                 )}
@@ -444,10 +444,10 @@ export default function Assessment({ type }: AssessmentProps) {
                         <div className="pt-2 sm:pt-4 max-w-xl mx-auto w-full">
                             <Button 
                                 onClick={handleContinue}
-                                className="w-full bg-yellow-400 hover:bg-yellow-300 text-red-700 font-black py-4 sm:py-5 rounded-full text-base sm:text-lg border-[3px] sm:border-[4px] border-yellow-500 shadow-[0_4px_0_#ca8a04] sm:shadow-[0_6px_0_#ca8a04] active:translate-y-[4px] sm:active:translate-y-[6px] active:shadow-none transition-all flex items-center justify-center gap-2 uppercase tracking-tight"
+                                className="w-full bg-yellow-400 hover:bg-yellow-300 text-red-700 font-black py-3 sm:py-5 rounded-full text-sm sm:text-lg border-[2.5px] sm:border-[4px] border-yellow-500 shadow-[0_3px_0_#ca8a04] sm:shadow-[0_6px_0_#ca8a04] active:translate-y-[3px] sm:active:translate-y-[6px] active:shadow-none transition-all flex items-center justify-center gap-2 uppercase tracking-tight"
                             >
                                 {isPreTest ? "Start" : "Return to Dashboard"}
-                                <ChevronRight className="h-5 w-5 sm:h-6 sm:w-6 stroke-[3]" />
+                                <ChevronRight className="h-4 w-4 sm:h-6 sm:w-6 stroke-[3]" />
                             </Button>
                         </div>
                     </CardContent>
@@ -457,59 +457,59 @@ export default function Assessment({ type }: AssessmentProps) {
     }
 
     return (
-        <div className="min-h-screen bg-background py-8 px-4 sm:px-6 lg:px-8 transition-colors duration-500 selection:bg-orange-500 selection:text-white">
+        <div className="min-h-[100dvh] bg-background p-3 sm:p-6 lg:p-8 flex flex-col justify-center transition-colors duration-500 selection:bg-orange-500 selection:text-white">
             <Head title={`${title} - SafeScape`} />
             
             {/* Post-Test Warning Modal */}
             {showWarningModal && (
                 <div className="fixed inset-0 z-[300] bg-slate-950/85 backdrop-blur-md overflow-y-auto flex items-center justify-center p-4">
-                    <div className="bg-white dark:bg-slate-900 border-[4px] border-[#ff4b3e] rounded-[2rem] p-6 sm:p-10 max-w-lg w-full text-center shadow-2xl space-y-6 select-none my-auto">
-                        <div className="inline-flex h-16 w-16 items-center justify-center bg-red-50 dark:bg-red-950/30 rounded-2xl border-2 border-red-100 dark:border-red-900 mb-2">
-                            <Shield className="h-8 w-8 text-[#ff4b3e]" strokeWidth={2.5} />
+                    <div className="bg-white dark:bg-slate-900 border-[3px] sm:border-[4px] border-[#ff4b3e] rounded-[1.5rem] sm:rounded-[2rem] p-5 sm:p-10 max-w-lg w-full text-center shadow-2xl space-y-4 sm:space-y-6 select-none my-auto">
+                        <div className="inline-flex h-12 w-12 sm:h-16 sm:w-16 items-center justify-center bg-red-50 dark:bg-red-950/30 rounded-xl sm:rounded-2xl border-2 border-red-100 dark:border-red-900 mb-1 sm:mb-2">
+                            <Shield className="h-6 w-6 sm:h-8 sm:w-8 text-[#ff4b3e]" strokeWidth={2.5} />
                         </div>
                         
-                        <div className="space-y-2">
-                            <h2 className="text-2xl sm:text-3xl font-black text-slate-800 dark:text-white uppercase tracking-tight">
+                        <div className="space-y-1 sm:space-y-2">
+                            <h2 className="text-xl sm:text-3xl font-black text-slate-800 dark:text-white uppercase tracking-tight">
                                 Final Post-Test Notice
                             </h2>
-                            <p className="text-xs sm:text-sm font-bold text-slate-500 dark:text-slate-400">
+                            <p className="text-[11px] sm:text-sm font-bold text-slate-500 dark:text-slate-400">
                                 Please review these critical rules before beginning your final assessment.
                             </p>
                         </div>
 
-                        <div className="bg-slate-50 dark:bg-slate-950 p-4 sm:p-5 rounded-2xl border-2 border-slate-100 dark:border-slate-800 text-left space-y-3.5 shadow-inner">
-                            <div className="flex gap-3">
-                                <span className="text-base sm:text-lg shrink-0 mt-0.5">⏱️</span>
-                                <p className="text-xs sm:text-sm font-bold text-slate-700 dark:text-slate-300 leading-normal">
+                        <div className="bg-slate-50 dark:bg-slate-950 p-3.5 sm:p-5 rounded-xl sm:rounded-2xl border-2 border-slate-100 dark:border-slate-800 text-left space-y-2.5 sm:space-y-3.5 shadow-inner">
+                            <div className="flex gap-2.5 sm:gap-3">
+                                <span className="text-sm sm:text-lg shrink-0 mt-0.5">⏱️</span>
+                                <p className="text-[11px] sm:text-sm font-bold text-slate-700 dark:text-slate-300 leading-normal">
                                     <strong className="text-slate-900 dark:text-white">20-Minute Time Limit:</strong> You have exactly 20 minutes to complete the test. Once started, the countdown cannot be paused.
                                 </p>
                             </div>
                             
-                            <div className="flex gap-3">
-                                <span className="text-base sm:text-lg shrink-0 mt-0.5">🚫</span>
-                                <p className="text-xs sm:text-sm font-bold text-slate-700 dark:text-slate-300 leading-normal">
+                            <div className="flex gap-2.5 sm:gap-3">
+                                <span className="text-sm sm:text-lg shrink-0 mt-0.5">🚫</span>
+                                <p className="text-[11px] sm:text-sm font-bold text-slate-700 dark:text-slate-300 leading-normal">
                                     <strong className="text-slate-900 dark:text-white">No Review Backtracking:</strong> You cannot turn back or review module lessons once you begin taking this assessment.
                                 </p>
                             </div>
 
-                            <div className="flex gap-3 pt-1 border-t border-slate-100 dark:border-slate-800/80">
-                                <span className="text-base sm:text-lg shrink-0 mt-0.5">❓</span>
-                                <p className="text-xs sm:text-sm font-bold text-[#ff4b3e] dark:text-red-400 leading-normal">
+                            <div className="flex gap-2.5 sm:gap-3 pt-1 border-t border-slate-100 dark:border-slate-800/80">
+                                <span className="text-sm sm:text-lg shrink-0 mt-0.5">❓</span>
+                                <p className="text-[11px] sm:text-sm font-bold text-[#ff4b3e] dark:text-red-400 leading-normal">
                                     <strong>Have you thoroughly reviewed</strong> all fire safety lessons and materials before starting?
                                 </p>
                             </div>
                         </div>
 
-                        <div className="flex flex-col sm:flex-row gap-3 pt-2">
+                        <div className="flex flex-col sm:flex-row gap-2.5 sm:gap-3 pt-1 sm:pt-2">
                             <Button
                                 onClick={() => handleContinue()}
-                                className="flex-1 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-750 text-slate-700 dark:text-slate-200 font-black py-4 sm:py-5 rounded-full border-[3px] border-slate-200 dark:border-slate-700 shadow-[0_4px_0_#cbd5e1] dark:shadow-[0_4px_0_#0f172a] active:translate-y-[4px] active:shadow-none transition-all uppercase tracking-wider text-xs sm:text-sm"
+                                className="flex-1 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-750 text-slate-700 dark:text-slate-200 font-black py-3 sm:py-5 rounded-full border-[2.5px] sm:border-[3px] border-slate-200 dark:border-slate-700 shadow-[0_3px_0_#cbd5e1] sm:shadow-[0_4px_0_#cbd5e1] dark:shadow-[0_3px_0_#0f172a] sm:dark:shadow-[0_4px_0_#0f172a] active:translate-y-[3px] sm:active:translate-y-[4px] active:shadow-none transition-all uppercase tracking-wider text-[11px] sm:text-sm"
                             >
                                 No, Go Back
                             </Button>
                             <Button
                                 onClick={() => setShowWarningModal(false)}
-                                className="flex-1 bg-[#ff4b3e] hover:bg-[#e03a2f] text-white font-black py-4 sm:py-5 rounded-full border-[3px] border-red-700 shadow-[0_4px_0_#b91c1c] active:translate-y-[4px] active:shadow-none transition-all uppercase tracking-wider text-xs sm:text-sm flex items-center justify-center gap-1.5"
+                                className="flex-1 bg-[#ff4b3e] hover:bg-[#e03a2f] text-white font-black py-3 sm:py-5 rounded-full border-[2.5px] sm:border-[3px] border-red-700 shadow-[0_3px_0_#b91c1c] sm:shadow-[0_4px_0_#b91c1c] active:translate-y-[3px] sm:active:translate-y-[4px] active:shadow-none transition-all uppercase tracking-wider text-[11px] sm:text-sm flex items-center justify-center gap-1.5"
                             >
                                 Yes, I am Ready!
                             </Button>
@@ -521,23 +521,23 @@ export default function Assessment({ type }: AssessmentProps) {
             {/* Custom F5 Refresh Warning Modal */}
             {showRefreshWarning && (
                 <div className="fixed inset-0 z-[400] bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4">
-                    <div className="bg-white dark:bg-slate-900 border-[4px] border-amber-500 rounded-[2rem] p-6 sm:p-8 max-w-md w-full text-center shadow-2xl space-y-5 select-none my-auto">
-                        <div className="inline-flex h-14 w-14 items-center justify-center bg-amber-50 dark:bg-amber-950/30 rounded-2xl border-2 border-amber-250 dark:border-amber-900/50">
-                            <span className="text-2xl">⚠️</span>
+                    <div className="bg-white dark:bg-slate-900 border-[3px] sm:border-[4px] border-amber-500 rounded-[1.5rem] sm:rounded-[2rem] p-5 sm:p-8 max-w-md w-full text-center shadow-2xl space-y-4 sm:space-y-5 select-none my-auto">
+                        <div className="inline-flex h-12 w-12 sm:h-14 sm:w-14 items-center justify-center bg-amber-50 dark:bg-amber-950/30 rounded-xl sm:rounded-2xl border-2 border-amber-250 dark:border-amber-900/50">
+                            <span className="text-xl sm:text-2xl">⚠️</span>
                         </div>
                         
-                        <div className="space-y-1.5">
-                            <h3 className="text-xl sm:text-2xl font-black text-slate-800 dark:text-white uppercase tracking-tight">
+                        <div className="space-y-1 sm:space-y-1.5">
+                            <h3 className="text-lg sm:text-2xl font-black text-slate-800 dark:text-white uppercase tracking-tight">
                                 Refresh Disabled
                             </h3>
-                            <p className="text-xs sm:text-sm font-bold text-slate-500 dark:text-slate-400 leading-normal">
+                            <p className="text-[11px] sm:text-sm font-bold text-slate-500 dark:text-slate-400 leading-normal">
                                 Refreshing is disabled to protect your active assessment progress. Please complete your questions and submit.
                             </p>
                         </div>
 
                         <Button
                             onClick={() => setShowRefreshWarning(false)}
-                            className="w-full bg-amber-500 hover:bg-amber-400 text-white font-black py-3.5 rounded-full border-[3px] border-amber-600 shadow-[0_4px_0_#d97706] active:translate-y-[4px] active:shadow-none transition-all uppercase tracking-wider text-xs sm:text-sm"
+                            className="w-full bg-amber-500 hover:bg-amber-400 text-white font-black py-2.5 sm:py-3.5 rounded-full border-[2.5px] sm:border-[3px] border-amber-600 shadow-[0_3px_0_#d97706] sm:shadow-[0_4px_0_#d97706] active:translate-y-[3px] sm:active:translate-y-[4px] active:shadow-none transition-all uppercase tracking-wider text-xs sm:text-sm"
                         >
                             Return to Test
                         </Button>
@@ -548,16 +548,16 @@ export default function Assessment({ type }: AssessmentProps) {
             {/* Custom ESC Escape Warning Modal */}
             {showEscapeWarning && (
                 <div className="fixed inset-0 z-[400] bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4">
-                    <div className="bg-white dark:bg-slate-900 border-[4px] border-red-500 rounded-[2rem] p-6 sm:p-8 max-w-md w-full text-center shadow-2xl space-y-5 select-none my-auto">
-                        <div className="inline-flex h-14 w-14 items-center justify-center bg-red-50 dark:bg-red-950/30 rounded-2xl border-2 border-red-100 dark:border-red-900 mb-2">
-                            <span className="text-2xl">🚫</span>
+                    <div className="bg-white dark:bg-slate-900 border-[3px] sm:border-[4px] border-red-500 rounded-[1.5rem] sm:rounded-[2rem] p-5 sm:p-8 max-w-md w-full text-center shadow-2xl space-y-4 sm:space-y-5 select-none my-auto">
+                        <div className="inline-flex h-12 w-12 sm:h-14 sm:w-14 items-center justify-center bg-red-50 dark:bg-red-950/30 rounded-xl sm:rounded-2xl border-2 border-red-100 dark:border-red-900 mb-1 sm:mb-2">
+                            <span className="text-xl sm:text-2xl">🚫</span>
                         </div>
                         
-                        <div className="space-y-1.5">
-                            <h3 className="text-xl sm:text-2xl font-black text-slate-800 dark:text-white uppercase tracking-tight">
+                        <div className="space-y-1 sm:space-y-1.5">
+                            <h3 className="text-lg sm:text-2xl font-black text-slate-800 dark:text-white uppercase tracking-tight">
                                 Fullscreen Required
                             </h3>
-                            <p className="text-xs sm:text-sm font-bold text-slate-500 dark:text-slate-400 leading-normal">
+                            <p className="text-[11px] sm:text-sm font-bold text-slate-500 dark:text-slate-400 leading-normal">
                                 Exiting fullscreen mode is disabled during the Post-Test to keep you in focus. Please complete your questions inside fullscreen mode.
                             </p>
                         </div>
@@ -569,7 +569,7 @@ export default function Assessment({ type }: AssessmentProps) {
                                     document.documentElement.requestFullscreen().catch(() => {})
                                 }
                             }}
-                            className="w-full bg-red-500 hover:bg-red-400 text-white font-black py-3.5 rounded-full border-[3px] border-red-600 shadow-[0_4px_0_#dc2626] active:translate-y-[4px] active:shadow-none transition-all uppercase tracking-wider text-xs sm:text-sm"
+                            className="w-full bg-red-500 hover:bg-red-400 text-white font-black py-2.5 sm:py-3.5 rounded-full border-[2.5px] sm:border-[3px] border-red-600 shadow-[0_3px_0_#dc2626] sm:shadow-[0_4px_0_#dc2626] active:translate-y-[3px] sm:active:translate-y-[4px] active:shadow-none transition-all uppercase tracking-wider text-xs sm:text-sm"
                         >
                             Return to Fullscreen
                         </Button>
@@ -577,48 +577,48 @@ export default function Assessment({ type }: AssessmentProps) {
                 </div>
             )}
             
-            <div className="max-w-3xl mx-auto mb-6 flex items-center gap-4">
+            <div className="max-w-3xl mx-auto mb-4 md:mb-6 flex items-center gap-3 md:gap-4 w-full shrink-0">
                 {!isTestStarted && (
                     <button 
                         onClick={handleContinue}
-                        className="h-10 w-10 sm:h-12 sm:w-12 bg-white dark:bg-slate-800 rounded-full border-2 border-slate-200 dark:border-slate-700 border-b-[4px] active:border-b-2 active:translate-y-[2px] shadow-sm flex items-center justify-center hover:bg-slate-50 dark:hover:bg-slate-700 transition-all shrink-0"
+                        className="h-9 w-9 sm:h-12 sm:w-12 bg-white dark:bg-slate-800 rounded-full border-2 border-slate-200 dark:border-slate-700 border-b-[4px] active:border-b-2 active:translate-y-[2px] shadow-sm flex items-center justify-center hover:bg-slate-50 dark:hover:bg-slate-700 transition-all shrink-0"
                     >
-                        <ArrowLeft className="h-5 w-5 sm:h-6 sm:w-6 text-slate-700 dark:text-slate-300" strokeWidth={3} />
+                        <ArrowLeft className="h-4 w-4 sm:h-6 sm:w-6 text-slate-700 dark:text-slate-300" strokeWidth={3} />
                     </button>
                 )}
                 <div>
-                    <h1 className="text-2xl sm:text-3xl font-black text-slate-800 dark:text-white tracking-tight">{title}</h1>
-                    <p className="text-sm text-slate-500 dark:text-slate-400 font-medium">{description}</p>
+                    <h1 className="text-xl sm:text-3xl font-black text-slate-800 dark:text-white tracking-tight">{title}</h1>
+                    <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 font-medium">{description}</p>
                 </div>
             </div>
 
-            <Card className="max-w-2xl mx-auto border-[4px] border-slate-200 dark:border-slate-800 shadow-[0_8px_0_#e2e8f0] dark:shadow-[0_8px_0_#0f172a] rounded-[2rem] overflow-hidden bg-white dark:bg-slate-900 transition-colors duration-500">
+            <Card className="w-full max-w-2xl mx-auto flex flex-col min-h-0 border-[3px] md:border-[4px] border-slate-200 dark:border-slate-800 shadow-[0_6px_0_#e2e8f0] dark:shadow-[0_6px_0_#0f172a] md:shadow-[0_8px_0_#e2e8f0] md:dark:shadow-[0_8px_0_#0f172a] rounded-[1.5rem] md:rounded-[2rem] overflow-hidden bg-white dark:bg-slate-900 transition-colors duration-500">
                 {loading ? (
-                    <div className="flex flex-col items-center justify-center py-24">
-                        <Loader2 className="h-12 w-12 animate-spin text-orange-500 mb-4" />
-                        <span className="text-slate-600 dark:text-slate-400 font-bold">Loading questions...</span>
+                    <div className="flex flex-col items-center justify-center flex-1 py-12 md:py-24">
+                        <Loader2 className="h-10 w-10 md:h-12 md:w-12 animate-spin text-orange-500 mb-4" />
+                        <span className="text-slate-600 dark:text-slate-400 font-bold text-sm md:text-base">Loading questions...</span>
                     </div>
                 ) : questions.length === 0 ? (
-                    <div className="text-center py-24 px-4">
-                        <Shield className="h-12 w-12 text-slate-300 dark:text-slate-700 mx-auto mb-4" />
-                        <h2 className="text-xl font-bold text-slate-700 dark:text-slate-300 mb-2">No Questions Found</h2>
-                        <p className="text-slate-500 dark:text-slate-400 mb-6">We couldn't find any questions for this assessment.</p>
-                        <Button onClick={() => router.visit('/')} variant="outline" className="border-2 rounded-full font-bold dark:border-slate-700 dark:text-slate-300">
+                    <div className="text-center flex-1 flex flex-col justify-center items-center py-12 md:py-24 px-4">
+                        <Shield className="h-10 w-10 md:h-12 md:w-12 text-slate-300 dark:text-slate-700 mb-4" />
+                        <h2 className="text-lg md:text-xl font-bold text-slate-700 dark:text-slate-300 mb-2">No Questions Found</h2>
+                        <p className="text-xs md:text-sm text-slate-500 dark:text-slate-400 mb-6">We couldn't find any questions for this assessment.</p>
+                        <Button onClick={() => router.visit('/')} variant="outline" className="border-2 rounded-full font-bold h-9 md:h-10 dark:border-slate-700 dark:text-slate-300">
                             Return Home
                         </Button>
                     </div>
                 ) : (
                     <>
                         {/* Progress Header */}
-                        <div className="bg-slate-50 dark:bg-slate-900/80 px-6 pb-5 pt-6 border-b-[3px] border-slate-100 dark:border-slate-800">
-                            <div className="flex flex-wrap justify-between items-center mb-4 gap-2">
+                        <div className="bg-slate-50 dark:bg-slate-900/80 px-4 py-3 sm:px-5 md:px-6 md:pb-5 md:pt-6 border-b-[3px] border-slate-100 dark:border-slate-800 shrink-0">
+                            <div className="flex flex-wrap justify-between items-center mb-2.5 md:mb-4 gap-2">
                                 <span className="font-black text-slate-500 dark:text-slate-400 text-sm sm:text-base uppercase tracking-wider">
                                     Question {currentQuestionIndex + 1} of {questions.length}
                                 </span>
-                                <div className="flex items-center gap-2">
+                                <div className="flex items-center gap-1.5 md:gap-2">
                                     {timeLeft !== null && (
                                         <span className={cn(
-                                            "font-black px-4 py-1.5 rounded-full text-sm sm:text-base border flex items-center gap-1.5 transition-all",
+                                            "font-black px-2.5 py-1 rounded-full text-sm sm:text-base border flex items-center gap-1 transition-all",
                                             timeLeft < 120 
                                                 ? "bg-red-50 dark:bg-red-950/30 border-red-300 dark:border-red-900 text-red-655 dark:text-red-400"
                                                 : "bg-amber-50 dark:bg-amber-950/30 border-amber-250 dark:border-amber-900/50 text-amber-600 dark:text-amber-400"
@@ -626,12 +626,12 @@ export default function Assessment({ type }: AssessmentProps) {
                                             ⏱️ {Math.floor(timeLeft / 60)}:{(timeLeft % 60) < 10 ? '0' : ''}{timeLeft % 60}
                                         </span>
                                     )}
-                                    <span className="font-black text-green-600 dark:text-green-400 bg-green-50 dark:bg-green-950/30 px-4 py-1.5 rounded-full text-sm sm:text-base border border-green-200 dark:border-green-900/50">
+                                    <span className="font-black text-green-600 dark:text-green-400 bg-green-50 dark:bg-green-950/30 px-2.5 py-1 rounded-full text-sm sm:text-base border border-green-200 dark:border-green-900/50">
                                         {Math.round(((currentQuestionIndex) / questions.length) * 100)}% Completed
                                     </span>
                                 </div>
                             </div>
-                            <div className="w-full bg-slate-100 dark:bg-slate-800 rounded-full h-4 overflow-hidden border-2 border-slate-200 dark:border-slate-700 shadow-inner">
+                            <div className="w-full bg-slate-100 dark:bg-slate-800 rounded-full h-2 md:h-4 overflow-hidden border-2 border-slate-200 dark:border-slate-700 shadow-inner">
                                 <div
                                     className="bg-gradient-to-r from-green-500 to-emerald-400 h-full rounded-full transition-all duration-300 ease-out"
                                     style={{ width: `${((currentQuestionIndex) / questions.length) * 100}%` }}
@@ -640,38 +640,39 @@ export default function Assessment({ type }: AssessmentProps) {
                         </div>
 
                         {/* Question Content */}
-                        <CardContent className="p-4 sm:p-8 pt-2 sm:pt-4 bg-white dark:bg-slate-900">
+                        <CardContent className="p-4 sm:p-5 md:p-8 pt-3 sm:pt-4 bg-white dark:bg-slate-900 flex flex-col justify-start">
                             {error && (
-                                <div className="mb-4 p-4 bg-red-50 dark:bg-red-950/20 border-2 border-red-200 dark:border-red-900/30 rounded-2xl flex items-start gap-3">
+                                <div className="mb-4 p-3 bg-red-50 dark:bg-red-950/20 border-2 border-red-200 dark:border-red-900/30 rounded-2xl flex items-start gap-3">
                                     <Shield className="h-5 w-5 text-red-500 shrink-0 mt-0.5" />
                                     <p className="text-red-700 dark:text-red-400 font-bold">{error}</p>
                                 </div>
                             )}
 
-                            <div className="mb-6 p-5 sm:p-6 bg-gradient-to-br from-orange-500 to-red-600 dark:from-orange-600 dark:to-red-700 rounded-[1.5rem] border-[3px] border-orange-600 dark:border-orange-800 shadow-[0_4px_0_#c2410c] dark:shadow-[0_4px_0_#7c2d12] relative mt-2">
-                                <span className="absolute -top-3 sm:-top-4 left-6 px-3 py-1 bg-yellow-400 text-orange-800 font-black text-[10px] sm:text-xs uppercase tracking-widest rounded-full border-[2px] border-yellow-500 shadow-sm">
+                            <div className="mb-4 md:mb-6 p-4 sm:p-5 md:p-6 bg-gradient-to-br from-orange-500 to-red-600 dark:from-orange-600 dark:to-red-700 rounded-[1rem] md:rounded-[1.5rem] border-[2.5px] md:border-[3px] border-orange-600 dark:border-orange-800 shadow-[0_3px_0_#c2410c] md:shadow-[0_4px_0_#c2410c] relative mt-3 md:mt-2 shrink-0">
+                                <span className="absolute -top-3 md:-top-4 left-4 md:left-6 px-2.5 py-0.5 md:px-3 md:py-1 bg-yellow-400 text-orange-800 font-black text-[10px] sm:text-xs uppercase tracking-widest rounded-full border-[1.5px] md:border-[2px] border-yellow-500 shadow-sm">
                                     {questions[currentQuestionIndex].category}
                                 </span>
-                                <h3 className="text-lg sm:text-xl font-black text-white leading-tight mt-1 drop-shadow-sm">
+                                <h3 className="text-base sm:text-lg md:text-xl font-black text-white leading-snug mt-1 drop-shadow-sm">
                                     {questions[currentQuestionIndex].question}
                                 </h3>
                             </div>
 
                             <RadioGroup
+                                key={questions[currentQuestionIndex].id}
                                 value={answers[questions[currentQuestionIndex].id]?.toString() || ""}
                                 onValueChange={(value) => handleAnswerQuestion(questions[currentQuestionIndex].id, parseInt(value))}
-                                className="space-y-4"
+                                className="space-y-2.5 md:space-y-4"
                             >
                                 {questions[currentQuestionIndex].options.map((option, index) => {
                                     const isSelected = answers[questions[currentQuestionIndex].id] === index
                                     return (
                                         <div 
-                                            key={index} 
+                                            key={`${questions[currentQuestionIndex].id}-${index}`} 
                                             className={`
-                                                flex items-center space-x-3 sm:space-x-4 p-3.5 sm:p-4 rounded-2xl border-[3px] transition-all cursor-pointer group
+                                                flex items-center p-3 md:p-4 rounded-xl md:rounded-2xl border-[2px] md:border-[3px] transition-all cursor-pointer group outline-none focus:outline-none
                                                 ${isSelected 
-                                                    ? 'bg-green-50 dark:bg-emerald-950/20 border-green-500 dark:border-emerald-600 shadow-[0_4px_0_#16a34a] dark:shadow-[0_4px_0_#065f46] -translate-y-1' 
-                                                    : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 shadow-[0_4px_0_#e2e8f0] dark:shadow-[0_4px_0_#0f172a] hover:border-orange-300 dark:hover:border-orange-700 hover:bg-orange-50 dark:hover:bg-slate-700/50 hover:-translate-y-1 hover:shadow-[0_5px_0_#fed7aa] dark:hover:shadow-[0_5px_0_#431407] active:shadow-none active:translate-y-[2px]'
+                                                    ? 'bg-yellow-50 dark:bg-yellow-950/20 border-yellow-500 dark:border-yellow-600 shadow-[0_3px_0_#eab308] dark:shadow-[0_4px_0_#ca8a04] -translate-y-[2px] md:-translate-y-1' 
+                                                    : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 shadow-[0_3px_0_#e2e8f0] dark:shadow-[0_4px_0_#0f172a] md:hover:border-orange-300 dark:md:hover:border-orange-700 md:hover:bg-orange-50 dark:md:hover:bg-slate-700/50 md:hover:-translate-y-1 md:hover:shadow-[0_4px_0_#fed7aa] dark:md:hover:shadow-[0_4px_0_#431407] active:shadow-none active:translate-y-[2px]'
                                                 }
                                             `}
                                             onClick={() => handleAnswerQuestion(questions[currentQuestionIndex].id, index)}
@@ -679,14 +680,12 @@ export default function Assessment({ type }: AssessmentProps) {
                                             <RadioGroupItem 
                                                 value={index.toString()} 
                                                 id={`q-${questions[currentQuestionIndex].id}-opt-${index}`} 
-                                                className={`h-6 w-6 border-[3px] transition-all shrink-0 ${
-                                                    isSelected ? 'border-green-600 dark:border-emerald-500 fill-green-600 dark:fill-emerald-500 text-green-600 dark:text-emerald-500' : 'border-slate-300 dark:border-slate-600 group-hover:border-orange-400 dark:group-hover:border-orange-500'
-                                                }`}
+                                                className="hidden"
                                             />
                                             <Label 
                                                 htmlFor={`q-${questions[currentQuestionIndex].id}-opt-${index}`}
                                                 className={`text-sm sm:text-base font-black cursor-pointer w-full leading-snug ${
-                                                    isSelected ? 'text-green-800 dark:text-emerald-50' : 'text-slate-700 dark:text-slate-300 group-hover:text-slate-900 dark:group-hover:text-white'
+                                                    isSelected ? 'text-yellow-800 dark:text-yellow-500' : 'text-slate-700 dark:text-slate-300 md:group-hover:text-slate-900 dark:md:group-hover:text-white'
                                                 }`}
                                             >
                                                 {option}
@@ -698,36 +697,47 @@ export default function Assessment({ type }: AssessmentProps) {
                         </CardContent>
 
                         {/* Navigation Footer */}
-                        <div className="px-6 py-4 flex justify-between items-center">
+                        <div className="px-4 py-3 md:px-6 md:py-4 flex justify-between items-center border-t border-slate-100 dark:border-slate-800 shrink-0 bg-slate-50 dark:bg-slate-900/50">
                             <Button 
                                 variant="outline" 
                                 disabled={currentQuestionIndex === 0 || submitting} 
                                 onClick={() => setCurrentQuestionIndex(prev => prev - 1)}
-                                className={`rounded-full font-black px-5 border-[2px] active:translate-y-[2px] transition-all shadow-[0_2px_0_#cbd5e1] dark:shadow-[0_2px_0_#0f172a] active:shadow-none h-10 ${
+                                className={`rounded-full font-black px-4 md:px-5 border-[2px] active:translate-y-[2px] transition-all shadow-[0_2px_0_#cbd5e1] dark:shadow-[0_2px_0_#0f172a] active:shadow-none h-9 md:h-10 text-xs md:text-sm ${
                                     currentQuestionIndex === 0 || submitting ? 'opacity-50 border-slate-200 dark:border-slate-700 shadow-none' : 'border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 hover:bg-slate-100 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200'
                                 }`}
                             >
-                                <ChevronLeft className="h-5 w-5 mr-1" /> Back
+                                <ChevronLeft className="h-4 w-4 md:h-5 md:w-5 mr-1" /> Back
                             </Button>
 
                             {currentQuestionIndex === questions.length - 1 ? (
                                 <Button 
                                     onClick={handleSubmit} 
                                     disabled={submitting || answers[questions[currentQuestionIndex].id] === undefined}
-                                    className={`rounded-full font-black px-6 py-5 text-base border-2 transition-all text-white relative ${
+                                    className={`rounded-full font-black px-4 md:px-6 py-2 md:py-5 text-xs md:text-base border-2 transition-all text-white relative h-9 md:h-auto ${
                                         answers[questions[currentQuestionIndex].id] === undefined
                                             ? 'bg-slate-300 dark:bg-slate-700 border-slate-400 dark:border-slate-600 opacity-50 cursor-not-allowed'
-                                            : 'bg-green-500 hover:bg-green-400 dark:bg-emerald-600 dark:hover:bg-emerald-500 border-green-600 dark:border-emerald-700 shadow-[0_4px_0_#16a34a] dark:shadow-[0_4px_0_#065f46] active:shadow-none active:translate-y-[4px]'
+                                            : 'bg-green-500 hover:bg-green-400 dark:bg-emerald-600 dark:hover:bg-emerald-500 border-green-600 dark:border-emerald-700 shadow-[0_3px_0_#16a34a] md:shadow-[0_4px_0_#16a34a] active:shadow-none active:translate-y-[2px] md:active:translate-y-[4px]'
                                     }`}
                                 >
                                     {submitting ? (
-                                        <><Loader2 className="h-5 w-5 animate-spin mr-2" /> Submitting...</>
+                                        <><Loader2 className="h-4 w-4 md:h-5 md:w-5 animate-spin mr-1 md:mr-2" /> Submitting...</>
                                     ) : (
-                                        <><Check className="h-5 w-5 mr-2" strokeWidth={4} /> Submit Results</>
+                                        <><Check className="h-4 w-4 md:h-5 md:w-5 mr-1 md:mr-2" strokeWidth={4} /> Submit</>
                                     )}
                                 </Button>
                             ) : (
-                                <div />
+                                <Button
+                                    variant="outline"
+                                    onClick={() => setCurrentQuestionIndex(prev => prev + 1)}
+                                    disabled={answers[questions[currentQuestionIndex].id] === undefined}
+                                    className={`rounded-full font-black px-4 md:px-5 border-[2px] active:translate-y-[2px] transition-all shadow-[0_2px_0_#cbd5e1] dark:shadow-[0_2px_0_#0f172a] active:shadow-none h-9 md:h-10 text-xs md:text-sm ${
+                                        answers[questions[currentQuestionIndex].id] === undefined
+                                            ? 'opacity-50 border-slate-200 dark:border-slate-700 shadow-none'
+                                            : 'border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 hover:bg-slate-100 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200'
+                                    }`}
+                                >
+                                    Next <ChevronRight className="h-4 w-4 md:h-5 md:w-5 ml-1" />
+                                </Button>
                             )}
                         </div>
                     </>

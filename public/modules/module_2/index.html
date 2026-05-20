@@ -369,8 +369,8 @@
                         </div>
                     </div>
 
-                    <button id="btn-content-read" onclick="markContentRead()" class="bg-orange-400 hover:bg-orange-500 text-white font-black py-2 px-4 sm:py-3 sm:px-6 rounded-full shadow-[0_4px_0_#c2410c] hover:-translate-y-0.5 active:translate-y-1 active:shadow-none transition-all uppercase tracking-wide mt-3 sm:mt-4 border-[3px] border-white text-xs sm:text-base">
-                        <i class="fa-solid fa-check"></i> I understand the alarm system
+                    <button id="btn-content-read" onclick="markContentRead()" class="bg-blue-500 text-white font-normal py-2.5 px-5 sm:py-3 sm:px-6 rounded-full border-[3px] border-white shadow-[0_4px_0_#1d4ed8] hover:-translate-y-0.5 active:translate-y-1 active:shadow-none transition-all uppercase tracking-wide mt-4 text-sm sm:text-base inline-flex items-center justify-center gap-2">
+                        I understand the alarm system
                     </button>
                 </div>
 
@@ -585,8 +585,8 @@
                 </p>
             </div>
 
-            <button id="btn-meeting-read" onclick="markMeetingPlaceRead()" class="bg-orange-400 hover:bg-orange-500 text-white font-black py-2 px-4 sm:py-3 sm:px-6 rounded-full shadow-[0_4px_0_#c2410c] hover:-translate-y-0.5 active:translate-y-1 active:shadow-none transition-all uppercase tracking-wide border-[3px] border-white text-xs sm:text-base">
-                <i class="fa-solid fa-check"></i> I understand the safe meeting place
+            <button id="btn-meeting-read" onclick="markMeetingPlaceRead()" class="bg-orange-400 hover:bg-orange-500 text-white font-medium py-2 px-4 sm:py-3 sm:px-6 rounded-full shadow-[0_4px_0_#c2410c] hover:-translate-y-0.5 active:translate-y-1 active:shadow-none transition-all uppercase tracking-wide border-[3px] border-white text-xs sm:text-base inline-flex items-center justify-center gap-2">
+                I understand the safe meeting place
             </button>
         </section>
 
@@ -725,7 +725,7 @@
                 const btn = document.getElementById('btn-content-read');
                 if (btn) {
                     btn.innerHTML = '<i class="fa-solid fa-check-circle"></i> Completed';
-                    btn.className = "ss-btn ss-btn-success mt-4 cursor-default";
+                    btn.className = "bg-green-500 text-white font-black py-2 px-4 sm:py-3 sm:px-6 rounded-full shadow-[0_4px_0_#15803d] transition-all uppercase tracking-wide mt-3 sm:mt-4 border-[3px] border-green-600 text-xs sm:text-base inline-flex items-center justify-center gap-2 cursor-default";
                     btn.onclick = null;
                 }
             }
@@ -735,7 +735,7 @@
                 const btnMeeting = document.getElementById('btn-meeting-read');
                 if (btnMeeting) {
                     btnMeeting.innerHTML = '<i class="fa-solid fa-check-circle"></i> Completed';
-                    btnMeeting.className = "ss-btn ss-btn-success mt-2 cursor-default";
+                    btnMeeting.className = "bg-green-500 text-white font-black py-2 px-4 sm:py-3 sm:px-6 rounded-full shadow-[0_4px_0_#15803d] transition-all uppercase tracking-wide border-[3px] border-green-600 text-xs sm:text-base inline-flex items-center justify-center gap-2 cursor-default";
                     btnMeeting.onclick = null;
                 }
             }

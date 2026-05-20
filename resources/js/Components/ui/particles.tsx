@@ -63,6 +63,7 @@ export const Particles = React.memo(({
     const mouse = useRef<MousePosition>({ x: 0, y: 0 });
     const canvasSize = useRef<{ w: number; h: number }>({ w: 0, h: 0 });
     const dpr = typeof window !== 'undefined' ? window.devicePixelRatio : 1;
+    const animationFrameRef = useRef<number | null>(null);
 
     useEffect(() => {
         if (canvasRef.current) {
@@ -81,6 +82,9 @@ export const Particles = React.memo(({
         window.addEventListener('mousemove', handleMouseMove);
 
         return () => {
+            if (animationFrameRef.current) {
+                window.cancelAnimationFrame(animationFrameRef.current);
+            }
             window.removeEventListener('resize', initCanvas);
             window.removeEventListener('mousemove', handleMouseMove);
         };
@@ -257,7 +261,7 @@ export const Particles = React.memo(({
                 drawCircle(newCircle);
             }
         });
-        window.requestAnimationFrame(animate);
+        animationFrameRef.current = window.requestAnimationFrame(animate);
     };
 
     return (

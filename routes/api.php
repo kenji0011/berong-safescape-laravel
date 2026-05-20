@@ -27,9 +27,9 @@ use App\Http\Controllers\NotificationController;
 // ==========================================
 
 // Auth API — used by registration wizard
-Route::middleware('throttle:api')->prefix('auth')->group(function () {
-    Route::get('/check-username', [AuthApiController::class, 'checkUsername']);
-    Route::post('/validate-credentials', [AuthApiController::class, 'validateCredentials']);
+Route::prefix('auth')->group(function () {
+    Route::middleware('throttle:auth')->get('/check-username', [AuthApiController::class, 'checkUsername']);
+    Route::middleware('throttle:auth')->post('/validate-credentials', [AuthApiController::class, 'validateCredentials']);
     Route::middleware('throttle:auth')->post('/register', [AuthApiController::class, 'register']);
     Route::middleware('throttle:password-reset')->post('/reset-password', [AuthApiController::class, 'resetPassword']);
 });
@@ -42,12 +42,12 @@ Route::get('/quick-questions', [ContentController::class, 'questions']);
 // Public schools list (for registration dropdowns)
 Route::get('/schools', [SchoolAnalyticsController::class, 'index']);
 
-Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
+Route::middleware(['auth:sanctum', 'throttle:api'])->get('/user', function (Request $request) {
     return $request->user();
 });
 
 // All protected API routes
-Route::middleware(['auth:sanctum'])->group(function () {
+Route::middleware(['auth:sanctum', 'throttle:api'])->group(function () {
     
     // Auth Profile Completion
     Route::post('/auth/complete-profile', [AuthApiController::class, 'completeProfile']);

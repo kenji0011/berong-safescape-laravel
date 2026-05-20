@@ -22,6 +22,7 @@ class DatabaseSeeder extends Seeder
         // ============================
         $admin = User::updateOrCreate(['username' => 'admin'], [
             'email' => 'admin@bfp.gov.ph',
+            'email_verified_at' => now(),
             'password' => Hash::make('admin123'),
             'name' => 'BFP Administrator',
             'firstName' => 'BFP',
@@ -32,6 +33,7 @@ class DatabaseSeeder extends Seeder
 
         $kid = User::updateOrCreate(['username' => 'testkid'], [
             'email' => 'kid@bfp.gov.ph',
+            'email_verified_at' => now(),
             'password' => Hash::make('kid123'),
             'name' => 'Young Firefighter',
             'firstName' => 'Young',
@@ -42,6 +44,7 @@ class DatabaseSeeder extends Seeder
 
         $adult = User::updateOrCreate(['username' => 'testadult'], [
             'email' => 'adult@bfp.gov.ph',
+            'email_verified_at' => now(),
             'password' => Hash::make('adult123'),
             'name' => 'John Smith',
             'firstName' => 'John',
@@ -52,6 +55,7 @@ class DatabaseSeeder extends Seeder
 
         $pro = User::updateOrCreate(['username' => 'testpro'], [
             'email' => 'pro@bfp.gov.ph',
+            'email_verified_at' => now(),
             'password' => Hash::make('pro123'),
             'name' => 'Firefighter Cruz',
             'firstName' => 'Firefighter',

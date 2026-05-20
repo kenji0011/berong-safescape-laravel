@@ -583,15 +583,15 @@ class AdminController extends Controller
     public function createFireCode(Request $request)
     {
         $request->validate([
-            'title' => 'required|string',
-            'sectionNum' => 'required|string',
+            'title' => 'required|string|max:255',
+            'sectionNum' => 'required|string|max:100',
             'content' => 'required|string',
         ]);
 
         $section = \App\Models\FireCodeSection::create([
-            'title' => $request->title,
-            'sectionNum' => $request->sectionNum,
-            'content' => $request->input('content'),
+            'title' => strip_tags($request->title),
+            'sectionNum' => strip_tags($request->sectionNum),
+            'content' => strip_tags($request->input('content')),
             'parentSectionId' => $request->parentSectionId,
         ]);
 
@@ -601,12 +601,28 @@ class AdminController extends Controller
     public function updateFireCode(Request $request, $id)
     {
         $section = \App\Models\FireCodeSection::findOrFail($id);
-        $section->update([
-            'title' => $request->title ?? $section->title,
-            'sectionNum' => $request->sectionNum ?? $section->sectionNum,
-            'content' => $request->input('content') ?? $section->content,
-            'parentSectionId' => $request->parentSectionId ?? $section->parentSectionId,
+        
+        $request->validate([
+            'title' => 'sometimes|required|string|max:255',
+            'sectionNum' => 'sometimes|required|string|max:100',
+            'content' => 'sometimes|required|string',
         ]);
+
+        $updates = [];
+        if ($request->has('title')) {
+            $updates['title'] = strip_tags($request->title);
+        }
+        if ($request->has('sectionNum')) {
+            $updates['sectionNum'] = strip_tags($request->sectionNum);
+        }
+        if ($request->has('content')) {
+            $updates['content'] = strip_tags($request->input('content'));
+        }
+        if ($request->has('parentSectionId')) {
+            $updates['parentSectionId'] = $request->parentSectionId;
+        }
+
+        $section->update($updates);
 
         return response()->json(['success' => true, 'section' => $section]);
     }

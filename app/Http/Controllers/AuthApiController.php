@@ -331,13 +331,14 @@ class AuthApiController extends Controller
             return response()->json(['success' => false, 'error' => 'Incorrect password.'], 403);
         }
 
-        $user->name = $request->name;
+        $user->name = strip_tags($request->name);
         
         if ($user->email !== $request->email) {
             $user->email = $request->email;
+            $user->email_verified_at = null;
             $user->save();
+            event(new \Illuminate\Auth\Events\Registered($user));
         } else {
-            $user->email = $request->email;
             $user->save();
         }
 

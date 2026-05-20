@@ -679,6 +679,17 @@ function SplashCursor({
         initFramebuffers();
         let lastUpdateTime = Date.now();
         let colorUpdateTimer = 0.0;
+        let lastInteractionTime = Date.now();
+        let isAnimating = true;
+
+        function wakeUp() {
+            lastInteractionTime = Date.now();
+            if (!isAnimating) {
+                isAnimating = true;
+                lastUpdateTime = Date.now();
+                animationFrameId.current = requestAnimationFrame(updateFrame);
+            }
+        }
 
         function updateFrame() {
             if (!isActive) return;
@@ -688,6 +699,14 @@ function SplashCursor({
             applyInputs();
             step(dt);
             render(null);
+
+            // Sleep after 5 seconds of inactivity
+            if (Date.now() - lastInteractionTime > 5000) {
+                isAnimating = false;
+                animationFrameId.current = null;
+                return;
+            }
+
             animationFrameId.current = requestAnimationFrame(updateFrame);
         }
 
@@ -970,6 +989,7 @@ function SplashCursor({
 
         // Named event handlers for proper cleanup
         function handleMouseDown(e) {
+            wakeUp();
             let pointer = pointers[0];
             let posX = scaleByPixelRatio(e.clientX);
             let posY = scaleByPixelRatio(e.clientY);
@@ -979,6 +999,7 @@ function SplashCursor({
 
         let firstMouseMoveHandled = false;
         function handleMouseMove(e) {
+            wakeUp();
             let pointer = pointers[0];
             let posX = scaleByPixelRatio(e.clientX);
             let posY = scaleByPixelRatio(e.clientY);
@@ -992,6 +1013,7 @@ function SplashCursor({
         }
 
         function handleTouchStart(e) {
+            wakeUp();
             const touches = e.targetTouches;
             let pointer = pointers[0];
             for (let i = 0; i < touches.length; i++) {
@@ -1002,6 +1024,7 @@ function SplashCursor({
         }
 
         function handleTouchMove(e) {
+            wakeUp();
             const touches = e.targetTouches;
             let pointer = pointers[0];
             for (let i = 0; i < touches.length; i++) {
@@ -1012,6 +1035,7 @@ function SplashCursor({
         }
 
         function handleTouchEnd(e) {
+            wakeUp();
             const touches = e.changedTouches;
             let pointer = pointers[0];
             for (let i = 0; i < touches.length; i++) {

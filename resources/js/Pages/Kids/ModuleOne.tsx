@@ -232,7 +232,7 @@ const ModuleOnePage = ({ initialProgress }: { initialProgress?: any }) => {
         setPitItems(next)
         setLabCompleted(false)
         setPitWater(true)
-        setPitMessage("💦 Sizzle! Water removed the Heat.")
+        setPitMessage("🌊 Sizzle! Water removed the Heat.")
         setTimeout(() => setPitWater(false), 1200)
       } else {
         setPitMessage("Water added, but there was no heat to cool.")
@@ -549,14 +549,14 @@ const ModuleOnePage = ({ initialProgress }: { initialProgress?: any }) => {
                   onClick={handleSection1}
                   disabled={section1Done}
                   className={cn(
-                    "inline-flex items-center gap-2 font-black text-sm transition-all uppercase tracking-wide",
+                    "inline-flex items-center gap-2 text-sm transition-all uppercase tracking-wide",
                     section1Done
-                      ? "bg-green-500 text-white px-6 py-3 rounded-full border-[3px] border-green-600 shadow-[0_4px_0_#15803d] cursor-default"
-                      : "bg-orange-400 hover:bg-orange-500 text-white px-6 py-3 rounded-full border-[3px] border-white shadow-[0_4px_0_#c2410c] hover:-translate-y-0.5 active:translate-y-1 active:shadow-none"
+                      ? "bg-green-500 text-white px-6 py-3 rounded-full border-[3px] border-green-600 shadow-[0_4px_0_#15803d] cursor-default font-black"
+                      : "bg-orange-400 hover:bg-orange-500 text-white px-6 py-3 rounded-full border-[3px] border-white shadow-[0_4px_0_#c2410c] hover:-translate-y-0.5 active:translate-y-1 active:shadow-none font-normal"
                   )}
                 >
-                  <CheckCircle className="h-4 w-4" />
-                  {section1Done ? "Completed ✓" : "I understand the Fire Triangle"}
+                  {section1Done && <CheckCircle className="h-4 w-4" />}
+                  {section1Done ? "Completed" : "I understand the Fire Triangle"}
                 </button>
               </div>
 
@@ -614,14 +614,14 @@ const ModuleOnePage = ({ initialProgress }: { initialProgress?: any }) => {
                     onClick={handleSection2}
                     disabled={section2Done}
                     className={cn(
-                      "inline-flex items-center gap-2 font-black text-sm transition-all uppercase tracking-wide mt-2",
+                      "inline-flex items-center gap-2 text-sm transition-all uppercase tracking-wide mt-2",
                       section2Done
-                        ? "bg-green-500 text-white px-6 py-3 rounded-full border-[3px] border-green-600 shadow-[0_4px_0_#15803d] cursor-default"
-                        : "bg-red-500 hover:bg-red-600 text-white px-6 py-3 rounded-full border-[3px] border-white shadow-[0_4px_0_#991b1b] hover:-translate-y-0.5 active:translate-y-1 active:shadow-none"
+                        ? "bg-green-500 text-white px-6 py-3 rounded-full border-[3px] border-green-600 shadow-[0_4px_0_#15803d] cursor-default font-black"
+                        : "bg-red-500 hover:bg-red-600 text-white px-6 py-3 rounded-full border-[3px] border-white shadow-[0_4px_0_#991b1b] hover:-translate-y-0.5 active:translate-y-1 active:shadow-none font-normal"
                     )}
                   >
-                    <CheckCircle className="h-4 w-4" />
-                    {section2Done ? "Completed ✓" : "I understand the rules"}
+                    {section2Done && <CheckCircle className="h-4 w-4" />}
+                    {section2Done ? "Completed" : "I understand the rules"}
                   </button>
                 </div>
 
@@ -706,14 +706,14 @@ const ModuleOnePage = ({ initialProgress }: { initialProgress?: any }) => {
                   onClick={handleSection3}
                   disabled={section3Done}
                   className={cn(
-                    "inline-flex items-center gap-2 font-black text-sm transition-all uppercase tracking-wide",
+                    "inline-flex items-center gap-2 text-sm transition-all uppercase tracking-wide",
                     section3Done
-                      ? "bg-green-500 text-white px-6 py-3 rounded-full border-[3px] border-green-600 shadow-[0_4px_0_#15803d] cursor-default"
-                      : "bg-rose-500 hover:bg-rose-600 text-white px-6 py-3 rounded-full border-[3px] border-white shadow-[0_4px_0_#be123c] hover:-translate-y-0.5 active:translate-y-1 active:shadow-none"
+                      ? "bg-green-500 text-white px-6 py-3 rounded-full border-[3px] border-green-600 shadow-[0_4px_0_#15803d] cursor-default font-black"
+                      : "bg-rose-500 hover:bg-rose-600 text-white px-6 py-3 rounded-full border-[3px] border-white shadow-[0_4px_0_#be123c] hover:-translate-y-0.5 active:translate-y-1 active:shadow-none font-normal"
                   )}
                 >
-                  <CheckCircle className="h-4 w-4" />
-                  {section3Done ? "Completed ✓" : "I understand how fire grows & travels"}
+                  {section3Done && <CheckCircle className="h-4 w-4" />}
+                  {section3Done ? "Completed" : "I understand how fire grows & travels"}
                 </button>
               </div>
             </div>
@@ -850,13 +850,29 @@ const ModuleOnePage = ({ initialProgress }: { initialProgress?: any }) => {
                     </div>
                   )}
 
-                  {/* Fire emoji — bottom of circle */}
-                  {labCompleted && (
-                    <div className="z-20 text-2xl sm:text-4xl" style={{ marginTop: 14 }}>🔥</div>
+                  {/* Fire image — bottom of circle with animated fire effect */}
+                  {labCompleted && !pitWater && (
+                    <div className="z-20 relative flex items-center justify-center" style={{ marginTop: 14 }}>
+                      {/* Animated fire glow layers */}
+                      <div className="absolute w-16 h-16 sm:w-24 sm:h-24 rounded-full animate-pulse" style={{ background: 'radial-gradient(circle, rgba(255,120,0,0.4) 0%, rgba(255,60,0,0.15) 50%, transparent 70%)' }} />
+                      <div className="absolute w-12 h-12 sm:w-20 sm:h-20 rounded-full" style={{ background: 'radial-gradient(circle, rgba(255,200,0,0.3) 0%, transparent 60%)', animation: 'fireFlicker 0.8s ease-in-out infinite alternate' }} />
+                      {/* Fire sparks */}
+                      <div className="absolute -top-2 sm:-top-3 left-1/2 -translate-x-1/2 w-1 h-1 sm:w-1.5 sm:h-1.5 bg-yellow-400 rounded-full" style={{ animation: 'fireSpark 1.2s ease-out infinite', opacity: 0.8 }} />
+                      <div className="absolute -top-1 sm:-top-2 left-1/3 w-1 h-1 bg-orange-400 rounded-full" style={{ animation: 'fireSpark 1.5s ease-out infinite 0.3s', opacity: 0.6 }} />
+                      <div className="absolute -top-1 sm:-top-2 right-1/3 w-1 h-1 bg-red-400 rounded-full" style={{ animation: 'fireSpark 1.8s ease-out infinite 0.6s', opacity: 0.7 }} />
+                      {/* Fire image */}
+                      <img src="/fire_hall.png" alt="Fire" className="w-10 h-10 sm:w-16 sm:h-16 object-contain relative z-10 drop-shadow-[0_0_12px_rgba(255,100,0,0.8)]" style={{ animation: 'fireWobble 0.6s ease-in-out infinite alternate' }} />
+                    </div>
                   )}
 
                   {/* Water splash */}
-                  {pitWater && <div className="text-3xl sm:text-5xl animate-bounce z-10">💦</div>}
+                  {pitWater && (
+                    <div className="z-10 relative flex items-center justify-center animate-bounce">
+                      {/* Water ripple glow */}
+                      <div className="absolute w-16 h-16 sm:w-24 sm:h-24 rounded-full animate-ping opacity-20" style={{ background: 'radial-gradient(circle, rgba(34,211,238,0.6) 0%, transparent 70%)' }} />
+                      <img src="/water_drop.png" alt="Water splash" className="w-10 h-10 sm:w-16 sm:h-16 object-contain relative z-10 drop-shadow-[0_0_10px_rgba(34,211,238,0.6)]" />
+                    </div>
+                  )}
 
                   {/* Placeholder */}
                   {pitItems.length === 0 && !pitWater && !labCompleted && (
@@ -885,6 +901,28 @@ const ModuleOnePage = ({ initialProgress }: { initialProgress?: any }) => {
                 </button>
               </div>
             </div>
+            {/* Fire animation keyframes */}
+            <style>{`
+              @keyframes fireWobble {
+                0% { transform: rotate(-3deg) scale(1); }
+                50% { transform: rotate(2deg) scale(1.08); }
+                100% { transform: rotate(-2deg) scale(1.04); }
+              }
+              @keyframes fireFlicker {
+                0% { opacity: 0.3; transform: scale(0.9); }
+                50% { opacity: 0.6; transform: scale(1.15); }
+                100% { opacity: 0.4; transform: scale(1); }
+              }
+              @keyframes fireSpark {
+                0% { transform: translateY(0) scale(1); opacity: 0.8; }
+                50% { transform: translateY(-12px) scale(0.6); opacity: 0.4; }
+                100% { transform: translateY(-20px) scale(0.2); opacity: 0; }
+              }
+              @keyframes popIn {
+                0% { transform: scale(0); opacity: 0; }
+                100% { transform: scale(1); opacity: 1; }
+              }
+            `}</style>
             </div>
           </section>
 
