@@ -246,11 +246,34 @@
         <!-- PART 1: THE HOOK (VIDEO) -->
         <section id="section-video" class="fade-in ss-section border-[3px] sm:border-[4px] border-slate-700" style="animation-delay: 0.2s;">
             <div class="ss-section-badge bg-green-500 border-[3px] border-white dark:border-slate-800 shadow-sm text-white transition-colors"><i class="fa-regular fa-circle-check"></i></div>
-            <div
-                class="w-full aspect-video bg-black rounded-[2rem] sm:rounded-[3rem] overflow-hidden shadow-2xl border border-slate-700 relative group">
-                <video id="module-video" controls class="w-full h-full object-cover" onplay="onVideoPlay()">
-                    <source src="../assets/videos/m1.mp4" type="video/mp4">
-                </video>
+            <div class="max-w-4xl mx-auto bg-slate-200 dark:bg-slate-800 p-4 sm:p-6 rounded-[2rem] sm:rounded-[3rem] border-[4px] border-slate-300 dark:border-slate-700 shadow-xl relative mt-8">
+                <!-- Minimal Antennae -->
+                <div class="absolute -top-6 left-1/2 -translate-x-1/2 flex gap-4 hidden sm:flex">
+                    <div class="w-1.5 h-8 bg-slate-400 dark:bg-slate-600 rotate-[30deg] rounded-full"></div>
+                    <div class="w-1.5 h-8 bg-slate-400 dark:bg-slate-600 -rotate-[30deg] rounded-full"></div>
+                </div>
+
+                <!-- TV Screen -->
+                <div class="w-full aspect-video bg-black rounded-2xl overflow-hidden border-[4px] border-slate-800 dark:border-slate-950 relative group shadow-inner">
+                    <video id="module-video" controls class="w-full h-full object-cover" onplay="onVideoPlay()">
+                        <source src="../assets/videos/m1.mp4" type="video/mp4">
+                    </video>
+                </div>
+        
+                <!-- TV Details (Speakers and Dials) -->
+                <div class="mt-4 flex justify-between items-center px-4 sm:px-8">
+                    <div class="flex gap-1.5 sm:gap-2">
+                        <div class="w-1.5 h-3 sm:h-4 bg-slate-400 dark:bg-slate-600 rounded-full"></div>
+                        <div class="w-1.5 h-3 sm:h-4 bg-slate-400 dark:bg-slate-600 rounded-full"></div>
+                        <div class="w-1.5 h-3 sm:h-4 bg-slate-400 dark:bg-slate-600 rounded-full"></div>
+                        <div class="w-1.5 h-3 sm:h-4 bg-slate-400 dark:bg-slate-600 rounded-full"></div>
+                        <div class="w-1.5 h-3 sm:h-4 bg-slate-400 dark:bg-slate-600 rounded-full"></div>
+                    </div>
+                    <div class="flex gap-3 sm:gap-4">
+                        <div class="w-6 h-6 sm:w-8 sm:h-8 rounded-full border-[3px] border-slate-400 dark:border-slate-600 bg-slate-300 dark:bg-slate-700"></div>
+                        <div class="w-6 h-6 sm:w-8 sm:h-8 rounded-full border-[3px] border-slate-400 dark:border-slate-600 bg-slate-300 dark:bg-slate-700"></div>
+                    </div>
+                </div>
             </div>
             <p class="text-center text-slate-500 text-sm mt-2">Watch the video to continue</p>
         </section>
@@ -846,6 +869,23 @@
             document.getElementById('btn-next-module').classList.add('hidden');
             container.innerHTML = '';
             container.classList.remove('hidden');
+            const startDiv = document.createElement('div');
+            startDiv.className = "text-center p-8 sm:p-12 bg-white dark:bg-slate-900 rounded-3xl border-[3px] border-yellow-300 shadow-sm transition-colors animate-fade-in";
+            startDiv.innerHTML = `
+                <h3 class="text-2xl sm:text-3xl font-black mb-4 text-slate-800 dark:text-white">Ready to test your knowledge?</h3>
+                <p class="mb-8 text-slate-600 dark:text-slate-400 font-bold text-sm sm:text-base">Note: The module content will be hidden during the quiz to prevent cheating. Once you start, you cannot back read the module!</p>
+                <button onclick="startQuizNow()" class="font-black px-8 sm:px-10 py-3 sm:py-4 rounded-full bg-yellow-400 text-red-600 shadow-[0_4px_0_#b45309] hover:-translate-y-0.5 active:translate-y-1 active:shadow-none transition-all uppercase tracking-wide text-sm sm:text-base">
+                    Start Quiz
+                </button>
+            `;
+            container.appendChild(startDiv);
+        }
+
+        function startQuizNow() {
+            document.body.classList.add('quiz-active');
+            
+            const container = document.getElementById('quiz-container');
+            container.innerHTML = '';
             
             correctCount = 0;
             answeredCount = 0;
@@ -908,7 +948,7 @@
                 const allAnswered = selectedAnswers.every(ans => ans !== null);
                 if (allAnswered) {
                     submitBtn.disabled = false;
-                    submitBtn.className = "font-black px-8 sm:px-10 py-3 sm:py-4 rounded-full uppercase tracking-wide text-sm sm:text-base transition-all flex items-center gap-2 bg-yellow-400 text-red-600 shadow-[0_4px_0_#b45309] hover:-translate-y-0.5 active:translate-y-1 active:shadow-none border-[3px] border-white cursor-pointer";
+                    submitBtn.className = "font-black px-8 sm:px-10 py-3 sm:py-4 rounded-full uppercase tracking-wide text-sm sm:text-base transition-all flex items-center gap-2 bg-yellow-400 text-red-600 shadow-[0_4px_0_#b45309] hover:-translate-y-0.5 active:translate-y-1 active:shadow-none cursor-pointer";
                 } else {
                     submitBtn.disabled = true;
                     submitBtn.className = "font-black px-8 sm:px-10 py-3 sm:py-4 rounded-full uppercase tracking-wide text-sm sm:text-base transition-all flex items-center gap-2 bg-slate-200 dark:bg-slate-800 text-slate-400 dark:text-slate-600 cursor-not-allowed border-[3px] border-slate-300 dark:border-slate-700";
@@ -917,6 +957,7 @@
         }
 
         function submitQuizAnswers() {
+            document.body.classList.remove('quiz-active');
             // Disable all options
             const allButtons = document.getElementById('quiz-container').querySelectorAll('.quiz-option');
             allButtons.forEach(btn => btn.disabled = true);
@@ -1031,20 +1072,19 @@
 
         function scrollToQuiz() { document.getElementById('final-quiz').scrollIntoView({ behavior: 'smooth' }); }
 
-        // --- TOAST ---
         function showToast(type, message) {
-            const container = document.getElementById('toast-container');
-            const toast = document.createElement('div');
-            toast.className = `ss-toast ${type}`;
-            const icon = type === 'success' ? 'fa-check-circle' : 'fa-info-circle';
-            toast.innerHTML = `<i class="fa-solid ${icon}"></i> ${message}`;
-            container.appendChild(toast);
-            setTimeout(() => {
-                toast.style.animation = 'slideIn 0.3s ease-out reverse';
-                setTimeout(() => toast.remove(), 300);
-            }, 3000);
+            try {
+                window.parent.postMessage({
+                    type: 'SAFESCAPE_SHOW_TOAST',
+                    toastType: type,
+                    message: message
+                }, '*');
+            } catch (e) {
+                console.error(e);
+            }
         }
     </script>
 </body>
 
 </html>
+

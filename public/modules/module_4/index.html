@@ -834,6 +834,24 @@
             if (btnRetake) btnRetake.classList.add('hidden');
             document.getElementById('btn-next-module').classList.add('hidden');
 
+            const startDiv = document.createElement('div');
+            startDiv.className = "text-center p-8 sm:p-12 bg-white dark:bg-slate-900 rounded-3xl border-[3px] border-yellow-300 shadow-sm transition-colors animate-fade-in";
+            startDiv.innerHTML = `
+                <h3 class="text-2xl sm:text-3xl font-black mb-4 text-slate-800 dark:text-white">Ready to test your knowledge?</h3>
+                <p class="mb-8 text-slate-600 dark:text-slate-400 font-bold text-sm sm:text-base">Note: The module content will be hidden during the quiz to prevent cheating. Once you start, you cannot back read the module!</p>
+                <button onclick="startQuizNow()" class="font-black px-8 sm:px-10 py-3 sm:py-4 rounded-full bg-yellow-400 text-red-600 shadow-[0_4px_0_#b45309] hover:-translate-y-0.5 active:translate-y-1 active:shadow-none transition-all uppercase tracking-wide text-sm sm:text-base">
+                    Start Quiz
+                </button>
+            `;
+            container.appendChild(startDiv);
+        }
+
+        function startQuizNow() {
+            document.body.classList.add('quiz-active');
+            
+            const container = document.getElementById('tf-questions');
+            container.innerHTML = '';
+            
             selectedTFAnswers = [null, null, null, null, null];
 
             tfQuestions.forEach((q, idx) => {
@@ -899,7 +917,7 @@
                 const allAnswered = selectedTFAnswers.every(ans => ans !== null);
                 if (allAnswered) {
                     submitBtn.disabled = false;
-                    submitBtn.className = "font-black px-8 sm:px-10 py-3 sm:py-4 rounded-full uppercase tracking-wide text-sm sm:text-base transition-all flex items-center gap-2 bg-yellow-400 text-red-600 shadow-[0_4px_0_#b45309] hover:-translate-y-0.5 active:translate-y-1 active:shadow-none border-[3px] border-white cursor-pointer";
+                    submitBtn.className = "font-black px-8 sm:px-10 py-3 sm:py-4 rounded-full uppercase tracking-wide text-sm sm:text-base transition-all flex items-center gap-2 bg-yellow-400 text-red-600 shadow-[0_4px_0_#b45309] hover:-translate-y-0.5 active:translate-y-1 active:shadow-none cursor-pointer";
                 } else {
                     submitBtn.disabled = true;
                     submitBtn.className = "font-black px-8 sm:px-10 py-3 sm:py-4 rounded-full uppercase tracking-wide text-sm sm:text-base transition-all flex items-center gap-2 bg-slate-200 dark:bg-slate-800 text-slate-400 dark:text-slate-600 cursor-not-allowed border-[3px] border-slate-300 dark:border-slate-700";
@@ -908,6 +926,7 @@
         }
 
         function submitTFQuizAnswers() {
+            document.body.classList.remove('quiz-active');
             // Disable all options
             const allButtons = document.getElementById('tf-questions').querySelectorAll('.tf-btn');
             allButtons.forEach(btn => btn.disabled = true);
@@ -1048,6 +1067,11 @@
                 showToast('success', 'Module 4 complete! Module 5 unlocked!');
                 new Audio('../../sounds/win.mp3').play().catch(e => {});
             }
+
+            // Scroll to the result section so it's visible
+            setTimeout(() => {
+                result.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }, 300);
         }
 
         function resetTFQuiz() {
@@ -1085,24 +1109,12 @@
             } catch (e) {
                 console.error(e);
             }
-
-            const container = document.getElementById('toast-container');
-            if (container) {
-                const toast = document.createElement('div');
-                toast.className = `ss-toast ${type}`;
-                const icons = { success: 'fa-check-circle', error: 'fa-exclamation-circle', info: 'fa-info-circle' };
-                toast.innerHTML = `<i class="fa-solid ${icons[type] || 'fa-info-circle'}"></i> ${message}`;
-                container.appendChild(toast);
-                setTimeout(() => {
-                    toast.style.animation = 'slideIn 0.3s ease-out reverse';
-                    setTimeout(() => toast.remove(), 300);
-                }, 3000);
-            }
         }
     </script>
 </body>
 
 </html>
+
 
 
 

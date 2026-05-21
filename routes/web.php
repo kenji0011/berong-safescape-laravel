@@ -232,4 +232,3 @@ Route::get('/about', function () {
 });
 
 require __DIR__.'/auth.php';
-

@@ -300,7 +300,7 @@ const ModuleTwoPage = ({ moduleNum, initialProgress }: { moduleNum: number; init
                             target.closest('.hazard-box') ||
                             target.closest('.sdr-word');
                             
-        if (isClickable) {
+        if (isClickable && !target.closest('.no-tap-sound')) {
           new Audio('/sounds/tap.mp3').play().catch(() => {});
         }
       });

@@ -32,6 +32,7 @@ const ModuleOnePage = ({ initialProgress }: { initialProgress?: any }) => {
   const videoRef = useRef<HTMLVideoElement>(null)
   const reviewQuestionsRef = useRef<HTMLDivElement>(null)
   const resultCardRef = useRef<HTMLDivElement>(null)
+  const quizSectionRef = useRef<HTMLElement>(null)
 
 
   // ── Progress state ──
@@ -54,6 +55,7 @@ const ModuleOnePage = ({ initialProgress }: { initialProgress?: any }) => {
   const [quizAnswers,     setQuizAnswers]     = useState<(number | null)[]>(initialProgress?.sectionData?.module1?.quizAnswers || [null, null, null, null, null])
   const [quizSubmitted,   setQuizSubmitted]   = useState(initialProgress?.sectionData?.module1?.quizPassed || false)
   const [quizPassed,      setQuizPassed]      = useState(initialProgress?.sectionData?.module1?.quizPassed || false)
+  const [quizStarted,     setQuizStarted]     = useState(initialProgress?.sectionData?.module1?.quizPassed || false)
   const [reviewMode,      setReviewMode]      = useState(false)
   const [loadedScore,     setLoadedScore]     = useState<number | null>(initialProgress?.sectionData?.module1?.quizScore !== undefined ? Number(initialProgress?.sectionData?.module1?.quizScore) : null)
   const [pitItems,        setPitItems]        = useState<string[]>(initialProgress?.sectionData?.module1?.elementMixerCompleted ? CORRECT_IDS : [])
@@ -368,28 +370,44 @@ const ModuleOnePage = ({ initialProgress }: { initialProgress?: any }) => {
 
   const handleQuizSubmit = async () => {
     if (!allQuizAnswered || quizSubmitted) return
+    
+    const passed = quizScore >= 4;
     setQuizSubmitted(true)
-    setQuizPassed(true)
+    setQuizPassed(passed)
     setLoadedScore(quizScore)
     
     // Play celebratory or fail sounds based on score
-    if (quizScore >= 4) {
+    if (passed) {
       new Audio('/sounds/finish.mp3').play().catch(e => console.warn("Failed to play audio:", e))
     } else {
       new Audio('/sounds/failed.mp3').play().catch(e => console.warn("Failed to play audio:", e))
     }
 
     try {
-      await saveSection({ videoWatched: true, section1Read: true, section2Read: true, section3Read: true, elementMixerCompleted: true, quizPassed: true, quizAnswers: quizAnswers, quizScore: quizScore }, false)
+      await saveSection({ videoWatched: true, section1Read: true, section2Read: true, section3Read: true, elementMixerCompleted: true, quizPassed: passed, quizAnswers: quizAnswers, quizScore: quizScore }, false)
       await axios.post("/api/kids/quiz", { quizType: "module_1_quiz", score: quizScore, maxScore: 5 }).catch(() => {})
     } catch {}
-    showToast("Quiz completed! Module 2 unlocked!")
+    
+    if (passed) {
+      showToast("Quiz completed! Module 2 unlocked!")
+    } else {
+      showToast("Keep trying! Review your answers and retake.")
+    }
+
+    setTimeout(() => {
+      if (passed) {
+        resultCardRef.current?.scrollIntoView({ behavior: "smooth", block: "center" })
+      } else {
+        quizSectionRef.current?.scrollIntoView({ behavior: "smooth", block: "start" })
+      }
+    }, 100)
   }
 
   const handleQuizRetake = () => {
     setQuizAnswers([null, null, null, null, null])
     setQuizSubmitted(false)
     setQuizPassed(false)
+    setQuizStarted(false)
     setLoadedScore(null)
     setReviewMode(false)
   }
@@ -453,7 +471,10 @@ const ModuleOnePage = ({ initialProgress }: { initialProgress?: any }) => {
           moduleLoading ? "opacity-0" : "opacity-100"
         )}>
 
-
+          <div className={cn(
+            "space-y-10 sm:space-y-14 md:space-y-20 transition-all duration-500",
+            quizStarted && !quizSubmitted ? "blur-[8px] grayscale-[40%] pointer-events-none select-none opacity-30" : ""
+          )}>
 
           {/* ── Intro ── */}
           <div className="text-center max-w-3xl mx-auto space-y-3 sm:space-y-4">
@@ -552,7 +573,7 @@ const ModuleOnePage = ({ initialProgress }: { initialProgress?: any }) => {
                     "inline-flex items-center gap-2 text-sm transition-all uppercase tracking-wide",
                     section1Done
                       ? "bg-green-500 text-white px-6 py-3 rounded-full border-[3px] border-green-600 shadow-[0_4px_0_#15803d] cursor-default font-black"
-                      : "bg-orange-400 hover:bg-orange-500 text-white px-6 py-3 rounded-full border-[3px] border-white shadow-[0_4px_0_#c2410c] hover:-translate-y-0.5 active:translate-y-1 active:shadow-none font-normal"
+                      : "bg-orange-400 hover:bg-orange-500 text-white px-6 py-3 rounded-full shadow-[0_4px_0_#c2410c] hover:-translate-y-0.5 active:translate-y-1 active:shadow-none font-normal"
                   )}
                 >
                   {section1Done && <CheckCircle className="h-4 w-4" />}
@@ -617,7 +638,7 @@ const ModuleOnePage = ({ initialProgress }: { initialProgress?: any }) => {
                       "inline-flex items-center gap-2 text-sm transition-all uppercase tracking-wide mt-2",
                       section2Done
                         ? "bg-green-500 text-white px-6 py-3 rounded-full border-[3px] border-green-600 shadow-[0_4px_0_#15803d] cursor-default font-black"
-                        : "bg-red-500 hover:bg-red-600 text-white px-6 py-3 rounded-full border-[3px] border-white shadow-[0_4px_0_#991b1b] hover:-translate-y-0.5 active:translate-y-1 active:shadow-none font-normal"
+                        : "bg-red-500 hover:bg-red-600 text-white px-6 py-3 rounded-full shadow-[0_4px_0_#991b1b] hover:-translate-y-0.5 active:translate-y-1 active:shadow-none font-normal"
                     )}
                   >
                     {section2Done && <CheckCircle className="h-4 w-4" />}
@@ -709,7 +730,7 @@ const ModuleOnePage = ({ initialProgress }: { initialProgress?: any }) => {
                     "inline-flex items-center gap-2 text-sm transition-all uppercase tracking-wide",
                     section3Done
                       ? "bg-green-500 text-white px-6 py-3 rounded-full border-[3px] border-green-600 shadow-[0_4px_0_#15803d] cursor-default font-black"
-                      : "bg-rose-500 hover:bg-rose-600 text-white px-6 py-3 rounded-full border-[3px] border-white shadow-[0_4px_0_#be123c] hover:-translate-y-0.5 active:translate-y-1 active:shadow-none font-normal"
+                      : "bg-rose-500 hover:bg-rose-600 text-white px-6 py-3 rounded-full shadow-[0_4px_0_#be123c] hover:-translate-y-0.5 active:translate-y-1 active:shadow-none font-normal"
                   )}
                 >
                   {section3Done && <CheckCircle className="h-4 w-4" />}
@@ -925,8 +946,9 @@ const ModuleOnePage = ({ initialProgress }: { initialProgress?: any }) => {
             `}</style>
             </div>
           </section>
+          </div>
 
-          <section className={cn(
+          <section ref={quizSectionRef} className={cn(
             "relative rounded-[2rem] border-[4px] shadow-sm transition-all duration-500 overflow-hidden",
             quizPassed
               ? "bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800/80 p-8 sm:p-14 text-center"
@@ -953,11 +975,7 @@ const ModuleOnePage = ({ initialProgress }: { initialProgress?: any }) => {
                   <Trophy className="h-6 w-6 sm:h-7 sm:w-7 inline-block mr-2 -mt-1" />
                   Fire Safety Certification
                 </h2>
-                {!quizPassed && (
-                  <p className="text-slate-600 dark:text-slate-400 font-bold text-sm sm:text-base transition-colors">
-                    Answer at least 4 out of 5 questions correctly to pass.
-                  </p>
-                )}
+
               </div>
             )}
 
@@ -1072,7 +1090,17 @@ const ModuleOnePage = ({ initialProgress }: { initialProgress?: any }) => {
             {/* Quiz Questions (not yet passed) */}
             {!quizPassed && (
               <div className="max-w-2xl mx-auto space-y-5 sm:space-y-6">
-                {QUIZ_QUESTIONS.map((question, qIdx) => (
+                {!quizStarted ? (
+                  <div className="text-center p-8 sm:p-12 bg-white dark:bg-slate-900 rounded-3xl border-[3px] border-yellow-300 shadow-sm transition-colors animate-fade-in">
+                    <h3 className="text-2xl sm:text-3xl font-black mb-4 text-slate-800 dark:text-white">Ready to test your knowledge?</h3>
+                    <p className="mb-8 text-slate-600 dark:text-slate-400 font-bold text-sm sm:text-base">Note: The module content will be hidden during the quiz to prevent cheating. Once you start, you cannot back read the module!</p>
+                    <button onClick={() => setQuizStarted(true)} className="font-black px-8 sm:px-10 py-3 sm:py-4 rounded-full bg-yellow-400 text-red-600 shadow-[0_4px_0_#b45309] hover:-translate-y-0.5 active:translate-y-1 active:shadow-none transition-all uppercase tracking-wide text-sm sm:text-base">
+                      Start Quiz
+                    </button>
+                  </div>
+                ) : (
+                  <>
+                    {QUIZ_QUESTIONS.map((question, qIdx) => (
                   <div
                     key={qIdx}
                     className="bg-white dark:bg-slate-900 p-4 sm:p-6 rounded-2xl sm:rounded-3xl border-[3px] border-yellow-200 dark:border-yellow-900/30 shadow-sm transition-colors"
@@ -1126,7 +1154,7 @@ const ModuleOnePage = ({ initialProgress }: { initialProgress?: any }) => {
                       className={cn(
                         "font-black px-8 sm:px-10 py-3 sm:py-4 rounded-full uppercase tracking-wide text-sm sm:text-base transition-all flex items-center gap-2",
                         allQuizAnswered
-                          ? "bg-yellow-400 text-red-600 shadow-[0_4px_0_#b45309] hover:-translate-y-0.5 active:translate-y-1 active:shadow-none border-[3px] border-white"
+                          ? "bg-yellow-400 text-red-600 shadow-[0_4px_0_#b45309] hover:-translate-y-0.5 active:translate-y-1 active:shadow-none"
                           : "bg-slate-200 dark:bg-slate-800 text-slate-400 dark:text-slate-600 cursor-not-allowed border-[3px] border-slate-300 dark:border-slate-700"
                       )}
                     >
@@ -1148,6 +1176,8 @@ const ModuleOnePage = ({ initialProgress }: { initialProgress?: any }) => {
                     </div>
                   )}
                 </div>
+                  </>
+                )}
               </div>
             )}
             </div>

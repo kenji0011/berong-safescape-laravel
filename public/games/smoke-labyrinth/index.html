@@ -508,12 +508,15 @@
 
         function closeDoorHotOverlay() {
             document.getElementById('door-hot-overlay').classList.add('hidden');
-            fogCtx.globalCompositeOperation = 'destination-out';
-            fogCtx.beginPath();
-            fogCtx.arc(exits[0].x + 10, exits[0].y + 10, 40, 0, Math.PI * 2);
-            fogCtx.fill();
-            fogCtx.globalCompositeOperation = 'source-over';
-            player.x -= 20;
+            let door = exits.find(e => e.type === 'door');
+            if (door) {
+                fogCtx.globalCompositeOperation = 'destination-out';
+                fogCtx.beginPath();
+                fogCtx.arc(door.x + 10, door.y + 10, 40, 0, Math.PI * 2);
+                fogCtx.fill();
+                fogCtx.globalCompositeOperation = 'source-over';
+                door.type = 'hot_door'; // Make it act as a wall
+            }
             gameState = 'playing';
             gameLoop();
         }
