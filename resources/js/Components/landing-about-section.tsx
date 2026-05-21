@@ -256,6 +256,32 @@ function FeatureCard({
     );
 }
 
+const getGlowColor = (colorStr: string) => {
+    if (colorStr.includes("red-500")) return "rgba(239, 68, 68, 0.35)";
+    if (colorStr.includes("purple-500")) return "rgba(168, 85, 247, 0.35)";
+    if (colorStr.includes("blue-500")) return "rgba(59, 130, 246, 0.35)";
+    if (colorStr.includes("emerald-500")) return "rgba(16, 185, 129, 0.35)";
+    if (colorStr.includes("amber-500")) return "rgba(245, 158, 11, 0.35)";
+    if (colorStr.includes("rose-500")) return "rgba(244, 63, 94, 0.35)";
+    if (colorStr.includes("indigo-500")) return "rgba(99, 102, 241, 0.35)";
+    if (colorStr.includes("violet-500")) return "rgba(139, 92, 246, 0.35)";
+    if (colorStr.includes("orange-500")) return "rgba(249, 115, 22, 0.35)";
+    return "rgba(239, 68, 68, 0.3)";
+};
+
+const getBorderGlowColor = (colorStr: string) => {
+    if (colorStr.includes("red-500")) return "rgb(239, 68, 68)";
+    if (colorStr.includes("purple-500")) return "rgb(168, 85, 247)";
+    if (colorStr.includes("blue-500")) return "rgb(59, 130, 246)";
+    if (colorStr.includes("emerald-500")) return "rgb(16, 185, 129)";
+    if (colorStr.includes("amber-500")) return "rgb(245, 158, 11)";
+    if (colorStr.includes("rose-500")) return "rgb(244, 63, 94)";
+    if (colorStr.includes("indigo-500")) return "rgb(99, 102, 241)";
+    if (colorStr.includes("violet-500")) return "rgb(139, 92, 246)";
+    if (colorStr.includes("orange-500")) return "rgb(249, 115, 22)";
+    return "rgb(239, 68, 68)";
+};
+
 // Animated Team Card Component
 function TeamCard({ member, index, reduceMotion }: { key?: React.Key; member: typeof teamMembers[0]; index: number; reduceMotion: boolean }) {
     const ref = useRef(null);
@@ -272,11 +298,13 @@ function TeamCard({ member, index, reduceMotion }: { key?: React.Key; member: ty
                 delay: index * 0.1
             }}
             whileHover={reduceMotion ? undefined : {
-                scale: 1.02,
-                y: -6,
-                transition: { duration: 0.2, ease: "easeOut" }
+                scale: 1.03,
+                y: -12,
+                boxShadow: `0 25px 50px -12px rgba(0, 0, 0, 0.5), 0 0 25px ${getGlowColor(member.color)}`,
+                borderColor: getBorderGlowColor(member.color),
+                transition: { type: "spring", stiffness: 300, damping: 20 }
             }}
-            className="group relative bg-white dark:bg-slate-800 rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-shadow duration-300 border border-slate-200 dark:border-slate-700 h-full flex flex-col cursor-pointer"
+            className="group relative bg-white dark:bg-slate-800 rounded-2xl overflow-hidden shadow-lg transition-all duration-300 border border-slate-200 dark:border-slate-700 h-full flex flex-col cursor-pointer"
         >
             {/* Gradient Header */}
             <div className={`h-32 bg-gradient-to-r ${member.color} relative`}>
@@ -302,7 +330,7 @@ function TeamCard({ member, index, reduceMotion }: { key?: React.Key; member: ty
                         <img
                             src={member.image}
                             alt={member.name}
-                            className="absolute inset-0 w-full h-full object-cover"
+                            className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-110"
                         />
                     </div>
                 </div>
@@ -451,300 +479,331 @@ export function LandingAboutSection() {
     const teamOpacity = useTransform(teamScrollProgress, [0, 0.2, 0.8, 1], [0, 1, 1, 0]);
     const teamScale = useTransform(teamScrollProgress, [0, 0.2, 0.8, 1], [0.95, 1, 1, 0.95]);
 
+    // Horizontal Scroll Pinning Logic
+    const [carouselWidth, setCarouselWidth] = useState(0);
+    const carouselRef = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        const updateWidth = () => {
+            if (carouselRef.current) {
+                // The amount we need to translate is the total scrollable width minus the viewport width
+                // We add a little extra (e.g. 100px) so the last card has some breathing room
+                setCarouselWidth(carouselRef.current.scrollWidth - window.innerWidth + 100);
+            }
+        };
+        updateWidth();
+        window.addEventListener("resize", updateWidth);
+        return () => window.removeEventListener("resize", updateWidth);
+    }, []);
+
+    const { scrollYProgress: horizontalScrollProgress } = useScroll({
+        target: teamRef,
+        offset: ["start start", "end end"]
+    });
+    
+    // Transform vertical progress into exact negative pixel translation
+    const teamX = useTransform(horizontalScrollProgress, [0, 1], [0, -carouselWidth]);
+
     return (
         <div className="space-y-10 sm:space-y-20 mt-10 sm:mt-20">
             {/* Meet Berong Section */}
-            <motion.section
-                ref={heroRef}
-                className="relative bg-white dark:bg-slate-900 py-10 sm:py-16 overflow-hidden rounded-[2rem] sm:rounded-[2.5rem] border border-gray-200/80 dark:border-slate-800 shadow-sm mx-2 sm:mx-0 transition-colors duration-500"
-                style={{ opacity: heroOpacity, scale: heroScale }}
-            >
-                {/* Background Pattern */}
-                <motion.div
-                    className="absolute inset-0 opacity-5"
-                    style={{ y: useTransform(heroScrollProgress, [0, 1], [0, 50]) }}
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+                <motion.section
+                    ref={heroRef}
+                    className="relative bg-white dark:bg-slate-900 py-10 sm:py-16 overflow-hidden rounded-[2rem] sm:rounded-[2.5rem] border border-gray-200/80 dark:border-slate-800 shadow-sm mx-2 sm:mx-0 transition-colors duration-500"
+                    style={{ opacity: heroOpacity, scale: heroScale }}
                 >
-                    <div className="absolute inset-0" style={{
-                        backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23dc2626' fill-opacity='0.4'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
-                    }} />
-                </motion.div>
+                    {/* Background Pattern */}
+                    <motion.div
+                        className="absolute inset-0 opacity-5"
+                        style={{ y: useTransform(heroScrollProgress, [0, 1], [0, 50]) }}
+                    >
+                        <div className="absolute inset-0" style={{
+                            backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23dc2626' fill-opacity='0.4'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
+                        }} />
+                    </motion.div>
 
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-                    <div className="flex flex-col lg:flex-row items-center gap-6 xl:gap-8 max-w-6xl mx-auto">
-                        {/* Berong Mascot - 3D Rotation on Scroll */}
-                        <motion.div
-                            className="flex-shrink-0 flex justify-center lg:justify-end lg:w-[45%]"
-                            style={{
-                                rotateY: mascotRotateY,
-                                scale: mascotScale,
-                            }}
-                        >
-                            <div className="relative w-48 h-48 sm:w-80 sm:h-80 lg:w-[400px] lg:h-[400px]">
-                                <motion.div
-                                    className="relative w-full h-full"
-                                    initial={{ opacity: 0, scale: 0.8 }}
-                                    whileInView={{ opacity: 1, scale: 1 }}
-                                    viewport={{ once: true }}
-                                    animate={reduceMotion ? { y: 0 } : { 
-                                        y: [-12, 12, -12],
-                                        filter: [
-                                            "drop-shadow(0px 30px 25px rgba(0, 0, 0, 0.15))",
-                                            "drop-shadow(0px 10px 10px rgba(0, 0, 0, 0.35))",
-                                            "drop-shadow(0px 30px 25px rgba(0, 0, 0, 0.15))"
-                                        ]
-                                    }}
-                                    transition={reduceMotion ? { duration: 0.6 } : {
-                                        y: { duration: 4, ease: "easeInOut", repeat: Infinity },
-                                        filter: { duration: 4, ease: "easeInOut", repeat: Infinity },
-                                        opacity: { duration: 0.6 },
-                                        scale: { duration: 0.6 }
-                                    }}
-                                >
-                                    <img
-                                        src="/berong-official-logo.jpg"
-                                        alt="Berong's E-Learning - Official Logo"
-                                        className="absolute inset-0 w-full h-full object-contain z-10"
-                                    />
-                                </motion.div>
-                            </div>
-                        </motion.div>
-                        {/* Hero Content - Parallax Text */}
-                        <motion.div
-                            className="text-center lg:text-left flex-grow lg:w-[55%] pb-1 sm:pb-0 flex flex-col justify-center lg:-ml-4"
-                            style={reduceMotion ? undefined : { y: heroTextY }}
-                        >
+                    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+                        <div className="flex flex-col lg:flex-row items-center gap-6 xl:gap-8 max-w-6xl mx-auto">
+                            {/* Berong Mascot - 3D Rotation on Scroll */}
                             <motion.div
-                                initial={{ opacity: 0, y: 20 }}
-                                whileInView={{ opacity: 1, y: 0 }}
-                                viewport={{ once: true }}
-                                transition={{ duration: 0.4 }}
-                                className="mb-4 flex justify-center lg:justify-start"
+                                className="flex-shrink-0 flex justify-center lg:justify-end lg:w-[45%]"
+                                style={{
+                                    rotateY: mascotRotateY,
+                                    scale: mascotScale,
+                                }}
                             >
-                                <span className="bg-red-100 dark:bg-red-950/30 text-red-600 dark:text-red-400 font-bold text-xs sm:text-sm uppercase tracking-widest px-4 py-1.5 rounded-full inline-block border border-red-200 dark:border-red-900/30 transition-colors">
-                                    About SafeScape
-                                </span>
+                                <div className="relative w-48 h-48 sm:w-80 sm:h-80 lg:w-[400px] lg:h-[400px]">
+                                    <motion.div
+                                        className="relative w-full h-full"
+                                        initial={{ opacity: 0, scale: 0.8 }}
+                                        whileInView={{ opacity: 1, scale: 1 }}
+                                        viewport={{ once: true }}
+                                        animate={reduceMotion ? { y: 0 } : { 
+                                            y: [-12, 12, -12],
+                                            filter: [
+                                                "drop-shadow(0px 30px 25px rgba(0, 0, 0, 0.15))",
+                                                "drop-shadow(0px 10px 10px rgba(0, 0, 0, 0.35))",
+                                                "drop-shadow(0px 30px 25px rgba(0, 0, 0, 0.15))"
+                                            ]
+                                        }}
+                                        transition={reduceMotion ? { duration: 0.6 } : {
+                                            y: { duration: 4, ease: "easeInOut", repeat: Infinity },
+                                            filter: { duration: 4, ease: "easeInOut", repeat: Infinity },
+                                            opacity: { duration: 0.6 },
+                                            scale: { duration: 0.6 }
+                                        }}
+                                    >
+                                        <img
+                                            src="/berong-official-logo.jpg"
+                                            alt="Berong's E-Learning - Official Logo"
+                                            className="absolute inset-0 w-full h-full object-contain z-10"
+                                        />
+                                    </motion.div>
+                                </div>
                             </motion.div>
-                            
-                            <motion.h1
-                                className="text-3xl sm:text-5xl lg:text-6xl font-black mb-2 sm:mb-3 text-slate-800 dark:text-white transition-colors"
-                                initial={{ opacity: 0, y: 30 }}
-                                whileInView={{ opacity: 1, y: 0 }}
-                                viewport={{ once: true }}
-                                transition={{ duration: 0.4, delay: 0.05 }}
+                            {/* Hero Content - Parallax Text */}
+                            <motion.div
+                                className="text-center lg:text-left flex-grow lg:w-[55%] pb-1 sm:pb-0 flex flex-col justify-center lg:-ml-4"
+                                style={reduceMotion ? undefined : { y: heroTextY }}
                             >
-                                Meet <span className="text-red-500">Berong</span>
-                            </motion.h1>
-                            
-                            <motion.p
-                                className="text-lg sm:text-2xl font-bold mb-4 sm:mb-6 text-orange-500"
-                                initial={{ opacity: 0, y: 30 }}
-                                whileInView={{ opacity: 1, y: 0 }}
-                                viewport={{ once: true }}
-                                transition={{ duration: 0.4, delay: 0.1 }}
-                            >
-                                Your Fire Safety Companion
-                            </motion.p>
-                            
-                            <motion.p
-                                className="text-sm sm:text-lg text-slate-600 dark:text-slate-400 font-medium leading-relaxed max-w-xl mx-auto lg:mx-0 px-2 sm:px-0 transition-colors"
-                                initial={{ opacity: 0, y: 30 }}
-                                whileInView={{ opacity: 1, y: 0 }}
-                                viewport={{ once: true }}
-                                transition={{ duration: 0.4, delay: 0.15 }}
-                            >
-                                <strong className="text-slate-800 dark:text-white">SafeScape</strong>, locally known as <strong className="text-slate-800 dark:text-white">&quot;Berong E-Learning&quot;</strong>, is named after the official mascot of the Bureau of Fire Protection.
-                                Berong represents our commitment to making fire safety education accessible, engaging, and effective for every Filipino.
-                            </motion.p>
-                        </motion.div>
+                                <motion.div
+                                    initial={{ opacity: 0, y: 20 }}
+                                    whileInView={{ opacity: 1, y: 0 }}
+                                    viewport={{ once: true }}
+                                    transition={{ duration: 0.4 }}
+                                    className="mb-4 flex justify-center lg:justify-start"
+                                >
+                                    <span className="bg-red-100 dark:bg-red-950/30 text-red-600 dark:text-red-400 font-bold text-xs sm:text-sm uppercase tracking-widest px-4 py-1.5 rounded-full inline-block border border-red-200 dark:border-red-900/30 transition-colors">
+                                        About SafeScape
+                                    </span>
+                                </motion.div>
+                                
+                                <motion.h1
+                                    className="text-3xl sm:text-5xl lg:text-6xl font-black mb-2 sm:mb-3 text-slate-800 dark:text-white transition-colors"
+                                    initial={{ opacity: 0, y: 30 }}
+                                    whileInView={{ opacity: 1, y: 0 }}
+                                    viewport={{ once: true }}
+                                    transition={{ duration: 0.4, delay: 0.05 }}
+                                >
+                                    Meet <span className="text-red-500">Berong</span>
+                                </motion.h1>
+                                
+                                <motion.p
+                                    className="text-lg sm:text-2xl font-bold mb-4 sm:mb-6 text-orange-500"
+                                    initial={{ opacity: 0, y: 30 }}
+                                    whileInView={{ opacity: 1, y: 0 }}
+                                    viewport={{ once: true }}
+                                    transition={{ duration: 0.4, delay: 0.1 }}
+                                >
+                                    Your Fire Safety Companion
+                                </motion.p>
+                                
+                                <motion.p
+                                    className="text-sm sm:text-lg text-slate-600 dark:text-slate-400 font-medium leading-relaxed max-w-xl mx-auto lg:mx-0 px-2 sm:px-0 transition-colors"
+                                    initial={{ opacity: 0, y: 30 }}
+                                    whileInView={{ opacity: 1, y: 0 }}
+                                    viewport={{ once: true }}
+                                    transition={{ duration: 0.4, delay: 0.15 }}
+                                >
+                                    <strong className="text-slate-800 dark:text-white">SafeScape</strong>, locally known as <strong className="text-slate-800 dark:text-white">&quot;Berong E-Learning&quot;</strong>, is named after the official mascot of the Bureau of Fire Protection.
+                                    Berong represents our commitment to making fire safety education accessible, engaging, and effective for every Filipino.
+                                </motion.p>
+                            </motion.div>
+                        </div>
                     </div>
-                </div>
-            </motion.section>
+                </motion.section>
+            </div>
 
             {/* Animated Stats Counter Strip */}
-            <motion.section
-                className="py-8 sm:py-12 bg-gradient-to-r from-red-700 via-red-600 to-orange-600 dark:from-red-950 dark:via-red-900 dark:to-orange-900 rounded-[2rem] sm:rounded-[2.5rem] shadow-sm mx-2 sm:mx-0 relative overflow-hidden transition-colors duration-500"
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.6 }}
-            >
-                <div className="absolute inset-0 opacity-10">
-                    <div className="absolute inset-0" style={{
-                        backgroundImage: "radial-gradient(circle at 2px 2px, rgba(255,255,255,0.3) 1px, transparent 0)",
-                        backgroundSize: "24px 24px",
-                    }} />
-                </div>
-                <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-4">
-                        <AnimatedCounter value={5} suffix="+" label="Learning Modules" icon={BookOpen} delay={0} />
-                        <AnimatedCounter value={3} suffix="" label="User Roles" icon={Shield} delay={150} />
-                        <AnimatedCounter value={6} suffix="+" label="Mini Games" icon={Gamepad2} delay={300} />
-                        <AnimatedCounter value={1} suffix="" label="AI Chatbot" icon={Brain} delay={450} />
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+                <motion.section
+                    className="py-8 sm:py-12 bg-gradient-to-r from-red-700 via-red-600 to-orange-600 dark:from-red-950 dark:via-red-900 dark:to-orange-900 rounded-[2rem] sm:rounded-[2.5rem] shadow-sm mx-2 sm:mx-0 relative overflow-hidden transition-colors duration-500"
+                    initial={{ opacity: 0, y: 30 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.6 }}
+                >
+                    <div className="absolute inset-0 opacity-10">
+                        <div className="absolute inset-0" style={{
+                            backgroundImage: "radial-gradient(circle at 2px 2px, rgba(255,255,255,0.3) 1px, transparent 0)",
+                            backgroundSize: "24px 24px",
+                        }} />
                     </div>
-                </div>
-            </motion.section>
-
-
+                    <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+                        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-4">
+                            <AnimatedCounter value={5} suffix="+" label="Learning Modules" icon={BookOpen} delay={0} />
+                            <AnimatedCounter value={3} suffix="" label="User Roles" icon={Shield} delay={150} />
+                            <AnimatedCounter value={6} suffix="+" label="Mini Games" icon={Gamepad2} delay={300} />
+                            <AnimatedCounter value={1} suffix="" label="AI Chatbot" icon={Brain} delay={450} />
+                        </div>
+                    </div>
+                </motion.section>
+            </div>
 
             {/* Platform Overview Section */}
-            <motion.section
-                ref={platformRef}
-                className="py-10 sm:py-14 bg-red-600 dark:bg-red-950 text-white relative overflow-hidden rounded-[2rem] sm:rounded-[2.5rem] shadow-sm mx-2 sm:mx-0 transition-colors duration-500"
-                style={{ opacity: platformOpacity, scale: platformScale }}
-            >
-                {/* Background Pattern */}
-                <div className="absolute inset-0 opacity-10">
-                    <div className="absolute inset-0" style={{
-                        backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.4'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
-                    }} />
-                </div>
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-                    <motion.div
-                        className="text-center mb-10 sm:mb-16"
-                        initial={{ opacity: 0, y: 40 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: true }}
-                        transition={{ duration: 0.7 }}
-                    >
-                        <h2 className="text-3xl sm:text-6xl font-black text-white mb-4 sm:mb-6 drop-shadow-lg uppercase tracking-tight italic">
-                            What is <span className="text-yellow-400 drop-shadow-[0_4px_0_#b45309]">SafeScape</span>?
-                        </h2>
-                        <p className="text-white font-bold max-w-2xl mx-auto text-sm sm:text-2xl px-4 leading-relaxed opacity-95">
-                            A comprehensive fire safety education platform designed to empower communities with knowledge and skills.
-                        </p>
-                    </motion.div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6" style={{ perspective: 1000 }}>
-                        {features.map((feature, index) => (
-                            <FeatureCard key={index} feature={feature} index={index} reduceMotion={reduceMotion} />
-                        ))}
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+                <motion.section
+                    ref={platformRef}
+                    className="py-10 sm:py-14 bg-red-600 dark:bg-red-950 text-white relative overflow-hidden rounded-[2rem] sm:rounded-[2.5rem] shadow-sm mx-2 sm:mx-0 transition-colors duration-500"
+                    style={{ opacity: platformOpacity, scale: platformScale }}
+                >
+                    {/* Background Pattern */}
+                    <div className="absolute inset-0 opacity-10">
+                        <div className="absolute inset-0" style={{
+                            backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.4'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
+                        }} />
                     </div>
-                </div>
-            </motion.section>
+                    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+                        <motion.div
+                            className="text-center mb-10 sm:mb-16"
+                            initial={{ opacity: 0, y: 40 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={{ once: true }}
+                            transition={{ duration: 0.7 }}
+                        >
+                            <h2 className="text-3xl sm:text-6xl font-black text-white mb-4 sm:mb-6 drop-shadow-lg uppercase tracking-tight italic">
+                                What is <span className="text-yellow-400 drop-shadow-[0_4px_0_#b45309]">SafeScape</span>?
+                            </h2>
+                            <p className="text-white font-bold max-w-2xl mx-auto text-sm sm:text-2xl px-4 leading-relaxed opacity-95">
+                                A comprehensive fire safety education platform designed to empower communities with knowledge and skills.
+                            </p>
+                        </motion.div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6" style={{ perspective: 1000 }}>
+                            {features.map((feature, index) => (
+                                <FeatureCard key={index} feature={feature} index={index} reduceMotion={reduceMotion} />
+                            ))}
+                        </div>
+                    </div>
+                </motion.section>
+            </div>
 
             {/* Partnership Section */}
-            <motion.section
-                ref={partnershipRef}
-                className="py-10 sm:py-14 bg-[#1e293b] dark:bg-slate-950 text-white relative overflow-hidden rounded-[2.5rem] shadow-md transition-colors duration-500"
-                style={{ opacity: partnershipOpacity, scale: partnershipScale }}
-            >
-                {/* Animated Background decoration */}
-                <motion.div
-                    className="absolute top-0 right-0 w-96 h-96 bg-red-500/10 rounded-full"
-                    animate={reduceMotion ? undefined : {
-                        x: [0, 30, 0],
-                        y: [0, -20, 0],
-                        scale: [1, 1.1, 1]
-                    }}
-                    transition={reduceMotion ? undefined : { duration: 8, repeat: Infinity }}
-                />
-                <motion.div
-                    className="absolute bottom-0 left-0 w-96 h-96 bg-yellow-500/10 rounded-full"
-                    animate={reduceMotion ? undefined : {
-                        x: [0, -30, 0],
-                        y: [0, 20, 0],
-                        scale: [1, 1.2, 1]
-                    }}
-                    transition={reduceMotion ? undefined : { duration: 10, repeat: Infinity }}
-                />
-
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+                <motion.section
+                    ref={partnershipRef}
+                    className="py-10 sm:py-14 bg-[#1e293b] dark:bg-slate-950 text-white relative overflow-hidden rounded-[2.5rem] shadow-md transition-colors duration-500"
+                    style={{ opacity: partnershipOpacity, scale: partnershipScale }}
+                >
+                    {/* Animated Background decoration */}
                     <motion.div
-                        className="text-center mb-8 sm:mb-10"
-                        initial={{ opacity: 0, y: 40 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: true }}
-                        transition={{ duration: 0.7 }}
-                    >
-                        <span className="font-bold text-[10px] sm:text-xs uppercase tracking-widest mb-4 inline-block border border-yellow-500/30 text-yellow-400 px-3 py-1 sm:px-4 sm:py-1.5 rounded-full bg-yellow-500/10">
-                            Collaborative Initiative
-                        </span>
-                        <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black mb-3">
-                            LSPU & BFP Sta. Cruz Partnership
-                        </h2>
-                        <p className="text-slate-300 font-medium max-w-4xl mx-auto text-sm sm:text-base leading-relaxed">
-                            SafeScape is a collaborative research initiative between the <strong className="text-white">College of Computer Studies (CCS)</strong> at
-                            <strong className="text-white"> Laguna State Polytechnic University (LSPU) - Santa Cruz Campus</strong> and the
-                            <strong className="text-white"> Bureau of Fire Protection (BFP) Santa Cruz</strong>. This partnership was formalized through a
-                            Memorandum of Agreement to address local fire safety challenges by leveraging advanced digital technologies.
-                        </p>
-                    </motion.div>
+                        className="absolute top-0 right-0 w-96 h-96 bg-red-500/10 rounded-full"
+                        animate={reduceMotion ? undefined : {
+                            x: [0, 30, 0],
+                            y: [0, -20, 0],
+                            scale: [1, 1.1, 1]
+                        }}
+                        transition={reduceMotion ? undefined : { duration: 8, repeat: Infinity }}
+                    />
+                    <motion.div
+                        className="absolute bottom-0 left-0 w-96 h-96 bg-yellow-500/10 rounded-full"
+                        animate={reduceMotion ? undefined : {
+                            x: [0, -30, 0],
+                            y: [0, 20, 0],
+                            scale: [1, 1.2, 1]
+                        }}
+                        transition={reduceMotion ? undefined : { duration: 10, repeat: Infinity }}
+                    />
 
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8" style={{ perspective: 1500 }}>
-                        {/* LSPU Card */}
-                        <PartnershipCard delay={0} reduceMotion={reduceMotion}>
-                            <div className="flex items-center gap-3 mb-4">
-                                <div className="relative w-14 h-14 sm:w-16 sm:h-16 flex-shrink-0">
-                                    <img
-                                        src="/lspu logo.png"
-                                        alt="LSPU Logo"
-                                        className="absolute inset-0 w-full h-full object-contain"
-                                    />
-                                </div>
-                                <div>
-                                    <h3 className="text-lg sm:text-xl font-bold">LSPU - Santa Cruz Campus</h3>
-                                    <p className="text-gray-400 text-xs sm:text-sm">College of Computer Studies</p>
-                                </div>
-                            </div>
-                            <p className="text-gray-300 text-sm leading-relaxed mb-4">
-                                The university provided technological expertise in AI, machine learning, and software development.
-                                Computer Science researchers majoring in Intelligent Systems designed and developed the platform under academic supervision.
+                    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+                        <motion.div
+                            className="text-center mb-8 sm:mb-10"
+                            initial={{ opacity: 0, y: 40 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={{ once: true }}
+                            transition={{ duration: 0.7 }}
+                        >
+                            <span className="font-bold text-[10px] sm:text-xs uppercase tracking-widest mb-4 inline-block border border-yellow-500/30 text-yellow-400 px-3 py-1 sm:px-4 sm:py-1.5 rounded-full bg-yellow-500/10">
+                                Collaborative Initiative
+                            </span>
+                            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black mb-3">
+                                LSPU & BFP Sta. Cruz Partnership
+                            </h2>
+                            <p className="text-slate-300 font-medium max-w-4xl mx-auto text-sm sm:text-base leading-relaxed">
+                                SafeScape is a collaborative research initiative between the <strong className="text-white">College of Computer Studies (CCS)</strong> at
+                                <strong className="text-white"> Laguna State Polytechnic University (LSPU) - Santa Cruz Campus</strong> and the
+                                <strong className="text-white"> Bureau of Fire Protection (BFP) Santa Cruz</strong>. This partnership was formalized through a
+                                Memorandum of Agreement to address local fire safety challenges by leveraging advanced digital technologies.
                             </p>
-                            <div className="bg-white/5 rounded-lg p-3 border border-white/10 mt-auto">
-                                <div className="flex items-center gap-3">
-                                    <GraduationCap className="w-5 h-5 text-yellow-400" />
+                        </motion.div>
+
+                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8" style={{ perspective: 1500 }}>
+                            {/* LSPU Card */}
+                            <PartnershipCard delay={0} reduceMotion={reduceMotion}>
+                                <div className="flex items-center gap-3 mb-4">
+                                    <div className="relative w-14 h-14 sm:w-16 sm:h-16 flex-shrink-0">
+                                        <img
+                                            src="/lspu logo.png"
+                                            alt="LSPU Logo"
+                                            className="absolute inset-0 w-full h-full object-contain"
+                                        />
+                                    </div>
                                     <div>
-                                        <p className="text-yellow-400 font-semibold text-[10px] sm:text-xs">Project Initiation & Thesis Adviser</p>
-                                        <p className="text-white font-medium text-sm">Dr. Mia V. Villarica, DIT</p>
-                                        <p className="text-gray-400 text-[10px] sm:text-xs">CCS Dean, LSPU Santa Cruz</p>
+                                        <h3 className="text-lg sm:text-xl font-bold">LSPU - Santa Cruz Campus</h3>
+                                        <p className="text-gray-400 text-xs sm:text-sm">College of Computer Studies</p>
                                     </div>
                                 </div>
-                            </div>
-                        </PartnershipCard>
-
-                        {/* BFP Card */}
-                        <PartnershipCard delay={1} reduceMotion={reduceMotion}>
-                            <div className="flex items-center gap-3 mb-4">
-                                <div className="relative w-14 h-14 sm:w-16 sm:h-16 flex-shrink-0">
-                                    <img
-                                        src="/bfp logo.png"
-                                        alt="BFP Logo"
-                                        className="absolute inset-0 w-full h-full object-contain"
-                                    />
-                                </div>
-                                <div>
-                                    <h3 className="text-lg sm:text-xl font-bold">BFP Santa Cruz Fire Station</h3>
-                                    <p className="text-gray-400 text-xs sm:text-sm">Bureau of Fire Protection</p>
-                                </div>
-                            </div>
-                            <p className="text-gray-300 text-sm leading-relaxed mb-4">
-                                BFP Santa Cruz reached out to LSPU-CCS to find innovative ways to enhance community fire preparedness.
-                                They provided the official knowledge base, including manuals and protocols, used to train the Berong AI chatbot and develop educational modules.
-                            </p>
-                            <div className="bg-white/5 rounded-lg p-3 border border-white/10 mt-auto">
-                                <div className="flex items-center gap-3">
-                                    <Shield className="w-5 h-5 text-yellow-400" />
-                                    <div>
-                                        <p className="text-yellow-400 font-semibold text-[10px] sm:text-xs">Project Initiator & Guide</p>
-                                        <p className="text-white font-medium text-sm">FSINSP Cesar A. Morfe Jr.</p>
-                                        <p className="text-gray-400 text-[10px] sm:text-xs">Initiated the partnership and provided constant guidance</p>
+                                <p className="text-gray-300 text-sm leading-relaxed mb-4">
+                                    The university provided technological expertise in AI, machine learning, and software development.
+                                    Computer Science researchers majoring in Intelligent Systems designed and developed the platform under academic supervision.
+                                </p>
+                                <div className="bg-white/5 rounded-lg p-3 border border-white/10 mt-auto">
+                                    <div className="flex items-center gap-3">
+                                        <GraduationCap className="w-5 h-5 text-yellow-400" />
+                                        <div>
+                                            <p className="text-yellow-400 font-semibold text-[10px] sm:text-xs">Project Initiation & Thesis Adviser</p>
+                                            <p className="text-white font-medium text-sm">Dr. Mia V. Villarica, DIT</p>
+                                            <p className="text-gray-400 text-[10px] sm:text-xs">CCS Dean, LSPU Santa Cruz</p>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        </PartnershipCard>
+                            </PartnershipCard>
+
+                            {/* BFP Card */}
+                            <PartnershipCard delay={1} reduceMotion={reduceMotion}>
+                                <div className="flex items-center gap-3 mb-4">
+                                    <div className="relative w-14 h-14 sm:w-16 sm:h-16 flex-shrink-0">
+                                        <img
+                                            src="/bfp logo.png"
+                                            alt="BFP Logo"
+                                            className="absolute inset-0 w-full h-full object-contain"
+                                        />
+                                    </div>
+                                    <div>
+                                        <h3 className="text-lg sm:text-xl font-bold">BFP Santa Cruz Fire Station</h3>
+                                        <p className="text-gray-400 text-xs sm:text-sm">Bureau of Fire Protection</p>
+                                    </div>
+                                </div>
+                                <p className="text-gray-300 text-sm leading-relaxed mb-4">
+                                    BFP Santa Cruz reached out to LSPU-CCS to find innovative ways to enhance community fire preparedness.
+                                    They provided the official knowledge base, including manuals and protocols, used to train the Berong AI chatbot and develop educational modules.
+                                </p>
+                                <div className="bg-white/5 rounded-lg p-3 border border-white/10 mt-auto">
+                                    <div className="flex items-center gap-3">
+                                        <Shield className="w-5 h-5 text-yellow-400" />
+                                        <div>
+                                            <p className="text-yellow-400 font-semibold text-[10px] sm:text-xs">Project Initiator & Guide</p>
+                                            <p className="text-white font-medium text-sm">FSINSP Cesar A. Morfe Jr.</p>
+                                            <p className="text-gray-400 text-[10px] sm:text-xs">Initiated the partnership and provided constant guidance</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </PartnershipCard>
+                        </div>
                     </div>
-                </div>
-            </motion.section>
+                </motion.section>
+            </div>
 
             {/* Research Team Section */}
             <motion.section
                 ref={teamRef}
-                className="pt-16 sm:pt-24 pb-4 sm:pb-8 bg-transparent rounded-3xl"
+                className={`pt-16 sm:pt-24 pb-4 sm:pb-8 bg-transparent rounded-3xl ${!reduceMotion ? 'h-[350vh] relative' : ''}`}
                 style={{ opacity: teamOpacity, scale: teamScale }}
             >
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div className={`w-full ${!reduceMotion ? 'sticky top-0 h-screen flex flex-col justify-center overflow-x-hidden' : ''}`}>
                     <motion.div
-                        className="text-center mb-16"
+                        className="text-center mb-10 sm:mb-16 shrink-0 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full"
                         initial={{ opacity: 0, y: 40 }}
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true }}
@@ -763,11 +822,35 @@ export function LandingAboutSection() {
                         </p>
                     </motion.div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                        {teamMembers.map((member, index) => (
-                            <TeamCard key={index} member={member} index={index} reduceMotion={reduceMotion} />
-                        ))}
-                    </div>
+                    {reduceMotion ? (
+                        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                                {teamMembers.map((member, index) => (
+                                    <TeamCard key={index} member={member} index={index} reduceMotion={reduceMotion} />
+                                ))}
+                            </div>
+                        </div>
+                    ) : (
+                        <div 
+                            className="flex w-full items-center relative overflow-hidden py-10 -my-10"
+                            style={{
+                                WebkitMaskImage: "linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%)",
+                                maskImage: "linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%)",
+                            }}
+                        >
+                            <motion.div 
+                                ref={carouselRef}
+                                style={{ x: teamX }}
+                                className="flex gap-6 sm:gap-8 px-4 sm:px-[6vw] w-max"
+                            >
+                                {teamMembers.map((member, index) => (
+                                    <div key={index} className="w-[300px] sm:w-[380px] shrink-0 h-[420px]">
+                                        <TeamCard member={member} index={index} reduceMotion={reduceMotion} />
+                                    </div>
+                                ))}
+                            </motion.div>
+                        </div>
+                    )}
                 </div>
             </motion.section>
         </div>
