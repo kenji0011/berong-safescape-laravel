@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useRef, useState } from "react";
-import { motion, useScroll, useTransform, useInView, useReducedMotion } from "motion/react";
+import { motion, useScroll, useTransform, useInView, useReducedMotion, useSpring } from "motion/react";
 import { Link } from '@inertiajs/react';
 import {
     Github,
@@ -498,11 +498,18 @@ export function LandingAboutSection() {
 
     const { scrollYProgress: horizontalScrollProgress } = useScroll({
         target: teamRef,
-        offset: ["start start", "end end"]
+        offset: ["start 72px", "end end"]
+    });
+    
+    // Smooth the scroll progress for a buttery horizontal scroll
+    const smoothProgress = useSpring(horizontalScrollProgress, {
+        stiffness: 100,
+        damping: 20,
+        mass: 0.5,
     });
     
     // Transform vertical progress into exact negative pixel translation
-    const teamX = useTransform(horizontalScrollProgress, [0, 1], [0, -carouselWidth]);
+    const teamX = useTransform(smoothProgress, [0, 1], [0, -carouselWidth]);
 
     return (
         <div className="space-y-10 sm:space-y-20 mt-10 sm:mt-20">
@@ -798,10 +805,10 @@ export function LandingAboutSection() {
             {/* Research Team Section */}
             <motion.section
                 ref={teamRef}
-                className={`pt-16 sm:pt-24 pb-4 sm:pb-8 bg-transparent rounded-3xl ${!reduceMotion ? 'h-[350vh] relative' : ''}`}
+                className={`pt-16 sm:pt-24 pb-4 sm:pb-8 bg-transparent rounded-3xl ${!reduceMotion ? 'h-[200vh] relative' : ''}`}
                 style={{ opacity: teamOpacity, scale: teamScale }}
             >
-                <div className={`w-full ${!reduceMotion ? 'sticky top-0 h-screen flex flex-col justify-center overflow-x-hidden' : ''}`}>
+                <div className={`w-full ${!reduceMotion ? 'sticky top-[64px] sm:top-[72px] h-[calc(100vh-64px)] sm:h-[calc(100vh-72px)] flex flex-col justify-center overflow-x-hidden' : ''}`}>
                     <motion.div
                         className="text-center mb-10 sm:mb-16 shrink-0 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full"
                         initial={{ opacity: 0, y: 40 }}
@@ -832,16 +839,12 @@ export function LandingAboutSection() {
                         </div>
                     ) : (
                         <div 
-                            className="flex w-full items-center relative overflow-hidden py-10 -my-10"
-                            style={{
-                                WebkitMaskImage: "linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%)",
-                                maskImage: "linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%)",
-                            }}
+                            className="flex w-full items-center relative py-10 -my-10"
                         >
                             <motion.div 
                                 ref={carouselRef}
                                 style={{ x: teamX }}
-                                className="flex gap-6 sm:gap-8 px-4 sm:px-[6vw] w-max"
+                                className="flex gap-6 sm:gap-8 px-4 sm:px-6 lg:px-8 xl:px-[calc((100vw-80rem)/2+2rem)] w-max"
                             >
                                 {teamMembers.map((member, index) => (
                                     <div key={index} className="w-[300px] sm:w-[380px] shrink-0 h-[420px]">

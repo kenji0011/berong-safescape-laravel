@@ -279,7 +279,7 @@ const ModuleOnePage = ({ initialProgress }: { initialProgress?: any }) => {
       await axios.post('/api/badges/award', {
         badge_id: 'module_1',
         badge_name: 'Fire Scout',
-        badge_icon: '🔥'
+        badge_icon: '/fire_hall.png'
       });
 
       await axios.post("/api/kids/safescape", { 

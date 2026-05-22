@@ -77,7 +77,7 @@ export const FeedbackWidget = () => {
                             </div>
                         ) : (
                             <form onSubmit={handleSubmit} className="space-y-4">
-                                <div className="flex justify-center gap-1 mb-6">
+                                <div className="flex justify-center gap-1.5 sm:gap-2 mb-6 bg-slate-50 dark:bg-slate-900 py-1.5 sm:py-3 rounded-2xl sm:rounded-3xl border-2 border-slate-100 dark:border-slate-700 w-fit mx-auto px-3 sm:px-6 shadow-inner">
                                     {[1, 2, 3, 4, 5].map((star) => (
                                         <button
                                             key={star}
@@ -85,14 +85,14 @@ export const FeedbackWidget = () => {
                                             onClick={() => setRating(star)}
                                             onMouseEnter={() => setHoverRating(star)}
                                             onMouseLeave={() => setHoverRating(0)}
-                                            className="p-1 transition-transform hover:scale-110 active:scale-95 focus:outline-none"
+                                            className="p-0.5 transition-transform hover:scale-125 hover:-translate-y-1 active:scale-90 outline-none"
                                         >
                                             <Star 
                                                 className={cn(
                                                     "h-8 w-8 sm:h-10 sm:w-10 transition-colors",
                                                     (hoverRating || rating) >= star 
                                                         ? "text-yellow-400 fill-yellow-400 drop-shadow-sm" 
-                                                        : "text-slate-200 dark:text-slate-800"
+                                                        : "text-slate-200 dark:text-slate-700 fill-slate-100 dark:fill-slate-800"
                                                 )} 
                                             />
                                         </button>

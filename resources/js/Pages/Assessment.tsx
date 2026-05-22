@@ -39,7 +39,13 @@ export default function Assessment({ type }: AssessmentProps) {
         maxScore?: number
     } | null>(null)
     const [timeLeft, setTimeLeft] = useState<number | null>(null)
-    const [showWarningModal, setShowWarningModal] = useState(type === 'postTest')
+    const [showWarningModal, setShowWarningModal] = useState(() => {
+        if (type === 'postTest') {
+            const hasCompleted = user?.postTestScore !== undefined && user?.postTestScore !== null
+            return !hasCompleted
+        }
+        return false
+    })
     const [showRefreshWarning, setShowRefreshWarning] = useState(false)
     const [showEscapeWarning, setShowEscapeWarning] = useState(false)
     const answersRef = useRef<Record<number, number>>({})

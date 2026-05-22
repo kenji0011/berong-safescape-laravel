@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { motion, AnimatePresence, useMotionValue, useTransform } from 'motion/react'
 import { Link } from '@inertiajs/react'
-import { ArrowLeft, CheckCircle2, Flame, Box, AlertTriangle, Trophy } from 'lucide-react'
+import { ArrowLeft, ArrowRight, CheckCircle2, Flame, Box, AlertTriangle, Trophy } from 'lucide-react'
 import DashboardLayout from '@/Layouts/DashboardLayout'
 import { HotOrNotSkeleton } from '@/Components/dashboard-skeletons'
 import axios from 'axios'
@@ -64,7 +64,7 @@ export default function HotOrNot() {
          axios.post('/api/badges/award', {
             badge_id: 'safety_scout',
             badge_name: 'Safety Scout',
-            badge_icon: '🤖'
+            badge_icon: '/safety_hall.png'
          }).catch(err => console.error("Failed to award badge:", err.response?.data || err.message))
 
          setTimeout(() => {
@@ -140,8 +140,8 @@ export default function HotOrNot() {
           <HotOrNotSkeleton />
         ) : gameState === 'start' && (
           <div className="max-w-md w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-8 rounded-[3rem] shadow-2xl text-center animate-in zoom-in duration-500 transition-colors">
-             <div className="w-24 h-24 bg-emerald-100 dark:bg-emerald-500/20 rounded-3xl flex items-center justify-center mx-auto mb-6 text-5xl">
-                🤖
+             <div className="w-24 h-24 bg-emerald-100 dark:bg-emerald-500/20 rounded-3xl flex items-center justify-center mx-auto mb-6">
+                <img src="/safety_hall.png" alt="Safety Scout" className="w-16 h-16 object-contain drop-shadow-md" />
              </div>
              <h1 className="text-4xl font-black mb-2 italic text-slate-900 dark:text-white tracking-tight uppercase">HOT OR NOT?</h1>
              <p className="text-slate-500 dark:text-slate-400 font-medium mb-8 leading-relaxed">
@@ -149,15 +149,19 @@ export default function HotOrNot() {
              </p>
              
              <div className="flex gap-4 mb-8">
-                <div className="flex-1 bg-rose-50 dark:bg-rose-900/10 p-4 rounded-2xl border border-rose-100 dark:border-rose-900/20 text-center">
-                   <div className="text-2xl mb-1">👈</div>
+                <div className="flex-1 bg-rose-50 dark:bg-rose-900/10 p-4 rounded-2xl border border-rose-100 dark:border-rose-900/20 text-center flex flex-col items-center">
+                   <div className="mb-2 bg-rose-100 dark:bg-rose-900/30 p-2 rounded-full">
+                     <ArrowLeft className="h-6 w-6 text-rose-500" />
+                   </div>
                    <div className="text-[10px] font-black text-rose-600 dark:text-rose-400 uppercase">Swipe Left</div>
-                   <div className="text-xs font-bold">Hot Tools</div>
+                   <div className="text-xs font-bold mt-1">Hot Tools</div>
                 </div>
-                <div className="flex-1 bg-emerald-50 dark:bg-emerald-900/10 p-4 rounded-2xl border border-emerald-100 dark:border-emerald-900/20 text-center">
-                   <div className="text-2xl mb-1">👉</div>
+                <div className="flex-1 bg-emerald-50 dark:bg-emerald-900/10 p-4 rounded-2xl border border-emerald-100 dark:border-emerald-900/20 text-center flex flex-col items-center">
+                   <div className="mb-2 bg-emerald-100 dark:bg-emerald-900/30 p-2 rounded-full">
+                     <ArrowRight className="h-6 w-6 text-emerald-500" />
+                   </div>
                    <div className="text-[10px] font-black text-emerald-600 dark:text-emerald-400 uppercase">Swipe Right</div>
-                   <div className="text-xs font-bold">Safe Toys</div>
+                   <div className="text-xs font-bold mt-1">Safe Toys</div>
                 </div>
              </div>
 
@@ -175,7 +179,9 @@ export default function HotOrNot() {
               {/* Mission Control (Hint + Progress) */}
               <div className="flex flex-col items-center gap-6 w-full max-w-sm px-4">
                  <div className="hidden md:flex items-center gap-3 bg-white dark:bg-slate-900 border-2 border-slate-100 dark:border-slate-800 px-6 py-4 rounded-[2rem] shadow-xl w-full transition-colors">
-                    <div className="text-3xl md:text-4xl">🤖</div>
+                    <div className="shrink-0">
+                       <img src="/safety_hall.png" alt="Robot" className="w-10 h-10 md:w-12 md:h-12 object-contain drop-shadow-sm" />
+                    </div>
                     <div className="text-[10px] md:text-xs font-black text-slate-600 dark:text-slate-300 uppercase tracking-[0.15em] leading-relaxed">
                        "Swipe right for toys, <br className="md:hidden" /> left for hot things!"
                     </div>
@@ -220,7 +226,9 @@ export default function HotOrNot() {
              <h1 className="text-3xl md:text-4xl font-black text-slate-900 dark:text-white mb-4 uppercase tracking-tight italic">SAFETY SCOUT!</h1>
              <p className="text-slate-500 dark:text-slate-400 mb-8 font-medium leading-relaxed">You're an expert at spotting danger! You found all 10 items and kept everyone safe.</p>
              <div className="bg-emerald-50 dark:bg-emerald-900/10 border border-emerald-100 dark:border-emerald-900/20 p-6 rounded-3xl mb-8 flex items-center gap-4 text-left">
-                <div className="text-4xl">🤖</div>
+                <div className="shrink-0">
+                   <img src="/safety_hall.png" alt="Safety Scout Badge" className="w-14 h-14 object-contain drop-shadow-md" />
+                </div>
                 <div>
                    <div className="text-[10px] font-black text-emerald-600 dark:text-emerald-400 uppercase tracking-[0.2em] mb-1">Badge Unlocked</div>
                    <div className="text-slate-900 dark:text-white font-black text-lg">Safety Scout</div>
@@ -242,7 +250,9 @@ export default function HotOrNot() {
             exit={{ opacity: 0, y: 100 }}
             className="fixed bottom-10 inset-x-6 z-50 bg-white dark:bg-slate-900 border-4 border-rose-100 dark:border-rose-900/20 p-6 rounded-[2.5rem] shadow-2xl flex items-center gap-4 max-w-lg mx-auto"
           >
-             <div className="text-4xl animate-bounce">🤖</div>
+             <div className="animate-bounce shrink-0">
+                <img src="/safety_hall.png" alt="Safety Tip" className="w-12 h-12 object-contain drop-shadow-md" />
+             </div>
              <div className="flex-1">
                 <div className="text-rose-600 font-black text-[10px] uppercase tracking-widest mb-1">Safety Tip!</div>
                 <div className="text-slate-700 dark:text-slate-300 font-bold text-sm leading-tight">

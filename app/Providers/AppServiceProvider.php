@@ -52,8 +52,8 @@ class AppServiceProvider extends ServiceProvider
                 ->symbols();
         });
 
-        // Enforce HTTPS in production
-        if ($this->app->environment('production')) {
+        // Enforce HTTPS in production or when using LocalTunnel
+        if ($this->app->environment('production') || request()->header('x-forwarded-proto') === 'https' || str_contains(request()->header('host', ''), 'loca.lt')) {
             URL::forceScheme('https');
         }
 

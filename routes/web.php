@@ -181,6 +181,10 @@ Route::get('/about', function () {
         ]);
     })->name('kids.badges');
 
+    Route::get('/kids/task-master', function () {
+        return Inertia::render('Kids/TaskMaster');
+    })->name('kids.task-master');
+
     Route::get('/kids/certificate', function () {
         return Inertia::render('Kids/Certificate');
     })->name('kids.certificate');

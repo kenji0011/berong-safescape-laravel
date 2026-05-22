@@ -1,4 +1,4 @@
-import React from "react"
+import React, { useEffect } from "react"
 import { Link } from '@inertiajs/react'
 import { ArrowLeft, Trophy, Lock, Calendar, Shield, CheckCircle, Zap, ArrowRight, BadgeCheck } from "lucide-react"
 import DashboardLayout from "@/Layouts/DashboardLayout"
@@ -21,12 +21,34 @@ const ALL_BADGES = [
   { id: 'smoke_scout', name: "Smoke Scout", source: "Smoke Crawl", image: "/smoke_hall.png", hint: "Stay low and find your way out of the smoke-filled maze!", target: "/kids/smoke-crawl" },
   { id: 'safety_scout', name: "Safety Scout", source: "Hot or Not", image: "/safety_hall.png", hint: "Correcty identify all hazards in the Hazard House.", target: "/kids/hot-or-not" },
   { id: 'hazard_hero', name: "Hazard Hero", source: "Hazard Blitz", image: "/hazard_hall.png", hint: "Neutralize hazards and reach 500 points in Hazard Blitz.", target: "/kids/hazard-blitz" },
-  { id: 'intel_analyst', name: "Intel Analyst", source: "Videos", image: "/intel_hall.png", hint: "Watch all fire safety training videos.", target: "/kids/videos" }
+  { id: 'intel_analyst', name: "Intel Analyst", source: "Videos", image: "/intel_hall.png", hint: "Watch all fire safety training videos.", target: "/kids/videos" },
+  { id: 'task_master', name: "Task Master", source: "Inspector Game", image: "/task_master_badge_placeholder.png", hint: "Find and solve all the fire safety tasks as the Inspector.", target: "/kids/task-master" }
 ]
 
 const BadgeHallPage = ({ completedModules = [], earnedBadges = [] }: BadgeHallProps) => {
   const { user } = useAuth()
   
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const highlight = params.get('highlight');
+    if (highlight) {
+      const decodedName = decodeURIComponent(highlight).toLowerCase();
+      const index = ALL_BADGES.findIndex(b => b.name.toLowerCase() === decodedName);
+      if (index !== -1) {
+        const el = document.getElementById(`badge-card-${index}`);
+        if (el) {
+          setTimeout(() => {
+            el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            el.classList.add('animate-bounce', 'ring-4', 'ring-yellow-400', 'ring-offset-4', 'ring-offset-slate-50', 'dark:ring-offset-slate-900', 'shadow-[0_0_40px_rgba(250,204,21,0.6)]');
+            setTimeout(() => {
+              el.classList.remove('animate-bounce', 'ring-4', 'ring-yellow-400', 'ring-offset-4', 'ring-offset-slate-50', 'dark:ring-offset-slate-900', 'shadow-[0_0_40px_rgba(250,204,21,0.6)]');
+            }, 3000);
+          }, 400); // slight delay to ensure smooth scrolling starts after layout
+        }
+      }
+    }
+  }, []);
+
   const getBadgeState = (badge: typeof ALL_BADGES[0]) => {
     const earned = earnedBadges.find(b => b.badge_id === badge.id)
     const isEarned = (badge.moduleNum && completedModules.includes(badge.moduleNum)) || !!earned
@@ -81,6 +103,7 @@ const BadgeHallPage = ({ completedModules = [], earnedBadges = [] }: BadgeHallPr
               return (
                 <div 
                   key={i} 
+                  id={`badge-card-${i}`}
                   className={cn(
                     "group relative p-4 sm:p-6 rounded-2xl sm:rounded-[2.5rem] border-2 sm:border-[3px] transition-all duration-500 flex flex-col min-h-[240px] sm:min-h-[300px] h-auto overflow-hidden",
                     state.isEarned 

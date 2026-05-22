@@ -40,7 +40,7 @@ const ModuleTwoPage = ({ moduleNum, initialProgress }: { moduleNum: number; init
           await axios.post('/api/badges/award', {
             badge_id: `module_${currentModule}`,
             badge_name: 'Fire Marshal',
-            badge_icon: '🔥'
+            badge_icon: '/shield_hall.png'
           });
         } catch (err: any) {
           console.error("Failed to award badge automatically:", err.response?.data || err.message)

@@ -27,6 +27,7 @@ export function NotificationPopover() {
   const [loading, setLoading] = useState(false);
   const [error] = useState<string | null>(null);
   const [openDropdownId, setOpenDropdownId] = useState<number | null>(null);
+  const [isOpen, setIsOpen] = useState(false);
   const [previewNotification, setPreviewNotification] = useState<Notification | null>(null);
   const prevNotificationsRef = useRef<Notification[]>([]);
   const previewTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -138,10 +139,18 @@ export function NotificationPopover() {
         router.get('/adult');
       } else if (notification.category === 'kids/rank') {
         router.get('/kids?rankGuide=true');
+      } else if (notification.type === 'achievement' || notification.title.toLowerCase().includes('badge')) {
+        const badgeNameMatch = notification.message.match(/earned the (.*?) badge/i);
+        let badgeParam = '';
+        if (badgeNameMatch && badgeNameMatch[1]) {
+           badgeParam = `?highlight=${encodeURIComponent(badgeNameMatch[1])}`;
+        }
+        router.get(`/kids/badges${badgeParam}`);
       } else {
         router.get(`/${notification.category}`);
       }
     }
+    setIsOpen(false);
   };
 
   const formatDate = (dateString: string) => {
@@ -181,7 +190,7 @@ export function NotificationPopover() {
   };
 
   return (
-    <Popover>
+    <Popover open={isOpen} onOpenChange={setIsOpen}>
       <PopoverTrigger asChild>
         <button className="relative flex items-center justify-center h-10 w-10 sm:h-12 sm:w-12 rounded-full bg-[#0ea5e9] border-[3px] border-white text-white shadow-[0_4px_0_#0284c7] hover:-translate-y-0.5 hover:shadow-[0_6px_0_#0284c7] active:translate-y-1 active:shadow-none data-[state=open]:translate-y-1 data-[state=open]:shadow-none transition-all duration-200 active:duration-75 outline-none cursor-pointer">
           <Bell className="h-5 w-5 sm:h-6 sm:w-6" strokeWidth={2.5} />

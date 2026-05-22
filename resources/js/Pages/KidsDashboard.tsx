@@ -100,23 +100,17 @@ const KidsDashboardPage = ({ modules, progress }: KidsPageProps) => {
       description: "Complete daily missions and earn legendary rewards! Show your skills as a top fire safety expert.",
       type: "game",
       imageUrl: "/task_master.png",
-      href: "#",
-      isLocked: true,
-      category: "games",
-      duration: "Under Development",
-      unlockRequirement: "Under Development"
+      href: "/kids/task-master",
+      category: "games"
     },
     {
       id: "escape-room-game",
       title: "The Right Call",
       description: "Answer emergency calls and dispatch the right team! Do you have what it takes to be a dispatching hero?",
       type: "game",
-      emoji: "🔦",
-      href: "#",
-      isLocked: true,
-      category: "games",
-      duration: "Under Development",
-      unlockRequirement: "Under Development"
+      imageUrl: "/therightcall_kids.png",
+      href: "/kids/the-right-call",
+      category: "games"
     },
     {
       id: "video-portal",

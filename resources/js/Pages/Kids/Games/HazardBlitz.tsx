@@ -115,7 +115,7 @@ const HazardBlitz = () => {
     axios.post('/api/badges/award', {
       badge_id: 'hazard_hero',
       badge_name: 'Hazard Hero',
-      badge_icon: '⚡'
+      badge_icon: '/hazard_hall.png'
     }).catch(err => console.error("Failed to award badge:", err.response?.data || err.message));
   }, [score, highScore, playSound]);
 
@@ -446,7 +446,9 @@ const HazardBlitz = () => {
                    transition={{ delay: 0.5 }}
                    className="bg-emerald-500/10 border-2 border-emerald-500/20 p-4 rounded-2xl mb-8 flex items-center gap-4 text-left"
                  >
-                    <div className="h-12 w-12 bg-emerald-500 rounded-xl flex items-center justify-center text-2xl shadow-lg shrink-0">⚡</div>
+                    <div className="h-12 w-12 bg-emerald-500 rounded-xl flex items-center justify-center shadow-lg shrink-0 overflow-hidden">
+                      <img src="/hazard_hall.png" alt="Hazard Hero Badge" className="w-full h-full object-contain p-1" />
+                    </div>
                     <div>
                        <div className="flex items-center gap-1.5 text-emerald-400 font-black text-xs uppercase tracking-widest">
                           <BadgeCheck className="h-3 w-3" />

@@ -188,7 +188,7 @@ const VideosPage = ({ initialVideos, watchedVideoIds }: VideosPageProps) => {
     axios.post('/api/badges/award', {
       badge_id: 'intel_analyst',
       badge_name: 'Intel Analyst',
-      badge_icon: '🎬'
+      badge_icon: '/intel_hall.png'
     }).catch(err => {
       setBadgeAwarded(false)
       console.error("Failed to award badge:", err.response?.data || err.message)

@@ -31,6 +31,7 @@ const MemoryGamePage = () => {
   const [moves, setMoves] = useState(0)
   const [matches, setMatches] = useState(0)
   const [isLocked, setIsLocked] = useState(false)
+  const [hasStarted, setHasStarted] = useState(false)
 
   const initGame = () => {
     setCards(generateCards())
@@ -91,7 +92,7 @@ const MemoryGamePage = () => {
               axios.post('/api/badges/award', {
                 badge_id: 'memory_master',
                 badge_name: 'Memory Master',
-                badge_icon: '🧠'
+                badge_icon: '/memory_hall.png'
               }).catch(err => console.error("Failed to award badge:", err.response?.data || err.message))
             }
             else playSound('match')
@@ -130,7 +131,9 @@ const MemoryGamePage = () => {
         <div className="relative z-10 w-full flex-1 flex items-center justify-center pt-6 pb-12">
           <div className="max-w-xl mx-auto w-full px-4 sm:px-6">
             <div className="w-full bg-white dark:bg-slate-900 border border-white/60 dark:border-slate-800/60 rounded-[3rem] p-10 sm:p-14 shadow-[0_20px_60px_rgba(20,184,166,0.15)] flex flex-col items-center text-center transform transition-all duration-700 animate-in fade-in zoom-in">
-              <div className="text-8xl md:text-9xl mb-6 animate-bounce-slow drop-shadow-2xl">🏆</div>
+              <div className="w-32 h-32 md:w-48 md:h-48 mb-6 animate-bounce-slow drop-shadow-2xl mx-auto">
+                <img src="/memory_hall.png" alt="Memory Master Badge" className="w-full h-full object-contain" />
+              </div>
               <h2 className="text-4xl sm:text-5xl font-black text-teal-600 dark:text-teal-400 tracking-tight mb-4 drop-shadow-sm">You Won!</h2>
               <p className="text-lg sm:text-xl font-bold text-slate-600 dark:text-slate-300 mb-2">All matches found!</p>
               <div className="text-lg font-medium text-slate-500 dark:text-slate-400 mb-10 bg-teal-50 dark:bg-teal-950/30 px-6 py-2 rounded-2xl border border-teal-100 dark:border-teal-900/50 shadow-sm w-full">
@@ -139,18 +142,55 @@ const MemoryGamePage = () => {
               <div className="flex flex-col sm:flex-row w-full gap-4">
                 <button 
                   onClick={initGame}
-                  className="flex-1 bg-teal-500 hover:bg-teal-400 text-white shadow-lg hover:-translate-y-1 active:translate-y-0 px-8 py-4 rounded-full font-black text-lg transition-all duration-300 border-b-4 border-teal-700 active:border-b-0"
+                  className="flex-1 bg-teal-500 hover:bg-teal-400 text-white shadow-lg hover:-translate-y-1 active:translate-y-0 px-8 py-4 rounded-full font-black text-lg transition-all duration-300 border-b-4 border-teal-700 active:border-b-0 uppercase tracking-widest"
                 >
                   Play Again
                 </button>
                 <Link 
                   href="/kids/challenges" 
-                  className="flex-1 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-2 border-slate-200 dark:border-slate-700 hover:border-teal-300 dark:hover:border-teal-600 hover:bg-teal-50 dark:hover:bg-teal-900/20 shadow-sm hover:shadow-md hover:-translate-y-1 active:translate-y-0 px-8 py-4 rounded-full font-bold text-lg transition-all duration-300 flex items-center justify-center text-center"
+                  className="flex-1 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-2 border-slate-200 dark:border-slate-700 hover:border-teal-300 dark:hover:border-teal-600 hover:bg-teal-50 dark:hover:bg-teal-900/20 shadow-sm hover:shadow-md hover:-translate-y-1 active:translate-y-0 px-8 py-4 rounded-full font-bold text-lg transition-all duration-300 flex items-center justify-center text-center uppercase tracking-widest"
                 >
                   Go Back
                 </Link>
               </div>
             </div>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  if (!hasStarted) {
+    return (
+      <div className="min-h-screen relative flex flex-col font-sans bg-blue-50 dark:bg-slate-950 selection:bg-teal-300 selection:text-teal-900 transition-colors duration-500">
+        <div className="absolute inset-0 z-0">
+          <img src="/challenges-bg.png" alt="" className="w-full h-full object-cover opacity-100 dark:opacity-50 transition-opacity duration-500" />
+          <div className="absolute inset-0 bg-white/40 dark:bg-slate-950/60 transition-colors duration-500"></div>
+        </div>
+        
+        <div className="relative z-10 flex-1 flex flex-col items-center justify-center p-4">
+          <div className="absolute top-4 left-4 z-20">
+            <Link href="/kids/challenges" className="inline-flex items-center gap-2 text-slate-500 dark:text-slate-400 font-bold hover:text-teal-600 dark:hover:text-teal-400 transition-all text-sm bg-white dark:bg-slate-800 px-4 py-2 rounded-full border border-white/60 dark:border-slate-700/60 shadow-sm">
+              <ArrowLeft className="h-4 w-4" />
+              Back to Activities
+            </Link>
+          </div>
+          
+          <div className="max-w-md w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-8 rounded-[3rem] shadow-2xl text-center animate-in zoom-in duration-500 transition-colors">
+            <div className="w-24 h-24 bg-teal-100 dark:bg-teal-500/20 rounded-3xl flex items-center justify-center mx-auto mb-6">
+               <img src="/memory_hall.png" alt="Memory Game" className="w-16 h-16 object-contain drop-shadow-md" />
+            </div>
+            <h1 className="text-4xl font-black mb-2 italic text-slate-900 dark:text-white tracking-tight uppercase">MEMORY MATCH</h1>
+            <p className="text-slate-500 dark:text-slate-400 font-medium mb-8 leading-relaxed">
+               Train your brain! Flip the cards to find matching safety symbols. Can you find all the pairs?
+            </p>
+            
+            <button 
+             onClick={() => setHasStarted(true)}
+             className="w-full bg-teal-500 hover:bg-teal-400 text-white font-black py-4 rounded-2xl shadow-xl transition-all hover:-translate-y-1 active:scale-95 text-lg uppercase tracking-widest border-b-4 border-teal-700 active:border-b-0"
+            >
+               START GAME
+            </button>
           </div>
         </div>
       </div>

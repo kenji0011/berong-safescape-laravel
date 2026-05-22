@@ -40,7 +40,7 @@ const ModuleFourPage = ({ moduleNum, initialProgress }: { moduleNum: number; ini
           await axios.post('/api/badges/award', {
             badge_id: `module_${currentModule}`,
             badge_name: 'Low & Go!',
-            badge_icon: '🏃'
+            badge_icon: '/low_hall.png'
           });
         } catch (err: any) {
           console.error("Failed to award badge automatically:", err.response?.data || err.message)

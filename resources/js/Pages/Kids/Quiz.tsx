@@ -56,6 +56,7 @@ const QuizPage = () => {
   const [isFinished, setIsFinished] = useState(false)
   const [isAnswerRevealed, setIsAnswerRevealed] = useState(false)
   const [showLevelTransition, setShowLevelTransition] = useState(false)
+  const [hasStarted, setHasStarted] = useState(false)
   
   const [soundEffects] = useState({
     click: new Audio('/sounds/click.mp3'),
@@ -156,7 +157,7 @@ const QuizPage = () => {
         axios.post('/api/badges/award', {
           badge_id: 'quiz_hero',
           badge_name: 'Quiz Hero',
-          badge_icon: '🏆'
+          badge_icon: '/quiz_hall.png'
         }).catch(err => console.error("Failed to award badge:", err.response?.data || err.message))
       } else {
         playSound('failed')
@@ -167,6 +168,43 @@ const QuizPage = () => {
   // Waiting for questions to load
   if (activeQuestions.length === 0) {
     return <div className="min-h-screen bg-blue-50 dark:bg-slate-950"></div>;
+  }
+
+  if (!hasStarted) {
+    return (
+      <div className="min-h-screen relative flex flex-col font-sans bg-blue-50 dark:bg-slate-950 selection:bg-teal-300 selection:text-teal-900 transition-colors duration-500">
+        <div className="absolute inset-0 z-0">
+          <img src="/challenges-bg.png" alt="" className="w-full h-full object-cover opacity-100 dark:opacity-50 transition-opacity duration-500" />
+          <div className="absolute inset-0 bg-white/40 dark:bg-slate-950/60 transition-colors duration-500"></div>
+        </div>
+        
+        <div className="relative z-10 flex-1 flex flex-col items-center justify-center p-4">
+          <div className="absolute top-4 left-4 z-20">
+            <Link href="/kids/challenges" className="inline-flex items-center gap-2 text-slate-500 dark:text-slate-400 font-bold hover:text-orange-600 dark:hover:text-orange-400 transition-all text-sm bg-white dark:bg-slate-800 px-4 py-2 rounded-full border border-white/60 dark:border-slate-700/60 shadow-sm">
+              <ArrowLeft className="h-4 w-4" />
+              Back to Activities
+            </Link>
+          </div>
+          
+          <div className="max-w-md w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-8 rounded-[3rem] shadow-2xl text-center animate-in zoom-in duration-500 transition-colors">
+            <div className="w-24 h-24 bg-yellow-100 dark:bg-yellow-500/20 rounded-3xl flex items-center justify-center mx-auto mb-6">
+               <img src="/quiz_hall.png" alt="Quiz Hero" className="w-16 h-16 object-contain drop-shadow-md" />
+            </div>
+            <h1 className="text-4xl font-black mb-2 italic text-slate-900 dark:text-white tracking-tight uppercase">FIRE SAFETY QUIZ</h1>
+            <p className="text-slate-500 dark:text-slate-400 font-medium mb-8 leading-relaxed">
+               Test your fire safety knowledge! Answer all 15 questions correctly to become a Quiz Hero. Are you ready?
+            </p>
+            
+            <button 
+             onClick={() => setHasStarted(true)}
+             className="w-full bg-primary hover:bg-red-500 text-white font-black py-4 rounded-2xl shadow-xl transition-all hover:-translate-y-1 active:scale-95 text-lg uppercase tracking-widest border-b-4 border-red-800 active:border-b-0 flex justify-center items-center gap-2"
+            >
+               START QUIZ
+            </button>
+          </div>
+        </div>
+      </div>
+    )
   }
 
   // View: Results Screen
@@ -183,8 +221,8 @@ const QuizPage = () => {
           
           {isPerfect ? (
             <div className="animate-in zoom-in duration-700">
-              <div className="h-24 w-24 sm:h-32 sm:w-32 bg-yellow-400 rounded-[1.5rem] sm:rounded-[2.5rem] flex items-center justify-center text-5xl sm:text-7xl mx-auto mb-4 sm:mb-6 shadow-xl border-4 border-white dark:border-slate-800 transform -rotate-6">
-                🏆
+              <div className="h-24 w-24 sm:h-32 sm:w-32 bg-yellow-400 rounded-[1.5rem] sm:rounded-[2.5rem] flex items-center justify-center mx-auto mb-4 sm:mb-6 shadow-xl border-4 border-white dark:border-slate-800 transform -rotate-6 overflow-hidden">
+                <img src="/quiz_hall.png" alt="Quiz Hero Badge" className="w-full h-full object-contain p-2" />
               </div>
               <h2 className="text-3xl sm:text-4xl font-black text-slate-900 dark:text-white mb-1 sm:mb-2 tracking-tighter">MASTERPIECE!</h2>
               <p className="text-slate-500 dark:text-slate-400 font-bold mb-6 sm:mb-8 text-sm sm:text-base">You've earned the <span className="text-yellow-600 dark:text-yellow-400">Quiz Hero</span> badge!</p>

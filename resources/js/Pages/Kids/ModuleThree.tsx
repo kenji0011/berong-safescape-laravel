@@ -39,8 +39,8 @@ const ModuleThreePage = ({ moduleNum, initialProgress }: { moduleNum: number; in
         try {
           await axios.post('/api/badges/award', {
             badge_id: `module_${currentModule}`,
-            badge_name: 'Escape Strategist',
-            badge_icon: '🗺️'
+            badge_name: 'Escape Planner',
+            badge_icon: '/plan_hall.png'
           });
         } catch (err: any) {
           console.error("Failed to award badge automatically:", err.response?.data || err.message)
