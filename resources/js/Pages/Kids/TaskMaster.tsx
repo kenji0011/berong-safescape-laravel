@@ -44,14 +44,31 @@ export default function TaskMaster() {
       
       <div className="fixed inset-0 bg-black z-[9999] flex items-center justify-center overflow-hidden touch-none">
         
-        {/* Navigation Overlay (appears when hovering near top or can be always slightly visible) */}
-        <Link 
-          href="/kids" 
-          className="absolute top-4 left-4 z-[10000] bg-black/50 hover:bg-black/80 text-white p-3 rounded-full backdrop-blur-sm transition-all border border-white/20 shadow-xl flex items-center gap-2 group"
-        >
-          <ArrowLeft className="h-5 w-5 group-hover:-translate-x-1 transition-transform" />
-          <span className="font-bold hidden sm:inline">Exit Game</span>
-        </Link>
+        <div className="absolute top-4 left-4 z-[10000] flex items-center gap-3">
+          <Link 
+            href="/kids" 
+            className="bg-black/50 hover:bg-black/80 text-white p-3 rounded-full backdrop-blur-sm transition-all border border-white/20 shadow-xl flex items-center gap-2 group"
+          >
+            <ArrowLeft className="h-5 w-5 group-hover:-translate-x-1 transition-transform" />
+            <span className="font-bold hidden sm:inline">Exit Game</span>
+          </Link>
+
+          <button 
+            onClick={() => {
+              if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(err => {
+                  console.error(`Error attempting to enable fullscreen: ${err.message}`);
+                });
+              } else {
+                document.exitFullscreen();
+              }
+            }}
+            className="bg-black/50 hover:bg-black/80 text-white p-3 rounded-full backdrop-blur-sm transition-all border border-white/20 shadow-xl flex items-center gap-2 group"
+          >
+            <Maximize className="h-5 w-5 group-hover:scale-110 transition-transform" />
+            <span className="font-bold hidden sm:inline">Fullscreen</span>
+          </button>
+        </div>
 
         {/* The Game Iframe */}
         <iframe 

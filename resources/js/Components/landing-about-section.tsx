@@ -330,6 +330,7 @@ function TeamCard({ member, index, reduceMotion }: { key?: React.Key; member: ty
                         <img
                             src={member.image}
                             alt={member.name}
+                            loading="lazy"
                             className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-110"
                         />
                     </div>
@@ -547,16 +548,10 @@ export function LandingAboutSection() {
                                         whileInView={{ opacity: 1, scale: 1 }}
                                         viewport={{ once: true }}
                                         animate={reduceMotion ? { y: 0 } : { 
-                                            y: [-12, 12, -12],
-                                            filter: [
-                                                "drop-shadow(0px 30px 25px rgba(0, 0, 0, 0.15))",
-                                                "drop-shadow(0px 10px 10px rgba(0, 0, 0, 0.35))",
-                                                "drop-shadow(0px 30px 25px rgba(0, 0, 0, 0.15))"
-                                            ]
+                                            y: [-12, 12, -12]
                                         }}
                                         transition={reduceMotion ? { duration: 0.6 } : {
                                             y: { duration: 4, ease: "easeInOut", repeat: Infinity },
-                                            filter: { duration: 4, ease: "easeInOut", repeat: Infinity },
                                             opacity: { duration: 0.6 },
                                             scale: { duration: 0.6 }
                                         }}
@@ -564,7 +559,8 @@ export function LandingAboutSection() {
                                         <img
                                             src="/berong-official-logo.jpg"
                                             alt="Berong's E-Learning - Official Logo"
-                                            className="absolute inset-0 w-full h-full object-contain z-10"
+                                            loading="lazy"
+                                            className="absolute inset-0 w-full h-full object-contain z-10 drop-shadow-[0_10px_15px_rgba(0,0,0,0.2)]"
                                         />
                                     </motion.div>
                                 </div>
@@ -743,6 +739,7 @@ export function LandingAboutSection() {
                                         <img
                                             src="/lspu logo.png"
                                             alt="LSPU Logo"
+                                            loading="lazy"
                                             className="absolute inset-0 w-full h-full object-contain"
                                         />
                                     </div>
@@ -774,6 +771,7 @@ export function LandingAboutSection() {
                                         <img
                                             src="/bfp logo.png"
                                             alt="BFP Logo"
+                                            loading="lazy"
                                             className="absolute inset-0 w-full h-full object-contain"
                                         />
                                     </div>

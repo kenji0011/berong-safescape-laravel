@@ -352,6 +352,37 @@ const CourseHubPage = ({ initialModules }: CourseHubProps) => {
                 )
               })}
 
+              {/* ── Task Master Game Card ── */}
+              <div
+                className="relative rounded-[2rem] flex flex-col transition-all duration-500 overflow-hidden bg-white dark:bg-slate-900 h-[400px] border-[3px] border-slate-200 dark:border-slate-800 shadow-[0_8px_0_#e2e8f0] dark:shadow-[0_8px_0_#0f172a] hover:-translate-y-1.5 hover:shadow-[0_12px_0_#e2e8f0] dark:hover:shadow-[0_12px_0_#0f172a]"
+              >
+                {/* Header Graphic Area - Solid Accent */}
+                <div className="h-32 sm:h-36 p-6 flex flex-col justify-end border-b-[3px] relative overflow-hidden bg-orange-500 border-orange-600">
+                  <div className="relative z-10">
+                    <span className="text-4xl mb-2 block">🔎</span>
+                    <h4 className="text-2xl sm:text-3xl font-black text-white drop-shadow-sm">
+                      Task Master
+                    </h4>
+                  </div>
+                </div>
+
+                <div className="p-7 flex flex-col flex-1">
+                  <p className="text-sm sm:text-base leading-relaxed mb-6 flex-1 font-bold text-slate-500 dark:text-slate-400">
+                    Step into the shoes of a Fire Inspector! Find and solve all the fire safety tasks in this interactive 3D game.
+                  </p>
+                  
+                  {/* CTA Button */}
+                  <div className="mt-auto pt-6 border-t-2 border-dashed border-slate-100 dark:border-slate-800 flex items-center justify-between">
+                    <Link
+                      href="/kids/task-master"
+                      className="w-full flex items-center justify-center gap-2 bg-orange-500 hover:bg-orange-400 text-white font-black py-4 rounded-2xl text-base border-b-[6px] border-orange-700 active:border-b-0 active:translate-y-[6px] shadow-lg transition-all uppercase tracking-widest"
+                    >
+                      Play Game <ArrowRight className="h-5 w-5" />
+                    </Link>
+                  </div>
+                </div>
+              </div>
+
               {/* ── Certificate Card ── */}
               <div
                 className={cn(

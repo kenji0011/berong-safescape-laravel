@@ -103,7 +103,6 @@ function AnimatedFeaturedCard({
           <img
             src={card.hoverImageUrl}
             alt={`${card.title} hover preview`}
-            decoding="async"
             loading="lazy"
             className={`absolute inset-0 w-full h-full object-cover transition-transform duration-700 ease-out scale-110 ${isRestricted ? '' : 'group-hover:scale-100'}`}
           />
@@ -117,8 +116,7 @@ function AnimatedFeaturedCard({
         <img
           src={card.imageUrl}
           alt={card.title}
-          decoding="async"
-          loading="lazy"
+          fetchpriority="high"
           className={`absolute inset-0 w-full h-full object-cover transition-all duration-700 ease-out ${isRestricted ? '' : 'group-hover:scale-110'}`}
         />
         {/* Gradient Overlay */}
