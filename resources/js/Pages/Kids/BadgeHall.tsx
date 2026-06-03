@@ -40,6 +40,7 @@ const BadgeHallPage = ({ completedModules = [], earnedBadges = [] }: BadgeHallPr
           setTimeout(() => {
             el.scrollIntoView({ behavior: 'smooth', block: 'center' });
             el.classList.add('animate-bounce', 'ring-4', 'ring-yellow-400', 'ring-offset-4', 'ring-offset-slate-50', 'dark:ring-offset-slate-900', 'shadow-[0_0_40px_rgba(250,204,21,0.6)]');
+            new Audio('/sounds/win.mp3').play().catch(() => {});
             setTimeout(() => {
               el.classList.remove('animate-bounce', 'ring-4', 'ring-yellow-400', 'ring-offset-4', 'ring-offset-slate-50', 'dark:ring-offset-slate-900', 'shadow-[0_0_40px_rgba(250,204,21,0.6)]');
             }, 3000);
@@ -104,8 +105,13 @@ const BadgeHallPage = ({ completedModules = [], earnedBadges = [] }: BadgeHallPr
                 <div 
                   key={i} 
                   id={`badge-card-${i}`}
+                  onClick={() => {
+                    if (state.isEarned) {
+                      new Audio('/sounds/tap.mp3').play().catch(() => {});
+                    }
+                  }}
                   className={cn(
-                    "group relative p-4 sm:p-6 rounded-2xl sm:rounded-[2.5rem] border-2 sm:border-[3px] transition-all duration-500 flex flex-col min-h-[240px] sm:min-h-[300px] h-auto overflow-hidden",
+                    "group relative p-4 sm:p-6 rounded-2xl sm:rounded-[2.5rem] border-2 sm:border-[3px] transition-all duration-500 flex flex-col min-h-[240px] sm:min-h-[300px] h-auto overflow-hidden cursor-pointer",
                     state.isEarned 
                       ? "bg-white dark:bg-slate-800 border-slate-200 dark:border-white/10 shadow-xl hover:-translate-y-1.5 sm:hover:-translate-y-2" 
                       : "bg-white dark:bg-slate-950/40 border-slate-200 dark:border-slate-800/40"

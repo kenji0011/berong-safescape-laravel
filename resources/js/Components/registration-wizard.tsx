@@ -477,7 +477,7 @@ export function RegistrationWizard({ onBackToLogin }: RegistrationWizardProps) {
     const rating = getScoreRating(percentage)
 
     return (
-      <Card className="w-full h-full sm:h-auto sm:max-h-[90vh] sm:max-w-md mx-auto rounded-none sm:rounded-[2rem] border-none sm:border border-slate-100 dark:border-slate-800/80 shadow-none sm:shadow-2xl bg-white dark:bg-slate-900 overflow-hidden transition-colors duration-500 flex flex-col py-0 sm:py-6 gap-0 sm:gap-6">
+      <Card className="w-full h-full sm:h-auto sm:max-h-[90vh] sm:max-w-md mx-auto rounded-none sm:rounded-[2rem] border-none sm:border border-slate-100 dark:border-slate-800/80 shadow-none sm:shadow-2xl bg-white dark:bg-slate-900 overflow-hidden transition-colors duration-500 flex flex-col py-0 gap-0 sm:gap-6">
         {/* Header Section */}
         <div className="bg-red-600 px-6 pt-[calc(1.25rem+env(safe-area-inset-top,0px))] pb-6 sm:pt-6 sm:pb-6 text-center rounded-none sm:rounded-t-[2rem] relative overflow-hidden shrink-0">
           {/* Decorative faint circles in background */}
@@ -537,7 +537,7 @@ export function RegistrationWizard({ onBackToLogin }: RegistrationWizardProps) {
   }
 
   return (
-    <Card className="w-full h-full sm:h-auto sm:max-h-[90vh] sm:max-w-3xl mx-auto rounded-none sm:rounded-[2rem] border-none sm:border border-slate-100 dark:border-slate-800/80 shadow-none sm:shadow-2xl bg-white dark:bg-slate-900 overflow-hidden transition-colors duration-500 flex flex-col justify-between sm:justify-start py-0 sm:py-4 gap-0 sm:gap-3">
+    <Card className="w-full h-full sm:h-auto sm:max-h-[90vh] sm:max-w-3xl mx-auto rounded-none sm:rounded-[2rem] border-none sm:border border-slate-100 dark:border-slate-800/80 shadow-none sm:shadow-2xl bg-white dark:bg-slate-900 overflow-hidden transition-colors duration-500 flex flex-col justify-between sm:justify-start py-0 gap-0 sm:gap-3">
       {/* Colorful Gradient Header */}
       <div className="bg-primary px-4 sm:px-8 pt-[calc(1.25rem+env(safe-area-inset-top,0px))] sm:pt-6 pb-5 sm:pb-6 rounded-none sm:rounded-t-[1.85rem]">
         <div className="flex items-center gap-2 mb-2 sm:mb-3">

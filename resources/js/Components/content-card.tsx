@@ -98,7 +98,7 @@ export const ContentCard = React.memo(({ content, onClick }: ContentCardProps) =
           )}
           {content.isCompleted && (
             <div className="bg-[#10B981] text-white font-black text-[7px] sm:text-[10px] tracking-wider uppercase px-2 py-1 sm:px-3 sm:py-1 rounded-full shadow-xl flex items-center gap-1 sm:gap-1.5 border-2 border-emerald-400">
-              <CheckCircle className="h-2.5 w-2.5 sm:h-3.5 sm:w-3.5" /> DONE
+              <CheckCircle className="h-2.5 w-2.5 sm:h-3.5 sm:w-3.5" />
             </div>
           )}
         </div>
@@ -161,7 +161,6 @@ export const ContentCard = React.memo(({ content, onClick }: ContentCardProps) =
           <div className="absolute inset-0 z-40 bg-yellow-400/10 pointer-events-none flex items-center justify-center">
             <div className="bg-yellow-400 text-red-700 font-extrabold px-3 py-1.5 sm:px-6 sm:py-2.5 rounded-full text-[9px] sm:text-xs uppercase tracking-widest animate-bounce shadow-[0_10px_25px_rgba(234,179,8,0.5)] border-2 border-white flex items-center gap-1">
               <span>Start Here</span>
-              <ArrowRight className="h-3 w-3 sm:h-4 sm:w-4" strokeWidth={4} />
             </div>
           </div>
         )}
@@ -191,11 +190,7 @@ export const ContentCard = React.memo(({ content, onClick }: ContentCardProps) =
                   : "bg-slate-50 dark:bg-slate-900 border-slate-100 dark:border-slate-800"
               )}>
                  <div className="flex items-center justify-center">
-                   {content.isCompleted ? (
-                      <CheckCircle className="h-2.5 w-2.5 sm:h-3.5 sm:w-3.5 text-white fill-white/20" />
-                   ) : (
-                      <span className="text-[10px] sm:text-sm">🎖️</span>
-                   )}
+                    <span className="text-[10px] sm:text-sm">🎖️</span>
                  </div>
                  <span className={cn(
                    "text-[8px] sm:text-[10px] font-black uppercase tracking-wider",
@@ -221,7 +216,6 @@ export const ContentCard = React.memo(({ content, onClick }: ContentCardProps) =
                 : "bg-indigo-600 text-white shadow-[0_2px_0_0_#4338ca] sm:shadow-[0_4px_0_0_#4338ca] hover:bg-indigo-500"
             )}>
               <span>{content.type === "game" ? "PLAY" : content.type === "video" ? "WATCH" : "START"}</span>
-              <ArrowRight className="h-3 w-3 sm:h-4 sm:w-4 group-hover:translate-x-1 transition-transform" strokeWidth={3} />
             </div>
           ) : (
             <div className="text-[8px] sm:text-xs font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest bg-slate-50 dark:bg-slate-900/50 px-3 py-1.5 rounded-lg border border-slate-100 dark:border-slate-800">

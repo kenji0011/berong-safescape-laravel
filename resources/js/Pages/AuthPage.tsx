@@ -17,6 +17,7 @@ import { Link } from '@inertiajs/react';
 import Image from '@/components/Image';
 import { RegistrationWizard } from "@/components/registration-wizard"
 import { Chatbot } from "@/components/chatbot"
+import { motion } from "motion/react"
 
 function AuthContent() {
   
@@ -28,6 +29,7 @@ function AuthContent() {
   const [showRegistrationWizard, setShowRegistrationWizard] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
   const defaultTab = searchParams.get("tab") || "login"
+  const [activeTab, setActiveTab] = useState(defaultTab)
 
   // Reset password state
   const [showResetDialog, setShowResetDialog] = useState(false)
@@ -282,7 +284,7 @@ function AuthContent() {
 
       {/* Registration Wizard Modal - Full screen overlay */}
       {showRegistrationWizard && (
-        <div className="fixed inset-0 z-50 bg-white dark:bg-slate-900 overflow-hidden sm:bg-slate-950 sm:bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] sm:dark:bg-[radial-gradient(#1e293b_1px,transparent_1px)] sm:[background-size:16px_16px] sm:flex sm:items-center sm:justify-center sm:p-4">
+        <div className="fixed inset-0 z-50 bg-white dark:bg-slate-900 overflow-hidden sm:bg-slate-50 dark:sm:bg-slate-950 sm:bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] dark:sm:bg-[radial-gradient(#1e293b_1px,transparent_1px)] sm:[background-size:16px_16px] sm:flex sm:items-center sm:justify-center sm:p-4 transition-colors duration-500">
           <div className="w-full max-w-3xl flex flex-col h-full sm:h-auto sm:max-h-[90vh]">
             <RegistrationWizard onBackToLogin={() => setShowRegistrationWizard(false)} />
           </div>
@@ -327,15 +329,33 @@ function AuthContent() {
             <CardDescription className="text-center text-slate-500 dark:text-slate-400 font-medium text-xs sm:text-sm transition-colors">Sign in or create an account to access learning materials</CardDescription>
           </CardHeader>
           <CardContent className="relative z-10 px-5 sm:px-8">
-            <Tabs defaultValue={defaultTab} className="w-full">
-              <TabsList className="grid w-full grid-cols-2 bg-slate-100 dark:bg-slate-800 p-1 sm:p-1.5 rounded-xl sm:rounded-2xl h-12 sm:h-14 mb-4 sm:mb-6 transition-colors">
-                <TabsTrigger value="login" className="rounded-lg sm:rounded-xl font-extrabold text-slate-400 dark:text-slate-500 text-xs sm:text-sm data-[state=active]:bg-green-600 dark:data-[state=active]:bg-green-600 data-[state=active]:text-white dark:data-[state=active]:text-white data-[state=active]:shadow-[0_3px_0_#166534] dark:data-[state=active]:shadow-[0_3px_0_#14532d] data-[state=active]:border-transparent border-transparent outline-none transition-all duration-300 h-full">Log In</TabsTrigger>
-                <TabsTrigger value="register" className="rounded-lg sm:rounded-xl font-extrabold text-slate-400 dark:text-slate-500 text-xs sm:text-sm data-[state=active]:bg-green-600 dark:data-[state=active]:bg-green-600 data-[state=active]:text-white dark:data-[state=active]:text-white data-[state=active]:shadow-[0_3px_0_#166534] dark:data-[state=active]:shadow-[0_3px_0_#14532d] data-[state=active]:border-transparent border-transparent outline-none transition-all duration-300 h-full">Register</TabsTrigger>
+            <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+              <TabsList className="grid w-full grid-cols-2 bg-slate-100 dark:bg-slate-800 p-1 sm:p-1.5 rounded-xl sm:rounded-2xl h-12 sm:h-14 mb-4 sm:mb-6 transition-colors relative">
+                <TabsTrigger value="login" className="relative z-10 w-full h-full rounded-lg sm:rounded-xl font-extrabold text-slate-400 dark:text-slate-500 text-xs sm:text-sm data-[state=active]:text-white dark:data-[state=active]:text-white data-[state=active]:bg-transparent dark:data-[state=active]:bg-transparent data-[state=active]:shadow-none border-transparent outline-none transition-colors duration-300">
+                  {activeTab === 'login' && (
+                    <motion.div
+                      layoutId="active-tab"
+                      className="absolute inset-0 bg-orange-500 dark:bg-orange-500 shadow-[0_3px_0_#c2410c] dark:shadow-[0_3px_0_#9a3412] rounded-lg sm:rounded-xl -z-10"
+                      transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+                    />
+                  )}
+                  Log In
+                </TabsTrigger>
+                <TabsTrigger value="register" className="relative z-10 w-full h-full rounded-lg sm:rounded-xl font-extrabold text-slate-400 dark:text-slate-500 text-xs sm:text-sm data-[state=active]:text-white dark:data-[state=active]:text-white data-[state=active]:bg-transparent dark:data-[state=active]:bg-transparent data-[state=active]:shadow-none border-transparent outline-none transition-colors duration-300">
+                  {activeTab === 'register' && (
+                    <motion.div
+                      layoutId="active-tab"
+                      className="absolute inset-0 bg-orange-500 dark:bg-orange-500 shadow-[0_3px_0_#c2410c] dark:shadow-[0_3px_0_#9a3412] rounded-lg sm:rounded-xl -z-10"
+                      transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+                    />
+                  )}
+                  Register
+                </TabsTrigger>
               </TabsList>
 
 
               {/* Login Tab */}
-              <TabsContent value="login" className="mt-0 animate-in fade-in-0 slide-in-from-left-4 duration-300">
+              <TabsContent value="login" className="min-h-[360px] sm:min-h-[400px] flex flex-col justify-center mt-0 animate-in fade-in-0 slide-in-from-left-4 duration-300">
                 <form onSubmit={handleLogin} className="space-y-3 sm:space-y-4">
                   <div className="space-y-1 sm:space-y-1.5">
                     <Label htmlFor="login-username" className="text-[11px] sm:text-xs font-bold text-slate-700 dark:text-slate-300 ml-1 transition-colors">Username</Label>
@@ -426,7 +446,7 @@ function AuthContent() {
                 </form>
               </TabsContent>
 
-              <TabsContent value="register" className="mt-0 animate-in fade-in-0 slide-in-from-right-4 duration-300">
+              <TabsContent value="register" className="min-h-[360px] sm:min-h-[400px] flex flex-col justify-center mt-0 animate-in fade-in-0 slide-in-from-right-4 duration-300">
                 <div className="space-y-3 sm:space-y-4 py-2 sm:py-4">
                   <div className="text-center">
                     <h3 className="text-base sm:text-lg font-bold text-slate-800 dark:text-white mb-1 sm:mb-2 mt-1 sm:mt-2 tracking-tight transition-colors">Create Your Account</h3>

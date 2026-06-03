@@ -82,25 +82,7 @@ const ModuleOnePage = ({ initialProgress }: { initialProgress?: any }) => {
     return () => clearTimeout(timer)
   }, [])
 
-  // Play tap sound on button/link clicks
-  useEffect(() => {
-    const handleTap = (e: MouseEvent) => {
-      const target = e.target as HTMLElement
-      if (target.closest('[draggable]')) return // Don't play tap on draggable element mixer items
-      
-      const isClickable = target.closest('button') || 
-                          target.closest('a') || 
-                          target.closest('[role="button"]') || 
-                          target.closest('.cursor-pointer') ||
-                          target.closest('.ss-btn-premium')
-                          
-      if (isClickable) {
-        new Audio('/sounds/tap.mp3').play().catch(() => {})
-      }
-    }
-    document.addEventListener('click', handleTap)
-    return () => document.removeEventListener('click', handleTap)
-  }, [])
+  // Tap sound removed per user request
 
   // Load progress from backend on mount
   useEffect(() => {
@@ -489,7 +471,7 @@ const ModuleOnePage = ({ initialProgress }: { initialProgress?: any }) => {
           </div>
 
           {/* ── Video Section ── */}
-          <section className={cn("relative bg-white dark:bg-slate-900 rounded-[1.5rem] sm:rounded-[2rem] border-[3px] sm:border-[4px] border-blue-200 dark:border-blue-900/50 shadow-sm p-4 sm:p-6 md:p-10 text-center transition-all", videoStarted && "!border-green-500")}>
+          <section className={cn("relative bg-white dark:bg-slate-900 rounded-[1.5rem] sm:rounded-[2rem] border-[3px] sm:border-[4px] border-blue-200 dark:border-blue-900/50 shadow-sm p-4 sm:p-6 md:p-10 text-center transition-all")}>
             {videoStarted && (
               <div className="absolute top-3 right-3 sm:top-4 sm:right-4 z-10 h-8 w-8 sm:h-10 sm:w-10 rounded-full bg-green-500 border-[3px] border-white shadow-sm flex items-center justify-center">
                 <CheckCircle className="h-4 w-4 sm:h-5 sm:w-5 text-white" />
@@ -513,8 +495,7 @@ const ModuleOnePage = ({ initialProgress }: { initialProgress?: any }) => {
           {/* ── Section 1.1 — What Makes a Fire? (unlocked after video) ── */}
           <section className={cn(
             "relative bg-white dark:bg-slate-900 rounded-[2rem] border-[4px] border-orange-200 dark:border-orange-900/30 p-5 sm:p-8 md:p-12 shadow-sm transition-all duration-500 overflow-hidden",
-            !videoStarted && "pointer-events-none select-none",
-            section1Done && "!border-green-500"
+            !videoStarted && "pointer-events-none select-none"
           )}>
             {section1Done && (
               <div className="absolute top-4 right-4 h-10 w-10 rounded-full bg-green-500 border-[3px] border-white shadow-sm flex items-center justify-center">
@@ -597,8 +578,7 @@ const ModuleOnePage = ({ initialProgress }: { initialProgress?: any }) => {
           {/* ── Section 1.2 — Grown-Up Tools (unlocked after section1) ── */}
           <section className={cn(
             "relative bg-white dark:bg-slate-900 rounded-[2rem] border-[4px] border-red-200 dark:border-red-900/30 p-5 sm:p-8 md:p-12 overflow-hidden shadow-sm transition-all duration-500",
-            !section1Done && "pointer-events-none select-none",
-            section2Done && "!border-green-500"
+            !section1Done && "pointer-events-none select-none"
           )}>
             {section2Done && (
               <div className="absolute top-4 right-4 h-10 w-10 rounded-full bg-green-500 border-[3px] border-white shadow-sm flex items-center justify-center">
@@ -665,8 +645,7 @@ const ModuleOnePage = ({ initialProgress }: { initialProgress?: any }) => {
           {/* ── Section 1.3 — How a Fire Grows & Travels (unlocked after section2) ── */}
           <section className={cn(
             "relative bg-white dark:bg-slate-900 rounded-[2rem] border-[4px] border-rose-200 dark:border-rose-900/30 p-5 sm:p-8 md:p-12 shadow-sm transition-all duration-500 overflow-hidden",
-            !section2Done && "pointer-events-none select-none",
-            section3Done && "!border-green-500"
+            !section2Done && "pointer-events-none select-none"
           )}>
             {section3Done && (
               <div className="absolute top-4 right-4 h-10 w-10 rounded-full bg-green-500 border-[3px] border-white shadow-sm flex items-center justify-center">
@@ -743,8 +722,7 @@ const ModuleOnePage = ({ initialProgress }: { initialProgress?: any }) => {
           {/* ── Element Mixer Lab (unlocked after section3) ── */}
           <section className={cn(
             "relative bg-purple-50 dark:bg-purple-950/20 rounded-[2rem] border-[4px] border-purple-200 dark:border-purple-900/30 p-5 sm:p-8 md:p-12 shadow-sm transition-all duration-500 overflow-hidden",
-            !section3Done && "pointer-events-none select-none",
-            mixerEverCompleted && "!border-green-500"
+            !section3Done && "pointer-events-none select-none"
           )}>
             {mixerEverCompleted && (
               <div className="absolute top-4 right-4 h-10 w-10 rounded-full bg-green-500 border-[3px] border-white shadow-sm flex items-center justify-center">

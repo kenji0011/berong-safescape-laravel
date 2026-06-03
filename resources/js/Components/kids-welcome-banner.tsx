@@ -25,6 +25,44 @@ export function KidsWelcomeBanner({ completedModules = [], earnedBadges = [] }: 
   const { user } = useAuth()
   const firstName = user?.name?.split(' ')[0] || 'Fire Hero'
   
+  const [streak, setStreak] = useState(1)
+
+  useEffect(() => {
+    if (!user?.id) return
+    const streakKey = `safescape_streak_${user.id}`
+    const lastActiveKey = `safescape_last_active_${user.id}`
+    
+    const savedStreak = localStorage.getItem(streakKey)
+    const savedLastActive = localStorage.getItem(lastActiveKey)
+    
+    const todayStr = new Date().toLocaleDateString('en-CA') // YYYY-MM-DD
+    
+    if (savedLastActive) {
+      if (savedLastActive === todayStr) {
+        setStreak(savedStreak ? parseInt(savedStreak, 10) : 1)
+      } else {
+        const lastActiveDate = new Date(savedLastActive)
+        const todayDate = new Date(todayStr)
+        
+        const diffTime = Math.abs(todayDate.getTime() - lastActiveDate.getTime())
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
+        
+        if (diffDays === 1) {
+          const nextStreak = savedStreak ? parseInt(savedStreak, 10) + 1 : 2
+          setStreak(nextStreak)
+          localStorage.setItem(streakKey, nextStreak.toString())
+        } else {
+          setStreak(1)
+          localStorage.setItem(streakKey, '1')
+        }
+      }
+    } else {
+      setStreak(1)
+      localStorage.setItem(streakKey, '1')
+    }
+    localStorage.setItem(lastActiveKey, todayStr)
+  }, [user?.id])
+  
   // All possible badges for summary - Synchronized with BadgeHall.tsx
   const ALL_BADGES = [
     { id: 'module_1', moduleNum: 1, image: "/fire_hall.png" },
@@ -170,12 +208,21 @@ export function KidsWelcomeBanner({ completedModules = [], earnedBadges = [] }: 
               <h1 className="text-3xl sm:text-5xl lg:text-7xl font-black text-white drop-shadow-md tracking-tighter mb-1">
                 Welcome, <span className="text-yellow-300">{firstName}!</span>
               </h1>
-              <div className="flex items-center justify-center gap-2 text-yellow-50/90 font-black text-sm sm:text-xl tracking-tight">
-                You are a <span className="text-yellow-300 underline underline-offset-4 decoration-yellow-400/50">{currentRank.name}</span> <RankIcon className="h-5 w-5 sm:h-6 sm:w-6 fill-yellow-300 text-yellow-300" />
+              <div className="flex flex-wrap items-center justify-center gap-2.5 text-yellow-50/90 font-black text-sm sm:text-xl tracking-tight">
+                <span className="flex items-center gap-2">
+                  You are a <span className="text-yellow-300 underline underline-offset-4 decoration-yellow-400/50">{currentRank.name}</span> <RankIcon className="h-5 w-5 sm:h-6 sm:w-6 fill-yellow-300 text-yellow-300" />
+                </span>
+                <span className="hidden sm:inline lg:hidden opacity-30">|</span>
+                <span className="inline-flex lg:hidden items-center gap-1.5 px-3 py-1 bg-white border border-orange-200 rounded-full text-orange-600 font-extrabold text-xs sm:text-sm shadow-md">
+                  🔥 {streak} Day Streak
+                </span>
                 
                 <Dialog open={showRankGuide} onOpenChange={setShowRankGuide}>
                   <DialogTrigger asChild>
-                    <button className="ml-1 p-1 hover:bg-white/20 rounded-full transition-colors group">
+                    <button 
+                      onClick={() => new Audio('/sounds/tap.mp3').play().catch(() => {})}
+                      className="ml-1 p-1 hover:bg-white/20 rounded-full transition-colors group"
+                    >
                       <CircleHelp className="h-4 w-4 sm:h-5 sm:w-5 text-white/60 group-hover:text-white" />
                     </button>
                   </DialogTrigger>
@@ -225,7 +272,10 @@ export function KidsWelcomeBanner({ completedModules = [], earnedBadges = [] }: 
 
                      <div className="p-6 pt-0">
                         <button 
-                          onClick={() => setShowRankGuide(false)}
+                          onClick={() => {
+                            new Audio('/sounds/click.mp3').play().catch(() => {});
+                            setShowRankGuide(false);
+                          }}
                           className="w-full bg-primary hover:bg-primary/90 text-white font-black py-4 rounded-2xl border-b-[6px] border-red-800 active:border-b-0 active:translate-y-[6px] transition-all uppercase tracking-widest text-sm"
                         >
                           Got it, Hero!
@@ -256,16 +306,23 @@ export function KidsWelcomeBanner({ completedModules = [], earnedBadges = [] }: 
                 <div className="flex-1">
                    <span className="text-[10px] font-black text-yellow-300/80 uppercase tracking-widest block mb-1">HERO IDENTITY</span>
                    <h3 className="text-2xl sm:text-4xl font-black text-white leading-none mb-3">{firstName}</h3>
-                   <div className="inline-flex items-center gap-2 px-3 py-1 bg-yellow-400 rounded-full text-red-700 font-black text-xs uppercase shadow-md">
-                      <RankIcon className="h-3 w-3" />
-                      Level {Math.floor(badgesFound / 2) + 1}
-                   </div>
+                    <div className="flex flex-wrap gap-2 items-center">
+                      <div className="inline-flex items-center gap-2 px-3 py-1 bg-yellow-400 rounded-full text-red-700 font-black text-xs uppercase shadow-md">
+                         <RankIcon className="h-3 w-3" />
+                         Level {Math.floor(badgesFound / 2) + 1}
+                      </div>
+                      <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-white border border-orange-200 rounded-full text-orange-600 font-black text-xs uppercase shadow-md">
+                         <span>🔥</span>
+                         <span>{streak} Day Streak</span>
+                      </div>
+                    </div>
                 </div>
              </div>
 
              {/* Card 2: Badges Summary Link */}
              <Link 
                href="/kids/badges"
+               onClick={() => new Audio('/sounds/click.mp3').play().catch(() => {})}
                className="bg-white/10 dark:bg-slate-950/40 backdrop-blur-xl rounded-[2rem] p-6 border border-white/20 dark:border-white/5 flex flex-col shadow-2xl hover:bg-white/15 dark:hover:bg-white/10 transition-all group"
              >
                 <div className="flex items-center justify-between mb-4">
@@ -382,7 +439,10 @@ export function KidsWelcomeBanner({ completedModules = [], earnedBadges = [] }: 
                   Congratulations! You've reached a new Hero Rank!
                 </p>
                 <button 
-                  onClick={() => setShowPromotion(false)}
+                  onClick={() => {
+                    new Audio('/sounds/click.mp3').play().catch(() => {});
+                    setShowPromotion(false);
+                  }}
                   className="w-full bg-yellow-400 text-yellow-900 font-black py-4 rounded-2xl shadow-[0_6px_0_#b45309] active:translate-y-[6px] active:shadow-none transition-all uppercase tracking-widest"
                 >
                   Awesome!

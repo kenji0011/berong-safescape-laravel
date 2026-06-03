@@ -50,6 +50,7 @@ const KidsDashboardPage = ({ modules, progress }: KidsPageProps) => {
       if (!tutorialSeen) {
         const timer = setTimeout(() => {
           setShowFirstTimeTutorial(true)
+          new Audio('/sounds/combo.mp3').play().catch(() => {})
         }, 1200) // Small delay to let the dashboard render
         return () => clearTimeout(timer)
       } else if (!firstModuleClicked) {
@@ -61,6 +62,7 @@ const KidsDashboardPage = ({ modules, progress }: KidsPageProps) => {
 
   const dismissTutorial = () => {
     if (!user) return
+    new Audio('/sounds/click.mp3').play().catch(() => {})
     const tutorialSeenKey = `safescape_kid_tutorial_seen_${user.id}`
     const firstModuleClickedKey = `safescape_first_module_clicked_${user.id}`
     localStorage.setItem(tutorialSeenKey, 'true')
@@ -101,7 +103,9 @@ const KidsDashboardPage = ({ modules, progress }: KidsPageProps) => {
       type: "game",
       imageUrl: "/task_master.png",
       href: "/kids/task-master",
-      category: "games"
+      isLocked: completedIds.length < 5,
+      category: "games",
+      unlockRequirement: "Complete 5 Modules"
     },
     {
       id: "escape-room-game",
@@ -110,7 +114,9 @@ const KidsDashboardPage = ({ modules, progress }: KidsPageProps) => {
       type: "game",
       imageUrl: "/therightcall_kids.png",
       href: "/kids/the-right-call",
-      category: "games"
+      isLocked: completedIds.length < 5,
+      category: "games",
+      unlockRequirement: "Complete 5 Modules"
     },
     {
       id: "video-portal",
@@ -141,12 +147,10 @@ const KidsDashboardPage = ({ modules, progress }: KidsPageProps) => {
 
   const handleContentClick = (content: ContentCardData) => {
     if (content.isLocked) {
-      if (content.id === "edith-simulation") {
-        toast.error("Access Denied!", {
-          description: "You must complete all 5 modules of the SafeScape Fire Safety Course to unlock this simulation!",
-          duration: 5000,
-        })
-      }
+      toast.error("Access Denied!", {
+        description: `You must complete all 5 modules of the SafeScape Fire Safety Course to unlock ${content.title}!`,
+        duration: 5000,
+      })
       return
     }
 
@@ -155,6 +159,8 @@ const KidsDashboardPage = ({ modules, progress }: KidsPageProps) => {
       localStorage.setItem(firstModuleClickedKey, 'true')
       setPulseFirstModule(false)
     }
+
+    new Audio('/sounds/tap.mp3').play().catch(() => {})
 
     if (content.href !== "#") {
       router.visit(content.href)

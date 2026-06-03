@@ -57,24 +57,22 @@ export default function Welcome({ carouselImages }: { carouselImages?: any[] }) 
 
         <main className="flex-grow pt-[80px] sm:pt-[96px] pb-6 sm:pb-8 w-full relative z-10 overflow-x-clip">
           {/* Cinematic Hero Section */}
-          <section className="mb-8 sm:mb-12 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+          <section className="mb-20 sm:mb-32 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
             <HeroSection />
           </section>
 
-          {/* Carousel */}
-          <section className="mb-8 sm:mb-12 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
-            <HeroCarousel initialImages={carouselImages} />
-          </section>
-
-          <section id="featured-section" className="mb-10 sm:mb-12 scroll-mt-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+          {/* Choose Your Path (Featured Cards) */}
+          <section id="featured-section" className="mb-20 sm:mb-32 scroll-mt-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
             <FeaturedCards serverUser={mappedUser} />
           </section>
 
-          <section id="about-section" className="mb-16 sm:mb-24 mt-8 sm:mt-12 scroll-mt-24 w-full">
-            <LandingAboutSection />
+          {/* About SafeScape Sections */}
+          <section id="about-section" className="mb-20 sm:mb-32 scroll-mt-24 w-full">
+            <LandingAboutSection carouselNode={<HeroCarousel initialImages={carouselImages} />} />
           </section>
 
-          <section className="mb-12 sm:mb-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+          {/* Assessment Section */}
+          <section className="mb-20 sm:mb-32 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
             <LandingAssessmentSection serverUser={mappedUser} />
           </section>
         </main>

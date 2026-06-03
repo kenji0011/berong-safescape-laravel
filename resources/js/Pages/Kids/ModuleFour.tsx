@@ -272,21 +272,7 @@ const ModuleFourPage = ({ moduleNum, initialProgress }: { moduleNum: number; ini
       iframeDoc.body.style.backgroundColor = 'transparent'; 
       iframeDoc.documentElement.style.overflow = 'hidden';
 
-      // Play tap sound on button/link clicks inside iframe
-      iframeDoc.addEventListener('click', (ev) => {
-        const target = ev.target as HTMLElement;
-        const isClickable = target.closest('button') || 
-                            target.closest('a') || 
-                            target.closest('[role="button"]') || 
-                            target.closest('.cursor-pointer') ||
-                            target.closest('.ss-btn-premium') ||
-                            target.closest('.hazard-box') ||
-                            target.closest('.sdr-word');
-                            
-        if (isClickable) {
-          new Audio('/sounds/tap.mp3').play().catch(() => {});
-        }
-      });
+      // Tap sound removed per user request
 
       const nav = iframeDoc.querySelector('.ss-nav') as HTMLElement;
       if (nav) nav.style.display = 'none';

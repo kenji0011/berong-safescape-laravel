@@ -298,27 +298,34 @@ function TeamCard({ member, index, reduceMotion, progress, totalCards = 9 }: { k
          1,  2,  3,  4,  5,  6,  7,  8
     ];
     
-    // Exact Y translation for the circle edge
+    // Exact Y translation for the circle edge, enhanced for a deeper arc
     const cardY = useTransform(distance, inputRange, [
-        1734, 1228, 855, 571, 355, 196, 86, 21, 0,
-        21, 86, 196, 355, 571, 855, 1228, 1734
+        2200, 1500, 1000, 650, 380, 190, 80, 20, 0,
+        20, 80, 190, 380, 650, 1000, 1500, 2200
     ]);
     
-    // Exact tangent rotation angles for the circle
+    // Enhanced tangent rotation angles for a more dramatic fan effect
     const cardRotateZ = useTransform(distance, inputRange, [
-        55, 46, 38, 31, 24, 18, 12, 6, 0,
-        -6, -12, -18, -24, -31, -38, -46, -55
+        65, 55, 45, 36, 27, 19, 12, 6, 0,
+        -6, -12, -19, -27, -36, -45, -55, -65
     ]);
     
     // Depth scaling based on cosine of the rotation angle
     const cardScale = useTransform(distance, inputRange, [
-        0.57, 0.69, 0.79, 0.86, 0.91, 0.95, 0.98, 0.99, 1,
-        0.99, 0.98, 0.95, 0.91, 0.86, 0.79, 0.69, 0.57
+        0.5, 0.6, 0.7, 0.8, 0.88, 0.94, 0.97, 0.99, 1.02,
+        0.99, 0.97, 0.94, 0.88, 0.8, 0.7, 0.6, 0.5
+    ]);
+    
+    // New opacity fading for distant cards to enhance the 3D depth illusion
+    const cardOpacity = useTransform(distance, inputRange, [
+        0, 0, 0.1, 0.3, 0.6, 0.85, 0.95, 1, 1,
+        1, 0.95, 0.85, 0.6, 0.3, 0.1, 0, 0
     ]);
 
+    // Enhanced hover animation wrapper
     return (
         <motion.div
-            style={reduceMotion ? {} : { y: cardY, rotateZ: cardRotateZ, scale: cardScale, transformOrigin: "bottom center" }}
+            style={reduceMotion ? {} : { y: cardY, rotateZ: cardRotateZ, scale: cardScale, opacity: cardOpacity, transformOrigin: "bottom center" }}
             className="h-full w-full"
         >
             <motion.div
@@ -442,7 +449,7 @@ function PartnershipCard({ children, delay = 0, reduceMotion = false }: { childr
                 scale: 1.02,
                 transition: { duration: 0.15, ease: "easeOut" }
             }}
-            className="bg-[#1e293b] rounded-2xl p-5 sm:p-8 border border-slate-700 hover:border-slate-500 transition-all duration-300 h-full flex flex-col transform-gpu will-change-transform relative overflow-hidden group/partner"
+            className="bg-white dark:bg-slate-900 rounded-2xl p-5 sm:p-8 border border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-600 transition-all duration-300 h-full flex flex-col transform-gpu will-change-transform relative overflow-hidden group/partner text-slate-800 dark:text-white shadow-sm dark:shadow-none"
             style={{ backfaceVisibility: "hidden" }}
         >
             {/* Animated gradient glow on hover */}
@@ -452,7 +459,7 @@ function PartnershipCard({ children, delay = 0, reduceMotion = false }: { childr
     );
 }
 
-export function LandingAboutSection() {
+export function LandingAboutSection({ carouselNode }: { carouselNode?: React.ReactNode }) {
     const prefersReducedMotion = useReducedMotion();
     const [isMobileViewport, setIsMobileViewport] = useState(false);
 
@@ -558,16 +565,21 @@ export function LandingAboutSection() {
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
                 <motion.section
                     ref={heroRef}
-                    className="relative bg-white dark:bg-slate-900 py-10 sm:py-16 overflow-hidden rounded-[2rem] sm:rounded-[2.5rem] border border-gray-200/80 dark:border-slate-800 shadow-sm mx-2 sm:mx-0 transition-colors duration-500"
+                    className="relative bg-gradient-to-br from-white to-slate-50 dark:from-slate-900 dark:to-[#0B1120] py-12 sm:py-20 overflow-hidden rounded-[2rem] sm:rounded-[2.5rem] border border-slate-200 dark:border-slate-800/80 shadow-2xl mx-2 sm:mx-0 transition-colors duration-500"
                     style={{ opacity: heroOpacity, scale: heroScale }}
                 >
-                    {/* Background Pattern */}
+                    {/* Modern Glow Effects */}
+                    <div className="absolute top-0 left-0 w-[500px] h-[500px] bg-red-500/10 dark:bg-red-500/20 rounded-full blur-[100px] -translate-x-1/2 -translate-y-1/2 pointer-events-none" />
+                    <div className="absolute bottom-0 right-0 w-[400px] h-[400px] bg-orange-500/10 dark:bg-orange-500/10 rounded-full blur-[80px] translate-x-1/3 translate-y-1/3 pointer-events-none" />
+
+                    {/* Subtle Dot Pattern */}
                     <motion.div
-                        className="absolute inset-0 opacity-5"
+                        className="absolute inset-0 opacity-[0.03] dark:opacity-[0.04]"
                         style={{ y: useTransform(heroScrollProgress, [0, 1], [0, 50]) }}
                     >
                         <div className="absolute inset-0" style={{
-                            backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23dc2626' fill-opacity='0.4'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
+                            backgroundImage: `radial-gradient(circle at 2px 2px, currentColor 1px, transparent 0)`,
+                            backgroundSize: "32px 32px",
                         }} />
                     </motion.div>
 
@@ -600,7 +612,7 @@ export function LandingAboutSection() {
                                             src="/berong-official-logo.jpg"
                                             alt="Berong's E-Learning - Official Logo"
                                             loading="lazy"
-                                            className="absolute inset-0 w-full h-full object-contain z-10 drop-shadow-[0_10px_15px_rgba(0,0,0,0.2)]"
+                                            className="absolute inset-0 w-full h-full object-contain z-10 drop-shadow-[0_20px_25px_rgba(0,0,0,0.3)] transition-all"
                                         />
                                     </motion.div>
                                 </div>
@@ -615,41 +627,68 @@ export function LandingAboutSection() {
                                     whileInView={{ opacity: 1, y: 0 }}
                                     viewport={{ once: true }}
                                     transition={{ duration: 0.4 }}
-                                    className="mb-4 flex justify-center lg:justify-start"
+                                    className="mb-6 flex justify-center lg:justify-start"
                                 >
-                                    <span className="bg-red-100 dark:bg-red-950/30 text-red-600 dark:text-red-400 font-bold text-xs sm:text-sm uppercase tracking-widest px-4 py-1.5 rounded-full inline-block border border-red-200 dark:border-red-900/30 transition-colors">
+                                    <span className="bg-red-50 dark:bg-red-500/10 text-red-600 dark:text-red-400 font-black text-[10px] sm:text-xs uppercase tracking-[0.2em] px-5 py-2 rounded-full inline-block border border-red-200/50 dark:border-red-500/20 shadow-sm transition-colors">
                                         About SafeScape
                                     </span>
                                 </motion.div>
                                 
                                 <motion.h1
-                                    className="text-3xl sm:text-5xl lg:text-6xl font-black mb-2 sm:mb-3 text-slate-800 dark:text-white transition-colors"
-                                    initial={{ opacity: 0, y: 30 }}
-                                    whileInView={{ opacity: 1, y: 0 }}
+                                    className="text-4xl sm:text-6xl lg:text-7xl font-black mb-3 sm:mb-4 text-slate-800 dark:text-white tracking-tight transition-colors flex flex-wrap justify-center lg:justify-start"
+                                    initial="hidden"
+                                    whileInView="visible"
                                     viewport={{ once: true }}
-                                    transition={{ duration: 0.4, delay: 0.05 }}
+                                    variants={{
+                                        hidden: { opacity: 1 },
+                                        visible: { opacity: 1, transition: { staggerChildren: 0.08, delayChildren: 0.1 } }
+                                    }}
                                 >
-                                    Meet <span className="text-red-500">Berong</span>
+                                    <span className="flex mr-3 sm:mr-4">
+                                        {Array.from("Meet").map((char, i) => (
+                                            <motion.span key={i} variants={{ hidden: { opacity: 0, y: 30, scale: 0.8 }, visible: { opacity: 1, y: 0, scale: 1, transition: { type: "spring", damping: 12, stiffness: 200 } } }}>
+                                                {char}
+                                            </motion.span>
+                                        ))}
+                                    </span>
+                                    <span className="flex text-red-500 drop-shadow-sm">
+                                        {Array.from("Berong").map((char, i) => (
+                                            <motion.span key={i} variants={{ hidden: { opacity: 0, y: 30, scale: 0.8 }, visible: { opacity: 1, y: 0, scale: 1, transition: { type: "spring", damping: 12, stiffness: 200 } } }}>
+                                                {char}
+                                            </motion.span>
+                                        ))}
+                                    </span>
                                 </motion.h1>
                                 
-                                <motion.p
-                                    className="text-lg sm:text-2xl font-bold mb-4 sm:mb-6 text-orange-500"
-                                    initial={{ opacity: 0, y: 30 }}
-                                    whileInView={{ opacity: 1, y: 0 }}
+                                <motion.div
+                                    className="text-xl sm:text-3xl font-extrabold mb-6 sm:mb-8 text-orange-500 tracking-tight flex flex-wrap justify-center lg:justify-start"
+                                    initial="hidden"
+                                    whileInView="visible"
                                     viewport={{ once: true }}
-                                    transition={{ duration: 0.4, delay: 0.1 }}
+                                    variants={{
+                                        hidden: { opacity: 1 },
+                                        visible: { opacity: 1, transition: { staggerChildren: 0.04, delayChildren: 0.6 } }
+                                    }}
                                 >
-                                    Your Fire Safety Companion
-                                </motion.p>
+                                    {"Your Fire Safety Companion".split(" ").map((word, wIdx) => (
+                                        <span key={wIdx} className="flex mr-2 sm:mr-3 last:mr-0">
+                                            {Array.from(word).map((char, cIdx) => (
+                                                <motion.span key={cIdx} variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0, transition: { type: "spring", damping: 15, stiffness: 200 } } }}>
+                                                    {char}
+                                                </motion.span>
+                                            ))}
+                                        </span>
+                                    ))}
+                                </motion.div>
                                 
                                 <motion.p
-                                    className="text-sm sm:text-lg text-slate-600 dark:text-slate-400 font-medium leading-relaxed max-w-xl mx-auto lg:mx-0 px-2 sm:px-0 transition-colors"
+                                    className="text-base sm:text-lg text-slate-600 dark:text-slate-400 font-medium leading-relaxed max-w-xl mx-auto lg:mx-0 px-2 sm:px-0 transition-colors"
                                     initial={{ opacity: 0, y: 30 }}
                                     whileInView={{ opacity: 1, y: 0 }}
                                     viewport={{ once: true }}
                                     transition={{ duration: 0.4, delay: 0.15 }}
                                 >
-                                    <strong className="text-slate-800 dark:text-white">SafeScape</strong>, locally known as <strong className="text-slate-800 dark:text-white">&quot;Berong E-Learning&quot;</strong>, is named after the official mascot of the Bureau of Fire Protection.
+                                    <strong className="text-slate-900 dark:text-slate-100 font-bold">SafeScape</strong>, locally known as <strong className="text-slate-900 dark:text-slate-100 font-bold">&quot;Berong E-Learning&quot;</strong>, is named after the official mascot of the Bureau of Fire Protection.
                                     Berong represents our commitment to making fire safety education accessible, engaging, and effective for every Filipino.
                                 </motion.p>
                             </motion.div>
@@ -688,13 +727,17 @@ export function LandingAboutSection() {
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
                 <motion.section
                     ref={platformRef}
-                    className="py-10 sm:py-14 bg-red-600 dark:bg-red-950 text-white relative overflow-hidden rounded-[2rem] sm:rounded-[2.5rem] shadow-sm mx-2 sm:mx-0 transition-colors duration-500"
+                    className="py-10 sm:py-14 bg-red-600 dark:bg-[#0B1120] text-white relative overflow-hidden rounded-[2rem] sm:rounded-[2.5rem] shadow-sm dark:shadow-2xl border border-transparent dark:border-slate-800/80 mx-2 sm:mx-0 transition-colors duration-500"
                     style={{ opacity: platformOpacity, scale: platformScale }}
                 >
+                    {/* Modern Glow Effects for Dark Mode */}
+                    <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-red-500/20 rounded-full blur-[120px] -translate-y-1/2 translate-x-1/3 pointer-events-none hidden dark:block" />
+                    <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-orange-500/10 rounded-full blur-[100px] translate-y-1/3 -translate-x-1/3 pointer-events-none hidden dark:block" />
+
                     {/* Background Pattern */}
-                    <div className="absolute inset-0 opacity-10">
+                    <div className="absolute inset-0 opacity-10 dark:opacity-5">
                         <div className="absolute inset-0" style={{
-                            backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.4'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
+                            backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.4'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
                         }} />
                     </div>
                     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
@@ -722,11 +765,18 @@ export function LandingAboutSection() {
                 </motion.section>
             </div>
 
+            {/* Carousel Injection (Between Sections) */}
+            {carouselNode && (
+                <div className="w-full">
+                    {carouselNode}
+                </div>
+            )}
+
             {/* Partnership Section */}
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
                 <motion.section
                     ref={partnershipRef}
-                    className="py-10 sm:py-14 bg-[#1e293b] dark:bg-slate-950 text-white relative overflow-hidden rounded-[2.5rem] shadow-md transition-colors duration-500"
+                    className="py-10 sm:py-14 bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-white relative overflow-hidden rounded-[2.5rem] shadow-xl dark:shadow-md border border-slate-200 dark:border-transparent transition-colors duration-500"
                     style={{ opacity: partnershipOpacity, scale: partnershipScale }}
                 >
                     {/* Animated Background decoration */}
@@ -757,16 +807,16 @@ export function LandingAboutSection() {
                             viewport={{ once: true }}
                             transition={{ duration: 0.7 }}
                         >
-                            <span className="font-bold text-[10px] sm:text-xs uppercase tracking-widest mb-4 inline-block border border-yellow-500/30 text-yellow-400 px-3 py-1 sm:px-4 sm:py-1.5 rounded-full bg-yellow-500/10">
+                            <span className="font-bold text-[10px] sm:text-xs uppercase tracking-widest mb-4 inline-block border border-yellow-500/30 text-yellow-600 dark:text-yellow-400 px-3 py-1 sm:px-4 sm:py-1.5 rounded-full bg-yellow-500/10">
                                 Collaborative Initiative
                             </span>
                             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black mb-3">
                                 LSPU & BFP Sta. Cruz Partnership
                             </h2>
-                            <p className="text-slate-300 font-medium max-w-4xl mx-auto text-sm sm:text-base leading-relaxed">
-                                SafeScape is a collaborative research initiative between the <strong className="text-white">College of Computer Studies (CCS)</strong> at
-                                <strong className="text-white"> Laguna State Polytechnic University (LSPU) - Santa Cruz Campus</strong> and the
-                                <strong className="text-white"> Bureau of Fire Protection (BFP) Santa Cruz</strong>. This partnership was formalized through a
+                            <p className="text-slate-600 dark:text-slate-300 font-medium max-w-4xl mx-auto text-sm sm:text-base leading-relaxed">
+                                SafeScape is a collaborative research initiative between the <strong className="text-slate-900 dark:text-white">College of Computer Studies (CCS)</strong> at
+                                <strong className="text-slate-900 dark:text-white"> Laguna State Polytechnic University (LSPU) - Santa Cruz Campus</strong> and the
+                                <strong className="text-slate-900 dark:text-white"> Bureau of Fire Protection (BFP) Santa Cruz</strong>. This partnership was formalized through a
                                 Memorandum of Agreement to address local fire safety challenges by leveraging advanced digital technologies.
                             </p>
                         </motion.div>
@@ -784,21 +834,21 @@ export function LandingAboutSection() {
                                         />
                                     </div>
                                     <div>
-                                        <h3 className="text-lg sm:text-xl font-bold">LSPU - Santa Cruz Campus</h3>
-                                        <p className="text-gray-400 text-xs sm:text-sm">College of Computer Studies</p>
+                                        <h3 className="text-lg sm:text-xl font-bold text-slate-800 dark:text-white">LSPU - Santa Cruz Campus</h3>
+                                        <p className="text-slate-500 dark:text-gray-400 text-xs sm:text-sm">College of Computer Studies</p>
                                     </div>
                                 </div>
-                                <p className="text-gray-300 text-sm leading-relaxed mb-4">
+                                <p className="text-slate-600 dark:text-gray-300 text-sm leading-relaxed mb-4">
                                     The university provided technological expertise in AI, machine learning, and software development.
                                     Computer Science researchers majoring in Intelligent Systems designed and developed the platform under academic supervision.
                                 </p>
-                                <div className="bg-white/5 rounded-lg p-3 border border-white/10 mt-auto">
+                                <div className="bg-slate-100 dark:bg-white/5 rounded-lg p-3 border border-slate-200 dark:border-white/10 mt-auto">
                                     <div className="flex items-center gap-3">
-                                        <GraduationCap className="w-5 h-5 text-yellow-400" />
+                                        <GraduationCap className="w-5 h-5 text-yellow-600 dark:text-yellow-400" />
                                         <div>
-                                            <p className="text-yellow-400 font-semibold text-[10px] sm:text-xs">Project Initiation & Thesis Adviser</p>
-                                            <p className="text-white font-medium text-sm">Dr. Mia V. Villarica, DIT</p>
-                                            <p className="text-gray-400 text-[10px] sm:text-xs">CCS Dean, LSPU Santa Cruz</p>
+                                            <p className="text-yellow-600 dark:text-yellow-400 font-semibold text-[10px] sm:text-xs">Project Initiation & Thesis Adviser</p>
+                                            <p className="text-slate-800 dark:text-white font-medium text-sm">Dr. Mia V. Villarica, DIT</p>
+                                            <p className="text-slate-500 dark:text-gray-400 text-[10px] sm:text-xs">CCS Dean, LSPU Santa Cruz</p>
                                         </div>
                                     </div>
                                 </div>
@@ -816,21 +866,21 @@ export function LandingAboutSection() {
                                         />
                                     </div>
                                     <div>
-                                        <h3 className="text-lg sm:text-xl font-bold">BFP Santa Cruz Fire Station</h3>
-                                        <p className="text-gray-400 text-xs sm:text-sm">Bureau of Fire Protection</p>
+                                        <h3 className="text-lg sm:text-xl font-bold text-slate-800 dark:text-white">BFP Santa Cruz Fire Station</h3>
+                                        <p className="text-slate-500 dark:text-gray-400 text-xs sm:text-sm">Bureau of Fire Protection</p>
                                     </div>
                                 </div>
-                                <p className="text-gray-300 text-sm leading-relaxed mb-4">
+                                <p className="text-slate-600 dark:text-gray-300 text-sm leading-relaxed mb-4">
                                     BFP Santa Cruz reached out to LSPU-CCS to find innovative ways to enhance community fire preparedness.
                                     They provided the official knowledge base, including manuals and protocols, used to train the Berong AI chatbot and develop educational modules.
                                 </p>
-                                <div className="bg-white/5 rounded-lg p-3 border border-white/10 mt-auto">
+                                <div className="bg-slate-100 dark:bg-white/5 rounded-lg p-3 border border-slate-200 dark:border-white/10 mt-auto">
                                     <div className="flex items-center gap-3">
-                                        <Shield className="w-5 h-5 text-yellow-400" />
+                                        <Shield className="w-5 h-5 text-yellow-600 dark:text-yellow-400" />
                                         <div>
-                                            <p className="text-yellow-400 font-semibold text-[10px] sm:text-xs">Project Initiator & Guide</p>
-                                            <p className="text-white font-medium text-sm">FSINSP Cesar A. Morfe Jr.</p>
-                                            <p className="text-gray-400 text-[10px] sm:text-xs">Initiated the partnership and provided constant guidance</p>
+                                            <p className="text-yellow-600 dark:text-yellow-400 font-semibold text-[10px] sm:text-xs">Project Initiator & Guide</p>
+                                            <p className="text-slate-800 dark:text-white font-medium text-sm">FSINSP Cesar A. Morfe Jr.</p>
+                                            <p className="text-slate-500 dark:text-gray-400 text-[10px] sm:text-xs">Initiated the partnership and provided constant guidance</p>
                                         </div>
                                     </div>
                                 </div>

@@ -40,24 +40,21 @@ export function HeroSection() {
         >
             {/* === Animated Background === */}
             <motion.div
-                className="absolute inset-0 z-0"
+                className="absolute inset-0 z-0 bg-slate-50 dark:bg-[#0B1120] transition-colors duration-500"
                 style={{ y: bgY }}
             >
-                {/* Base gradient */}
-                <div className="absolute inset-0 bg-gradient-to-br from-red-600 via-orange-500 to-amber-500 dark:from-red-900 dark:via-orange-800 dark:to-amber-900" />
-
-                {/* Animated overlay blobs */}
+                {/* Modern Glow Effects */}
                 <motion.div
-                    className="absolute top-[-20%] right-[-10%] w-[60%] h-[60%] bg-white/10 rounded-full blur-3xl"
+                    className="absolute top-[-20%] right-[-10%] w-[60%] h-[60%] bg-red-600/20 rounded-full blur-[120px]"
                     animate={reduceMotion ? {} : {
                         x: [0, 30, 0],
                         y: [0, -20, 0],
-                        scale: [1, 1.15, 1],
+                        scale: [1, 1.1, 1],
                     }}
                     transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
                 />
                 <motion.div
-                    className="absolute bottom-[-20%] left-[-10%] w-[50%] h-[50%] bg-yellow-400/10 rounded-full blur-3xl"
+                    className="absolute bottom-[-20%] left-[-10%] w-[50%] h-[50%] bg-orange-500/15 rounded-full blur-[100px]"
                     animate={reduceMotion ? {} : {
                         x: [0, -20, 0],
                         y: [0, 15, 0],
@@ -66,14 +63,16 @@ export function HeroSection() {
                     transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
                 />
 
-                {/* Dot pattern overlay */}
-                <div
-                    className="absolute inset-0 opacity-20"
-                    style={{
-                        backgroundImage: "radial-gradient(circle at 2px 2px, rgba(255,255,255,0.3) 1px, transparent 0)",
-                        backgroundSize: "32px 32px",
-                    }}
-                />
+                {/* Subtle Grid Pattern */}
+                <div className="absolute inset-0 opacity-[0.05]">
+                    <div
+                        className="absolute inset-0"
+                        style={{
+                            backgroundImage: "radial-gradient(circle at 2px 2px, #ffffff 1px, transparent 0)",
+                            backgroundSize: "32px 32px",
+                        }}
+                    />
+                </div>
             </motion.div>
 
             {/* === Fire Particles (desktop only) === */}
@@ -100,15 +99,15 @@ export function HeroSection() {
                     transition={{ duration: 0.5, delay: 0.1 }}
                     className="mb-6 sm:mb-8"
                 >
-                    <span className="inline-flex items-center gap-2 px-4 py-1.5 sm:px-5 sm:py-2 rounded-full bg-white/15 backdrop-blur-md border border-white/20 text-white font-bold text-xs sm:text-sm uppercase tracking-widest shadow-lg text-center leading-snug">
-                        <Shield className="h-3.5 w-3.5 sm:h-4 sm:w-4 shrink-0" strokeWidth={2.5} />
-                        <span className="sm:hidden">BFP — Sta. Cruz, Laguna</span>
+                    <span className="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-red-500/10 border border-red-500/20 text-red-400 font-black text-[10px] sm:text-xs uppercase tracking-[0.2em] shadow-sm leading-snug">
+                        <Shield className="h-3.5 w-3.5 sm:h-4 sm:w-4 shrink-0 text-red-500" strokeWidth={2.5} />
+                        <span className="sm:hidden">BFP — Sta. Cruz</span>
                         <span className="hidden sm:inline">Bureau of Fire Protection — Sta. Cruz, Laguna</span>
                     </span>
                 </motion.div>
 
                 {/* Animated Headline */}
-                <h1 className="text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-black text-white leading-[0.95] tracking-tight mb-6 sm:mb-8 drop-shadow-xl">
+                <h1 className="text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-black text-slate-900 dark:text-white leading-[0.95] tracking-tight mb-6 sm:mb-8 drop-shadow-md dark:drop-shadow-xl transition-colors duration-500">
                     {headlineWords.map((word, i) => (
                         <motion.span
                             key={i}
@@ -121,7 +120,7 @@ export function HeroSection() {
                             }}
                             className={`inline-block mr-[0.25em] ${
                                 word === "Safety." || word === "Lives."
-                                    ? "text-yellow-300 drop-shadow-[0_4px_20px_rgba(253,224,71,0.4)]"
+                                    ? "text-red-500 dark:text-yellow-300 drop-shadow-[0_2px_10px_rgba(239,68,68,0.3)] dark:drop-shadow-[0_4px_20px_rgba(253,224,71,0.4)]"
                                     : ""
                             }`}
                         >
@@ -135,7 +134,7 @@ export function HeroSection() {
                     initial={{ opacity: 0, y: 20 }}
                     animate={isInView ? { opacity: 1, y: 0 } : {}}
                     transition={{ duration: 0.6, delay: 0.8 }}
-                    className="text-base sm:text-xl md:text-2xl text-white/90 font-medium max-w-2xl leading-relaxed mb-8 sm:mb-10 px-2"
+                    className="text-base sm:text-xl md:text-2xl text-slate-700 dark:text-white/90 font-medium max-w-2xl leading-relaxed mb-8 sm:mb-10 px-2 transition-colors duration-500"
                 >
                     Empowering every Filipino with interactive fire safety education — 
                     from kids to professionals.
@@ -152,9 +151,9 @@ export function HeroSection() {
                         onClick={() => {
                             document.getElementById("featured-section")?.scrollIntoView({ behavior: "smooth" });
                         }}
-                        className="group px-8 sm:px-10 py-3 sm:py-4 bg-white text-red-600 font-extrabold text-sm sm:text-base rounded-full border-2 border-white shadow-[0_4px_0_rgba(0,0,0,0.15)] hover:-translate-y-1 hover:shadow-[0_8px_0_rgba(0,0,0,0.15)] active:translate-y-[4px] active:shadow-none transition-all uppercase tracking-wide flex items-center gap-2"
+                        className="group px-8 sm:px-10 py-3.5 sm:py-4 bg-gradient-to-r from-red-600 to-orange-500 text-white font-black text-xs sm:text-sm rounded-full shadow-lg hover:shadow-[0_10px_20px_rgba(220,38,38,0.3)] hover:-translate-y-1 active:translate-y-0 transition-all uppercase tracking-[0.15em] flex items-center gap-2"
                     >
-                        <Flame className="h-4 w-4 sm:h-5 sm:w-5 group-hover:rotate-12 transition-transform" strokeWidth={2.5} />
+                        <Flame className="h-4 w-4 sm:h-5 sm:w-5 group-hover:rotate-12 group-hover:scale-110 transition-transform" strokeWidth={2.5} />
                         Get Started
                     </button>
                 </motion.div>
