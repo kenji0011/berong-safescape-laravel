@@ -283,29 +283,62 @@ const getBorderGlowColor = (colorStr: string) => {
 };
 
 // Animated Team Card Component
-function TeamCard({ member, index, reduceMotion }: { key?: React.Key; member: typeof teamMembers[0]; index: number; reduceMotion: boolean }) {
+function TeamCard({ member, index, reduceMotion, progress, totalCards = 9 }: { key?: React.Key; member: typeof teamMembers[0]; index: number; reduceMotion: boolean; progress: any; totalCards?: number }) {
     const ref = useRef(null);
     const isInView = useInView(ref, { once: true, margin: "-50px" });
+    const centerProgress = totalCards > 1 ? index / (totalCards - 1) : 0;
+    const distance = useTransform(progress, (p: number) => {
+        return (p - centerProgress) * (totalCards - 1);
+    });
+
+    // Perfect circular wheel math (R=4000px, Card+Gap=412px)
+    // We map the full range from -8 to 8 to cover all cards in the carousel
+    const inputRange = [
+        -8, -7, -6, -5, -4, -3, -2, -1, 0,
+         1,  2,  3,  4,  5,  6,  7,  8
+    ];
+    
+    // Exact Y translation for the circle edge
+    const cardY = useTransform(distance, inputRange, [
+        1734, 1228, 855, 571, 355, 196, 86, 21, 0,
+        21, 86, 196, 355, 571, 855, 1228, 1734
+    ]);
+    
+    // Exact tangent rotation angles for the circle
+    const cardRotateZ = useTransform(distance, inputRange, [
+        55, 46, 38, 31, 24, 18, 12, 6, 0,
+        -6, -12, -18, -24, -31, -38, -46, -55
+    ]);
+    
+    // Depth scaling based on cosine of the rotation angle
+    const cardScale = useTransform(distance, inputRange, [
+        0.57, 0.69, 0.79, 0.86, 0.91, 0.95, 0.98, 0.99, 1,
+        0.99, 0.98, 0.95, 0.91, 0.86, 0.79, 0.69, 0.57
+    ]);
 
     return (
         <motion.div
-            ref={ref}
-            initial={{ opacity: 0, y: 30 }}
-            animate={isInView ? { opacity: 1, y: 0 } : {}}
-            transition={{
-                duration: 0.5,
-                ease: "easeOut",
-                delay: index * 0.1
-            }}
-            whileHover={reduceMotion ? undefined : {
-                scale: 1.03,
-                y: -12,
-                boxShadow: `0 25px 50px -12px rgba(0, 0, 0, 0.5), 0 0 25px ${getGlowColor(member.color)}`,
-                borderColor: getBorderGlowColor(member.color),
-                transition: { type: "spring", stiffness: 300, damping: 20 }
-            }}
-            className="group relative bg-white dark:bg-slate-800 rounded-2xl overflow-hidden shadow-lg transition-all duration-300 border border-slate-200 dark:border-slate-700 h-full flex flex-col cursor-pointer"
+            style={reduceMotion ? {} : { y: cardY, rotateZ: cardRotateZ, scale: cardScale, transformOrigin: "bottom center" }}
+            className="h-full w-full"
         >
+            <motion.div
+                ref={ref}
+                initial={reduceMotion ? { opacity: 0, y: 30 } : { opacity: 0 }}
+                animate={isInView ? (reduceMotion ? { opacity: 1, y: 0 } : { opacity: 1 }) : {}}
+                transition={{
+                    duration: 0.5,
+                    ease: "easeOut",
+                    delay: reduceMotion ? index * 0.1 : 0
+                }}
+                whileHover={reduceMotion ? undefined : {
+                    scale: 1.03,
+                    y: -12,
+                    boxShadow: `0 25px 50px -12px rgba(0, 0, 0, 0.5), 0 0 25px ${getGlowColor(member.color)}`,
+                    borderColor: getBorderGlowColor(member.color),
+                    transition: { duration: 0.2, ease: "easeOut" }
+                }}
+                className="group relative bg-white dark:bg-slate-800 rounded-2xl overflow-hidden shadow-lg border border-slate-200 dark:border-slate-700 h-full flex flex-col cursor-pointer"
+            >
             {/* Gradient Header */}
             <div className={`h-32 bg-gradient-to-r ${member.color} relative`}>
                 <div className="absolute inset-0 bg-black/20" />
@@ -348,7 +381,7 @@ function TeamCard({ member, index, reduceMotion }: { key?: React.Key; member: ty
                             key={roleIndex}
                             initial={{ opacity: 0, y: 10 }}
                             animate={isInView ? { opacity: 1, y: 0 } : {}}
-                            transition={{ delay: index * 0.1 + roleIndex * 0.05 + 0.15 }}
+                            transition={{ delay: (reduceMotion ? index * 0.1 : 0) + roleIndex * 0.05 + 0.15 }}
                             className="inline-flex items-center gap-1 px-3 py-1 bg-slate-100 dark:bg-slate-700 rounded-full text-xs font-medium text-slate-600 dark:text-slate-300 h-fit transition-colors"
                         >
                             {member.roleIcons[roleIndex] && (
@@ -385,6 +418,7 @@ function TeamCard({ member, index, reduceMotion }: { key?: React.Key; member: ty
                     ))}
                 </div>
             </div>
+            </motion.div>
         </motion.div>
     );
 }
@@ -487,9 +521,9 @@ export function LandingAboutSection() {
     useEffect(() => {
         const updateWidth = () => {
             if (carouselRef.current) {
-                // The amount we need to translate is the total scrollable width minus the viewport width
-                // We add a little extra (e.g. 100px) so the last card has some breathing room
-                setCarouselWidth(carouselRef.current.scrollWidth - window.innerWidth + 100);
+                // We scroll exactly until the end of the carousel
+                // Centering padding handles the rest natively
+                setCarouselWidth(carouselRef.current.scrollWidth - document.documentElement.clientWidth);
             }
         };
         updateWidth();
@@ -502,11 +536,17 @@ export function LandingAboutSection() {
         offset: ["start 72px", "end end"]
     });
     
-    // Smooth the scroll progress for a buttery horizontal scroll
-    const smoothProgress = useSpring(horizontalScrollProgress, {
-        stiffness: 100,
+    // Create dead zones at the start and end of the scroll
+    // 0% to 5%: hold first card centered
+    // 85% to 100%: hold last card centered before unlocking the page
+    const carouselProgress = useTransform(horizontalScrollProgress, [0.05, 0.85], [0, 1]);
+    
+    // Overdamped spring for buttery smooth, inertial sliding WITHOUT any bounce
+    const smoothProgress = useSpring(carouselProgress, {
+        stiffness: 60,
         damping: 20,
-        mass: 0.5,
+        mass: 0.8,
+        restDelta: 0.0001
     });
     
     // Transform vertical progress into exact negative pixel translation
@@ -803,10 +843,10 @@ export function LandingAboutSection() {
             {/* Research Team Section */}
             <motion.section
                 ref={teamRef}
-                className={`pt-16 sm:pt-24 pb-4 sm:pb-8 bg-transparent rounded-3xl ${!reduceMotion ? 'h-[200vh] relative' : ''}`}
+                className={`bg-transparent rounded-3xl ${!reduceMotion ? 'h-[250vh] relative mt-16 sm:mt-24' : 'pt-16 sm:pt-24 pb-4 sm:pb-8'}`}
                 style={{ opacity: teamOpacity, scale: teamScale }}
             >
-                <div className={`w-full ${!reduceMotion ? 'sticky top-[64px] sm:top-[72px] h-[calc(100vh-64px)] sm:h-[calc(100vh-72px)] flex flex-col justify-center overflow-x-hidden' : ''}`}>
+                <div className={`w-full ${!reduceMotion ? 'sticky top-[64px] sm:top-[72px] h-[calc(100vh-64px)] sm:h-[calc(100vh-72px)] flex flex-col justify-start pt-4 sm:pt-12 overflow-hidden' : ''}`}>
                     <motion.div
                         className="text-center mb-10 sm:mb-16 shrink-0 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full"
                         initial={{ opacity: 0, y: 40 }}
@@ -828,12 +868,16 @@ export function LandingAboutSection() {
                     </motion.div>
 
                     {reduceMotion ? (
-                        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
-                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                                {teamMembers.map((member, index) => (
-                                    <TeamCard key={index} member={member} index={index} reduceMotion={reduceMotion} />
-                                ))}
-                            </div>
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 px-4 sm:px-0 max-w-7xl mx-auto w-full">
+                            {teamMembers.map((member, index) => (
+                                <TeamCard 
+                                    key={index} 
+                                    member={member} 
+                                    index={index} 
+                                    reduceMotion={true}
+                                    progress={horizontalScrollProgress}
+                                />
+                            ))}
                         </div>
                     ) : (
                         <div 
@@ -842,11 +886,17 @@ export function LandingAboutSection() {
                             <motion.div 
                                 ref={carouselRef}
                                 style={{ x: teamX }}
-                                className="flex gap-6 sm:gap-8 px-4 sm:px-6 lg:px-8 xl:px-[calc((100vw-80rem)/2+2rem)] w-max"
+                                className="flex gap-6 sm:gap-8 px-[calc(50vw_-_150px)] sm:px-[calc(50vw_-_190px)] py-10 w-max perspective-[1000px]"
                             >
                                 {teamMembers.map((member, index) => (
                                     <div key={index} className="w-[300px] sm:w-[380px] shrink-0 h-[420px]">
-                                        <TeamCard member={member} index={index} reduceMotion={reduceMotion} />
+                                        <TeamCard 
+                                            member={member} 
+                                            index={index} 
+                                            reduceMotion={reduceMotion}
+                                            progress={smoothProgress}
+                                            totalCards={teamMembers.length}
+                                        />
                                     </div>
                                 ))}
                             </motion.div>

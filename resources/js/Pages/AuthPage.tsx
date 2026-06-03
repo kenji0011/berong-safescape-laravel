@@ -329,8 +329,8 @@ function AuthContent() {
           <CardContent className="relative z-10 px-5 sm:px-8">
             <Tabs defaultValue={defaultTab} className="w-full">
               <TabsList className="grid w-full grid-cols-2 bg-slate-100 dark:bg-slate-800 p-1 sm:p-1.5 rounded-xl sm:rounded-2xl h-12 sm:h-14 mb-4 sm:mb-6 transition-colors">
-                <TabsTrigger value="login" className="rounded-lg sm:rounded-xl font-extrabold text-slate-400 dark:text-slate-500 text-xs sm:text-sm data-[state=active]:bg-[#d60000] dark:data-[state=active]:bg-red-600 data-[state=active]:text-white dark:data-[state=active]:text-white data-[state=active]:shadow-[0_3px_0_#991b1b] dark:data-[state=active]:shadow-[0_3px_0_#7f1d1d] data-[state=active]:border-transparent border-transparent outline-none transition-all duration-300 h-full">Log In</TabsTrigger>
-                <TabsTrigger value="register" className="rounded-lg sm:rounded-xl font-extrabold text-slate-400 dark:text-slate-500 text-xs sm:text-sm data-[state=active]:bg-[#2563eb] dark:data-[state=active]:bg-blue-600 data-[state=active]:text-white dark:data-[state=active]:text-white data-[state=active]:shadow-[0_3px_0_#1e40af] dark:data-[state=active]:shadow-[0_3px_0_#1e3a8a] data-[state=active]:border-transparent border-transparent outline-none transition-all duration-300 h-full">Register</TabsTrigger>
+                <TabsTrigger value="login" className="rounded-lg sm:rounded-xl font-extrabold text-slate-400 dark:text-slate-500 text-xs sm:text-sm data-[state=active]:bg-green-600 dark:data-[state=active]:bg-green-600 data-[state=active]:text-white dark:data-[state=active]:text-white data-[state=active]:shadow-[0_3px_0_#166534] dark:data-[state=active]:shadow-[0_3px_0_#14532d] data-[state=active]:border-transparent border-transparent outline-none transition-all duration-300 h-full">Log In</TabsTrigger>
+                <TabsTrigger value="register" className="rounded-lg sm:rounded-xl font-extrabold text-slate-400 dark:text-slate-500 text-xs sm:text-sm data-[state=active]:bg-green-600 dark:data-[state=active]:bg-green-600 data-[state=active]:text-white dark:data-[state=active]:text-white data-[state=active]:shadow-[0_3px_0_#166534] dark:data-[state=active]:shadow-[0_3px_0_#14532d] data-[state=active]:border-transparent border-transparent outline-none transition-all duration-300 h-full">Register</TabsTrigger>
               </TabsList>
 
 
@@ -628,7 +628,7 @@ function AuthContent() {
                 <div className="flex flex-col sm:flex-row gap-3">
                   <Button 
                     variant="outline" 
-                    className="flex-1 rounded-2xl h-12 sm:h-14 font-bold text-slate-500 dark:text-slate-400 border-2 border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all" 
+                    className="flex-1 rounded-2xl h-12 sm:h-14 font-bold text-slate-500 dark:text-slate-400 border-2 border-slate-200 dark:border-slate-700 shadow-[0_4px_0_#e2e8f0] dark:shadow-[0_4px_0_#334155] hover:bg-slate-50 dark:hover:bg-slate-800 active:translate-y-1 active:shadow-none transition-all" 
                     onClick={() => {
                       if (resetStep === 3) {
                         // Can't go back from password step (token is one-time)

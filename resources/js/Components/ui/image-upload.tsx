@@ -129,7 +129,7 @@ export function ImageUpload({
   };
 
   return (
-    <Card className="rounded-[2rem] border-[3px] border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800/50 shadow-[0_8px_0_#cbd5e1] dark:shadow-[0_8px_0_#0f172a] overflow-hidden transition-all h-full flex flex-col">
+    <Card className="rounded-[2rem] border-[3px] border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800/50 backdrop-blur-md shadow-[0_8px_0_#cbd5e1] dark:shadow-[0_8px_0_#0f172a] overflow-hidden transition-all h-full flex flex-col">
       <CardHeader className="relative">
         <div className="flex flex-col gap-1">
           <CardTitle className="text-xl font-bold text-slate-800 dark:text-white">{title}</CardTitle>

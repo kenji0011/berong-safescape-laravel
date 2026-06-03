@@ -80,7 +80,7 @@ function FooterLinkItem({ link, isRestricted, onClick, isMobile = false }: {
       <button
         onClick={onClick}
         disabled={isRestricted}
-        className={`group/link flex items-center gap-1.5 text-[13px] sm:text-[14px] font-medium ${isMobile ? 'text-left w-full' : 'text-center justify-center'} whitespace-nowrap transition-all duration-200 ${
+        className={`group/link flex items-center gap-1.5 text-[13px] sm:text-[14px] font-medium text-left justify-start w-full whitespace-nowrap transition-all duration-200 ${
           isRestricted
             ? 'text-slate-700 cursor-not-allowed opacity-40'
             : 'text-slate-400 hover:text-white'
@@ -255,6 +255,14 @@ export function Footer() {
           backgroundSize: "24px 24px",
         }} />
 
+        {/* Premium Bottom Edge Glow */}
+        <div className="absolute bottom-0 left-0 right-0 h-[500px] bg-gradient-to-t from-red-600/10 via-orange-500/5 to-transparent pointer-events-none" />
+        <motion.div 
+          className="absolute bottom-[-250px] left-1/2 -translate-x-1/2 w-[80%] max-w-[1200px] h-[500px] bg-gradient-to-r from-red-600/20 via-orange-500/20 to-red-600/20 blur-[120px] rounded-[100%] pointer-events-none"
+          animate={reduceMotion ? {} : { opacity: [0.4, 0.7, 0.4], scale: [1, 1.05, 1] }}
+          transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
+        />
+
 
 
         <div className="max-w-[1600px] mx-auto relative z-10 w-full flex flex-col items-center min-h-[calc(100vh-60px-5rem)] justify-between">
@@ -271,7 +279,7 @@ export function Footer() {
             </p>
           </motion.div>
 
-          {/* 2. Sub-Category Links (Center Aligned with stagger) */}
+          {/* 2. Sub-Category Links */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-12 sm:gap-24 md:gap-32 lg:gap-40 mb-6 w-full max-w-5xl justify-items-center">
             {footerColumns.map((column, index) => (
               <motion.div
@@ -279,15 +287,15 @@ export function Footer() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={isDesktopInView ? { opacity: 1, y: 0 } : {}}
                 transition={{ duration: 0.5, delay: 0.2 + index * 0.1 }}
-                className="flex flex-col gap-5 items-center"
+                className="flex flex-col gap-5 items-start"
               >
                 {/* Animated underline on header */}
                 <div className="relative">
-                  <h4 className="text-[12px] sm:text-[13px] font-black text-white tracking-[0.2em] uppercase text-center">
+                  <h4 className="text-[12px] sm:text-[13px] font-black text-white tracking-[0.2em] uppercase text-left">
                     {column.title}
                   </h4>
                 </div>
-                <ul className="flex flex-col gap-2.5 items-center">
+                <ul className="flex flex-col gap-2.5 items-start w-full">
                   {column.links.map((link, linkIndex) => (
                     <FooterLinkItem
                       key={linkIndex}
@@ -365,12 +373,16 @@ export function Footer() {
 
           {/* 5. Copyright */}
           <motion.div
-            initial={{ opacity: 0 }}
-            animate={isDesktopInView ? { opacity: 1 } : {}}
-            transition={{ duration: 0.5, delay: 1.0 }}
-            className="w-full text-center"
+            initial={{ opacity: 0, y: 10 }}
+            animate={isDesktopInView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.7, delay: 1.0 }}
+            className="w-full text-center relative pt-8 mt-4"
           >
-            <p className="text-[11px] sm:text-[12px] text-slate-600 font-semibold tracking-[0.2em] uppercase">
+            {/* Premium Gradient Divider */}
+            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-3/4 max-w-4xl h-px bg-gradient-to-r from-transparent via-orange-500/20 to-transparent" />
+            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-1/2 max-w-xl h-px bg-gradient-to-r from-transparent via-red-500/40 to-transparent blur-[2px]" />
+            
+            <p className="text-[11px] sm:text-[12px] text-slate-400 font-semibold tracking-[0.2em] uppercase relative z-10 drop-shadow-sm">
               &copy; {new Date().getFullYear()} BFP Sta.Cruz Laguna. All rights reserved.
             </p>
           </motion.div>

@@ -10,6 +10,7 @@ import { Navigation } from "@/components/navigation"
 import DashboardLayout from "@/Layouts/DashboardLayout";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Shield, BarChart3, ImageIcon, FileText, Video, Users, HelpCircle, BookOpen, Loader2 } from "lucide-react"
+import { motion } from "motion/react"
 import type { CarouselImage, BlogPost } from "@/types/admin"
 import { ConfirmationDialog } from "@/components/ui/confirmation-dialog"
 import {
@@ -78,6 +79,7 @@ function AdminDashboard({
   })
 
   // Local UI State for forms
+  const [activeTab, setActiveTab] = useState("carousel")
   const [newCarousel, setNewCarousel] = useState({ title: "", alt: "", url: "" })
   const [carouselUploadKey, setCarouselUploadKey] = useState(0)
 
@@ -727,14 +729,35 @@ function AdminDashboard({
           </button>
         </div>
 
-        <Tabs defaultValue="carousel" className="space-y-6">
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
           <TabsList className="flex w-full sm:grid sm:grid-cols-6 bg-slate-200/70 dark:bg-slate-800/50 backdrop-blur-md p-2 rounded-[1.5rem] gap-2 shadow-inner h-auto border-2 border-slate-200 dark:border-slate-700 transition-colors">
-            <TabsTrigger value="carousel" className="flex-1 font-bold text-slate-500 dark:text-slate-400 data-[state=active]:!bg-[#d60000] data-[state=active]:!text-white transition-all rounded-xl py-3 px-2 sm:px-4 data-[state=active]:shadow-[0_4px_0_#991b1b] hover:bg-white/50 dark:hover:bg-slate-700/50 hover:text-slate-700 dark:hover:text-slate-200"><ImageIcon className="h-5 w-5 sm:h-4 sm:w-4 sm:mr-2" strokeWidth={2.5} /><span className="hidden sm:inline text-sm">Carousel</span></TabsTrigger>
-            <TabsTrigger value="blogs" className="flex-1 font-bold text-slate-500 dark:text-slate-400 data-[state=active]:!bg-[#d60000] data-[state=active]:!text-white transition-all rounded-xl py-3 px-2 sm:px-4 data-[state=active]:shadow-[0_4px_0_#991b1b] hover:bg-white/50 dark:hover:bg-slate-700/50 hover:text-slate-700 dark:hover:text-slate-200"><FileText className="h-5 w-5 sm:h-4 sm:w-4 sm:mr-2" strokeWidth={2.5} /><span className="hidden sm:inline text-sm">Blogs</span></TabsTrigger>
-            <TabsTrigger value="videos" className="flex-1 font-bold text-slate-500 dark:text-slate-400 data-[state=active]:!bg-[#d60000] data-[state=active]:!text-white transition-all rounded-xl py-3 px-2 sm:px-4 data-[state=active]:shadow-[0_4px_0_#991b1b] hover:bg-white/50 dark:hover:bg-slate-700/50 hover:text-slate-700 dark:hover:text-slate-200"><Video className="h-5 w-5 sm:h-4 sm:w-4 sm:mr-2" strokeWidth={2.5} /><span className="hidden sm:inline text-sm">Videos</span></TabsTrigger>
-            <TabsTrigger value="users" className="flex-1 font-bold text-slate-500 dark:text-slate-400 data-[state=active]:!bg-[#d60000] data-[state=active]:!text-white transition-all rounded-xl py-3 px-2 sm:px-4 data-[state=active]:shadow-[0_4px_0_#991b1b] hover:bg-white/50 dark:hover:bg-slate-700/50 hover:text-slate-700 dark:hover:text-slate-200"><Users className="h-5 w-5 sm:h-4 sm:w-4 sm:mr-2" strokeWidth={2.5} /><span className="hidden sm:inline text-sm">Users</span></TabsTrigger>
-            <TabsTrigger value="quick-questions" className="flex-1 font-bold text-slate-500 dark:text-slate-400 data-[state=active]:!bg-[#d60000] data-[state=active]:!text-white transition-all rounded-xl py-3 px-2 sm:px-4 data-[state=active]:shadow-[0_4px_0_#991b1b] hover:bg-white/50 dark:hover:bg-slate-700/50 hover:text-slate-700 dark:hover:text-slate-200"><HelpCircle className="h-5 w-5 sm:h-4 sm:w-4 sm:mr-2" strokeWidth={2.5} /><span className="hidden sm:inline text-sm">Q&A</span></TabsTrigger>
-            <TabsTrigger value="fire-codes" className="flex-1 font-bold text-slate-500 dark:text-slate-400 data-[state=active]:!bg-[#d60000] data-[state=active]:!text-white transition-all rounded-xl py-3 px-2 sm:px-4 data-[state=active]:shadow-[0_4px_0_#991b1b] hover:bg-white/50 dark:hover:bg-slate-700/50 hover:text-slate-700 dark:hover:text-slate-200"><BookOpen className="h-5 w-5 sm:h-4 sm:w-4 sm:mr-2" strokeWidth={2.5} /><span className="hidden sm:inline text-sm">Fire Codes</span></TabsTrigger>
+            {[
+              { id: "carousel", icon: ImageIcon, label: "Carousel" },
+              { id: "blogs", icon: FileText, label: "Blogs" },
+              { id: "videos", icon: Video, label: "Videos" },
+              { id: "users", icon: Users, label: "Users" },
+              { id: "quick-questions", icon: HelpCircle, label: "Q&A" },
+              { id: "fire-codes", icon: BookOpen, label: "Fire Codes" }
+            ].map((tab) => (
+              <TabsTrigger 
+                key={tab.id}
+                value={tab.id} 
+                className="relative flex-1 font-bold text-slate-500 dark:text-slate-400 transition-colors duration-300 rounded-xl py-3 px-2 sm:px-4 hover:bg-white/50 dark:hover:bg-slate-700/50 hover:text-slate-700 dark:hover:text-slate-200 data-[state=active]:!text-white data-[state=active]:hover:!text-white !bg-transparent data-[state=active]:!bg-transparent data-[state=active]:!shadow-none"
+              >
+                {activeTab === tab.id && (
+                  <motion.div
+                    layoutId="activeAdminTab"
+                    className="absolute inset-0 bg-[#d60000] rounded-xl shadow-[0_4px_0_#991b1b]"
+                    initial={false}
+                    transition={{ type: "spring", stiffness: 400, damping: 30 }}
+                  />
+                )}
+                <span className="relative z-10 flex items-center justify-center">
+                  <tab.icon className="h-5 w-5 sm:h-4 sm:w-4 sm:mr-2" strokeWidth={2.5} />
+                  <span className="hidden sm:inline text-sm">{tab.label}</span>
+                </span>
+              </TabsTrigger>
+            ))}
           </TabsList>
 
           <ConfirmationDialog
