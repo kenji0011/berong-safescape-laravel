@@ -219,8 +219,28 @@ const CourseHubPage = ({ initialModules }: CourseHubProps) => {
       )}
 
       {/* ── Bright Module Content Area ── */}
-      <div className="flex-1 bg-white dark:bg-slate-950 bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] dark:bg-[radial-gradient(#1e293b_1px,transparent_1px)] [background-size:16px_16px] py-8 sm:py-12 px-4 sm:px-6 lg:px-8 border-t border-border">
-        <div className="max-w-6xl mx-auto">
+      <div className="relative flex-1 bg-white dark:bg-slate-950 bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] dark:bg-[radial-gradient(#1e293b_1px,transparent_1px)] [background-size:16px_16px] py-8 sm:py-12 px-4 sm:px-6 lg:px-8 border-t border-border overflow-hidden">
+        
+        {/* Floating Themed Elements for Empty Space */}
+        <style dangerouslySetInnerHTML={{__html: `
+          @keyframes float {
+            0% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(5deg); }
+            100% { transform: translateY(0px) rotate(0deg); }
+          }
+          .floating-icon { animation: float 8s ease-in-out infinite; }
+        `}} />
+        <div className="absolute inset-0 overflow-hidden pointer-events-none opacity-20 dark:opacity-10 z-0">
+          <div className="absolute top-[5%] left-[5%] text-6xl floating-icon" style={{ animationDelay: '0s' }}>🚒</div>
+          <div className="absolute top-[15%] right-[8%] text-5xl floating-icon" style={{ animationDelay: '1s', transform: 'scale(-1, 1)' }}>🧯</div>
+          <div className="absolute top-[40%] left-[2%] text-7xl floating-icon" style={{ animationDelay: '2s' }}>👨‍🚒</div>
+          <div className="absolute top-[50%] right-[4%] text-6xl floating-icon" style={{ animationDelay: '3s' }}>🚨</div>
+          <div className="absolute bottom-[20%] left-[8%] text-6xl floating-icon" style={{ animationDelay: '1.5s' }}>🔥</div>
+          <div className="absolute bottom-[10%] right-[10%] text-7xl floating-icon" style={{ animationDelay: '2.5s' }}>💧</div>
+          <div className="absolute top-[80%] left-[45%] text-5xl floating-icon" style={{ animationDelay: '4s' }}>🛡️</div>
+        </div>
+
+        <div className="max-w-6xl mx-auto relative z-10">
 
           {/* ── SafeScape Internal Header ── */}
           <div className="flex flex-col sm:flex-row items-center justify-between border-b-2 border-blue-200 dark:border-slate-800 pb-4 mb-8 sm:mb-12 gap-4">
@@ -325,7 +345,7 @@ const CourseHubPage = ({ initialModules }: CourseHubProps) => {
                   <div
                     key={module.id}
                     className={cn(
-                      "relative overflow-hidden rounded-[2rem] flex flex-col transition-all duration-300 bg-white dark:bg-slate-900 group h-[400px] will-change-transform border-[3px]",
+                      "relative overflow-hidden rounded-[2rem] flex flex-col transition-all duration-300 bg-white dark:bg-slate-900 group h-full will-change-transform border-[3px]",
                       module.isLocked
                         ? "border-slate-200 dark:border-slate-800 opacity-80 bg-slate-50/50 dark:bg-slate-950/50 shadow-none"
                         : `${theme.borderClass} ${theme.shadowClass} hover:-translate-y-1.5`
@@ -334,28 +354,30 @@ const CourseHubPage = ({ initialModules }: CourseHubProps) => {
                     {/* Content Container */}
                     <div className="relative z-10 p-6 sm:p-7 flex flex-col flex-1 h-full">
                       {/* Top Row: Module # and Status */}
-                      <div className="flex items-center justify-between mb-6">
-                        <div className="flex items-center gap-3">
+                      <div className="flex items-start sm:items-center justify-between mb-6 gap-2">
+                        <div className="flex flex-wrap items-center gap-2 sm:gap-3">
                            <div className={cn(
-                             "h-10 w-10 rounded-2xl flex items-center justify-center font-black text-lg border-2 shadow-sm",
+                             "h-10 w-10 rounded-2xl flex items-center justify-center font-black text-lg border-2 shadow-sm shrink-0",
                              module.isLocked 
                                ? "bg-slate-50 border-slate-100 text-slate-400 dark:bg-slate-800 dark:border-slate-700 dark:text-slate-600"
                                : theme.badgeClass
                            )}>
                              {module.dayNumber}
                            </div>
-                           <span className={cn(
-                             "text-[10px] font-black uppercase tracking-widest px-2.5 py-1 rounded-lg border",
-                             module.isLocked 
-                               ? "bg-slate-50 text-slate-400 border-slate-100 dark:bg-slate-800 dark:text-slate-600 dark:border-slate-700"
-                               : theme.badgeClass
-                           )}>
-                             Module
-                           </span>
+                           {module.recommendedAction && !module.isLocked && module.recommendedAction !== 'Mastered' && (
+                             <div className={cn(
+                               "px-2.5 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest border shadow-sm",
+                               module.recommendedAction === 'Priority Review' ? 'bg-red-600 border-red-700 text-white shadow-red-200 dark:shadow-none' : 
+                               module.recommendedAction === 'Needs Practice' ? 'bg-orange-500 border-orange-600 text-white shadow-orange-200 dark:shadow-none' : 
+                               'bg-emerald-600 border-emerald-700 text-white shadow-emerald-200 dark:shadow-none'
+                             )}>
+                               {module.recommendedAction}
+                             </div>
+                           )}
                         </div>
 
                         {module.isCompleted && (
-                          <div className="h-9 w-9 rounded-full bg-emerald-500 flex items-center justify-center shadow-md border-2 border-white dark:border-slate-800 animate-in zoom-in duration-500">
+                          <div className="h-9 w-9 rounded-full bg-emerald-500 flex items-center justify-center shadow-md border-2 border-white dark:border-slate-800 animate-in zoom-in duration-500 shrink-0">
                             <CheckCircle className="h-5 w-5 text-white" />
                           </div>
                         )}
@@ -371,7 +393,7 @@ const CourseHubPage = ({ initialModules }: CourseHubProps) => {
 
                       {/* Description */}
                       <p className={cn(
-                        "text-sm sm:text-base leading-relaxed font-bold line-clamp-3 mb-6",
+                        "text-sm sm:text-base leading-relaxed font-bold mb-6",
                         module.isLocked ? "text-slate-300 dark:text-slate-700" : "text-slate-500 dark:text-slate-400"
                       )}>
                         {meta?.description || module.description}
@@ -380,72 +402,89 @@ const CourseHubPage = ({ initialModules }: CourseHubProps) => {
                       <div className="flex-1" />
 
                       {/* Bottom Section: Badge & CTA */}
-                      <div className="space-y-5">
-                        {/* Recommendation / Badge Row */}
-                        <div className="flex items-center gap-3">
-                          {module.recommendedAction && !module.isLocked && (
-                            <div className={cn(
-                              "px-3 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-widest border-2 shadow-sm",
-                              module.recommendedAction === 'Priority Review' ? 'bg-red-50 border-red-100 text-red-600 dark:bg-red-950/30 dark:border-red-900/30 dark:text-red-400' : 
-                              module.recommendedAction === 'Needs Practice' ? 'bg-orange-50 border-orange-100 text-orange-600 dark:bg-orange-950/30 dark:border-orange-900/30 dark:text-orange-400' : 
-                              'bg-emerald-50 border-emerald-100 text-emerald-600 dark:bg-emerald-950/30 dark:border-emerald-900/30 dark:text-emerald-400'
-                            )}>
-                              {module.recommendedAction}
+                      <div className="space-y-4">
+                        {/* Visual Progress Bar */}
+                        {!module.isLocked && (
+                          <div className="mb-4">
+                            <div className="flex justify-between items-center text-[10px] font-black uppercase mb-1.5 text-slate-500 dark:text-slate-400">
+                              <span>{module.isCompleted ? "Mastered" : "Training Progress"}</span>
+                              <span className={cn(module.isCompleted ? "text-emerald-600 dark:text-emerald-400" : "text-blue-600 dark:text-blue-400")}>
+                                {module.isCompleted ? "100%" : `${module.progress}%`}
+                              </span>
                             </div>
-                          )}
-
-                          {meta && (
-                            <div className={cn(
-                              "flex items-center gap-2 text-[10px] font-black px-3 py-1.5 rounded-xl border-2 uppercase tracking-tight shadow-sm",
-                              module.isCompleted 
-                                ? "bg-amber-50 border-amber-100 text-amber-700 dark:bg-amber-950/20 dark:border-amber-900/30 dark:text-amber-500" 
-                                : "bg-slate-50 border-slate-100 text-slate-400 dark:bg-slate-900/30 dark:border-slate-800 dark:text-slate-600"
-                            )}>
-                              <img 
-                                src={meta.badge.image} 
-                                className={cn("h-4 w-4 object-contain", !module.isCompleted && "filter grayscale opacity-45")} 
-                                alt="Badge" 
+                            <div className="h-3 w-full bg-slate-100 dark:bg-slate-800/80 rounded-full overflow-hidden shadow-inner border border-slate-200 dark:border-slate-700">
+                              <div 
+                                className={cn("h-full rounded-full transition-all duration-1000 bg-gradient-to-r", 
+                                  module.isCompleted ? "from-emerald-400 to-emerald-500" : "from-blue-400 to-blue-500"
+                                )} 
+                                style={{ width: `${module.isCompleted ? 100 : module.progress}%` }}
                               />
-                              <span>{meta.badge.name} Badge</span>
+                            </div>
+                          </div>
+                        )}
+
+                        {/* CTA Button & Badge */}
+                        <div className="pt-2 flex items-center justify-between gap-3">
+                          {meta && (
+                            <div className="relative group/badge flex-shrink-0">
+                              <div 
+                                className={cn(
+                                  "flex items-center justify-center shrink-0 w-[52px] h-[52px] rounded-2xl border-[3px] shadow-sm transition-transform group-hover/badge:scale-110 cursor-help",
+                                  module.isCompleted 
+                                    ? "bg-amber-50 border-amber-200 dark:bg-amber-950/20 dark:border-amber-900/30" 
+                                    : "bg-slate-50 border-slate-200 dark:bg-slate-900/30 dark:border-slate-800"
+                                )}
+                              >
+                                <img 
+                                  src={meta.badge.image} 
+                                  className={cn("h-7 w-7 object-contain", !module.isCompleted && "filter grayscale opacity-45")} 
+                                  alt={`${meta.badge.name} Badge`} 
+                                />
+                              </div>
+                              {/* Custom Tooltip */}
+                              <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-max max-w-[150px] pointer-events-none opacity-0 group-hover/badge:opacity-100 transition-opacity duration-200 z-[100]">
+                                <div className="bg-slate-800 text-white text-[10px] font-bold px-3 py-1.5 rounded-lg shadow-xl text-center leading-tight">
+                                  {meta.badge.name} Badge
+                                </div>
+                                <div className="w-2 h-2 bg-slate-800 rotate-45 mx-auto -mt-1 shadow-xl"></div>
+                              </div>
                             </div>
                           )}
-                        </div>
-
-                        {/* CTA Button */}
-                        <div className="pt-5 border-t-2 border-dashed border-slate-100 dark:border-slate-800 flex items-center justify-between">
-                          {module.isCompleted ? (
-                            <Link
-                              href={moduleRoute}
-                              className={cn(
-                                "w-full flex items-center justify-center gap-2 font-black py-3.5 rounded-2xl text-sm border-b-[4px] active:border-b-0 active:translate-y-[4px] shadow-lg transition-all uppercase tracking-wide",
-                                theme.buttonClass
-                              )}
-                            >
-                              Review Lessons
-                            </Link>
-                          ) : module.isLocked ? (
-                            <button 
-                              onClick={() => {
-                                toast.error("Module Locked", {
-                                  description: "You must complete the previous modules to unlock this one!",
-                                })
-                              }}
-                              className="w-full flex items-center justify-center gap-2 bg-slate-100 dark:bg-slate-900/50 text-slate-400 dark:text-slate-600 font-bold py-3.5 rounded-2xl text-sm border-2 border-slate-200 dark:border-slate-800 cursor-not-allowed hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors"
-                            >
-                              <Lock className="h-4 w-4" /> Module Locked
-                            </button>
-                          ) : (
-                            <Link
-                              href={moduleRoute}
-                              className={cn(
-                                "w-full flex items-center justify-center gap-2 font-black py-4 rounded-2xl text-base border-b-[6px] active:border-b-0 active:translate-y-[6px] shadow-xl transition-all uppercase tracking-widest",
-                                theme.buttonClass
-                              )}
-                            >
-                              {module.progress > 0 ? "Continue Mission" : "Start Learning"}
-                              <ArrowRight className="h-5 w-5" />
-                            </Link>
-                          )}
+                          <div className="flex-1">
+                            {module.isCompleted ? (
+                              <Link
+                                href={moduleRoute}
+                                className={cn(
+                                  "w-full flex items-center justify-center gap-2 font-black py-3.5 rounded-2xl text-sm border-b-[4px] active:border-b-0 active:translate-y-[4px] shadow-lg transition-all uppercase tracking-wide",
+                                  theme.buttonClass
+                                )}
+                              >
+                                Review Lessons
+                              </Link>
+                            ) : module.isLocked ? (
+                              <button 
+                                onClick={() => {
+                                  toast.error("Module Locked", {
+                                    description: "You must complete the previous modules to unlock this one!",
+                                  })
+                                }}
+                                className="w-full flex items-center justify-center gap-2 bg-slate-100 dark:bg-slate-900/50 text-slate-400 dark:text-slate-600 font-bold py-3.5 rounded-2xl text-sm border-2 border-slate-200 dark:border-slate-800 cursor-not-allowed hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors"
+                              >
+                                <Lock className="h-4 w-4" /> Module Locked
+                              </button>
+                            ) : (
+                              <Link
+                                href={moduleRoute}
+                                className={cn(
+                                  "w-full flex items-center justify-center gap-2 font-black py-4 rounded-2xl text-base border-b-[6px] active:border-b-0 active:translate-y-[6px] shadow-xl transition-all uppercase tracking-widest",
+                                  theme.buttonClass
+                                )}
+                              >
+                                {module.progress > 0 ? "Continue Mission" : "Start Learning"}
+                                <ArrowRight className="h-5 w-5" />
+                              </Link>
+                            )}
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -456,7 +495,7 @@ const CourseHubPage = ({ initialModules }: CourseHubProps) => {
               {/* ── Certificate Card ── */}
               <div
                 className={cn(
-                  "relative rounded-[2rem] flex flex-col transition-all duration-500 overflow-hidden bg-white dark:bg-slate-900 h-[400px] border-[3px]",
+                  "relative rounded-[2rem] flex flex-col transition-all duration-500 overflow-hidden bg-white dark:bg-slate-900 h-full border-[3px]",
                   completedCount === 5
                     ? "border-yellow-400 shadow-xl shadow-yellow-100/40 dark:shadow-yellow-950/20 hover:-translate-y-1.5"
                     : "border-slate-200 dark:border-slate-800 opacity-80"

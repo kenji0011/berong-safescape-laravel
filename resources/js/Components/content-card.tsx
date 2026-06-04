@@ -14,17 +14,22 @@ export interface ContentCardData {
   type: "game" | "video" | "activity" | "module" | "exam"
   imageUrl?: string
   illustrationUrl?: string
+  videoPreviewUrl?: string
   emoji?: string
   href: string
   isLocked?: boolean
   isCompleted?: boolean
   isNew?: boolean
+  isExternal?: boolean
   shouldPulse?: boolean
   difficulty?: "easy" | "medium" | "hard"
   duration?: string
   category?: string
   hideBadge?: boolean
   unlockRequirement?: string
+  badgeImageUrl?: string
+  badgeName?: string
+  badgeHint?: string
 }
 
 interface ContentCardProps {
@@ -62,14 +67,18 @@ export const ContentCard = React.memo(({ content, onClick }: ContentCardProps) =
   const innerContent = (
     <>
       {/* Visual Header Section */}
-      <div className={cn(
-        "relative h-32 sm:h-52 w-full flex items-center justify-center overflow-hidden z-0 shrink-0 transition-all duration-500",
-        typeGradients[content.type] || "bg-slate-400"
-      )}>
+      <div className="relative h-32 sm:h-52 w-full flex items-center justify-center overflow-hidden z-10 shrink-0">
+        {/* Background Color Layer */}
+        <div className={cn(
+          "absolute inset-0 transition-all duration-700 z-0",
+          content.videoPreviewUrl ? "bg-white dark:bg-slate-800" : (typeGradients[content.type] || "bg-slate-400"),
+          content.videoPreviewUrl && "group-hover:opacity-0"
+        )} />
+
         {/* Subtle Glassmorphism Patterns / Lighting - Optimized for mobile performance */}
-        <div className="absolute inset-0 bg-white/10 opacity-30 pointer-events-none"></div>
-        <div className="absolute -top-16 -right-16 w-48 h-48 bg-white/20 rounded-full pointer-events-none transition-transform duration-700 group-hover:scale-150 hidden sm:block"></div>
-        <div className="absolute -bottom-16 -left-16 w-48 h-48 bg-black/10 rounded-full pointer-events-none hidden sm:block"></div>
+        <div className={cn("absolute inset-0 bg-white/10 opacity-30 pointer-events-none transition-opacity duration-700", content.videoPreviewUrl && "group-hover:opacity-0")}></div>
+        <div className={cn("absolute -top-16 -right-16 w-48 h-48 bg-white/20 rounded-full pointer-events-none transition-all duration-700 group-hover:scale-150 hidden sm:block", content.videoPreviewUrl && "group-hover:opacity-0")}></div>
+        <div className={cn("absolute -bottom-16 -left-16 w-48 h-48 bg-black/10 rounded-full pointer-events-none hidden sm:block transition-opacity duration-700", content.videoPreviewUrl && "group-hover:opacity-0")}></div>
 
         {/* Top-Left Indicator: Module or Difficulty */}
         <div className="absolute top-3 left-3 z-20">
@@ -122,7 +131,8 @@ export const ContentCard = React.memo(({ content, onClick }: ContentCardProps) =
         {/* Central Graphic */}
         <div className={cn(
            "absolute inset-0 z-10 transition-all duration-700 flex items-center justify-center",
-           !content.isLocked && "group-hover:scale-110"
+           !content.isLocked && "group-hover:scale-110",
+           content.videoPreviewUrl && "group-hover:opacity-0 group-hover:scale-95"
         )}>
           {content.illustrationUrl ? (
             <div className="h-20 w-20 sm:h-36 sm:w-36 flex items-center justify-center drop-shadow-[0_10px_20px_rgba(0,0,0,0.15)] group-hover:-translate-y-2 transition-transform duration-500">
@@ -168,29 +178,54 @@ export const ContentCard = React.memo(({ content, onClick }: ContentCardProps) =
       </div>
 
       {/* Text Content Section */}
-      <div className="p-3 sm:p-6 flex-1 flex flex-col bg-white dark:bg-slate-800/90 z-10 relative">
-        <h3 className="font-black text-[13px] sm:text-xl text-slate-800 dark:text-white leading-tight mb-1 sm:mb-2 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors line-clamp-2 tracking-tight">
+      <div className="p-3 sm:p-6 flex-1 flex flex-col z-10 relative">
+        <div className={cn(
+          "absolute inset-0 transition-opacity duration-700 z-[-1]",
+          "bg-white dark:bg-slate-800/90",
+          content.videoPreviewUrl && "group-hover:opacity-0"
+        )} />
+        <h3 className={cn(
+          "font-black text-[13px] sm:text-xl text-slate-800 dark:text-white leading-tight mb-1 sm:mb-2 transition-colors line-clamp-2 tracking-tight",
+          content.videoPreviewUrl ? "group-hover:!text-white group-hover:drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]" : "group-hover:text-indigo-600 dark:group-hover:text-indigo-400"
+        )}>
           {content.title}
         </h3>
 
         {content.description && (
-          <p className="text-[10px] sm:text-[13px] text-slate-500 dark:text-slate-400 font-bold leading-relaxed mb-3 sm:mb-6 line-clamp-2">
+          <p className={cn(
+            "text-[10px] sm:text-[13px] text-slate-500 dark:text-slate-400 font-bold leading-relaxed mb-3 sm:mb-6 line-clamp-2 transition-colors",
+            content.videoPreviewUrl && "group-hover:!text-slate-100 group-hover:drop-shadow-[0_1px_3px_rgba(0,0,0,0.8)]"
+          )}>
             {content.description}
           </p>
         )}
 
         {/* Footer Actions */}
-        <div className="mt-auto flex items-center justify-between pt-3 sm:pt-4 border-t-2 border-slate-50 dark:border-slate-700/50">
+        <div className={cn(
+          "mt-auto flex items-center justify-between pt-3 sm:pt-4 border-t-2 transition-colors",
+          content.videoPreviewUrl ? "border-slate-50 dark:border-slate-700/50 group-hover:!border-white/30" : "border-slate-50 dark:border-slate-700/50"
+        )}>
           <div className="flex items-center gap-2 text-[8px] sm:text-xs font-black uppercase tracking-wide">
             {(content.type === "module" || content.type === "video" || content.type === "activity") && !content.hideBadge && (
               <div className={cn(
-                "px-2 py-1 rounded-lg border-2 shadow-sm flex items-center gap-1.5 transition-colors",
+                "px-2 py-1 rounded-lg border-2 shadow-sm flex items-center gap-1.5 transition-colors group/badge relative",
                 content.isCompleted 
                   ? "bg-emerald-500 border-emerald-400 text-white" 
                   : "bg-slate-50 dark:bg-slate-900 border-slate-100 dark:border-slate-800"
               )}>
                  <div className="flex items-center justify-center">
-                    <span className="text-[10px] sm:text-sm">🎖️</span>
+                    {content.badgeImageUrl ? (
+                      <img 
+                        src={content.badgeImageUrl} 
+                        alt="Badge" 
+                        className={cn(
+                          "h-4 w-4 sm:h-5 sm:w-5 object-contain transition-all",
+                          !content.isCompleted && "filter grayscale opacity-50"
+                        )} 
+                      />
+                    ) : (
+                      <span className="text-[10px] sm:text-sm">🎖️</span>
+                    )}
                  </div>
                  <span className={cn(
                    "text-[8px] sm:text-[10px] font-black uppercase tracking-wider",
@@ -198,6 +233,14 @@ export const ContentCard = React.memo(({ content, onClick }: ContentCardProps) =
                  )}>
                     {content.isCompleted ? "Earned" : "Badge"}
                  </span>
+                 
+                 {/* Tooltip Content */}
+                 {content.badgeName && content.badgeHint && (
+                   <div className="absolute bottom-full left-0 mb-2 w-48 bg-slate-900 text-white text-[10px] sm:text-xs rounded-xl p-3 opacity-0 invisible group-hover/badge:opacity-100 group-hover/badge:visible transition-all z-50 shadow-xl pointer-events-none border border-slate-700 before:content-[''] before:absolute before:top-full before:left-8 before:-translate-x-1/2 before:border-4 before:border-transparent before:border-t-slate-900 normal-case tracking-normal text-left">
+                     <p className="font-black text-yellow-400 mb-1 leading-tight">{content.badgeName}</p>
+                     <p className="font-semibold leading-relaxed text-slate-300">{content.badgeHint}</p>
+                   </div>
+                 )}
               </div>
             )}
             {content.duration && (
@@ -224,6 +267,22 @@ export const ContentCard = React.memo(({ content, onClick }: ContentCardProps) =
           )}
         </div>
       </div>
+      
+      {/* Background Video */}
+      {content.videoPreviewUrl && (
+        <div className="absolute inset-0 z-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none">
+          <video
+            src={content.videoPreviewUrl}
+            autoPlay
+            muted
+            loop
+            playsInline
+            className="absolute inset-0 w-full h-full object-cover"
+          />
+          {/* Vignette Effect */}
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,rgba(0,0,0,0.7)_100%)]"></div>
+        </div>
+      )}
     </>
   )
 
@@ -242,6 +301,30 @@ export const ContentCard = React.memo(({ content, onClick }: ContentCardProps) =
       >
         {innerContent}
       </motion.div>
+    )
+  }
+
+  if (content.isExternal) {
+    return (
+      <motion.a
+        href={content.href}
+        onClick={() => { if (onClick) onClick() }}
+        whileHover={{ 
+          y: -10,
+          scale: 1.02,
+          transition: { type: "spring", stiffness: 400, damping: 25 }
+        }}
+        whileTap={{ scale: 0.98 }}
+        className={cn(
+           "group relative flex flex-col h-full w-full rounded-2xl sm:rounded-[2.5rem] overflow-hidden bg-white dark:bg-slate-800",
+           "cursor-pointer shadow-[0_8px_30px_rgba(0,0,0,0.06)] border border-slate-100 dark:border-slate-700/50",
+           content.shouldPulse 
+             ? "ring-[6px] ring-yellow-400 animate-pulse shadow-[0_0_45px_rgba(250,204,21,0.7)]" 
+             : (content.type === "module" && "ring-4 ring-yellow-400 shadow-[0_10px_30px_rgba(250,204,21,0.2)]")
+        )}
+      >
+        {innerContent}
+      </motion.a>
     )
   }
 

@@ -131,12 +131,12 @@ function AnimatedFeaturedCard({
           {card.icon}
         </div>
 
-        <div className="pr-16 sm:pr-20 transition-all duration-500 relative z-10">
+        <div className="transition-all duration-500 relative z-10">
           <h3 className={`text-xl sm:text-2xl font-black text-slate-800 dark:text-white tracking-tight mb-2 sm:mb-3 transition-colors duration-300 ${isRestricted ? '' : 'group-hover/card:text-white'}`}>
             {card.title}
           </h3>
           <div className="transition-all duration-500">
-            <p className={`text-sm font-semibold text-slate-500 dark:text-slate-400 leading-relaxed line-clamp-2 transition-colors duration-300 ${isRestricted ? '' : 'group-hover/card:text-slate-300'}`}>
+            <p className={`text-sm font-semibold text-slate-500 dark:text-slate-400 leading-relaxed transition-colors duration-300 ${isRestricted ? '' : 'group-hover/card:text-slate-300'}`}>
               {card.description}
             </p>
           </div>
@@ -210,7 +210,7 @@ function MobileAnimatedCard({
         {/* Content */}
         <div className="min-w-0 flex-1">
           <h3 className={`font-black text-base text-slate-800 dark:text-white leading-tight transition-colors ${isRestricted ? '' : 'group-hover:text-red-600 dark:group-hover:text-orange-400'}`}>{card.title}</h3>
-          <p className="text-[12px] font-semibold text-slate-500 dark:text-slate-400 line-clamp-2 leading-snug mt-1 transition-colors">{card.description}</p>
+          <p className="text-[12px] font-semibold text-slate-500 dark:text-slate-400 leading-snug mt-1 transition-colors">{card.description}</p>
         </div>
       </div>
       {/* Full Width Mobile Button */}

@@ -312,9 +312,22 @@ function TeamCard({ member, index, reduceMotion, progress, totalCards = 9 }: { k
     
     // Depth scaling based on cosine of the rotation angle
     const cardScale = useTransform(distance, inputRange, [
-        0.5, 0.6, 0.7, 0.8, 0.88, 0.94, 0.97, 0.99, 1.02,
-        0.99, 0.97, 0.94, 0.88, 0.8, 0.7, 0.6, 0.5
+        0.5, 0.6, 0.7, 0.75, 0.8, 0.85, 0.9, 0.95, 1.1,
+        0.95, 0.9, 0.85, 0.8, 0.75, 0.7, 0.6, 0.5
     ]);
+    
+    // 3D Tilt for cylinder effect
+    const cardRotateY = useTransform(distance, inputRange, [
+        40, 35, 30, 25, 20, 15, 10, 5, 0,
+        -5, -10, -15, -20, -25, -30, -35, -40
+    ]);
+
+    const cardRotateX = useTransform(distance, [-2, -1, 0, 1, 2], [10, 5, 0, 5, 10]);
+
+    // Avatar dynamic popping
+    const avatarScale = useTransform(distance, [-2, -1, 0, 1, 2], [0.8, 0.9, 1.25, 0.9, 0.8]);
+    const avatarY = useTransform(distance, [-2, -1, 0, 1, 2], [10, 5, -20, 5, 10]);
+    const nameScale = useTransform(distance, [-1, 0, 1], [0.9, 1.1, 0.9]);
     
     // New opacity fading for distant cards to enhance the 3D depth illusion
     const cardOpacity = useTransform(distance, inputRange, [
@@ -325,7 +338,16 @@ function TeamCard({ member, index, reduceMotion, progress, totalCards = 9 }: { k
     // Enhanced hover animation wrapper
     return (
         <motion.div
-            style={reduceMotion ? {} : { y: cardY, rotateZ: cardRotateZ, scale: cardScale, opacity: cardOpacity, transformOrigin: "bottom center" }}
+            style={reduceMotion ? {} : { 
+                y: cardY, 
+                rotateZ: cardRotateZ, 
+                rotateY: cardRotateY, 
+                rotateX: cardRotateX,
+                scale: cardScale, 
+                opacity: cardOpacity, 
+                transformOrigin: "bottom center",
+                transformStyle: "preserve-3d"
+            }}
             className="h-full w-full"
         >
             <motion.div
@@ -347,7 +369,7 @@ function TeamCard({ member, index, reduceMotion, progress, totalCards = 9 }: { k
                 className="group relative bg-white dark:bg-slate-800 rounded-2xl overflow-hidden shadow-lg border border-slate-200 dark:border-slate-700 h-full flex flex-col cursor-pointer"
             >
             {/* Gradient Header */}
-            <div className={`h-32 bg-gradient-to-r ${member.color} relative`}>
+            <div className={`h-32 bg-gradient-to-r ${member.color} relative overflow-hidden`}>
                 <div className="absolute inset-0 bg-black/20" />
                 {/* Decorative circles */}
                 <motion.div
@@ -362,9 +384,12 @@ function TeamCard({ member, index, reduceMotion, progress, totalCards = 9 }: { k
                 />
             </div>
 
-            {/* Profile Image */}
-            <div className="relative -mt-16 flex justify-center">
-                <div className="relative">
+            {/* Profile Image - Now Animated on Scroll */}
+            <div className="relative -mt-16 flex justify-center perspective-[1000px]">
+                <motion.div 
+                    style={reduceMotion ? {} : { scale: avatarScale, y: avatarY }}
+                    className="relative p-1.5 bg-white dark:bg-slate-800 rounded-full shadow-xl"
+                >
                     <div className={`absolute inset-0 bg-slate-400 rounded-full opacity-50 group-hover:opacity-75 transition-opacity`} />
                     <div className="relative w-32 h-32 rounded-full border-4 border-white dark:border-slate-800 overflow-hidden bg-white dark:bg-slate-900 shadow-xl">
                         <img
@@ -374,7 +399,7 @@ function TeamCard({ member, index, reduceMotion, progress, totalCards = 9 }: { k
                             className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-110"
                         />
                     </div>
-                </div>
+                </motion.div>
             </div>
 
             {/* Content */}
@@ -521,6 +546,12 @@ export function LandingAboutSection({ carouselNode }: { carouselNode?: React.Rea
     const teamOpacity = useTransform(teamScrollProgress, [0, 0.2, 0.8, 1], [0, 1, 1, 0]);
     const teamScale = useTransform(teamScrollProgress, [0, 0.2, 0.8, 1], [0.95, 1, 1, 0.95]);
 
+    const { scrollYProgress: teamEnterProgress } = useScroll({
+        target: teamRef,
+        offset: ["start end", "start center"]
+    });
+    const patternOpacity = useTransform(teamEnterProgress, [0, 1], [0, 1]);
+
     // Horizontal Scroll Pinning Logic
     const [carouselWidth, setCarouselWidth] = useState(0);
     const carouselRef = useRef<HTMLDivElement>(null);
@@ -562,7 +593,7 @@ export function LandingAboutSection({ carouselNode }: { carouselNode?: React.Rea
     return (
         <div className="space-y-10 sm:space-y-20 mt-10 sm:mt-20">
             {/* Meet Berong Section */}
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full md:snap-center scroll-mt-24">
                 <motion.section
                     ref={heroRef}
                     className="relative bg-gradient-to-br from-white to-slate-50 dark:from-slate-900 dark:to-[#0B1120] py-12 sm:py-20 overflow-hidden rounded-[2rem] sm:rounded-[2.5rem] border border-slate-200 dark:border-slate-800/80 shadow-2xl mx-2 sm:mx-0 transition-colors duration-500"
@@ -724,7 +755,7 @@ export function LandingAboutSection({ carouselNode }: { carouselNode?: React.Rea
             </div>
 
             {/* Platform Overview Section */}
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full md:snap-center scroll-mt-24">
                 <motion.section
                     ref={platformRef}
                     className="py-10 sm:py-14 bg-red-600 dark:bg-[#0B1120] text-white relative overflow-hidden rounded-[2rem] sm:rounded-[2.5rem] shadow-sm dark:shadow-2xl border border-transparent dark:border-slate-800/80 mx-2 sm:mx-0 transition-colors duration-500"
@@ -773,7 +804,7 @@ export function LandingAboutSection({ carouselNode }: { carouselNode?: React.Rea
             )}
 
             {/* Partnership Section */}
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full md:snap-center scroll-mt-24">
                 <motion.section
                     ref={partnershipRef}
                     className="py-10 sm:py-14 bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-white relative overflow-hidden rounded-[2.5rem] shadow-xl dark:shadow-md border border-slate-200 dark:border-transparent transition-colors duration-500"
@@ -893,10 +924,15 @@ export function LandingAboutSection({ carouselNode }: { carouselNode?: React.Rea
             {/* Research Team Section */}
             <motion.section
                 ref={teamRef}
-                className={`bg-transparent rounded-3xl ${!reduceMotion ? 'h-[250vh] relative mt-16 sm:mt-24' : 'pt-16 sm:pt-24 pb-4 sm:pb-8'}`}
+                className={`bg-transparent rounded-3xl relative ${!reduceMotion ? 'h-[400vh] mt-16 sm:mt-24' : 'pt-16 sm:pt-24 pb-4 sm:pb-8'}`}
                 style={{ opacity: teamOpacity, scale: teamScale }}
             >
-                <div className={`w-full ${!reduceMotion ? 'sticky top-[64px] sm:top-[72px] h-[calc(100vh-64px)] sm:h-[calc(100vh-72px)] flex flex-col justify-start pt-4 sm:pt-12 overflow-hidden' : ''}`}>
+                <div className={`w-full relative z-10 ${!reduceMotion ? 'sticky top-[64px] sm:top-[72px] h-[calc(100vh-64px)] sm:h-[calc(100vh-72px)] flex flex-col justify-start pt-4 sm:pt-12 overflow-hidden' : ''} rounded-3xl`}>
+                    {/* Dynamic Dotted Pattern Background using Tailwind classes */}
+                    <motion.div 
+                        className="absolute inset-0 pointer-events-none z-[-1] rounded-3xl bg-white dark:bg-slate-950 bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] dark:bg-[radial-gradient(#1e293b_1px,transparent_1px)] [background-size:16px_16px]"
+                        style={{ opacity: patternOpacity }}
+                    />
                     <motion.div
                         className="text-center mb-10 sm:mb-16 shrink-0 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full"
                         initial={{ opacity: 0, y: 40 }}
@@ -910,7 +946,7 @@ export function LandingAboutSection({ carouselNode }: { carouselNode?: React.Rea
                             </span>
                         </div>
                         <h2 className="text-4xl sm:text-5xl font-black text-slate-800 dark:text-white mb-4 transition-colors">
-                            Meet the Developers
+                            <BinaryScrambleText text="Meet the Developers" />
                         </h2>
                         <p className="text-slate-600 dark:text-slate-400 font-medium max-w-2xl mx-auto text-lg transition-colors">
                             Computer Science researchers majoring in Intelligent Systems who designed and developed SafeScape.
@@ -957,3 +993,65 @@ export function LandingAboutSection({ carouselNode }: { carouselNode?: React.Rea
         </div>
     );
 }
+
+const BINARY_CHARS = "01";
+
+function BinaryScrambleText({ text, className = "" }: { text: string, className?: string }) {
+    const ref = useRef(null);
+    const isInView = useInView(ref, { once: true, margin: "-100px" });
+
+    return (
+        <span ref={ref} className={className}>
+            {text.split("").map((char, index) => {
+                if (char === " ") return <span key={index}> </span>;
+                return (
+                    <BinaryScrambleLetter 
+                        key={index} 
+                        char={char} 
+                        trigger={isInView} 
+                        delay={index * 0.05} 
+                    />
+                );
+            })}
+        </span>
+    );
+}
+
+function BinaryScrambleLetter({ char, trigger, delay }: { char: string, trigger: boolean, delay: number }) {
+    const [displayChar, setDisplayChar] = useState("0");
+    const [isDecoded, setIsDecoded] = useState(false);
+    
+    useEffect(() => {
+        if (!trigger) return;
+        
+        let iterations = 0;
+        const maxIterations = 15;
+        let timeoutId: any;
+        
+        const startDelay = setTimeout(() => {
+            const interval = setInterval(() => {
+                if (iterations >= maxIterations) {
+                    clearInterval(interval);
+                    setDisplayChar(char);
+                    setIsDecoded(true);
+                } else {
+                    setDisplayChar(BINARY_CHARS[Math.floor(Math.random() * BINARY_CHARS.length)]);
+                    iterations++;
+                }
+            }, 30);
+            timeoutId = interval;
+        }, delay * 1000);
+        
+        return () => {
+            clearTimeout(startDelay);
+            clearInterval(timeoutId);
+        };
+    }, [trigger, char, delay]);
+
+    return (
+        <span className={isDecoded ? "" : "text-slate-400 dark:text-slate-600 font-mono opacity-80"}>
+            {trigger ? displayChar : "0"}
+        </span>
+    );
+}
+

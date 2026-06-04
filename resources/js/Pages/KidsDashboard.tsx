@@ -99,9 +99,10 @@ const KidsDashboardPage = ({ modules, progress }: KidsPageProps) => {
     {
       id: "video-game",
       title: "Task Master",
-      description: "Complete daily missions and earn legendary rewards! Show your skills as a top fire safety expert.",
+      description: "Complete tasks and learn about fire safety.",
       type: "game",
       imageUrl: "/task_master.png",
+      videoPreviewUrl: "/task_master_preview.mp4",
       href: "/kids/task-master",
       isLocked: completedIds.length < 5,
       category: "games",

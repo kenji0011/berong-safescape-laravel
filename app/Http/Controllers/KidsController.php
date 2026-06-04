@@ -47,12 +47,33 @@ class KidsController extends Controller
             $sectionProgress = 0;
             if ($progress && $progress->sectionData) {
                 $sections = json_decode($progress->sectionData, true) ?? [];
-                // Count any truthy value (true, number > 0, non-empty string)
-                $completedSections = count(array_filter($sections, function($v) {
-                    return $v === true || (is_numeric($v) && $v > 0) || (is_string($v) && strlen($v) > 0);
-                }));
-                $totalSections = max(count($sections), 1);
-                $sectionProgress = $isCompleted ? 100 : (int) round(($completedSections / $totalSections) * 100);
+                
+                $moduleKeys = [
+                    1 => ['videoWatched', 'section1Read', 'section2Read', 'section3Read', 'elementMixerCompleted', 'quizPassed'],
+                    2 => ['videoWatched', 'soundDetectivePassed', 'networkMapViewed', 'rhythmGameCompleted', 'safeMeetingPlaceRead', 'quizPassed'],
+                    3 => ['videoWatched', 'section1Read', 'section2Read', 'section3Read', 'gameCompleted', 'quizPassed'],
+                    4 => ['videoWatched', 'section1Read', 'section2Read', 'section3Read', 'gameCompleted', 'quizPassed'],
+                    5 => ['videoWatched', 'section1Read', 'section2Read', 'section3Read', 'gameCompleted', 'quizPassed'],
+                ];
+                
+                if (isset($moduleKeys[$module->dayNumber])) {
+                    $keys = $moduleKeys[$module->dayNumber];
+                    $completedSections = 0;
+                    foreach ($keys as $key) {
+                        if (isset($sections[$key]) && ($sections[$key] === true || $sections[$key] === 'true' || $sections[$key] === 1 || $sections[$key] === '1')) {
+                            $completedSections++;
+                        }
+                    }
+                    $totalSections = count($keys);
+                    $sectionProgress = $isCompleted ? 100 : (int) round(($completedSections / $totalSections) * 100);
+                } else {
+                    $completedSections = count(array_filter($sections, function($v, $k) {
+                        return ($v === true || (is_numeric($v) && $v > 0) || (is_string($v) && strlen($v) > 0))
+                            && strpos($k, 'quiz') === false;
+                    }, ARRAY_FILTER_USE_BOTH));
+                    $totalSections = 6;
+                    $sectionProgress = $isCompleted ? 100 : (int) round(($completedSections / $totalSections) * 100);
+                }
             }
 
             // Adaptive Learning logic

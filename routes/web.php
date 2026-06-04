@@ -155,6 +155,11 @@ Route::get('/about', function () {
         return Inertia::render('Kids/HotOrNot');
     })->name('kids.hot_or_not');
 
+
+    Route::get('/kids/the-right-call', function () {
+        return Inertia::render('Kids/Games/RightCall');
+    })->name('kids.right_call');
+
     Route::get('/kids/hazard-blitz', function () {
         return Inertia::render('Kids/Games/HazardBlitz');
     })->name('kids.hazard_blitz');
