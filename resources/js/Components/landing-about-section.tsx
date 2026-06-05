@@ -316,13 +316,7 @@ function TeamCard({ member, index, reduceMotion, progress, totalCards = 9 }: { k
         0.95, 0.9, 0.85, 0.8, 0.75, 0.7, 0.6, 0.5
     ]);
     
-    // 3D Tilt for cylinder effect
-    const cardRotateY = useTransform(distance, inputRange, [
-        40, 35, 30, 25, 20, 15, 10, 5, 0,
-        -5, -10, -15, -20, -25, -30, -35, -40
-    ]);
 
-    const cardRotateX = useTransform(distance, [-2, -1, 0, 1, 2], [10, 5, 0, 5, 10]);
 
     // Avatar dynamic popping
     const avatarScale = useTransform(distance, [-2, -1, 0, 1, 2], [0.8, 0.9, 1.25, 0.9, 0.8]);
@@ -340,13 +334,11 @@ function TeamCard({ member, index, reduceMotion, progress, totalCards = 9 }: { k
         <motion.div
             style={reduceMotion ? {} : { 
                 y: cardY, 
-                rotateZ: cardRotateZ, 
-                rotateY: cardRotateY, 
-                rotateX: cardRotateX,
+                rotate: cardRotateZ, 
                 scale: cardScale, 
                 opacity: cardOpacity, 
                 transformOrigin: "bottom center",
-                transformStyle: "preserve-3d"
+                willChange: "transform, opacity"
             }}
             className="h-full w-full"
         >
@@ -374,11 +366,13 @@ function TeamCard({ member, index, reduceMotion, progress, totalCards = 9 }: { k
                 {/* Decorative circles */}
                 <motion.div
                     className="absolute -bottom-4 -right-4 w-24 h-24 bg-white/10 rounded-full"
+                    style={{ willChange: "transform" }}
                     animate={reduceMotion ? undefined : { scale: [1, 1.1, 1] }}
                     transition={reduceMotion ? undefined : { duration: 3, repeat: Infinity }}
                 />
                 <motion.div
                     className="absolute top-4 left-4 w-12 h-12 bg-white/10 rounded-full"
+                    style={{ willChange: "transform" }}
                     animate={reduceMotion ? undefined : { scale: [1, 1.2, 1] }}
                     transition={reduceMotion ? undefined : { duration: 2.5, repeat: Infinity, delay: 0.5 }}
                 />
@@ -387,7 +381,7 @@ function TeamCard({ member, index, reduceMotion, progress, totalCards = 9 }: { k
             {/* Profile Image - Now Animated on Scroll */}
             <div className="relative -mt-16 flex justify-center perspective-[1000px]">
                 <motion.div 
-                    style={reduceMotion ? {} : { scale: avatarScale, y: avatarY }}
+                    style={reduceMotion ? {} : { scale: avatarScale, y: avatarY, willChange: "transform" }}
                     className="relative p-1.5 bg-white dark:bg-slate-800 rounded-full shadow-xl"
                 >
                     <div className={`absolute inset-0 bg-slate-400 rounded-full opacity-50 group-hover:opacity-75 transition-opacity`} />
@@ -579,21 +573,13 @@ export function LandingAboutSection({ carouselNode }: { carouselNode?: React.Rea
     // 85% to 100%: hold last card centered before unlocking the page
     const carouselProgress = useTransform(horizontalScrollProgress, [0.05, 0.85], [0, 1]);
     
-    // Overdamped spring for buttery smooth, inertial sliding WITHOUT any bounce
-    const smoothProgress = useSpring(carouselProgress, {
-        stiffness: 60,
-        damping: 20,
-        mass: 0.8,
-        restDelta: 0.0001
-    });
-    
-    // Transform vertical progress into exact negative pixel translation
-    const teamX = useTransform(smoothProgress, [0, 1], [0, -carouselWidth]);
+    // Direct transform without spring physics for 60fps performance
+    const teamX = useTransform(carouselProgress, [0, 1], [0, -carouselWidth]);
 
     return (
         <div className="space-y-10 sm:space-y-20 mt-10 sm:mt-20">
             {/* Meet Berong Section */}
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full md:snap-center scroll-mt-24">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full scroll-mt-24">
                 <motion.section
                     ref={heroRef}
                     className="relative bg-gradient-to-br from-white to-slate-50 dark:from-slate-900 dark:to-[#0B1120] py-12 sm:py-20 overflow-hidden rounded-[2rem] sm:rounded-[2.5rem] border border-slate-200 dark:border-slate-800/80 shadow-2xl mx-2 sm:mx-0 transition-colors duration-500"
@@ -755,7 +741,7 @@ export function LandingAboutSection({ carouselNode }: { carouselNode?: React.Rea
             </div>
 
             {/* Platform Overview Section */}
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full md:snap-center scroll-mt-24">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full scroll-mt-24">
                 <motion.section
                     ref={platformRef}
                     className="py-10 sm:py-14 bg-red-600 dark:bg-[#0B1120] text-white relative overflow-hidden rounded-[2rem] sm:rounded-[2.5rem] shadow-sm dark:shadow-2xl border border-transparent dark:border-slate-800/80 mx-2 sm:mx-0 transition-colors duration-500"
@@ -804,7 +790,7 @@ export function LandingAboutSection({ carouselNode }: { carouselNode?: React.Rea
             )}
 
             {/* Partnership Section */}
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full md:snap-center scroll-mt-24">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full scroll-mt-24">
                 <motion.section
                     ref={partnershipRef}
                     className="py-10 sm:py-14 bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-white relative overflow-hidden rounded-[2.5rem] shadow-xl dark:shadow-md border border-slate-200 dark:border-transparent transition-colors duration-500"
@@ -971,7 +957,7 @@ export function LandingAboutSection({ carouselNode }: { carouselNode?: React.Rea
                         >
                             <motion.div 
                                 ref={carouselRef}
-                                style={{ x: teamX }}
+                                style={{ x: teamX, willChange: "transform" }}
                                 className="flex gap-6 sm:gap-8 px-[calc(50vw_-_150px)] sm:px-[calc(50vw_-_190px)] py-10 w-max perspective-[1000px]"
                             >
                                 {teamMembers.map((member, index) => (
@@ -980,7 +966,7 @@ export function LandingAboutSection({ carouselNode }: { carouselNode?: React.Rea
                                             member={member} 
                                             index={index} 
                                             reduceMotion={reduceMotion}
-                                            progress={smoothProgress}
+                                            progress={carouselProgress}
                                             totalCards={teamMembers.length}
                                         />
                                     </div>

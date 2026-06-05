@@ -78,6 +78,15 @@ class ContentController extends Controller
     }
 
     /**
+     * GET /api/content/manuals
+     */
+    public function manuals()
+    {
+        $manuals = \App\Models\FireCodeSection::orderBy('category')->orderBy('sectionNum')->orderBy('id')->get();
+        return response()->json($manuals);
+    }
+
+    /**
      * Default resource methods for admin CRUD
      */
     public function index() { return $this->blogs(request()); }

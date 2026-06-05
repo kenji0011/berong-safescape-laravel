@@ -385,15 +385,6 @@ const ModuleOnePage = ({ initialProgress }: { initialProgress?: any }) => {
     }, 100)
   }
 
-  const handleQuizRetake = () => {
-    setQuizAnswers([null, null, null, null, null])
-    setQuizSubmitted(false)
-    setQuizPassed(false)
-    setQuizStarted(false)
-    setLoadedScore(null)
-    setReviewMode(false)
-  }
-
   // ─────────────────────────────────────────────
   return (
     <div className="min-h-screen bg-white dark:bg-slate-950 bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] dark:bg-[radial-gradient(#1e293b_1px,transparent_1px)] [background-size:16px_16px] font-sans flex flex-col transition-colors duration-500">
@@ -453,10 +444,7 @@ const ModuleOnePage = ({ initialProgress }: { initialProgress?: any }) => {
           moduleLoading ? "opacity-0" : "opacity-100"
         )}>
 
-          <div className={cn(
-            "space-y-10 sm:space-y-14 md:space-y-20 transition-all duration-500",
-            quizStarted && !quizSubmitted ? "blur-[8px] grayscale-[40%] pointer-events-none select-none opacity-30" : ""
-          )}>
+          <div className="space-y-10 sm:space-y-14 md:space-y-20 transition-all duration-500">
 
           {/* ── Intro ── */}
           <div className="text-center max-w-3xl mx-auto space-y-3 sm:space-y-4">
@@ -1071,7 +1059,7 @@ const ModuleOnePage = ({ initialProgress }: { initialProgress?: any }) => {
                 {!quizStarted ? (
                   <div className="text-center p-8 sm:p-12 bg-white dark:bg-slate-900 rounded-3xl border-[3px] border-yellow-300 shadow-sm transition-colors animate-fade-in">
                     <h3 className="text-2xl sm:text-3xl font-black mb-4 text-slate-800 dark:text-white">Ready to test your knowledge?</h3>
-                    <p className="mb-8 text-slate-600 dark:text-slate-400 font-bold text-sm sm:text-base">Note: The module content will be hidden during the quiz to prevent cheating. Once you start, you cannot back read the module!</p>
+                    <p className="mb-8 text-slate-600 dark:text-slate-400 font-bold text-sm sm:text-base">Review the module content above and start when you're ready!</p>
                     <button onClick={() => setQuizStarted(true)} className="font-black px-8 sm:px-10 py-3 sm:py-4 rounded-full bg-yellow-400 text-red-600 shadow-[0_4px_0_#b45309] hover:-translate-y-0.5 active:translate-y-1 active:shadow-none transition-all uppercase tracking-wide text-sm sm:text-base">
                       Start Quiz
                     </button>
@@ -1144,13 +1132,7 @@ const ModuleOnePage = ({ initialProgress }: { initialProgress?: any }) => {
                       <p className="text-lg sm:text-xl font-black text-red-500">
                         You scored {quizScore}/5. You need 4/5 to pass.
                       </p>
-                      <button
-                        onClick={handleQuizRetake}
-                        className="bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-black px-8 py-3 rounded-full border-[3px] border-slate-200 dark:border-slate-700 shadow-[0_4px_0_#cbd5e1] dark:shadow-[0_4px_0_#0f172a] hover:-translate-y-0.5 active:translate-y-1 active:shadow-none transition-all uppercase tracking-wide text-sm flex items-center gap-2 mx-auto"
-                      >
-                        <RotateCcwIcon className="h-4 w-4" />
-                        Retake Quiz
-                      </button>
+
                     </div>
                   )}
                 </div>

@@ -116,7 +116,7 @@ function AnimatedFeaturedCard({
         <img
           src={card.imageUrl}
           alt={card.title}
-          fetchpriority="high"
+          fetchPriority="high"
           className={`absolute inset-0 w-full h-full object-cover transition-transform duration-1000 ease-out ${isRestricted ? '' : 'group-hover/card:scale-110'}`}
         />
         {/* Sleek Gradient Overlay */}
@@ -273,39 +273,31 @@ export function FeaturedCards({ serverUser }: { serverUser?: ServerUser | null }
     return <FeaturedCardsSkeleton />;
   }
 
+  // Helper to determine permissions from comma-separated role string
+  const getPermissionsFromRoleString = (roleStr: string) => {
+    const roles = (roleStr ?? "guest").split(",");
+    const isAdmin = roles.includes("admin");
+    const isProfessional = roles.includes("professional") || isAdmin;
+    return {
+      accessKids: roles.includes("kid") || isProfessional,
+      accessAdult: roles.includes("adult") || isProfessional,
+      accessProfessional: isProfessional,
+      isAdmin: isAdmin,
+    };
+  };
+
   // Use client user if available, otherwise reconstruct from serverUser
   const user = clientUser || (serverUser ? {
     ...serverUser,
-    permissions: serverUser.role === 'admin'
-      ? { accessKids: true, accessAdult: true, accessProfessional: true, isAdmin: true }
-      : serverUser.role === 'professional'
-        ? { accessKids: true, accessAdult: true, accessProfessional: true, isAdmin: false }
-        : serverUser.role === 'adult'
-          ? { accessKids: false, accessAdult: true, accessProfessional: false, isAdmin: false }
-          : serverUser.role === 'kid'
-            ? { accessKids: true, accessAdult: false, accessProfessional: false, isAdmin: false }
-            : { accessKids: false, accessAdult: false, accessProfessional: false, isAdmin: false }
+    permissions: getPermissionsFromRoleString(serverUser.role)
   } as any : null);
 
   // Determine if a card is restricted (greyed out) for the current user
   const isCardRestricted = (card: FeaturedCardItem): boolean => {
     // Not logged in or admin — all cards accessible
-    if (!user || user.role === 'admin') return false;
+    if (!user || user.permissions?.isAdmin) return false;
 
-    if (user.role === 'kid') {
-      // Kids can only access Kids
-      return card.requiredPermission !== 'accessKids';
-    }
-    if (user.role === 'adult') {
-      // Adults can only access Adult
-      return card.requiredPermission !== 'accessAdult';
-    }
-    if (user.role === 'professional') {
-      // Professionals can access Adult + Professional
-      return card.requiredPermission === 'accessKids';
-    }
-
-    return false;
+    return !user.permissions?.[card.requiredPermission];
   };
 
   // Always show all 3 cards

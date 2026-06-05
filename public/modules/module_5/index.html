@@ -962,7 +962,7 @@
                 <p class="ss-completion-desc" id="result-desc"></p>
 
                 <div class="ss-completion-actions">
-                    <button id="btn-retake" onclick="loadExam()" class="hidden ss-btn-premium ss-btn-outline">Retake Exam</button>
+
                     <button id="btn-view-cert" onclick="showCertificate()" class="hidden ss-btn-premium ss-btn-emerald">
                         View Certificate <i class="fa-solid fa-award"></i>
                     </button>
@@ -1607,7 +1607,7 @@
             startDiv.className = "text-center p-8 sm:p-12 bg-white dark:bg-slate-900 rounded-3xl border-[3px] border-yellow-300 shadow-sm transition-colors animate-fade-in";
             startDiv.innerHTML = `
                 <h3 class="text-2xl sm:text-3xl font-black mb-4 text-slate-800 dark:text-white">Ready to take the final exam?</h3>
-                <p class="mb-8 text-slate-600 dark:text-slate-400 font-bold text-sm sm:text-base">Note: The module content will be hidden during the exam to prevent cheating. Once you start, you cannot back read the module!</p>
+                <p class="mb-8 text-slate-600 dark:text-slate-400 font-bold text-sm sm:text-base">Review the module content above and start when you're ready!</p>
                 <button onclick="startExamNow()" class="font-black px-8 sm:px-10 py-3 sm:py-4 rounded-full bg-yellow-400 text-red-600 shadow-[0_4px_0_#b45309] hover:-translate-y-0.5 active:translate-y-1 active:shadow-none transition-all uppercase tracking-wide text-sm sm:text-base">
                     Start Exam
                 </button>
@@ -1633,7 +1633,6 @@
                 document.getElementById('result-desc').innerText = "You have proven yourself as a Fire Safety Hero!";
                 
                 document.getElementById('btn-view-cert').classList.remove('hidden');
-                document.getElementById('btn-retake').classList.add('hidden');
                 
                 const fe = document.getElementById('final-exam');
                 fe.className = "fade-in ss-section bg-white dark:bg-slate-900 rounded-[2rem] p-8 sm:p-14 text-center border-[4px] border-slate-200 dark:border-slate-800 shadow-sm mt-12 sm:mt-24 transition-colors duration-500";
@@ -1645,7 +1644,6 @@
             document.getElementById('exam-result').classList.add('hidden');
             document.getElementById('exam-submit').classList.remove('hidden');
             document.getElementById('final-exam-header').classList.remove('hidden');
-            document.getElementById('btn-retake').classList.add('hidden');
             document.getElementById('btn-view-cert').classList.add('hidden');
 
             finalQuestions.forEach((item, idx) => {
@@ -1778,7 +1776,6 @@
                 title.className = "ss-completion-title !text-orange-600";
                 showScoreBadge(score, 15);
                 desc.innerText = `You scored ${score}/15. Review the modules and try again!`;
-                document.getElementById('btn-retake').classList.remove('hidden');
             }
         }
 

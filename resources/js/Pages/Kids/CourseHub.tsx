@@ -407,7 +407,7 @@ const CourseHubPage = ({ initialModules }: CourseHubProps) => {
                         {!module.isLocked && (
                           <div className="mb-4">
                             <div className="flex justify-between items-center text-[10px] font-black uppercase mb-1.5 text-slate-500 dark:text-slate-400">
-                              <span>{module.isCompleted ? "Mastered" : "Training Progress"}</span>
+                              <span>{module.isCompleted ? "Progress" : "Training Progress"}</span>
                               <span className={cn(module.isCompleted ? "text-emerald-600 dark:text-emerald-400" : "text-blue-600 dark:text-blue-400")}>
                                 {module.isCompleted ? "100%" : `${module.progress}%`}
                               </span>

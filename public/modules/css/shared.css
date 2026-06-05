@@ -874,14 +874,3 @@ html.dyslexia-mode * {
     letter-spacing: 0.05em !important;
     word-spacing: 0.1em !important;
 }
-
-/* ===== ANTI-CHEATING BLUR ===== */
-body.quiz-active section:not(#final-quiz):not(#section-check):not(#final-exam),
-body.quiz-active .ss-nav,
-body.quiz-active footer {
-    filter: blur(8px) grayscale(40%);
-    pointer-events: none;
-    opacity: 0.3;
-    transition: all 0.5s ease;
-    user-select: none;
-}

@@ -73,7 +73,7 @@ const KidsDashboardPage = ({ modules, progress }: KidsPageProps) => {
     }
   }
 
-  const buildContent = (completedIds: number[], shouldPulse: boolean): ContentCardData[] => [
+  const buildContent = (completedIds: number[], badges: any[], shouldPulse: boolean): ContentCardData[] => [
     {
       id: "safescape-course",
       title: "SafeScape Fire Safety Course",
@@ -109,17 +109,6 @@ const KidsDashboardPage = ({ modules, progress }: KidsPageProps) => {
       unlockRequirement: "Complete 5 Modules"
     },
     {
-      id: "escape-room-game",
-      title: "The Right Call",
-      description: "Answer emergency calls and dispatch the right team! Do you have what it takes to be a dispatching hero?",
-      type: "game",
-      imageUrl: "/therightcall_kids.png",
-      href: "/kids/the-right-call",
-      isLocked: completedIds.length < 5,
-      category: "games",
-      unlockRequirement: "Complete 5 Modules"
-    },
-    {
       id: "video-portal",
       title: "Fire Safety Videos",
       description: "Watch exciting videos and learn how to be a Fire Safety Hero! New videos added every week.",
@@ -128,6 +117,17 @@ const KidsDashboardPage = ({ modules, progress }: KidsPageProps) => {
       href: "/kids/videos",
       duration: "Full Library",
       category: "videos"
+    },
+    {
+      id: "escape-room-game",
+      title: "The Right Call",
+      description: "Answer emergency calls and dispatch the right team! Do you have what it takes to be a dispatching hero?",
+      type: "game",
+      imageUrl: "/therightcall_kids.png",
+      href: "/kids/the-right-call",
+      isLocked: !badges.some(b => b.badge_id === 'intel_analyst'),
+      category: "games",
+      unlockRequirement: "Watch all Fire Safety Videos"
     },
     {
       id: "activity-portal",
@@ -143,13 +143,13 @@ const KidsDashboardPage = ({ modules, progress }: KidsPageProps) => {
   ]
 
   const allContent = useMemo(() => {
-    return buildContent(progress?.completedModules || [], pulseFirstModule)
+    return buildContent(progress?.completedModules || [], progress?.badges || [], pulseFirstModule)
   }, [progress, pulseFirstModule])
 
   const handleContentClick = (content: ContentCardData) => {
     if (content.isLocked) {
       toast.error("Access Denied!", {
-        description: `You must complete all 5 modules of the SafeScape Fire Safety Course to unlock ${content.title}!`,
+        description: `You must ${content.unlockRequirement?.toLowerCase() || 'complete the requirements'} to unlock ${content.title}!`,
         duration: 5000,
       })
       return

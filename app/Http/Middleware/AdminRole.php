@@ -13,7 +13,14 @@ class AdminRole
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if (! $request->user() || $request->user()->role !== 'admin') {
+        $user = $request->user();
+        if (!$user) {
+            abort(403, 'Unauthorized action. Admin role required.');
+        }
+
+        $userRoles = array_filter(array_map('trim', explode(',', $user->role ?? 'guest')));
+
+        if (!in_array('admin', $userRoles)) {
             abort(403, 'Unauthorized action. Admin role required.');
         }
 

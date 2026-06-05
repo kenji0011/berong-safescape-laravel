@@ -147,6 +147,19 @@ export function Chatbot() {
   const speakText = async (text: string, messageId: string | null = null, force: boolean = false) => {
     if (!readAloudRef.current && !force) return
     
+    if (isTTSLoading) return;
+
+    // If clicking the button of the currently speaking message, just stop it and return
+    if (messageId && speakingMessageId === messageId) {
+      window.speechSynthesis.cancel();
+      if (currentAudioRef.current) {
+        currentAudioRef.current.pause();
+        currentAudioRef.current.currentTime = 0;
+      }
+      setSpeakingMessageId(null);
+      return;
+    }
+
     // Stop any current native speech or audio
     window.speechSynthesis.cancel() 
     if (currentAudioRef.current) {
@@ -844,14 +857,21 @@ export function Chatbot() {
                           </div>
                           <button
                             onClick={() => speakText(message.text, message.id, true)}
-                            className={`absolute -bottom-2 -right-2 h-8 w-8 flex items-center justify-center rounded-full border-2 shadow-md transition-all hover:scale-110 active:scale-90 z-10 ${
+                            disabled={isTTSLoading}
+                            className={`absolute -bottom-2 -right-2 h-8 w-8 flex items-center justify-center rounded-full border-2 shadow-md transition-all z-10 ${
+                              isTTSLoading ? 'cursor-not-allowed opacity-70' : 'hover:scale-110 active:scale-90'
+                            } ${
                               speakingMessageId === message.id 
                                 ? `bg-orange-500 border-orange-200 text-white ${isTTSLoading ? 'animate-pulse' : ''}` 
                                 : "bg-slate-500 dark:bg-slate-700 border-white dark:border-slate-900 text-white"
                             }`}
-                            title="Read aloud"
+                            title={speakingMessageId === message.id && !isTTSLoading ? "Stop reading" : "Read aloud"}
                           >
-                            <Volume2 className="h-4 w-4" strokeWidth={2.5} />
+                            {speakingMessageId === message.id && !isTTSLoading ? (
+                              <Square className="h-3 w-3 fill-current" />
+                            ) : (
+                              <Volume2 className="h-4 w-4" strokeWidth={2.5} />
+                            )}
                           </button>
                         </>
                       ) : (

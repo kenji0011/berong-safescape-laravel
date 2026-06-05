@@ -445,7 +445,7 @@ const ModuleFivePage = ({ moduleNum, initialProgress }: { moduleNum: number; ini
 
         <iframe 
           ref={iframeRef}
-          src={`/modules/module_${currentModule}/index.html?v=4`}
+          src={`/modules/module_${currentModule}/index.html?v=5`}
           className={cn(
             "w-full border-none m-0 p-0 transition-opacity duration-700",
             iframeLoading ? "opacity-0" : "opacity-100"

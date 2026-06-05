@@ -53,7 +53,7 @@ class KidsController extends Controller
                     2 => ['videoWatched', 'soundDetectivePassed', 'networkMapViewed', 'rhythmGameCompleted', 'safeMeetingPlaceRead', 'quizPassed'],
                     3 => ['videoWatched', 'section1Read', 'section2Read', 'section3Read', 'gameCompleted', 'quizPassed'],
                     4 => ['videoWatched', 'section1Read', 'section2Read', 'section3Read', 'gameCompleted', 'quizPassed'],
-                    5 => ['videoWatched', 'section1Read', 'section2Read', 'section3Read', 'gameCompleted', 'quizPassed'],
+                    5 => ['videoWatched', 'sdrCompleted', 'sdrTrapCompleted', 'hazardHuntCompleted', 'finalExamPassed'],
                 ];
                 
                 if (isset($moduleKeys[$module->dayNumber])) {

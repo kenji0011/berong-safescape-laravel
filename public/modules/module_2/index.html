@@ -612,7 +612,7 @@
                 <p class="ss-completion-desc" id="result-desc"></p>
 
                 <div class="ss-completion-actions">
-                    <button id="btn-retake" onclick="renderQuiz()" class="hidden ss-btn-premium ss-btn-outline">Retake Quiz</button>
+
                     <button id="btn-review" onclick="toggleReview()" class="hidden ss-btn-premium ss-btn-outline">Review Answers</button>
                     <a href="../module_3/index.html" id="btn-next-module" class="hidden ss-btn-premium ss-btn-gold">
                         Go to Module 3 <i class="fa-solid fa-arrow-right"></i>
@@ -1118,9 +1118,12 @@
             const container = document.getElementById('quiz-container');
             
             if (localState.quizPassed) {
-                document.getElementById('quiz-result').classList.remove('hidden');
-                document.getElementById('btn-retake').classList.add('hidden');
-                document.getElementById('btn-review').classList.remove('hidden');
+                const quizResult = document.getElementById('quiz-result');
+                if (quizResult) quizResult.classList.remove('hidden');
+                const btnReview = document.getElementById('btn-review');
+                if (btnReview) btnReview.classList.remove('hidden');
+                const btnNext = document.getElementById('btn-next-module');
+                if (btnNext) btnNext.classList.remove('hidden');
                 
                 const score = localState.quizScore || 0;
                 const icon = document.getElementById('result-icon');
@@ -1191,9 +1194,10 @@
                 return;
             }
 
-            document.getElementById('quiz-result').classList.add('hidden');
-            document.getElementById('btn-retake').classList.add('hidden');
-            document.getElementById('btn-next-module').classList.add('hidden');
+            const quizResult = document.getElementById('quiz-result');
+            if (quizResult) quizResult.classList.add('hidden');
+            const btnNext = document.getElementById('btn-next-module');
+            if (btnNext) btnNext.classList.add('hidden');
             container.innerHTML = '';
             
             // Remove collapse classes and show normally
@@ -1204,7 +1208,7 @@
             startDiv.className = "text-center p-8 sm:p-12 bg-white dark:bg-slate-900 rounded-3xl border-[3px] border-yellow-300 shadow-sm transition-colors animate-fade-in";
             startDiv.innerHTML = `
                 <h3 class="text-2xl sm:text-3xl font-black mb-4 text-slate-800 dark:text-white">Ready to test your knowledge?</h3>
-                <p class="mb-8 text-slate-600 dark:text-slate-400 font-bold text-sm sm:text-base">Note: The module content will be hidden during the quiz to prevent cheating. Once you start, you cannot back read the module!</p>
+                <p class="mb-8 text-slate-600 dark:text-slate-400 font-bold text-sm sm:text-base">Review the module content above and start when you're ready!</p>
                 <button onclick="startQuizNow()" class="font-black px-8 sm:px-10 py-3 sm:py-4 rounded-full bg-yellow-400 text-red-600 shadow-[0_4px_0_#b45309] hover:-translate-y-0.5 active:translate-y-1 active:shadow-none transition-all uppercase tracking-wide text-sm sm:text-base">
                     Start Quiz
                 </button>
@@ -1341,7 +1345,6 @@
             const icon = document.getElementById('result-icon');
             const title = document.getElementById('result-title');
             const desc = document.getElementById('result-desc');
-            const retakeBtn = document.getElementById('btn-retake');
             const nextBtn = document.getElementById('btn-next-module');
 
             resultDiv.classList.remove('hidden');
@@ -1352,14 +1355,15 @@
             document.getElementById('quiz-container').classList.add('hidden');
             document.getElementById('final-quiz').querySelector('.text-center').classList.add('hidden');
             const fq = document.getElementById('final-quiz');
-            fq.className = "fade-in ss-section bg-white dark:bg-slate-900 rounded-[2rem] p-8 sm:p-14 text-center border-[4px] border-slate-200 dark:border-slate-800/80 shadow-sm transition-all duration-500";
+            fq.className = "fade-in ss-section bg-white dark:bg-slate-900 rounded-[2rem] p-8 sm:p-14 text-center border-[4px] border-slate-200 dark:border-slate-800 shadow-sm transition-all duration-500";
 
             showScoreBadge(correctCount, 5);
 
             // Always show next module and review, never show retake
-            nextBtn.classList.remove('hidden');
-            document.getElementById('btn-review').classList.remove('hidden');
-            retakeBtn.classList.add('hidden');
+            const btnNext = document.getElementById('btn-next-module');
+            if (btnNext) btnNext.classList.remove('hidden');
+            const btnReview = document.getElementById('btn-review');
+            if (btnReview) btnReview.classList.remove('hidden');
 
             if (correctCount === 5) {
                 icon.innerText = "🏆";

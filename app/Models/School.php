@@ -53,13 +53,13 @@ class School extends Model
             ->first();
 
         $this->totalStudents = (int) ($stats->total_students ?? 0);
-        $this->averagePreTestScore = (float) ($stats->avg_pre_test ?? 0);
-        $this->averagePostTestScore = (float) ($stats->avg_post_test ?? 0);
+        $this->averagePreTestScore = round((float) ($stats->avg_pre_test ?? 0), 2);
+        $this->averagePostTestScore = round((float) ($stats->avg_post_test ?? 0), 2);
 
         // 2. Calculate completion rate (users with at least 1 completed module)
         if ($this->totalStudents > 0) {
             $completedUsers = \App\Models\User::where('school_id', $this->id)
-                ->whereHas('progress', function($q) {
+                ->whereHas('safeScapeProgress', function($q) {
                     $q->where('completed', true);
                 })->count();
             $this->averageCompletionRate = round(($completedUsers / $this->totalStudents) * 100, 1);
@@ -68,9 +68,9 @@ class School extends Model
         }
 
         // 3. Calculate total modules completed across the school
-        $this->totalModulesCompleted = \App\Models\UserProgress::join('users', 'user_progress.userId', '=', 'users.id')
+        $this->totalModulesCompleted = \App\Models\SafeScapeProgress::join('users', 'safescape_progress.userId', '=', 'users.id')
             ->where('users.school_id', $this->id)
-            ->where('user_progress.completed', true)
+            ->where('safescape_progress.completed', true)
             ->count();
 
         $this->save();

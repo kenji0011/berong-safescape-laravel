@@ -35,13 +35,7 @@ export default function Welcome({ carouselImages }: { carouselImages?: any[] }) 
         {carouselImages && carouselImages.length > 0 && (
           <link rel="preload" as="image" href={carouselImages[0].imageUrl} fetchPriority="high" />
         )}
-        <style>{`
-          @media (min-width: 768px) {
-            html {
-              scroll-snap-type: y proximity;
-            }
-          }
-        `}</style>
+
       </Head>
       <div className="min-h-screen flex flex-col relative">
         <Navigation />
@@ -63,23 +57,28 @@ export default function Welcome({ carouselImages }: { carouselImages?: any[] }) 
         )}
 
         <main className="flex-grow pt-[80px] sm:pt-[96px] pb-6 sm:pb-8 w-full relative z-10 overflow-x-clip">
+          {/* Hero Carousel - Topmost Section */}
+          <section className="mb-20 sm:mb-32 w-full">
+            <HeroCarousel initialImages={carouselImages} />
+          </section>
+
           {/* Cinematic Hero Section */}
-          <section className="mb-20 sm:mb-32 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full md:snap-center">
+          <section className="mb-20 sm:mb-32 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
             <HeroSection />
           </section>
 
           {/* Choose Your Path (Featured Cards) */}
-          <section id="featured-section" className="mb-20 sm:mb-32 scroll-mt-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full md:snap-center">
+          <section id="featured-section" className="mb-20 sm:mb-32 scroll-mt-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
             <FeaturedCards serverUser={mappedUser} />
           </section>
 
           {/* About SafeScape Sections */}
           <section id="about-section" className="mb-20 sm:mb-32 scroll-mt-24 w-full">
-            <LandingAboutSection carouselNode={<HeroCarousel initialImages={carouselImages} />} />
+            <LandingAboutSection />
           </section>
 
           {/* Assessment Section */}
-          <section className="mb-20 sm:mb-32 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full md:snap-center">
+          <section className="mb-20 sm:mb-32 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
             <LandingAssessmentSection serverUser={mappedUser} />
           </section>
         </main>

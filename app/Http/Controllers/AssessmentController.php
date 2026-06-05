@@ -145,14 +145,14 @@ class AssessmentController extends Controller
     {
         /** @var User $user */
         $user = Auth::user();
-        
-        $isAdult = $user->age >= 18 && $user->role !== 'kid';
+        $userRoles = array_filter(array_map('trim', explode(',', $user->role ?? 'guest')));
+        $isAdult = $user->age >= 18 && !in_array('kid', $userRoles);
         
         // Count how many modules the kid completed
-        $modulesCompleted = \App\Models\UserProgress::where('userId', $user->id)->where('completed', true)->count();
+        $modulesCompleted = \App\Models\SafeScapeProgress::where('userId', $user->id)->where('completed', true)->count();
         $engagementPoints = $user->engagementPoints ?? 0;
         
-        $minModules = 3;
+        $minModules = 5;
         $minPoints = 50; 
         
         $alreadyCompleted = !is_null($user->postTestScore);

@@ -46,8 +46,7 @@ export default function Assessment({ type }: AssessmentProps) {
         }
         return false
     })
-    const [showRefreshWarning, setShowRefreshWarning] = useState(false)
-    const [showEscapeWarning, setShowEscapeWarning] = useState(false)
+
     const answersRef = useRef<Record<number, number>>({})
 
     const isPreTest = type === 'preTest'
@@ -120,54 +119,7 @@ export default function Assessment({ type }: AssessmentProps) {
         }
     }, [isTestStarted])
 
-    // Intercept F5 / Refresh keys and Escape key to block refresh/exiting and keep fullscreen active
-    useEffect(() => {
-        const handleKeyDown = (e: KeyboardEvent) => {
-            if (!isTestStarted) return
 
-            if (
-                e.key === "F5" || 
-                (e.ctrlKey && (e.key === "r" || e.key === "R")) || 
-                (e.metaKey && (e.key === "r" || e.key === "R"))
-            ) {
-                e.preventDefault()
-                setShowRefreshWarning(true)
-            }
-
-            if (e.key === "Escape" && type === "postTest") {
-                e.preventDefault()
-                setShowEscapeWarning(true)
-                // Force fullscreen back if exited
-                if (!document.fullscreenElement) {
-                    document.documentElement.requestFullscreen().catch(() => {})
-                }
-            }
-        }
-
-        window.addEventListener("keydown", handleKeyDown)
-        return () => {
-            window.removeEventListener("keydown", handleKeyDown)
-        }
-    }, [isTestStarted, type])
-
-    // Intercept fullscreenchange to prevent escaping fullscreen during Post-Test
-    useEffect(() => {
-        const handleFullscreenChange = () => {
-            if (isTestStarted && type === "postTest" && !document.fullscreenElement) {
-                setShowEscapeWarning(true)
-                // Instantly request fullscreen back
-                const docEl = document.documentElement
-                if (docEl.requestFullscreen) {
-                    docEl.requestFullscreen().catch(() => {})
-                }
-            }
-        }
-
-        document.addEventListener("fullscreenchange", handleFullscreenChange)
-        return () => {
-            document.removeEventListener("fullscreenchange", handleFullscreenChange)
-        }
-    }, [isTestStarted, type])
 
     // Embedded feedback state
     const [feedbackRating, setFeedbackRating] = useState(0)
@@ -524,64 +476,7 @@ export default function Assessment({ type }: AssessmentProps) {
                 </div>
             )}
             
-            {/* Custom F5 Refresh Warning Modal */}
-            {showRefreshWarning && (
-                <div className="fixed inset-0 z-[400] bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4">
-                    <div className="bg-white dark:bg-slate-900 border-[3px] sm:border-[4px] border-amber-500 rounded-[1.5rem] sm:rounded-[2rem] p-5 sm:p-8 max-w-md w-full text-center shadow-2xl space-y-4 sm:space-y-5 select-none my-auto">
-                        <div className="inline-flex h-12 w-12 sm:h-14 sm:w-14 items-center justify-center bg-amber-50 dark:bg-amber-950/30 rounded-xl sm:rounded-2xl border-2 border-amber-250 dark:border-amber-900/50">
-                            <span className="text-xl sm:text-2xl">⚠️</span>
-                        </div>
-                        
-                        <div className="space-y-1 sm:space-y-1.5">
-                            <h3 className="text-lg sm:text-2xl font-black text-slate-800 dark:text-white uppercase tracking-tight">
-                                Refresh Disabled
-                            </h3>
-                            <p className="text-[11px] sm:text-sm font-bold text-slate-500 dark:text-slate-400 leading-normal">
-                                Refreshing is disabled to protect your active assessment progress. Please complete your questions and submit.
-                            </p>
-                        </div>
 
-                        <Button
-                            onClick={() => setShowRefreshWarning(false)}
-                            className="w-full bg-amber-500 hover:bg-amber-400 text-white font-black py-2.5 sm:py-3.5 rounded-full border-[2.5px] sm:border-[3px] border-amber-600 shadow-[0_3px_0_#d97706] sm:shadow-[0_4px_0_#d97706] active:translate-y-[3px] sm:active:translate-y-[4px] active:shadow-none transition-all uppercase tracking-wider text-xs sm:text-sm"
-                        >
-                            Return to Test
-                        </Button>
-                    </div>
-                </div>
-            )}
-            
-            {/* Custom ESC Escape Warning Modal */}
-            {showEscapeWarning && (
-                <div className="fixed inset-0 z-[400] bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4">
-                    <div className="bg-white dark:bg-slate-900 border-[3px] sm:border-[4px] border-red-500 rounded-[1.5rem] sm:rounded-[2rem] p-5 sm:p-8 max-w-md w-full text-center shadow-2xl space-y-4 sm:space-y-5 select-none my-auto">
-                        <div className="inline-flex h-12 w-12 sm:h-14 sm:w-14 items-center justify-center bg-red-50 dark:bg-red-950/30 rounded-xl sm:rounded-2xl border-2 border-red-100 dark:border-red-900 mb-1 sm:mb-2">
-                            <span className="text-xl sm:text-2xl">🚫</span>
-                        </div>
-                        
-                        <div className="space-y-1 sm:space-y-1.5">
-                            <h3 className="text-lg sm:text-2xl font-black text-slate-800 dark:text-white uppercase tracking-tight">
-                                Fullscreen Required
-                            </h3>
-                            <p className="text-[11px] sm:text-sm font-bold text-slate-500 dark:text-slate-400 leading-normal">
-                                Exiting fullscreen mode is disabled during the Post-Test to keep you in focus. Please complete your questions inside fullscreen mode.
-                            </p>
-                        </div>
-
-                        <Button
-                            onClick={() => {
-                                setShowEscapeWarning(false)
-                                if (!document.fullscreenElement) {
-                                    document.documentElement.requestFullscreen().catch(() => {})
-                                }
-                            }}
-                            className="w-full bg-red-500 hover:bg-red-400 text-white font-black py-2.5 sm:py-3.5 rounded-full border-[2.5px] sm:border-[3px] border-red-600 shadow-[0_3px_0_#dc2626] sm:shadow-[0_4px_0_#dc2626] active:translate-y-[3px] sm:active:translate-y-[4px] active:shadow-none transition-all uppercase tracking-wider text-xs sm:text-sm"
-                        >
-                            Return to Fullscreen
-                        </Button>
-                    </div>
-                </div>
-            )}
             
             <div className="max-w-3xl mx-auto mb-4 md:mb-6 flex items-center gap-3 md:gap-4 w-full shrink-0">
                 {!isTestStarted && (
