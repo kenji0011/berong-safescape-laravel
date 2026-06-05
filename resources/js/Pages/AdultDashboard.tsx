@@ -32,18 +32,18 @@ const AdultPageClient = ({ initialBlogs }: AdultPageClientProps) => {
 
     const filteredBlogs = blogs.filter(
         (blog) =>
-            blog.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            blog.excerpt.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            blog.content.toLowerCase().includes(searchQuery.toLowerCase()),
+            (blog.title?.toLowerCase() || "").includes(searchQuery.toLowerCase()) ||
+            (blog.excerpt?.toLowerCase() || "").includes(searchQuery.toLowerCase()) ||
+            (blog.content?.toLowerCase() || "").includes(searchQuery.toLowerCase()),
     )
 
     return (
         <>
             <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4 sm:pt-6 pb-8 w-full relative min-h-screen">
-                {/* Background Overlay - Dynamic based on theme */}
+            {/* Background Overlay - Dynamic based on theme */}
+            <div className="fixed inset-0 z-0 pointer-events-none bg-slate-50/85 dark:bg-slate-950/90 transition-colors duration-500" />
 
-
-                <div className="relative z-10">
+            <div className="relative z-10">
                     {/* Welcome Banner */}
                     <AdultWelcomeBanner />
 
@@ -175,14 +175,14 @@ const AdultPageClient = ({ initialBlogs }: AdultPageClientProps) => {
                     </div>
 
                     {/* Search Bar */}
-                    <div className="mb-10 relative group">
-                        <Search className="absolute left-6 top-1/2 transform -translate-y-1/2 h-5 w-5 text-slate-400 dark:text-slate-500 group-focus-within:text-orange-500 transition-colors duration-300" />
+                    <div className="mb-10 relative group max-w-md w-full">
+                        <Search className="absolute left-5 top-1/2 transform -translate-y-1/2 h-5 w-5 text-slate-400 dark:text-slate-500 group-focus-within:text-orange-500 transition-colors duration-300" />
                         <input
                             type="text"
                             placeholder="Search fire safety articles..."
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
-                            className="w-full pl-14 py-6 rounded-full border-[3px] border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 bg-white dark:bg-slate-900 shadow-[0_4px_0_#cbd5e1] dark:shadow-[0_4px_0_#0f172a] focus:outline-none focus:border-orange-500 focus:ring-4 focus:ring-orange-500/20 text-base text-slate-800 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 transition-all duration-300"
+                            className="w-full pl-12 py-3.5 rounded-full border-[3px] border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 bg-white dark:bg-slate-900 shadow-[0_4px_0_#cbd5e1] dark:shadow-[0_4px_0_#0f172a] focus:outline-none focus:border-orange-500 focus:ring-4 focus:ring-orange-500/20 text-sm text-slate-800 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 transition-all duration-300"
                         />
                     </div>
 
@@ -191,7 +191,7 @@ const AdultPageClient = ({ initialBlogs }: AdultPageClientProps) => {
                     <h2 className="text-2xl font-bold mb-6 text-foreground">Fire Safety Articles</h2>
                     <Deferred data="initialBlogs" fallback={<AdultDashboardSkeleton />}>
                         {filteredBlogs.length === 0 ? (
-                            <div className="relative overflow-hidden bg-white/60 dark:bg-slate-800/60 backdrop-blur-md border-[4px] border-dashed border-slate-300 dark:border-slate-700 rounded-[2rem] p-12 flex flex-col items-center justify-center text-center shadow-sm transition-all duration-300">
+                            <div className="relative overflow-hidden bg-white dark:bg-slate-800 border-[4px] border-dashed border-slate-300 dark:border-slate-700 rounded-[2rem] p-12 flex flex-col items-center justify-center text-center shadow-sm transition-all duration-300">
                                 <div className="absolute top-0 right-0 w-64 h-64 bg-red-100 dark:bg-red-900/20 rounded-full blur-3xl opacity-50 -z-10 transform translate-x-1/2 -translate-y-1/2 transition-colors"></div>
                                 <div className="absolute bottom-0 left-0 w-64 h-64 bg-blue-100 dark:bg-blue-900/20 rounded-full blur-3xl opacity-50 -z-10 transform -translate-x-1/2 translate-y-1/2 transition-colors"></div>
                                 

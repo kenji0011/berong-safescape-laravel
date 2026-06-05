@@ -630,6 +630,11 @@ function AdminDashboard({
       return
     }
 
+    if (!newFireCode.filename.toLowerCase().endsWith(".pdf")) {
+      setError("Please specify a PDF file only (filename must end in .pdf)")
+      return
+    }
+
     openConfirmationDialog(
       "Add Manual / Fire Code",
       "Are you sure you want to add this manual or fire code?",

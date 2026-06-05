@@ -584,7 +584,7 @@ class AdminController extends Controller
     public function uploadManual(Request $request)
     {
         $request->validate([
-            'file' => 'required|file|mimes:pdf,doc,docx|max:102400', // 100MB max
+            'file' => 'required|file|mimes:pdf|max:102400', // 100MB max
         ]);
 
         if ($request->hasFile('file')) {
@@ -617,7 +617,7 @@ class AdminController extends Controller
             'sectionNum' => 'nullable|string|max:100',
             'content' => 'nullable|string',
             'description' => 'nullable|string',
-            'filename' => 'nullable|string|max:255',
+            'filename' => ['nullable', 'string', 'max:255', 'regex:/\.pdf$/i'],
             'parentSectionId' => 'nullable|integer',
         ]);
 
@@ -645,7 +645,7 @@ class AdminController extends Controller
             'sectionNum' => 'nullable|string|max:100',
             'content' => 'nullable|string',
             'description' => 'nullable|string',
-            'filename' => 'nullable|string|max:255',
+            'filename' => ['nullable', 'string', 'max:255', 'regex:/\.pdf$/i'],
             'parentSectionId' => 'nullable|integer',
         ]);
 
