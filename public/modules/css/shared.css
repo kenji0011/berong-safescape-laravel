@@ -251,13 +251,11 @@
 }
 
 .ss-section.completed {
-    border-color: #22c55e !important;
     background-color: #ffffff !important;
 }
 
 .dark .ss-section.completed {
     background-color: #0f172a !important;
-    border-color: #16a34a !important;
 }
 
 .ss-section.completed .ss-section-badge {
@@ -875,15 +873,4 @@ html.dyslexia-mode * {
     font-family: "Open-Dyslexic", "OpenDyslexic", "Comic Sans MS", "Comic Sans", sans-serif !important;
     letter-spacing: 0.05em !important;
     word-spacing: 0.1em !important;
-}
-
-/* ===== ANTI-CHEATING BLUR ===== */
-body.quiz-active section:not(#final-quiz):not(#section-check):not(#final-exam),
-body.quiz-active .ss-nav,
-body.quiz-active footer {
-    filter: blur(8px) grayscale(40%);
-    pointer-events: none;
-    opacity: 0.3;
-    transition: all 0.5s ease;
-    user-select: none;
 }

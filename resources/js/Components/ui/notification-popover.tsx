@@ -140,10 +140,14 @@ export function NotificationPopover() {
       } else if (notification.category === 'kids/rank') {
         router.get('/kids?rankGuide=true');
       } else if (notification.type === 'achievement' || notification.title.toLowerCase().includes('badge')) {
-        const badgeNameMatch = notification.message.match(/earned the (.*?) badge/i);
         let badgeParam = '';
+        const badgeNameMatch = notification.message.match(/earned the (.*?) badge/i);
+        const rankMatch = notification.message.match(/ranked up to (.*?)!/i);
+        
         if (badgeNameMatch && badgeNameMatch[1]) {
            badgeParam = `?highlight=${encodeURIComponent(badgeNameMatch[1])}`;
+        } else if (rankMatch && rankMatch[1]) {
+           badgeParam = `?highlight=${encodeURIComponent(rankMatch[1])}`;
         }
         router.get(`/kids/badges${badgeParam}`);
       } else {

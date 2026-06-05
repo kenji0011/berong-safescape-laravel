@@ -49,7 +49,10 @@ const KidsChallengesPage = ({ progress }: ChallengesProps) => {
             href: "/kids/quiz",
             difficulty: "medium",
             category: "activities",
-            isCompleted: earnedBadgeIds.includes('quiz_hero')
+            isCompleted: earnedBadgeIds.includes('quiz_hero'),
+            badgeImageUrl: "/quiz_hall.png",
+            badgeName: "Quiz Hero",
+            badgeHint: "Score 100% on any Fire Safety Quiz."
           },
             {
               id: "activity-2",
@@ -60,7 +63,10 @@ const KidsChallengesPage = ({ progress }: ChallengesProps) => {
               href: "/kids/memory-game",
               difficulty: "easy",
               category: "activities",
-              isCompleted: earnedBadgeIds.includes('memory_master')
+              isCompleted: earnedBadgeIds.includes('memory_master'),
+              badgeImageUrl: "/memory_hall.png",
+              badgeName: "Memory Master",
+              badgeHint: "Finish the Memory Match game with zero mistakes."
             },
             {
               id: "activity-3",
@@ -71,7 +77,10 @@ const KidsChallengesPage = ({ progress }: ChallengesProps) => {
               href: "/kids/smoke-crawl",
               difficulty: "hard",
               category: "activities",
-              isCompleted: earnedBadgeIds.includes('smoke_scout')
+              isCompleted: earnedBadgeIds.includes('smoke_scout'),
+              badgeImageUrl: "/smoke_hall.png",
+              badgeName: "Smoke Scout",
+              badgeHint: "Stay low and find your way out of the smoke-filled maze!"
             },
             {
               id: "activity-7",
@@ -82,7 +91,10 @@ const KidsChallengesPage = ({ progress }: ChallengesProps) => {
               href: "/kids/hot-or-not",
               difficulty: "easy",
               category: "activities",
-              isCompleted: earnedBadgeIds.includes('safety_scout')
+              isCompleted: earnedBadgeIds.includes('safety_scout'),
+              badgeImageUrl: "/safety_hall.png",
+              badgeName: "Safety Scout",
+              badgeHint: "Correcty identify all hazards in the Hazard House."
             },
             {
               id: "activity-8",
@@ -93,7 +105,10 @@ const KidsChallengesPage = ({ progress }: ChallengesProps) => {
               href: "/kids/hazard-blitz",
               difficulty: "medium",
               category: "activities",
-              isCompleted: earnedBadgeIds.includes('hazard_hero')
+              isCompleted: earnedBadgeIds.includes('hazard_hero'),
+              badgeImageUrl: "/hazard_hall.png",
+              badgeName: "Hazard Hero",
+              badgeHint: "Neutralize hazards and reach 500 points in Hazard Blitz."
             }
           ]
 

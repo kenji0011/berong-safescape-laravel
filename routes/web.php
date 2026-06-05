@@ -37,28 +37,33 @@ Route::get('/about', function () {
         Route::get('/dashboard', function () {
             /** @var \App\Models\User $user */
             $user = Auth::user();
-            if ($user->role === 'admin') return redirect()->route('admin');
-            if ($user->role === 'professional') return redirect()->route('professional');
-            if ($user->role === 'kid') return redirect()->route('kids');
-            return redirect()->route('adult');
-    })->name('dashboard');
+            $userRoles = array_filter(array_map('trim', explode(',', $user->role ?? 'guest')));
+
+            if (in_array('admin', $userRoles)) return redirect()->route('admin');
+            if (in_array('professional', $userRoles)) return redirect()->route('professional');
+            if (in_array('adult', $userRoles)) return redirect()->route('adult');
+            if (in_array('kid', $userRoles)) return redirect()->route('kids');
+
+            return redirect()->route('adult'); // default fallback
+        })->name('dashboard');
 
     Route::get('/profile', function () {
         return Inertia::render('Profile');
     })->name('profile');
 
-    Route::get('/kids', function () {
-        return Inertia::render('KidsDashboard', [
-            'modules' => KidsModule::where('isActive', true)->orderBy('dayNumber')->get(),
-            'progress' => [
-                'completedModules' => \App\Models\SafeScapeProgress::where('userId', Auth::id())
-                    ->where('completed', true)
-                    ->pluck('moduleNum')
-                    ->values(),
-                'badges' => \App\Models\UserBadge::where('userId', Auth::id())->get()
-            ],
-        ]);
-    })->name('kids');
+    Route::middleware('role:kid,adult')->group(function () {
+        Route::get('/kids', function () {
+            return Inertia::render('KidsDashboard', [
+                'modules' => KidsModule::where('isActive', true)->orderBy('dayNumber')->get(),
+                'progress' => [
+                    'completedModules' => \App\Models\SafeScapeProgress::where('userId', Auth::id())
+                        ->where('completed', true)
+                        ->pluck('moduleNum')
+                        ->values(),
+                    'badges' => \App\Models\UserBadge::where('userId', Auth::id())->get()
+                ],
+            ]);
+        })->name('kids');
 
     Route::post('/api/badges/award', [BadgeController::class, 'award'])->name('badges.award');
     Route::get('/api/badges', [BadgeController::class, 'index'])->name('badges.index');
@@ -155,6 +160,11 @@ Route::get('/about', function () {
         return Inertia::render('Kids/HotOrNot');
     })->name('kids.hot_or_not');
 
+
+    Route::get('/kids/the-right-call', function () {
+        return Inertia::render('Kids/Games/RightCall');
+    })->name('kids.right_call');
+
     Route::get('/kids/hazard-blitz', function () {
         return Inertia::render('Kids/Games/HazardBlitz');
     })->name('kids.hazard_blitz');
@@ -188,8 +198,10 @@ Route::get('/about', function () {
     Route::get('/kids/certificate', function () {
         return Inertia::render('Kids/Certificate');
     })->name('kids.certificate');
+    }); // End Kids role group
 
-    Route::get('/adult', function () {
+    Route::middleware('role:adult,professional')->group(function () {
+        Route::get('/adult', function () {
         return Inertia::render('AdultDashboard', [
             'initialBlogs' => Inertia::defer(fn () => BlogPost::with('author:id,name')
                 ->where('isPublished', true)
@@ -206,8 +218,10 @@ Route::get('/about', function () {
             'blog' => $blog,
         ]);
     })->name('adult.blog.show');
-    
-    Route::get('/professional', function () {
+    }); // End Adult role group
+
+    Route::middleware('role:professional')->group(function () {
+        Route::get('/professional', function () {
         return Inertia::render('ProfessionalDashboard', [
             'initialVideos' => Inertia::defer(fn () => \App\Models\Video::where('isActive', true)
                 ->where('category', 'professional')
@@ -227,12 +241,34 @@ Route::get('/about', function () {
                 ->values()),
         ]);
     })->name('professional');
-    
+    }); // End Professional role group
+
     // Admin routing
     Route::middleware('admin')->group(function () {
         Route::get('/admin', [\App\Http\Controllers\AdminController::class, 'dashboardPage'])->name('admin');
         Route::get('/admin/analytics', [\App\Http\Controllers\AdminController::class, 'analyticsPage'])->name('admin.analytics');
     });
+});
+
+Route::get('/temp-clear-scores', function () {
+    try {
+        $affected = \Illuminate\Support\Facades\DB::table('users')->where('id', 10)->update([
+            'competency_scores' => null,
+            'preTestScore' => null,
+            'postTestScore' => null,
+        ]);
+        
+        return response()->json([
+            'success' => true,
+            'message' => 'Scores cleared successfully.',
+            'rows_affected' => $affected
+        ]);
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'error' => $e->getMessage()
+        ], 500);
+    }
 });
 
 require __DIR__.'/auth.php';

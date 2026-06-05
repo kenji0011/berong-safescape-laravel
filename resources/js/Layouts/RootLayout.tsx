@@ -7,6 +7,7 @@ import { LoginLoader } from "@/components/login-loader";
 import { ProfileCheckWrapper } from "@/components/profile-check-wrapper";
 import { FocusModeManager } from "@/Components/focus-mode-manager";
 import { usePage } from '@inertiajs/react';
+import { Toaster } from "@/Components/ui/sonner";
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   const { url } = usePage();
@@ -47,6 +48,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <LogoutLoader />
           <FocusModeManager />
         </div>
+        <Toaster position="top-right" richColors duration={3000} />
       </div>
     </AuthProvider>
   );

@@ -289,21 +289,7 @@ const ModuleTwoPage = ({ moduleNum, initialProgress }: { moduleNum: number; init
       iframeDoc.body.style.backgroundColor = 'transparent'; 
       iframeDoc.documentElement.style.overflow = 'hidden'; // Hide inner scrollbar
 
-      // Play tap sound on button/link clicks inside iframe
-      iframeDoc.addEventListener('click', (ev) => {
-        const target = ev.target as HTMLElement;
-        const isClickable = target.closest('button') || 
-                            target.closest('a') || 
-                            target.closest('[role="button"]') || 
-                            target.closest('.cursor-pointer') ||
-                            target.closest('.ss-btn-premium') ||
-                            target.closest('.hazard-box') ||
-                            target.closest('.sdr-word');
-                            
-        if (isClickable && !target.closest('.no-tap-sound')) {
-          new Audio('/sounds/tap.mp3').play().catch(() => {});
-        }
-      });
+      // Tap sound removed per user request
 
       const nav = iframeDoc.querySelector('.ss-nav') as HTMLElement;
       if (nav) nav.style.display = 'none';
@@ -439,7 +425,7 @@ const ModuleTwoPage = ({ moduleNum, initialProgress }: { moduleNum: number; init
 
         <iframe 
           ref={iframeRef}
-          src={`/modules/module_${currentModule}/index.html?v=4`}
+          src={`/modules/module_${currentModule}/index.html?v=5`}
           className={cn(
             "w-full border-none m-0 p-0 transition-opacity duration-700",
             iframeLoading ? "opacity-0" : "opacity-100"

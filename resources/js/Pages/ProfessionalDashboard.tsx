@@ -96,6 +96,7 @@ const ProfessionalDashboard = ({ initialVideos, watchedVideoIds = [] }: Professi
     const [showRankGuide, setShowRankGuide] = useState(false)
     const [showPromotion, setShowPromotion] = useState(false)
     const [promotedRank, setPromotedRank] = useState<any>(null)
+    const [highlightManuals, setHighlightManuals] = useState(false)
     const playerRef = useRef<HTMLDivElement>(null)
     const ytPlayerRef = useRef<any>(null)
 
@@ -238,6 +239,18 @@ const ProfessionalDashboard = ({ initialVideos, watchedVideoIds = [] }: Professi
         setSelectedVideo(video)
     }
 
+    const handleScrollToManuals = (e: React.MouseEvent) => {
+        e.preventDefault();
+        const element = document.getElementById('manuals-section');
+        if (element) {
+            element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            setHighlightManuals(true);
+            setTimeout(() => {
+                setHighlightManuals(false);
+            }, 2000);
+        }
+    };
+
     const filteredVideos = videos.filter(
         (video) =>
             video.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -284,7 +297,7 @@ const ProfessionalDashboard = ({ initialVideos, watchedVideoIds = [] }: Professi
                         </div>
                     </Link>
 
-                    <Link href="#manuals-section" onClick={(e) => { e.preventDefault(); document.getElementById('manuals-section')?.scrollIntoView({ behavior: 'smooth' }) }} className="block group h-full outline-none relative">
+                    <Link href="#manuals-section" onClick={handleScrollToManuals} className="block group h-full outline-none relative">
                         {/* FLOATING HOVER PREVIEW WINDOW */}
                         <div className="hidden sm:block absolute bottom-[105%] left-1/2 -translate-x-1/2 mb-2 w-[305px] sm:w-[350px] bg-white/95 dark:bg-slate-900/95 backdrop-blur-md rounded-2xl border-2 border-blue-100 dark:border-blue-500/40 p-3 shadow-2xl shadow-blue-100/50 dark:shadow-blue-500/25 pointer-events-none opacity-0 scale-95 -translate-y-2 group-hover:opacity-100 group-hover:scale-100 group-hover:translate-y-0 transition-all duration-300 z-50">
                             {/* Triangle indicator below preview */}
@@ -609,7 +622,15 @@ const ProfessionalDashboard = ({ initialVideos, watchedVideoIds = [] }: Professi
                 </div>
 
                 {/* Resources Section */}
-                <div id="manuals-section" className="mt-8 sm:mt-12 mb-6 sm:mb-8">
+                <div 
+                    id="manuals-section" 
+                    className={cn(
+                        "mt-8 sm:mt-12 mb-6 sm:mb-8 transition-all duration-500 rounded-[2.2rem] p-1.5",
+                        highlightManuals 
+                            ? "ring-[6px] ring-blue-500/50 dark:ring-blue-400/50 scale-[1.01] bg-blue-500/5 dark:bg-blue-400/5" 
+                            : "ring-0 ring-transparent scale-100 bg-transparent"
+                    )}
+                >
                     <h2 className="text-xl sm:text-2xl font-black mb-4 sm:mb-6 text-slate-800 dark:text-white tracking-tight">Additional Resources</h2>
                     <div className="bg-white dark:bg-slate-900 rounded-[2rem] border-[3px] border-slate-200 dark:border-slate-800 p-4 sm:p-6 md:p-8 flex flex-col md:flex-row items-center justify-between gap-4 sm:gap-6 shadow-[0_6px_0_#cbd5e1] dark:shadow-[0_6px_0_#0f172a] sm:shadow-[0_8px_0_#cbd5e1] sm:dark:shadow-[0_8px_0_#0f172a] transition-all duration-300">
                         <div className="flex items-start gap-4 sm:gap-6 flex-1 w-full">

@@ -35,8 +35,9 @@ export default function Welcome({ carouselImages }: { carouselImages?: any[] }) 
         {carouselImages && carouselImages.length > 0 && (
           <link rel="preload" as="image" href={carouselImages[0].imageUrl} fetchPriority="high" />
         )}
+
       </Head>
-      <div className="min-h-screen flex flex-col relative" style={{ scrollBehavior: 'smooth' }}>
+      <div className="min-h-screen flex flex-col relative">
         <Navigation />
 
         {/* Global floating fire particles (desktop only, very subtle) */}
@@ -56,25 +57,28 @@ export default function Welcome({ carouselImages }: { carouselImages?: any[] }) 
         )}
 
         <main className="flex-grow pt-[80px] sm:pt-[96px] pb-6 sm:pb-8 w-full relative z-10 overflow-x-clip">
-          {/* Cinematic Hero Section */}
-          <section className="mb-8 sm:mb-12 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
-            <HeroSection />
-          </section>
-
-          {/* Carousel */}
-          <section className="mb-8 sm:mb-12 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+          {/* Hero Carousel - Topmost Section */}
+          <section className="mb-20 sm:mb-32 w-full">
             <HeroCarousel initialImages={carouselImages} />
           </section>
 
-          <section id="featured-section" className="mb-10 sm:mb-12 scroll-mt-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+          {/* Cinematic Hero Section */}
+          <section className="mb-20 sm:mb-32 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+            <HeroSection />
+          </section>
+
+          {/* Choose Your Path (Featured Cards) */}
+          <section id="featured-section" className="mb-20 sm:mb-32 scroll-mt-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
             <FeaturedCards serverUser={mappedUser} />
           </section>
 
-          <section id="about-section" className="mb-16 sm:mb-24 mt-8 sm:mt-12 scroll-mt-24 w-full">
+          {/* About SafeScape Sections */}
+          <section id="about-section" className="mb-20 sm:mb-32 scroll-mt-24 w-full">
             <LandingAboutSection />
           </section>
 
-          <section className="mb-12 sm:mb-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+          {/* Assessment Section */}
+          <section className="mb-20 sm:mb-32 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
             <LandingAssessmentSection serverUser={mappedUser} />
           </section>
         </main>

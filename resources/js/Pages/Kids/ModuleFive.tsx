@@ -284,21 +284,7 @@ const ModuleFivePage = ({ moduleNum, initialProgress }: { moduleNum: number; ini
       iframeDoc.body.style.backgroundColor = 'transparent'; 
       iframeDoc.documentElement.style.overflow = 'hidden';
 
-      // Play tap sound on button/link clicks inside iframe
-      iframeDoc.addEventListener('click', (ev) => {
-        const target = ev.target as HTMLElement;
-        const isClickable = target.closest('button') || 
-                            target.closest('a') || 
-                            target.closest('[role="button"]') || 
-                            target.closest('.cursor-pointer') ||
-                            target.closest('.ss-btn-premium') ||
-                            target.closest('.hazard-box') ||
-                            target.closest('.sdr-word');
-                            
-        if (isClickable) {
-          new Audio('/sounds/tap.mp3').play().catch(() => {});
-        }
-      });
+      // Tap sound removed per user request
 
       const nav = iframeDoc.querySelector('.ss-nav') as HTMLElement;
       if (nav) nav.style.display = 'none';
@@ -459,7 +445,7 @@ const ModuleFivePage = ({ moduleNum, initialProgress }: { moduleNum: number; ini
 
         <iframe 
           ref={iframeRef}
-          src={`/modules/module_${currentModule}/index.html?v=4`}
+          src={`/modules/module_${currentModule}/index.html?v=5`}
           className={cn(
             "w-full border-none m-0 p-0 transition-opacity duration-700",
             iframeLoading ? "opacity-0" : "opacity-100"

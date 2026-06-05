@@ -40,7 +40,8 @@ class BadgeController extends Controller
         );
 
         // Implement a notification for obtaining badges only on a Kids Account
-        if (!$existingBadge && $user->role === 'kid') {
+        $userRoles = array_filter(array_map('trim', explode(',', $user->role ?? 'guest')));
+        if (!$existingBadge && in_array('kid', $userRoles)) {
             Notification::create([
                 'userId' => $user->id,
                 'title' => 'New Badge Earned! 🏆',

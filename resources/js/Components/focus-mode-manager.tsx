@@ -1,10 +1,13 @@
 import React, { useState, useEffect, useRef } from "react"
 import { usePage } from "@inertiajs/react"
-import { Shield, Volume2, VolumeX } from "lucide-react"
+import { Shield, Volume2, VolumeX, Sun, Moon } from "lucide-react"
+import { motion, AnimatePresence } from "framer-motion"
 import { cn } from "@/lib/utils"
+import { useSettings } from "@/lib/settings-context"
 
 export function FocusModeManager() {
   const { url } = usePage()
+  const { isDarkMode, toggleDarkMode } = useSettings()
 
   // Focus state variables
   const [showModeSelectionModal, setShowModeSelectionModal] = useState(false)
@@ -291,7 +294,7 @@ export function FocusModeManager() {
                     : "bg-slate-100 dark:bg-slate-800/80 text-slate-400 dark:text-slate-500 cursor-not-allowed"
                 )}
               >
-                {selectedMode === "focus" ? "Start Focus Mission →" : "Start Standard Mission →"}
+                {selectedMode === "focus" ? "Start Focus Mission" : "Start Standard Mission"}
               </button>
             </div>
           </div>
@@ -321,6 +324,21 @@ export function FocusModeManager() {
             <span className="hidden sm:inline">Ambient Audio</span>
           </button>
 
+          {/* Dark Mode Toggle */}
+          <button
+            onClick={toggleDarkMode}
+            title="Toggle Theme"
+            className={cn(
+              "p-1.5 sm:p-2 rounded-xl transition-all hover:bg-slate-100 dark:hover:bg-white/10 active:scale-95 flex items-center gap-1.5 sm:gap-2 text-[10px] sm:text-xs font-black uppercase tracking-wider",
+              isDarkMode
+                ? "text-purple-400 bg-white/5"
+                : "text-slate-600"
+            )}
+          >
+            {isDarkMode ? <Sun className="h-3.5 sm:h-4 w-3.5 sm:w-4" /> : <Moon className="h-3.5 sm:h-4 w-3.5 sm:w-4" />}
+            <span className="hidden sm:inline">{isDarkMode ? "Light Mode" : "Dark Mode"}</span>
+          </button>
+
           {/* Exit Focus Mode */}
           <button
             onClick={selectStandardMode}
@@ -332,33 +350,41 @@ export function FocusModeManager() {
       )}
 
       {/* Slide-in DND Notification */}
-      {showDNDNotification && (
-        <div className="fixed top-6 left-1/2 -translate-x-1/2 sm:left-auto sm:translate-x-0 sm:top-8 sm:right-8 z-[250] w-[90vw] max-w-[340px] sm:w-[420px] sm:max-w-none bg-white/95 dark:bg-slate-950/95 border border-slate-200 dark:border-slate-800/80 rounded-2xl shadow-2xl p-4 sm:p-6 text-slate-800 dark:text-white animate-in slide-in-from-top-4 sm:slide-in-from-right-10 duration-300 transition-all">
-          <div className="flex items-center gap-3.5">
-            <div className="h-10 w-10 sm:h-12 sm:w-12 bg-white rounded-xl border border-emerald-200 dark:border-slate-800 flex items-center justify-center shrink-0">
-              <img src="/berong_pr.png" alt="Berong" className="w-8 h-8 sm:w-10 sm:h-10 object-contain drop-shadow" />
+      <AnimatePresence>
+        {showDNDNotification && (
+          <motion.div 
+            initial={{ opacity: 0, x: 100 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: 100 }}
+            transition={{ type: "spring", stiffness: 300, damping: 25 }}
+            className="fixed top-6 left-1/2 -translate-x-1/2 sm:left-auto sm:translate-x-0 sm:top-8 sm:right-8 z-[250] w-[90vw] max-w-[340px] sm:w-[420px] sm:max-w-none bg-white/95 dark:bg-slate-950/95 border border-slate-200 dark:border-slate-800/80 rounded-2xl shadow-2xl p-4 sm:p-6 text-slate-800 dark:text-white"
+          >
+            <div className="flex items-center gap-3.5">
+              <div className="h-10 w-10 sm:h-12 sm:w-12 bg-white rounded-xl border border-emerald-200 dark:border-slate-800 flex items-center justify-center shrink-0">
+                <img src="/berong_pr.png" alt="Berong" className="w-8 h-8 sm:w-10 sm:h-10 object-contain drop-shadow" />
+              </div>
+              <div className="flex-1">
+                <h4 className="text-xs sm:text-sm font-black uppercase tracking-widest text-emerald-600 dark:text-emerald-400 leading-tight">Focus Protocol Active</h4>
+                <p className="text-[10px] sm:text-xs text-slate-500 dark:text-slate-300 font-bold leading-normal mt-0.5">Do Not Disturb mode initialized.</p>
+              </div>
             </div>
-            <div className="flex-1">
-              <h4 className="text-xs sm:text-sm font-black uppercase tracking-widest text-emerald-600 dark:text-emerald-400 leading-tight">Focus Protocol Active</h4>
-              <p className="text-[10px] sm:text-xs text-slate-500 dark:text-slate-300 font-bold leading-normal mt-0.5">Do Not Disturb mode initialized.</p>
+            <div className="mt-4 space-y-2 border-t border-slate-100 dark:border-slate-800 pt-3.5">
+              <div className="flex items-center justify-between text-[10px] sm:text-xs font-semibold text-slate-500 dark:text-slate-400">
+                <span>🔇 All Notification previews</span>
+                <span className="text-emerald-600 dark:text-emerald-400 font-black">MUTED</span>
+              </div>
+              <div className="flex items-center justify-between text-[10px] sm:text-xs font-semibold text-slate-500 dark:text-slate-400">
+                <span>🖥️ Layout Immersion</span>
+                <span className="text-emerald-600 dark:text-emerald-400 font-black">FULLSCREEN</span>
+              </div>
+              <div className="flex items-center justify-between text-[10px] sm:text-xs font-semibold text-slate-500 dark:text-slate-400">
+                <span>🧭 Dashboard Widgets</span>
+                <span className="text-emerald-600 dark:text-emerald-400 font-black">HIDDEN</span>
+              </div>
             </div>
-          </div>
-          <div className="mt-4 space-y-2 border-t border-slate-100 dark:border-slate-800 pt-3.5">
-            <div className="flex items-center justify-between text-[10px] sm:text-xs font-semibold text-slate-500 dark:text-slate-400">
-              <span>🔇 All Notification previews</span>
-              <span className="text-emerald-600 dark:text-emerald-400 font-black">MUTED</span>
-            </div>
-            <div className="flex items-center justify-between text-[10px] sm:text-xs font-semibold text-slate-500 dark:text-slate-400">
-              <span>🖥️ Layout Immersion</span>
-              <span className="text-emerald-600 dark:text-emerald-400 font-black">FULLSCREEN</span>
-            </div>
-            <div className="flex items-center justify-between text-[10px] sm:text-xs font-semibold text-slate-500 dark:text-slate-400">
-              <span>🧭 Dashboard Widgets</span>
-              <span className="text-emerald-600 dark:text-emerald-400 font-black">HIDDEN</span>
-            </div>
-          </div>
-        </div>
-      )}
+          </motion.div>
+        )}
+      </AnimatePresence>
     </>
   )
 }

@@ -65,6 +65,80 @@ export function Chatbot() {
   const [speakingMessageId, setSpeakingMessageId] = useState<string | null>(null)
   const [isTTSLoading, setIsTTSLoading] = useState(false)
 
+  const playPop = () => {
+    try {
+      const AudioContextClass = window.AudioContext || (window as any).webkitAudioContext
+      if (!AudioContextClass) return
+      const ctx = new AudioContextClass()
+      const osc = ctx.createOscillator()
+      const gain = ctx.createGain()
+      osc.type = "sine"
+      osc.frequency.setValueAtTime(400, ctx.currentTime)
+      osc.frequency.exponentialRampToValueAtTime(1200, ctx.currentTime + 0.1)
+      gain.gain.setValueAtTime(0.4, ctx.currentTime)
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.1)
+      osc.connect(gain)
+      gain.connect(ctx.destination)
+      osc.start()
+      osc.stop(ctx.currentTime + 0.1)
+    } catch (e) {
+      console.warn("Pop sound failed:", e)
+    }
+  }
+
+  const playChirp = () => {
+    try {
+      const AudioContextClass = window.AudioContext || (window as any).webkitAudioContext
+      if (!AudioContextClass) return
+      const ctx = new AudioContextClass()
+      const now = ctx.currentTime
+      const osc1 = ctx.createOscillator()
+      const gain1 = ctx.createGain()
+      osc1.type = "sine"
+      osc1.frequency.setValueAtTime(600, now)
+      gain1.gain.setValueAtTime(0.3, now)
+      gain1.gain.exponentialRampToValueAtTime(0.001, now + 0.15)
+      osc1.connect(gain1)
+      gain1.connect(ctx.destination)
+      osc1.start(now)
+      osc1.stop(now + 0.15)
+      
+      const osc2 = ctx.createOscillator()
+      const gain2 = ctx.createGain()
+      osc2.type = "sine"
+      osc2.frequency.setValueAtTime(800, now + 0.08)
+      gain2.gain.setValueAtTime(0.3, now + 0.08)
+      gain2.gain.exponentialRampToValueAtTime(0.001, now + 0.25)
+      osc2.connect(gain2)
+      gain2.connect(ctx.destination)
+      osc2.start(now + 0.08)
+      osc2.stop(now + 0.25)
+    } catch (e) {
+      console.warn("Chirp sound failed:", e)
+    }
+  }
+
+  const playClose = () => {
+    try {
+      const AudioContextClass = window.AudioContext || (window as any).webkitAudioContext
+      if (!AudioContextClass) return
+      const ctx = new AudioContextClass()
+      const osc = ctx.createOscillator()
+      const gain = ctx.createGain()
+      osc.type = "sine"
+      osc.frequency.setValueAtTime(800, ctx.currentTime)
+      osc.frequency.exponentialRampToValueAtTime(300, ctx.currentTime + 0.15)
+      gain.gain.setValueAtTime(0.3, ctx.currentTime)
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.15)
+      osc.connect(gain)
+      gain.connect(ctx.destination)
+      osc.start()
+      osc.stop(ctx.currentTime + 0.15)
+    } catch (e) {
+      console.warn("Close sound failed:", e)
+    }
+  }
+
   const readAloudRef = useRef(readAloud)
   useEffect(() => {
     readAloudRef.current = readAloud
@@ -73,6 +147,19 @@ export function Chatbot() {
   const speakText = async (text: string, messageId: string | null = null, force: boolean = false) => {
     if (!readAloudRef.current && !force) return
     
+    if (isTTSLoading) return;
+
+    // If clicking the button of the currently speaking message, just stop it and return
+    if (messageId && speakingMessageId === messageId) {
+      window.speechSynthesis.cancel();
+      if (currentAudioRef.current) {
+        currentAudioRef.current.pause();
+        currentAudioRef.current.currentTime = 0;
+      }
+      setSpeakingMessageId(null);
+      return;
+    }
+
     // Stop any current native speech or audio
     window.speechSynthesis.cancel() 
     if (currentAudioRef.current) {
@@ -413,6 +500,7 @@ export function Chatbot() {
       timestamp: new Date(),
     }
     setMessages((prev) => [...prev, botMessage])
+    playChirp()
     if (botResponse !== "Response generation stopped.") {
       speakText(botResponse, botMessage.id)
     }
@@ -443,6 +531,7 @@ export function Chatbot() {
       timestamp: new Date(),
     }
     setMessages((prev) => [...prev, botMessage])
+    playChirp()
     speakText(responseText, botMessage.id)
   }
 
@@ -553,7 +642,10 @@ export function Chatbot() {
               whileDrag={{ scale: 1.1, cursor: "grabbing" }}
               transition={{ type: "spring", stiffness: 600, damping: 35 }}
               onClick={() => {
-                if (!isDragging) setIsOpen(true)
+                if (!isDragging) {
+                  setIsOpen(true)
+                  playPop()
+                }
               }}
               style={{
                 x: dragX,
@@ -688,7 +780,10 @@ export function Chatbot() {
                     {useMiniButton ? <Maximize2 className="h-5 w-5" strokeWidth={2.5} /> : <Minimize2 className="h-5 w-5" strokeWidth={2.5} />}
                   </button>
                   <button
-                    onClick={() => setIsOpen(false)}
+                    onClick={() => {
+                      setIsOpen(false)
+                      playClose()
+                    }}
                     className="h-9 w-9 flex items-center justify-center text-white hover:bg-white/20 rounded-lg transition-colors"
                   >
                     <X className="h-6 w-6" strokeWidth={3} />
@@ -762,14 +857,21 @@ export function Chatbot() {
                           </div>
                           <button
                             onClick={() => speakText(message.text, message.id, true)}
-                            className={`absolute -bottom-2 -right-2 h-8 w-8 flex items-center justify-center rounded-full border-2 shadow-md transition-all hover:scale-110 active:scale-90 z-10 ${
+                            disabled={isTTSLoading}
+                            className={`absolute -bottom-2 -right-2 h-8 w-8 flex items-center justify-center rounded-full border-2 shadow-md transition-all z-10 ${
+                              isTTSLoading ? 'cursor-not-allowed opacity-70' : 'hover:scale-110 active:scale-90'
+                            } ${
                               speakingMessageId === message.id 
                                 ? `bg-orange-500 border-orange-200 text-white ${isTTSLoading ? 'animate-pulse' : ''}` 
                                 : "bg-slate-500 dark:bg-slate-700 border-white dark:border-slate-900 text-white"
                             }`}
-                            title="Read aloud"
+                            title={speakingMessageId === message.id && !isTTSLoading ? "Stop reading" : "Read aloud"}
                           >
-                            <Volume2 className="h-4 w-4" strokeWidth={2.5} />
+                            {speakingMessageId === message.id && !isTTSLoading ? (
+                              <Square className="h-3 w-3 fill-current" />
+                            ) : (
+                              <Volume2 className="h-4 w-4" strokeWidth={2.5} />
+                            )}
                           </button>
                         </>
                       ) : (

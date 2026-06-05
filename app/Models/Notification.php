@@ -46,7 +46,15 @@ class Notification extends Model
 
         if ($targetRoles) {
             $roles = is_array($targetRoles) ? $targetRoles : [$targetRoles];
-            $query->whereIn('role', $roles);
+            $query->where(function ($q) use ($roles) {
+                foreach ($roles as $index => $role) {
+                    if ($index === 0) {
+                        $q->where('role', 'LIKE', "%{$role}%");
+                    } else {
+                        $q->orWhere('role', 'LIKE', "%{$role}%");
+                    }
+                }
+            });
         }
 
         // Chunking to handle large amounts of users if necessary

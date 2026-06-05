@@ -9,7 +9,8 @@ import { useAuth } from "@/lib/auth-context"
 import { Navigation } from "@/components/navigation"
 import DashboardLayout from "@/Layouts/DashboardLayout";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Shield, BarChart3, ImageIcon, FileText, Video, Users, HelpCircle, BookOpen, Loader2 } from "lucide-react"
+import { Shield, BarChart3, ImageIcon, FileText, Video, Users, HelpCircle, BookOpen, Loader2, AlertCircle } from "lucide-react"
+import { motion } from "motion/react"
 import type { CarouselImage, BlogPost } from "@/types/admin"
 import { ConfirmationDialog } from "@/components/ui/confirmation-dialog"
 import {
@@ -78,6 +79,7 @@ function AdminDashboard({
   })
 
   // Local UI State for forms
+  const [activeTab, setActiveTab] = useState("carousel")
   const [newCarousel, setNewCarousel] = useState({ title: "", alt: "", url: "" })
   const [carouselUploadKey, setCarouselUploadKey] = useState(0)
 
@@ -115,8 +117,11 @@ function AdminDashboard({
 
   const [newFireCode, setNewFireCode] = useState({
     title: "",
+    category: "Policy",
     sectionNum: "",
     content: "",
+    description: "",
+    filename: "",
     parentSectionId: ""
   })
 
@@ -615,19 +620,24 @@ function AdminDashboard({
   }
 
   const handleAddFireCode = () => {
-    if (!newFireCode.title || !newFireCode.sectionNum || !newFireCode.content) {
-      setError("Please fill all fire code section fields")
+    if (!newFireCode.title || !newFireCode.category) {
+      setError("Please fill in the title and category")
+      return
+    }
+
+    if (!newFireCode.filename) {
+      setError("Please upload a manual/fire code file or enter a filename")
       return
     }
 
     openConfirmationDialog(
-      "Add Fire Code Section",
-      "Are you sure you want to add this fire code section?",
+      "Add Manual / Fire Code",
+      "Are you sure you want to add this manual or fire code?",
       "add-fire-code",
       async () => {
         try {
           setIsSubmitting(true);
-          setSubmittingMessage("Adding fire code section...");
+          setSubmittingMessage("Adding manual/fire code...");
           closeConfirmationDialog();
 
           const response = await apiFetch('/api/admin/fire-codes', {
@@ -638,14 +648,22 @@ function AdminDashboard({
 
           if (response.ok) {
             await loadFireCodeSections()
-            setNewFireCode({ title: "", sectionNum: "", content: "", parentSectionId: "" })
-            setSuccess("Fire code section added successfully")
+            setNewFireCode({
+              title: "",
+              category: "Policy",
+              sectionNum: "",
+              content: "",
+              description: "",
+              filename: "",
+              parentSectionId: ""
+            })
+            setSuccess("Manual / Fire Code added successfully")
           } else {
             const errorData = await response.json()
-            setError(errorData.error || "Failed to add fire code section")
+            setError(errorData.error || "Failed to add manual / fire code")
           }
         } catch (error) {
-          console.error('Error adding fire code section:', error)
+          console.error('Error adding section:', error)
           setError("Network error occurred")
         } finally {
           setIsSubmitting(false);
@@ -656,20 +674,20 @@ function AdminDashboard({
 
   const handleDeleteFireCode = (id: number) => {
     openConfirmationDialog(
-      "Delete Fire Code Section",
-      "Are you sure you want to delete this fire code section? This action cannot be undone.",
+      "Delete Manual / Fire Code",
+      "Are you sure you want to delete this manual or fire code? This action cannot be undone.",
       "delete-fire-code",
       async () => {
         try {
           const response = await apiFetch(`/api/admin/fire-codes/${id}`, { method: 'DELETE' })
           if (response.ok) {
             await loadFireCodeSections()
-            setSuccess("Fire code section deleted")
+            setSuccess("Deleted successfully")
           } else {
-            setError("Failed to delete fire code section")
+            setError("Failed to delete")
           }
         } catch (error) {
-          console.error('Error deleting fire code section:', error)
+          console.error('Error deleting section:', error)
           setError("Network error occurred")
         } finally {
           closeConfirmationDialog();
@@ -727,14 +745,35 @@ function AdminDashboard({
           </button>
         </div>
 
-        <Tabs defaultValue="carousel" className="space-y-6">
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
           <TabsList className="flex w-full sm:grid sm:grid-cols-6 bg-slate-200/70 dark:bg-slate-800/50 backdrop-blur-md p-2 rounded-[1.5rem] gap-2 shadow-inner h-auto border-2 border-slate-200 dark:border-slate-700 transition-colors">
-            <TabsTrigger value="carousel" className="flex-1 font-bold text-slate-500 dark:text-slate-400 data-[state=active]:!bg-[#d60000] data-[state=active]:!text-white transition-all rounded-xl py-3 px-2 sm:px-4 data-[state=active]:shadow-[0_4px_0_#991b1b] hover:bg-white/50 dark:hover:bg-slate-700/50 hover:text-slate-700 dark:hover:text-slate-200"><ImageIcon className="h-5 w-5 sm:h-4 sm:w-4 sm:mr-2" strokeWidth={2.5} /><span className="hidden sm:inline text-sm">Carousel</span></TabsTrigger>
-            <TabsTrigger value="blogs" className="flex-1 font-bold text-slate-500 dark:text-slate-400 data-[state=active]:!bg-[#d60000] data-[state=active]:!text-white transition-all rounded-xl py-3 px-2 sm:px-4 data-[state=active]:shadow-[0_4px_0_#991b1b] hover:bg-white/50 dark:hover:bg-slate-700/50 hover:text-slate-700 dark:hover:text-slate-200"><FileText className="h-5 w-5 sm:h-4 sm:w-4 sm:mr-2" strokeWidth={2.5} /><span className="hidden sm:inline text-sm">Blogs</span></TabsTrigger>
-            <TabsTrigger value="videos" className="flex-1 font-bold text-slate-500 dark:text-slate-400 data-[state=active]:!bg-[#d60000] data-[state=active]:!text-white transition-all rounded-xl py-3 px-2 sm:px-4 data-[state=active]:shadow-[0_4px_0_#991b1b] hover:bg-white/50 dark:hover:bg-slate-700/50 hover:text-slate-700 dark:hover:text-slate-200"><Video className="h-5 w-5 sm:h-4 sm:w-4 sm:mr-2" strokeWidth={2.5} /><span className="hidden sm:inline text-sm">Videos</span></TabsTrigger>
-            <TabsTrigger value="users" className="flex-1 font-bold text-slate-500 dark:text-slate-400 data-[state=active]:!bg-[#d60000] data-[state=active]:!text-white transition-all rounded-xl py-3 px-2 sm:px-4 data-[state=active]:shadow-[0_4px_0_#991b1b] hover:bg-white/50 dark:hover:bg-slate-700/50 hover:text-slate-700 dark:hover:text-slate-200"><Users className="h-5 w-5 sm:h-4 sm:w-4 sm:mr-2" strokeWidth={2.5} /><span className="hidden sm:inline text-sm">Users</span></TabsTrigger>
-            <TabsTrigger value="quick-questions" className="flex-1 font-bold text-slate-500 dark:text-slate-400 data-[state=active]:!bg-[#d60000] data-[state=active]:!text-white transition-all rounded-xl py-3 px-2 sm:px-4 data-[state=active]:shadow-[0_4px_0_#991b1b] hover:bg-white/50 dark:hover:bg-slate-700/50 hover:text-slate-700 dark:hover:text-slate-200"><HelpCircle className="h-5 w-5 sm:h-4 sm:w-4 sm:mr-2" strokeWidth={2.5} /><span className="hidden sm:inline text-sm">Q&A</span></TabsTrigger>
-            <TabsTrigger value="fire-codes" className="flex-1 font-bold text-slate-500 dark:text-slate-400 data-[state=active]:!bg-[#d60000] data-[state=active]:!text-white transition-all rounded-xl py-3 px-2 sm:px-4 data-[state=active]:shadow-[0_4px_0_#991b1b] hover:bg-white/50 dark:hover:bg-slate-700/50 hover:text-slate-700 dark:hover:text-slate-200"><BookOpen className="h-5 w-5 sm:h-4 sm:w-4 sm:mr-2" strokeWidth={2.5} /><span className="hidden sm:inline text-sm">Fire Codes</span></TabsTrigger>
+            {[
+              { id: "carousel", icon: ImageIcon, label: "Carousel" },
+              { id: "blogs", icon: FileText, label: "Blogs" },
+              { id: "videos", icon: Video, label: "Videos" },
+              { id: "users", icon: Users, label: "Users" },
+              { id: "quick-questions", icon: HelpCircle, label: "Q&A" },
+              { id: "fire-codes", icon: BookOpen, label: "Manuals" }
+            ].map((tab) => (
+              <TabsTrigger 
+                key={tab.id}
+                value={tab.id} 
+                className="relative flex-1 font-bold text-slate-500 dark:text-slate-400 transition-colors duration-300 rounded-xl py-3 px-2 sm:px-4 hover:bg-white/50 dark:hover:bg-slate-700/50 hover:text-slate-700 dark:hover:text-slate-200 data-[state=active]:!text-white data-[state=active]:hover:!text-white !bg-transparent data-[state=active]:!bg-transparent data-[state=active]:!shadow-none"
+              >
+                {activeTab === tab.id && (
+                  <motion.div
+                    layoutId="activeAdminTab"
+                    className="absolute inset-0 bg-[#d60000] rounded-xl shadow-[0_4px_0_#991b1b]"
+                    initial={false}
+                    transition={{ type: "spring", stiffness: 400, damping: 30 }}
+                  />
+                )}
+                <span className="relative z-10 flex items-center justify-center">
+                  <tab.icon className="h-5 w-5 sm:h-4 sm:w-4 sm:mr-2" strokeWidth={2.5} />
+                  <span className="hidden sm:inline text-sm">{tab.label}</span>
+                </span>
+              </TabsTrigger>
+            ))}
           </TabsList>
 
           <ConfirmationDialog
@@ -747,15 +786,15 @@ function AdminDashboard({
           />
 
           <AlertDialog open={roleChangeDialog.isOpen} onOpenChange={(open) => { if (!open && !roleChangeLoading) closeRoleChangeDialog() }}>
-            <AlertDialogContent>
+            <AlertDialogContent className="bg-white/90 dark:bg-slate-900/80 backdrop-blur-xl border-[3px] border-slate-200 dark:border-slate-700 rounded-[2rem] shadow-2xl">
               <AlertDialogHeader>
-                <AlertDialogTitle>Verify Admin Password</AlertDialogTitle>
-                <AlertDialogDescription>
-                  Enter your admin password to {roleChangeDialog.action === 'remove' ? 'remove' : 'grant'} the <strong>{roleChangeDialog.permission}</strong> permission for <strong>{roleChangeDialog.userName}</strong>.
+                <AlertDialogTitle className="text-2xl font-black text-slate-800 dark:text-white tracking-tight">Verify Admin Password</AlertDialogTitle>
+                <AlertDialogDescription className="text-slate-500 dark:text-slate-400 font-bold text-sm mt-2">
+                  Enter your admin password to {roleChangeDialog.action === 'remove' ? 'remove' : 'grant'} the <strong className="text-slate-800 dark:text-white font-extrabold">{roleChangeDialog.permission}</strong> permission for <strong className="text-slate-800 dark:text-white font-extrabold">{roleChangeDialog.userName}</strong>.
                 </AlertDialogDescription>
               </AlertDialogHeader>
-              <div className="py-4">
-                <Label htmlFor="role-change-password">Password</Label>
+              <div className="py-3">
+                <Label htmlFor="role-change-password" className="font-bold text-slate-700 dark:text-slate-300">Password</Label>
                 <Input
                   id="role-change-password"
                   type="password"
@@ -768,14 +807,26 @@ function AdminDashboard({
                   }}
                   onKeyDown={(e) => { if (e.key === 'Enter') handleConfirmRoleChange() }}
                   autoFocus
+                  className="border-2 border-slate-200 dark:border-slate-700 dark:bg-slate-900 dark:text-white focus-visible:ring-red-500 rounded-xl mt-1.5"
                 />
-                {roleChangeError && <p className="text-sm text-destructive mt-2">{roleChangeError}</p>}
+                {roleChangeError && <p className="text-sm font-bold text-red-600 dark:text-red-400 mt-2 flex items-center gap-1.5"><AlertCircle className="h-4 w-4"/> {roleChangeError}</p>}
               </div>
-              <AlertDialogFooter>
-                <Button variant="outline" onClick={closeRoleChangeDialog} disabled={roleChangeLoading}>Cancel</Button>
-                <Button onClick={handleConfirmRoleChange} disabled={roleChangeLoading || !roleChangePassword}>
-                  {roleChangeLoading ? 'Verifying...' : 'Confirm Change'}
+              <AlertDialogFooter className="gap-3 mt-4">
+                <Button 
+                  variant="outline" 
+                  onClick={closeRoleChangeDialog} 
+                  disabled={roleChangeLoading}
+                  className="rounded-xl border-2 border-slate-200 dark:border-slate-700 font-bold text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all h-11"
+                >
+                  Cancel
                 </Button>
+                <button 
+                  onClick={handleConfirmRoleChange} 
+                  disabled={roleChangeLoading || !roleChangePassword}
+                  className="rounded-xl font-black h-11 px-6 transition-all shadow-[0_4px_0_#991b1b] hover:-translate-y-0.5 hover:shadow-[0_6px_0_#991b1b] active:translate-y-1 active:shadow-none bg-[#d60000] text-white hover:bg-red-500 border-none disabled:opacity-50"
+                >
+                  {roleChangeLoading ? 'Verifying...' : 'Confirm Change'}
+                </button>
               </AlertDialogFooter>
             </AlertDialogContent>
           </AlertDialog>

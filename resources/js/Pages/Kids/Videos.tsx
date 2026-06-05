@@ -185,6 +185,7 @@ const VideosPage = ({ initialVideos, watchedVideoIds }: VideosPageProps) => {
 
   const awardBadge = () => {
     setBadgeAwarded(true)
+    new Audio('/sounds/win.mp3').play().catch(() => {})
     axios.post('/api/badges/award', {
       badge_id: 'intel_analyst',
       badge_name: 'Intel Analyst',
@@ -196,6 +197,7 @@ const VideosPage = ({ initialVideos, watchedVideoIds }: VideosPageProps) => {
   }
 
   const handleVideoSelect = (video: any) => {
+    new Audio('/sounds/tap.mp3').play().catch(() => {})
     setActiveVideo(video)
     playerRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' })
   }

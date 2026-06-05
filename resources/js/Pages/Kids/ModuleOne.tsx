@@ -59,6 +59,7 @@ const ModuleOnePage = ({ initialProgress }: { initialProgress?: any }) => {
   const [reviewMode,      setReviewMode]      = useState(false)
   const [loadedScore,     setLoadedScore]     = useState<number | null>(initialProgress?.sectionData?.module1?.quizScore !== undefined ? Number(initialProgress?.sectionData?.module1?.quizScore) : null)
   const [pitItems,        setPitItems]        = useState<string[]>(initialProgress?.sectionData?.module1?.elementMixerCompleted ? CORRECT_IDS : [])
+  const [showBadgeModal,  setShowBadgeModal]  = useState(false)
 
   const handleToggleReview = () => {
     const nextMode = !reviewMode
@@ -82,25 +83,7 @@ const ModuleOnePage = ({ initialProgress }: { initialProgress?: any }) => {
     return () => clearTimeout(timer)
   }, [])
 
-  // Play tap sound on button/link clicks
-  useEffect(() => {
-    const handleTap = (e: MouseEvent) => {
-      const target = e.target as HTMLElement
-      if (target.closest('[draggable]')) return // Don't play tap on draggable element mixer items
-      
-      const isClickable = target.closest('button') || 
-                          target.closest('a') || 
-                          target.closest('[role="button"]') || 
-                          target.closest('.cursor-pointer') ||
-                          target.closest('.ss-btn-premium')
-                          
-      if (isClickable) {
-        new Audio('/sounds/tap.mp3').play().catch(() => {})
-      }
-    }
-    document.addEventListener('click', handleTap)
-    return () => document.removeEventListener('click', handleTap)
-  }, [])
+  // Tap sound removed per user request
 
   // Load progress from backend on mount
   useEffect(() => {
@@ -128,15 +111,11 @@ const ModuleOnePage = ({ initialProgress }: { initialProgress?: any }) => {
 
   // ── Progress bar ──
   const progress = useMemo(() => {
-    let p = 0
-    if (videoStarted)   p += 15
-    if (section1Done)   p += 15
-    if (section2Done)   p += 15
-    if (section3Done)   p += 15
-    if (labCompleted)   p += 20
-    if (quizPassed)     p += 20
-    return p
-  }, [videoStarted, section1Done, section2Done, section3Done, labCompleted, quizPassed])
+    if (moduleCompleted) return 100;
+    const states = [videoStarted, section1Done, section2Done, section3Done, labCompleted, quizPassed];
+    const completedCount = states.filter(Boolean).length;
+    return Math.round((completedCount / 6) * 100);
+  }, [videoStarted, section1Done, section2Done, section3Done, labCompleted, quizPassed, moduleCompleted])
 
   // ── Helper: save to backend ──
   const saveSection = async (sectionData: Record<string, any>, completed: boolean) => {
@@ -289,7 +268,10 @@ const ModuleOnePage = ({ initialProgress }: { initialProgress?: any }) => {
       });
 
       setModuleCompleted(true)
-      router.visit('/kids/safescape/2')
+      setShowBadgeModal(true)
+      
+      // Play a success sound for the badge
+      new Audio('/sounds/finish.mp3').play().catch(e => console.warn("Failed to play audio:", e))
     } catch (error: any) {
       console.error("Failed to complete module:", error.response?.data || error.message)
       showToast("Error saving progress. Try again.", "info")
@@ -403,15 +385,6 @@ const ModuleOnePage = ({ initialProgress }: { initialProgress?: any }) => {
     }, 100)
   }
 
-  const handleQuizRetake = () => {
-    setQuizAnswers([null, null, null, null, null])
-    setQuizSubmitted(false)
-    setQuizPassed(false)
-    setQuizStarted(false)
-    setLoadedScore(null)
-    setReviewMode(false)
-  }
-
   // ─────────────────────────────────────────────
   return (
     <div className="min-h-screen bg-white dark:bg-slate-950 bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] dark:bg-[radial-gradient(#1e293b_1px,transparent_1px)] [background-size:16px_16px] font-sans flex flex-col transition-colors duration-500">
@@ -471,10 +444,7 @@ const ModuleOnePage = ({ initialProgress }: { initialProgress?: any }) => {
           moduleLoading ? "opacity-0" : "opacity-100"
         )}>
 
-          <div className={cn(
-            "space-y-10 sm:space-y-14 md:space-y-20 transition-all duration-500",
-            quizStarted && !quizSubmitted ? "blur-[8px] grayscale-[40%] pointer-events-none select-none opacity-30" : ""
-          )}>
+          <div className="space-y-10 sm:space-y-14 md:space-y-20 transition-all duration-500">
 
           {/* ── Intro ── */}
           <div className="text-center max-w-3xl mx-auto space-y-3 sm:space-y-4">
@@ -489,7 +459,7 @@ const ModuleOnePage = ({ initialProgress }: { initialProgress?: any }) => {
           </div>
 
           {/* ── Video Section ── */}
-          <section className={cn("relative bg-white dark:bg-slate-900 rounded-[1.5rem] sm:rounded-[2rem] border-[3px] sm:border-[4px] border-blue-200 dark:border-blue-900/50 shadow-sm p-4 sm:p-6 md:p-10 text-center transition-all", videoStarted && "!border-green-500")}>
+          <section className={cn("relative bg-white dark:bg-slate-900 rounded-[1.5rem] sm:rounded-[2rem] border-[3px] sm:border-[4px] border-blue-200 dark:border-blue-900/50 shadow-sm p-4 sm:p-6 md:p-10 text-center transition-all")}>
             {videoStarted && (
               <div className="absolute top-3 right-3 sm:top-4 sm:right-4 z-10 h-8 w-8 sm:h-10 sm:w-10 rounded-full bg-green-500 border-[3px] border-white shadow-sm flex items-center justify-center">
                 <CheckCircle className="h-4 w-4 sm:h-5 sm:w-5 text-white" />
@@ -513,8 +483,7 @@ const ModuleOnePage = ({ initialProgress }: { initialProgress?: any }) => {
           {/* ── Section 1.1 — What Makes a Fire? (unlocked after video) ── */}
           <section className={cn(
             "relative bg-white dark:bg-slate-900 rounded-[2rem] border-[4px] border-orange-200 dark:border-orange-900/30 p-5 sm:p-8 md:p-12 shadow-sm transition-all duration-500 overflow-hidden",
-            !videoStarted && "pointer-events-none select-none",
-            section1Done && "!border-green-500"
+            !videoStarted && "pointer-events-none select-none"
           )}>
             {section1Done && (
               <div className="absolute top-4 right-4 h-10 w-10 rounded-full bg-green-500 border-[3px] border-white shadow-sm flex items-center justify-center">
@@ -597,8 +566,7 @@ const ModuleOnePage = ({ initialProgress }: { initialProgress?: any }) => {
           {/* ── Section 1.2 — Grown-Up Tools (unlocked after section1) ── */}
           <section className={cn(
             "relative bg-white dark:bg-slate-900 rounded-[2rem] border-[4px] border-red-200 dark:border-red-900/30 p-5 sm:p-8 md:p-12 overflow-hidden shadow-sm transition-all duration-500",
-            !section1Done && "pointer-events-none select-none",
-            section2Done && "!border-green-500"
+            !section1Done && "pointer-events-none select-none"
           )}>
             {section2Done && (
               <div className="absolute top-4 right-4 h-10 w-10 rounded-full bg-green-500 border-[3px] border-white shadow-sm flex items-center justify-center">
@@ -665,8 +633,7 @@ const ModuleOnePage = ({ initialProgress }: { initialProgress?: any }) => {
           {/* ── Section 1.3 — How a Fire Grows & Travels (unlocked after section2) ── */}
           <section className={cn(
             "relative bg-white dark:bg-slate-900 rounded-[2rem] border-[4px] border-rose-200 dark:border-rose-900/30 p-5 sm:p-8 md:p-12 shadow-sm transition-all duration-500 overflow-hidden",
-            !section2Done && "pointer-events-none select-none",
-            section3Done && "!border-green-500"
+            !section2Done && "pointer-events-none select-none"
           )}>
             {section3Done && (
               <div className="absolute top-4 right-4 h-10 w-10 rounded-full bg-green-500 border-[3px] border-white shadow-sm flex items-center justify-center">
@@ -743,8 +710,7 @@ const ModuleOnePage = ({ initialProgress }: { initialProgress?: any }) => {
           {/* ── Element Mixer Lab (unlocked after section3) ── */}
           <section className={cn(
             "relative bg-purple-50 dark:bg-purple-950/20 rounded-[2rem] border-[4px] border-purple-200 dark:border-purple-900/30 p-5 sm:p-8 md:p-12 shadow-sm transition-all duration-500 overflow-hidden",
-            !section3Done && "pointer-events-none select-none",
-            mixerEverCompleted && "!border-green-500"
+            !section3Done && "pointer-events-none select-none"
           )}>
             {mixerEverCompleted && (
               <div className="absolute top-4 right-4 h-10 w-10 rounded-full bg-green-500 border-[3px] border-white shadow-sm flex items-center justify-center">
@@ -1093,7 +1059,7 @@ const ModuleOnePage = ({ initialProgress }: { initialProgress?: any }) => {
                 {!quizStarted ? (
                   <div className="text-center p-8 sm:p-12 bg-white dark:bg-slate-900 rounded-3xl border-[3px] border-yellow-300 shadow-sm transition-colors animate-fade-in">
                     <h3 className="text-2xl sm:text-3xl font-black mb-4 text-slate-800 dark:text-white">Ready to test your knowledge?</h3>
-                    <p className="mb-8 text-slate-600 dark:text-slate-400 font-bold text-sm sm:text-base">Note: The module content will be hidden during the quiz to prevent cheating. Once you start, you cannot back read the module!</p>
+                    <p className="mb-8 text-slate-600 dark:text-slate-400 font-bold text-sm sm:text-base">Review the module content above and start when you're ready!</p>
                     <button onClick={() => setQuizStarted(true)} className="font-black px-8 sm:px-10 py-3 sm:py-4 rounded-full bg-yellow-400 text-red-600 shadow-[0_4px_0_#b45309] hover:-translate-y-0.5 active:translate-y-1 active:shadow-none transition-all uppercase tracking-wide text-sm sm:text-base">
                       Start Quiz
                     </button>
@@ -1166,13 +1132,7 @@ const ModuleOnePage = ({ initialProgress }: { initialProgress?: any }) => {
                       <p className="text-lg sm:text-xl font-black text-red-500">
                         You scored {quizScore}/5. You need 4/5 to pass.
                       </p>
-                      <button
-                        onClick={handleQuizRetake}
-                        className="bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-black px-8 py-3 rounded-full border-[3px] border-slate-200 dark:border-slate-700 shadow-[0_4px_0_#cbd5e1] dark:shadow-[0_4px_0_#0f172a] hover:-translate-y-0.5 active:translate-y-1 active:shadow-none transition-all uppercase tracking-wide text-sm flex items-center gap-2 mx-auto"
-                      >
-                        <RotateCcwIcon className="h-4 w-4" />
-                        Retake Quiz
-                      </button>
+
                     </div>
                   )}
                 </div>
@@ -1191,6 +1151,30 @@ const ModuleOnePage = ({ initialProgress }: { initialProgress?: any }) => {
 
         </div>
       </div>
+
+      {/* ── Badge Earned Modal ── */}
+      {showBadgeModal && (
+        <div className="fixed inset-0 z-[999] flex items-center justify-center bg-slate-950/60 backdrop-blur-sm px-4 animate-in fade-in duration-300">
+          <div className="bg-white dark:bg-slate-900 rounded-[2rem] max-w-sm w-full p-8 flex flex-col items-center text-center shadow-2xl border-[4px] border-amber-200 dark:border-amber-900/50 animate-in zoom-in-95 duration-500">
+            <div className="h-24 w-24 bg-amber-50 dark:bg-amber-900/20 rounded-full border-[4px] border-amber-100 dark:border-amber-800 flex items-center justify-center mb-6 shadow-inner relative overflow-hidden">
+              <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,theme(colors.amber.300/20)_0%,transparent_70%)] animate-pulse"></div>
+              <img src="/fire_hall.png" alt="Fire Scout Badge" className="h-16 w-16 object-contain relative z-10 drop-shadow-md animate-bounce" />
+            </div>
+            <h2 className="text-2xl font-black text-slate-800 dark:text-white mb-2">Badge Unlocked!</h2>
+            <p className="text-amber-600 dark:text-amber-400 font-bold uppercase tracking-widest text-sm mb-4">Fire Scout</p>
+            <p className="text-slate-600 dark:text-slate-400 text-sm font-medium mb-8 leading-relaxed">
+              Congratulations! You've mastered the Fire Triangle and earned your first official SafeScape badge.
+            </p>
+            <button
+              onClick={() => router.visit('/kids/safescape/2')}
+              className="w-full bg-amber-500 hover:bg-amber-400 text-white font-black px-6 py-4 rounded-[1.25rem] border-b-[5px] border-amber-700 active:border-b-[1px] active:mt-[4px] transition-all uppercase tracking-wider text-sm flex items-center justify-center gap-2"
+            >
+              Continue to Module 2
+              <ArrowLeft className="h-4 w-4 rotate-180" />
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* ── Toast ── */}
       {toast && (

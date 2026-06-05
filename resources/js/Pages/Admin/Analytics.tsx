@@ -63,6 +63,13 @@ export default function AnalyticsDashboard({
 }: any) {
   const { user, isLoading: authLoading } = useAuth()
   
+  const formatValue = (val: any) => {
+    if (val === null || val === undefined) return "0";
+    const num = Number(val);
+    if (isNaN(num)) return val;
+    return num % 1 === 0 ? num.toString() : num.toFixed(2);
+  };
+
   const [loading, setLoading] = useState(!initialSummaryData)
   const [refreshing, setRefreshing] = useState(false)
   const [error, setError] = useState("")
@@ -167,7 +174,7 @@ export default function AnalyticsDashboard({
   }
 
   // Find max values for bar chart scaling
-  const maxBarangayUsers = Math.max(...(Array.isArray(barangayData) ? barangayData : []).map(b => b.userCount || 0), 1)
+  const maxBarangayUsers = Math.max(...(Array.isArray(barangayData) ? barangayData : []).map(b => b.userCount || 0), 10)
   const maxKnowledgeScore = 100
 
   return (
@@ -347,7 +354,7 @@ export default function AnalyticsDashboard({
                     </div>
                     <div className="relative z-10 mt-2 sm:mt-0">
                       <div className="text-4xl sm:text-5xl font-black text-slate-800 dark:text-white drop-shadow-sm leading-none">{summary.preTestsTaken}</div>
-                      <p className="font-bold text-slate-400 dark:text-slate-500 mt-1.5 text-[11px] sm:text-sm leading-tight">Avg score: {summary.averagePreTestScore}/15</p>
+                      <p className="font-bold text-slate-400 dark:text-slate-500 mt-1.5 text-[11px] sm:text-sm leading-tight">Avg score: {formatValue(summary.averagePreTestScore)}/15</p>
                     </div>
                   </div>
 
@@ -361,7 +368,7 @@ export default function AnalyticsDashboard({
                     </div>
                     <div className="relative z-10 mt-2 sm:mt-0">
                       <div className="text-4xl sm:text-5xl font-black text-slate-800 dark:text-white drop-shadow-sm leading-none">{summary.postTestsTaken}</div>
-                      <p className="font-bold text-slate-400 dark:text-slate-500 mt-1.5 text-[11px] sm:text-sm leading-tight">Avg score: {summary.averagePostTestScore}/15</p>
+                      <p className="font-bold text-slate-400 dark:text-slate-500 mt-1.5 text-[11px] sm:text-sm leading-tight">Avg score: {formatValue(summary.averagePostTestScore)}/15</p>
                     </div>
                   </div>
 
@@ -375,7 +382,7 @@ export default function AnalyticsDashboard({
                     </div>
                     <div className="relative z-10 mt-2 sm:mt-0">
                       <div className={`text-4xl sm:text-5xl font-black drop-shadow-sm leading-none ${summary.averageImprovement >= 0 ? "text-green-500 dark:text-green-400" : "text-red-500 dark:text-red-400"}`}>
-                        {summary.averageImprovement >= 0 ? "+" : ""}{summary.averageImprovement}
+                        {summary.averageImprovement >= 0 ? "+" : ""}{formatValue(summary.averageImprovement)}
                       </div>
                       <p className="font-bold text-slate-400 dark:text-slate-500 mt-1.5 text-[11px] sm:text-sm leading-tight">points improved</p>
                     </div>
@@ -393,7 +400,7 @@ export default function AnalyticsDashboard({
                     </div>
                     <div className="mt-2 sm:mt-0">
                       <span className="text-3xl sm:text-4xl font-black text-slate-800 dark:text-white drop-shadow-sm leading-none">{summary.totalEngagementPoints.toLocaleString()}</span>
-                      <p className="font-bold text-slate-400 dark:text-slate-500 mt-1 sm:mt-2 text-[11px] sm:text-sm">Avg {summary.avgEngagementPerUser} per user</p>
+                      <p className="font-bold text-slate-400 dark:text-slate-500 mt-1 sm:mt-2 text-[11px] sm:text-sm">Avg {formatValue(summary.avgEngagementPerUser)} per user</p>
                     </div>
                   </div>
 
@@ -552,7 +559,7 @@ export default function AnalyticsDashboard({
                         <th className="text-center px-4">Users</th>
                         <th className="text-center px-4">Avg Pre-Test</th>
                         <th className="text-center px-4">Avg Post-Test</th>
-                        <th className="text-center px-6">Improvement</th>
+                        <th className="text-center px-6">Percentage</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -562,17 +569,17 @@ export default function AnalyticsDashboard({
                           <td className="py-5 px-4 text-center font-bold text-slate-500 dark:text-slate-400 border-y-2 border-slate-100 dark:border-slate-800 text-lg tabular-nums">{b.userCount}</td>
                           <td className="py-5 px-4 text-center border-y-2 border-slate-100 dark:border-slate-800">
                             <span className="bg-orange-100 dark:bg-orange-900/30 text-orange-600 dark:text-orange-400 border-2 border-orange-200 dark:border-orange-800 px-4 py-2 rounded-full font-black text-sm">
-                              {b.avgPreTestScore}/15
+                              {formatValue(b.avgPreTestScore)}/15
                             </span>
                           </td>
                           <td className="py-5 px-4 text-center border-y-2 border-slate-100 dark:border-slate-800">
                             <span className="bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 border-2 border-emerald-200 dark:border-emerald-800 px-4 py-2 rounded-full font-black text-sm">
-                              {b.avgPostTestScore}/15
+                              {formatValue(b.avgPostTestScore)}/15
                             </span>
                           </td>
                           <td className="py-5 px-6 text-center rounded-r-[1.5rem] border-y-2 border-r-2 border-slate-100 dark:border-slate-800">
                             <span className={`font-black text-base px-4 py-2 rounded-full border-2 ${b.avgImprovement >= 0 ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 border-green-200 dark:border-green-800 shadow-sm' : 'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 border-red-200 dark:border-red-800 shadow-sm'}`}>
-                              {b.avgImprovement >= 0 ? "+" : ""}{b.avgImprovement}
+                              {b.avgImprovement >= 0 ? "+" : ""}{formatValue(b.avgImprovement)}%
                             </span>
                           </td>
                         </tr>
@@ -596,16 +603,16 @@ export default function AnalyticsDashboard({
                         </div>
                         <div className="flex flex-col items-center bg-orange-50 dark:bg-orange-900/30 rounded-xl border-2 border-orange-200 dark:border-orange-800 border-b-[3px] dark:border-b-[3px] p-2.5">
                           <span className="text-[9px] font-extrabold text-orange-400 dark:text-orange-500 uppercase tracking-wider mb-1">Pre</span>
-                          <span className="text-base font-black text-orange-600 dark:text-orange-400 tabular-nums leading-none">{b.avgPreTestScore}/15</span>
+                          <span className="text-base font-black text-orange-600 dark:text-orange-400 tabular-nums leading-none">{formatValue(b.avgPreTestScore)}/15</span>
                         </div>
                         <div className="flex flex-col items-center bg-emerald-50 dark:bg-emerald-900/30 rounded-xl border-2 border-emerald-200 dark:border-emerald-800 border-b-[3px] dark:border-b-[3px] p-2.5">
                           <span className="text-[9px] font-extrabold text-emerald-400 dark:text-emerald-500 uppercase tracking-wider mb-1">Post</span>
-                          <span className="text-base font-black text-emerald-600 dark:text-emerald-400 tabular-nums leading-none">{b.avgPostTestScore}/15</span>
+                          <span className="text-base font-black text-emerald-600 dark:text-emerald-400 tabular-nums leading-none">{formatValue(b.avgPostTestScore)}/15</span>
                         </div>
                         <div className={`flex flex-col items-center rounded-xl border-2 border-b-[3px] p-2.5 ${b.avgImprovement >= 0 ? 'bg-green-50 dark:bg-green-900/30 border-green-200 dark:border-green-800' : 'bg-red-50 dark:bg-red-900/30 border-red-200 dark:border-red-800'}`}>
-                          <span className={`text-[9px] font-extrabold uppercase tracking-wider mb-1 ${b.avgImprovement >= 0 ? 'text-green-400' : 'text-red-400'}`}>Improv</span>
+                          <span className={`text-[9px] font-extrabold uppercase tracking-wider mb-1 ${b.avgImprovement >= 0 ? 'text-green-400' : 'text-red-400'}`}>Pct</span>
                           <span className={`text-lg font-black tabular-nums leading-none ${b.avgImprovement >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
-                            {b.avgImprovement >= 0 ? "+" : ""}{b.avgImprovement}
+                            {b.avgImprovement >= 0 ? "+" : ""}{formatValue(b.avgImprovement)}%
                           </span>
                         </div>
                       </div>
@@ -891,15 +898,15 @@ export default function AnalyticsDashboard({
                   </div>
                   <div className="bg-white dark:bg-slate-800 rounded-2xl sm:rounded-[2rem] border-2 border-slate-200 dark:border-slate-700 border-b-[4px] dark:border-b-[6px] sm:border-b-[6px] p-4 sm:p-5 hover:-translate-y-1 transition-all shadow-[0_4px_0_#cbd5e1] dark:shadow-[0_4px_0_#0f172a]">
                     <span className="font-extrabold text-slate-400 dark:text-slate-500 uppercase tracking-wider text-[10px] sm:text-xs">Avg Pre-Test</span>
-                    <div className="text-2xl sm:text-3xl font-black text-orange-500 dark:text-orange-400 mt-1">{schoolAnalytics.summary.overallAvgPreTest}</div>
+                    <div className="text-2xl sm:text-3xl font-black text-orange-500 dark:text-orange-400 mt-1">{formatValue(schoolAnalytics.summary.overallAvgPreTest)}</div>
                   </div>
                   <div className="bg-white dark:bg-slate-800 rounded-2xl sm:rounded-[2rem] border-2 border-slate-200 dark:border-slate-700 border-b-[4px] dark:border-b-[6px] sm:border-b-[6px] p-4 sm:p-5 hover:-translate-y-1 transition-all shadow-[0_4px_0_#cbd5e1] dark:shadow-[0_4px_0_#0f172a]">
                     <span className="font-extrabold text-slate-400 dark:text-slate-500 uppercase tracking-wider text-[10px] sm:text-xs">Avg Post-Test</span>
-                    <div className="text-2xl sm:text-3xl font-black text-emerald-500 dark:text-emerald-400 mt-1">{schoolAnalytics.summary.overallAvgPostTest}</div>
+                    <div className="text-2xl sm:text-3xl font-black text-emerald-500 dark:text-emerald-400 mt-1">{formatValue(schoolAnalytics.summary.overallAvgPostTest)}</div>
                   </div>
                   <div className="bg-white dark:bg-slate-800 rounded-2xl sm:rounded-[2rem] border-2 border-slate-200 dark:border-slate-700 border-b-[4px] dark:border-b-[6px] sm:border-b-[6px] p-4 sm:p-5 hover:-translate-y-1 transition-all col-span-2 lg:col-span-1 shadow-[0_4px_0_#cbd5e1] dark:shadow-[0_4px_0_#0f172a]">
                     <span className="font-extrabold text-slate-400 dark:text-slate-500 uppercase tracking-wider text-[10px] sm:text-xs">Completion Rate</span>
-                    <div className="text-2xl sm:text-3xl font-black text-blue-500 dark:text-blue-400 mt-1">{schoolAnalytics.summary.overallCompletionRate}%</div>
+                    <div className="text-2xl sm:text-3xl font-black text-blue-500 dark:text-blue-400 mt-1">{formatValue(schoolAnalytics.summary.overallCompletionRate)}%</div>
                   </div>
                 </div>
               )}
@@ -941,11 +948,11 @@ export default function AnalyticsDashboard({
                           <div className="grid grid-cols-4 gap-2 mt-3">
                             <div className="bg-orange-50 dark:bg-orange-900/30 rounded-lg border border-orange-200 dark:border-orange-800 p-2 text-center">
                               <div className="text-[9px] font-extrabold text-orange-400 dark:text-orange-500 uppercase tracking-tighter">Pre-Test</div>
-                              <div className="text-[13px] sm:text-sm font-black text-orange-600 dark:text-orange-400">{school.averagePreTestScore}</div>
+                              <div className="text-[13px] sm:text-sm font-black text-orange-600 dark:text-orange-400">{formatValue(school.averagePreTestScore)}</div>
                             </div>
                             <div className="bg-emerald-50 dark:bg-emerald-900/30 rounded-lg border border-emerald-200 dark:border-emerald-800 p-2 text-center">
                               <div className="text-[9px] font-extrabold text-emerald-400 dark:text-emerald-500 uppercase tracking-tighter">Post-Test</div>
-                              <div className="text-[13px] sm:text-sm font-black text-emerald-600 dark:text-emerald-400">{school.averagePostTestScore}</div>
+                              <div className="text-[13px] sm:text-sm font-black text-emerald-600 dark:text-emerald-400">{formatValue(school.averagePostTestScore)}</div>
                             </div>
                             <div className="bg-yellow-50 dark:bg-yellow-900/30 rounded-lg border border-yellow-200 dark:border-yellow-800 p-2 text-center">
                               <div className="text-[9px] font-extrabold text-yellow-500 dark:text-yellow-400 uppercase tracking-tighter">Increase</div>
@@ -955,7 +962,7 @@ export default function AnalyticsDashboard({
                             </div>
                             <div className="bg-blue-50 dark:bg-blue-900/30 rounded-lg border border-blue-200 dark:border-blue-800 p-2 text-center">
                               <div className="text-[9px] font-extrabold text-blue-400 dark:text-blue-500 uppercase tracking-tighter">Complete</div>
-                              <div className="text-[13px] sm:text-sm font-black text-blue-600 dark:text-blue-400">{school.averageCompletionRate}%</div>
+                              <div className="text-[13px] sm:text-sm font-black text-blue-600 dark:text-blue-400">{formatValue(school.averageCompletionRate)}%</div>
                             </div>
                           </div>
                         </div>
@@ -982,7 +989,7 @@ export default function AnalyticsDashboard({
                     </div>
                     <span className="font-extrabold text-slate-500 dark:text-slate-400 uppercase tracking-wider text-[11px] sm:text-xs">Avg Rating</span>
                   </div>
-                  <div className="text-4xl sm:text-5xl font-black text-yellow-500 dark:text-yellow-400">{feedbackAnalytics?.overallAverage || 0}<span className="text-lg text-slate-400 dark:text-slate-500">/5</span></div>
+                  <div className="text-4xl sm:text-5xl font-black text-yellow-500 dark:text-yellow-400">{formatValue(feedbackAnalytics?.overallAverage)}<span className="text-lg text-slate-400 dark:text-slate-500">/5</span></div>
                 </div>
                 <div className="bg-white dark:bg-slate-800 rounded-2xl sm:rounded-[2rem] border-2 border-slate-200 dark:border-slate-700 border-b-[4px] dark:border-b-[6px] sm:border-b-[6px] p-5 sm:p-6 hover:-translate-y-1 transition-all shadow-[0_8px_0_#cbd5e1] dark:shadow-[0_8px_0_#0f172a]">
                   <div className="flex items-center gap-2 mb-3">
@@ -1038,7 +1045,7 @@ export default function AnalyticsDashboard({
                         </div>
                         <div className="flex items-center gap-3">
                           <span className="font-black text-yellow-600 dark:text-yellow-400 text-base sm:text-lg">
-                            {f.avgRating}★
+                            {formatValue(f.avgRating)}★
                           </span>
                           <div className={`flex items-center gap-1.5 px-4 py-2 rounded-xl border-[3px] transition-all duration-200 shadow-[0_3px_0_rgba(0,0,0,0.1)] active:translate-y-[3px] active:shadow-none ${expandedFeature === f.featureName ? 'bg-slate-800 dark:bg-slate-700 text-white border-slate-900 dark:border-slate-600 shadow-[0_3px_0_#0f172a] dark:shadow-[0_3px_0_#1e293b]' : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-700 group-hover:border-slate-300 dark:group-hover:border-slate-600 shadow-[0_3px_0_#e2e8f0] dark:shadow-[0_3px_0_#0f172a]'}`}>
                             <span className="text-xs sm:text-sm font-black uppercase tracking-wider">

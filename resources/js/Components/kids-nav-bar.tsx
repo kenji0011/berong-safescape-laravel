@@ -31,7 +31,10 @@ export function KidsNavBar({ activeCategory, onCategoryChange }: KidsNavBarProps
           return (
             <button
               key={category.id}
-              onClick={() => onCategoryChange(category.id)}
+              onClick={() => {
+                new Audio('/sounds/tap.mp3').play().catch(() => {});
+                onCategoryChange(category.id);
+              }}
               className={cn(
                 "flex items-center gap-2.5 px-8 py-3.5 rounded-full font-black text-sm uppercase transition-all duration-200 active:duration-75 border-2",
                 isActive
@@ -56,7 +59,10 @@ export function KidsNavBar({ activeCategory, onCategoryChange }: KidsNavBarProps
             return (
               <button
                 key={category.id}
-                onClick={() => onCategoryChange(category.id)}
+                onClick={() => {
+                  new Audio('/sounds/tap.mp3').play().catch(() => {});
+                  onCategoryChange(category.id);
+                }}
                 className={cn(
                   "flex items-center justify-center gap-1.5 px-3.5 py-2.5 rounded-full font-black text-[11px] uppercase transition-all duration-200 active:duration-75 shrink-0 border-2",
                   isActive

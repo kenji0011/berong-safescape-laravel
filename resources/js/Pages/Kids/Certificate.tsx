@@ -12,6 +12,11 @@ const CertificatePage = () => {
   const certificateRef = useRef<HTMLDivElement>(null)
   const [downloading, setDownloading] = useState(false)
 
+  // Play victory celebration sound on load
+  React.useEffect(() => {
+    new Audio('/sounds/wingame.mp3').play().catch(() => {})
+  }, [])
+
   // Format date as "Given this Xth day of Month, Year"
   const d = new Date()
   const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
@@ -25,6 +30,7 @@ const CertificatePage = () => {
 
   const handleDownload = async () => {
     if (!certificateRef.current) return
+    new Audio('/sounds/click.mp3').play().catch(() => {})
     try {
       setDownloading(true)
       const [{ toPng }, { default: JsPDF }] = await Promise.all([

@@ -95,63 +95,62 @@ function AnimatedFeaturedCard({
   const isInView = useInView(ref, { once: true, margin: "-80px" });
 
   const cardContent = (
-    <div className={`w-full flex flex-col bg-white/80 dark:bg-slate-800/80 backdrop-blur-xl rounded-2xl sm:rounded-3xl overflow-hidden relative transition-all duration-300 border-2 border-white/60 dark:border-slate-700/60 ${isRestricted ? '' : card.accentBorder} shadow-[0_4px_20px_rgba(0,0,0,0.06)] dark:shadow-[0_4px_20px_rgba(0,0,0,0.3)] ${isRestricted ? 'grayscale opacity-50' : 'group-hover:-translate-y-2 group-hover:shadow-[0_20px_50px_rgba(0,0,0,0.12)] dark:group-hover:shadow-[0_20px_50px_rgba(0,0,0,0.5)] group-active:translate-y-0 group-active:shadow-[0_4px_20px_rgba(0,0,0,0.06)]'}`}>
+    <div className={`w-full flex flex-col bg-white dark:bg-[#0B1120] rounded-[2rem] overflow-hidden relative transition-all duration-500 border border-slate-200 dark:border-slate-800 shadow-xl ${isRestricted ? 'grayscale opacity-50' : 'group-hover/card:-translate-y-3 group-hover/card:shadow-[0_30px_60px_rgba(0,0,0,0.12)] dark:group-hover/card:shadow-[0_30px_60px_rgba(0,0,0,0.6)] group-hover/card:dark:border-slate-700/80'}`}>
 
       {/* Full Card Hover Overlay */}
       {card.hoverImageUrl && (
-        <div className={`absolute inset-0 z-20 pointer-events-none transition-all duration-500 ease-out opacity-0 ${isRestricted ? '' : 'group-hover:opacity-100'}`}>
+        <div className={`absolute inset-0 z-20 pointer-events-none transition-all duration-700 ease-out opacity-0 ${isRestricted ? '' : 'group-hover/card:opacity-100'}`}>
           <img
             src={card.hoverImageUrl}
             alt={`${card.title} hover preview`}
             loading="lazy"
-            className={`absolute inset-0 w-full h-full object-cover transition-transform duration-700 ease-out scale-110 ${isRestricted ? '' : 'group-hover:scale-100'}`}
+            className={`absolute inset-0 w-full h-full object-cover transition-transform duration-1000 ease-out scale-110 ${isRestricted ? '' : 'group-hover/card:scale-100'}`}
           />
           {/* Dark gradient for text readability */}
-          <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/40 to-transparent opacity-90 transition-opacity duration-500" />
+          <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/60 to-transparent opacity-95 transition-opacity duration-700" />
         </div>
       )}
 
       {/* Image Area */}
-      <div className="h-[140px] sm:h-[200px] shrink-0 w-full overflow-hidden relative bg-slate-900">
+      <div className="h-[180px] sm:h-[220px] shrink-0 w-full overflow-hidden relative bg-slate-900">
         <img
           src={card.imageUrl}
           alt={card.title}
-          fetchpriority="high"
-          className={`absolute inset-0 w-full h-full object-cover transition-all duration-700 ease-out ${isRestricted ? '' : 'group-hover:scale-110'}`}
+          fetchPriority="high"
+          className={`absolute inset-0 w-full h-full object-cover transition-transform duration-1000 ease-out ${isRestricted ? '' : 'group-hover/card:scale-110'}`}
         />
-        {/* Gradient Overlay */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
+        {/* Sleek Gradient Overlay */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent mix-blend-multiply" />
       </div>
 
       {/* Content Area */}
-      <div className="p-4 sm:p-6 flex-1 flex flex-col relative z-30 bg-white/50 dark:bg-slate-800/50 backdrop-blur-sm transition-all duration-500 group-hover:bg-transparent dark:group-hover:bg-transparent group-hover:backdrop-blur-none">
+      <div className="p-5 sm:p-8 flex-1 flex flex-col relative z-30 transition-all duration-500 bg-transparent">
 
         {/* Floating Icon */}
-        <div className={`absolute -top-7 sm:-top-8 right-4 sm:right-6 h-12 w-12 sm:h-14 sm:w-14 bg-gradient-to-br ${card.gradient} rounded-xl sm:rounded-2xl flex items-center justify-center text-white shadow-lg ${isRestricted ? '' : 'group-hover:opacity-0 group-hover:scale-75 group-hover:-translate-y-4'} transition-all duration-500 z-10 border-2 border-white/30`}>
+        <div className={`absolute -top-8 sm:-top-10 right-6 sm:right-8 h-14 w-14 sm:h-16 sm:w-16 bg-gradient-to-br ${card.gradient} rounded-[1.25rem] sm:rounded-2xl shadow-xl flex items-center justify-center text-white ${isRestricted ? '' : 'group-hover/card:-translate-y-2 group-hover/card:scale-110 group-hover/card:rotate-6'} transition-all duration-500 z-10 border-4 border-white dark:border-[#0B1120]`}>
           {card.icon}
         </div>
 
-        <div className="pr-14 sm:pr-16 group-hover:pr-0 transition-all duration-500">
-          <h3 className={`text-lg sm:text-xl lg:text-2xl font-black text-slate-800 dark:text-white leading-tight mb-1.5 sm:mb-2 transition-all duration-500 ${isRestricted ? '' : 'group-hover:text-white group-hover:drop-shadow-lg group-hover:-translate-y-2'}`}>
+        <div className="transition-all duration-500 relative z-10">
+          <h3 className={`text-xl sm:text-2xl font-black text-slate-800 dark:text-white tracking-tight mb-2 sm:mb-3 transition-colors duration-300 ${isRestricted ? '' : 'group-hover/card:text-white'}`}>
             {card.title}
           </h3>
-          <div className={`transition-all duration-500 overflow-hidden ${isRestricted ? '' : 'group-hover:max-h-0 group-hover:opacity-0'} max-h-[4rem]`}>
-            <p className="text-xs sm:text-sm font-semibold text-slate-500 dark:text-slate-400 line-clamp-2 leading-relaxed">
+          <div className="transition-all duration-500">
+            <p className={`text-sm font-semibold text-slate-500 dark:text-slate-400 leading-relaxed transition-colors duration-300 ${isRestricted ? '' : 'group-hover/card:text-slate-300'}`}>
               {card.description}
             </p>
           </div>
         </div>
 
         {/* Action Button */}
-        <div className="mt-auto pt-4 sm:pt-5 transition-transform duration-500 group-hover:-translate-y-2">
+        <div className="mt-auto pt-6 transition-all duration-500">
           {isRestricted ? (
-            <div className="w-full bg-slate-300 dark:bg-slate-600 text-slate-500 dark:text-slate-400 font-extrabold text-xs sm:text-sm py-2.5 sm:py-3 rounded-xl sm:rounded-2xl flex items-center justify-center gap-2 tracking-wide uppercase cursor-not-allowed">
+            <div className="w-full bg-slate-100 dark:bg-slate-800/50 text-slate-400 dark:text-slate-500 font-extrabold text-xs sm:text-sm py-3.5 sm:py-4 rounded-xl flex items-center justify-center tracking-[0.15em] uppercase cursor-not-allowed">
               🔒 Locked
             </div>
           ) : (
-            <div className={`w-full bg-gradient-to-r ${card.gradient} text-white font-extrabold text-xs sm:text-sm py-2.5 sm:py-3 rounded-xl sm:rounded-2xl shadow-[0_4px_0_rgba(0,0,0,0.15)] transition-all group-hover:-translate-y-0.5 group-hover:shadow-[0_6px_0_rgba(0,0,0,0.15)] group-active:translate-y-[4px] group-active:shadow-[0_0px_0_rgba(0,0,0,0.15)] flex items-center justify-center gap-2 tracking-wide uppercase`}>
+            <div className={`w-full bg-gradient-to-r ${card.gradient} text-white font-black text-xs sm:text-sm py-3.5 sm:py-4 rounded-xl shadow-lg transition-all flex items-center justify-center tracking-[0.15em] uppercase ${isRestricted ? '' : 'group-hover/card:shadow-[0_10px_20px_rgba(0,0,0,0.2)] group-hover/card:-translate-y-1'}`}>
               {card.btn}
-              <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform duration-300" strokeWidth={3} />
             </div>
           )}
         </div>
@@ -172,12 +171,12 @@ function AnimatedFeaturedCard({
       className="h-full"
     >
       {isRestricted ? (
-        <div className="flex w-full h-full cursor-not-allowed">
+        <div className="flex w-full h-full cursor-not-allowed group/card">
           {cardContent}
         </div>
       ) : (
         <PermissionGuard requiredPermission={card.requiredPermission} targetPath={card.link}>
-          <Link href={card.link} prefetch={false} className="outline-none flex w-full h-full group">
+          <Link href={card.link} prefetch={false} className="outline-none flex w-full h-full group/card">
             {cardContent}
           </Link>
         </PermissionGuard>
@@ -211,7 +210,7 @@ function MobileAnimatedCard({
         {/* Content */}
         <div className="min-w-0 flex-1">
           <h3 className={`font-black text-base text-slate-800 dark:text-white leading-tight transition-colors ${isRestricted ? '' : 'group-hover:text-red-600 dark:group-hover:text-orange-400'}`}>{card.title}</h3>
-          <p className="text-[12px] font-semibold text-slate-500 dark:text-slate-400 line-clamp-2 leading-snug mt-1 transition-colors">{card.description}</p>
+          <p className="text-[12px] font-semibold text-slate-500 dark:text-slate-400 leading-snug mt-1 transition-colors">{card.description}</p>
         </div>
       </div>
       {/* Full Width Mobile Button */}
@@ -274,39 +273,31 @@ export function FeaturedCards({ serverUser }: { serverUser?: ServerUser | null }
     return <FeaturedCardsSkeleton />;
   }
 
+  // Helper to determine permissions from comma-separated role string
+  const getPermissionsFromRoleString = (roleStr: string) => {
+    const roles = (roleStr ?? "guest").split(",");
+    const isAdmin = roles.includes("admin");
+    const isProfessional = roles.includes("professional") || isAdmin;
+    return {
+      accessKids: roles.includes("kid") || isProfessional,
+      accessAdult: roles.includes("adult") || isProfessional,
+      accessProfessional: isProfessional,
+      isAdmin: isAdmin,
+    };
+  };
+
   // Use client user if available, otherwise reconstruct from serverUser
   const user = clientUser || (serverUser ? {
     ...serverUser,
-    permissions: serverUser.role === 'admin'
-      ? { accessKids: true, accessAdult: true, accessProfessional: true, isAdmin: true }
-      : serverUser.role === 'professional'
-        ? { accessKids: true, accessAdult: true, accessProfessional: true, isAdmin: false }
-        : serverUser.role === 'adult'
-          ? { accessKids: false, accessAdult: true, accessProfessional: false, isAdmin: false }
-          : serverUser.role === 'kid'
-            ? { accessKids: true, accessAdult: false, accessProfessional: false, isAdmin: false }
-            : { accessKids: false, accessAdult: false, accessProfessional: false, isAdmin: false }
+    permissions: getPermissionsFromRoleString(serverUser.role)
   } as any : null);
 
   // Determine if a card is restricted (greyed out) for the current user
   const isCardRestricted = (card: FeaturedCardItem): boolean => {
     // Not logged in or admin — all cards accessible
-    if (!user || user.role === 'admin') return false;
+    if (!user || user.permissions?.isAdmin) return false;
 
-    if (user.role === 'kid') {
-      // Kids can only access Kids
-      return card.requiredPermission !== 'accessKids';
-    }
-    if (user.role === 'adult') {
-      // Adults can only access Adult
-      return card.requiredPermission !== 'accessAdult';
-    }
-    if (user.role === 'professional') {
-      // Professionals can access Adult + Professional
-      return card.requiredPermission === 'accessKids';
-    }
-
-    return false;
+    return !user.permissions?.[card.requiredPermission];
   };
 
   // Always show all 3 cards
@@ -319,14 +310,14 @@ export function FeaturedCards({ serverUser }: { serverUser?: ServerUser | null }
         initial={{ opacity: 0, y: 20 }}
         animate={isInView ? { opacity: 1, y: 0 } : {}}
         transition={{ duration: 0.5 }}
-        className="text-center mb-8 sm:mb-10"
+        className="text-center mb-10 sm:mb-14"
       >
-        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-900/30 mb-4">
-          <Flame className="h-3.5 w-3.5 text-red-500" strokeWidth={2.5} />
-          <span className="text-xs font-bold text-red-600 dark:text-red-400 uppercase tracking-widest">Choose Your Path</span>
+        <div className="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-red-50 dark:bg-red-500/10 border border-red-200/50 dark:border-red-500/20 mb-6 shadow-sm">
+          <Flame className="h-4 w-4 text-red-500" strokeWidth={2.5} />
+          <span className="text-[10px] sm:text-xs font-black text-red-600 dark:text-red-400 uppercase tracking-[0.2em]">Choose Your Path</span>
         </div>
-        <h2 className="text-2xl sm:text-4xl font-black text-slate-800 dark:text-white tracking-tight">
-          Start Your <span className="text-red-500">Fire Safety</span> Journey
+        <h2 className="text-3xl sm:text-5xl font-black text-slate-800 dark:text-white tracking-tight">
+          Start Your <span className="text-red-500 drop-shadow-sm">Fire Safety</span> Journey
         </h2>
       </motion.div>
 

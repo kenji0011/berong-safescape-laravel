@@ -11,11 +11,11 @@ interface BadgeHallProps {
 }
 
 const ALL_BADGES = [
-  { id: 'module_1', moduleNum: 1, name: "Fire Triangle", source: "Module 1", image: "/fire_hall.png", hint: "Complete Module 1: Fire is a Tool, Not a Toy and pass the quiz.", target: "/kids/safescape/1" },
-  { id: 'module_2', moduleNum: 2, name: "Safety Leader", source: "Module 2", image: "/shield_hall.png", hint: "Master the Fire Drill in Module 2 to earn this badge.", target: "/kids/safescape/2" },
-  { id: 'module_3', moduleNum: 3, name: "Plan Master", source: "Module 3", image: "/plan_hall.png", hint: "Create your Family Escape Plan in Module 3.", target: "/kids/safescape/3" },
-  { id: 'module_4', moduleNum: 4, name: "Low & Go!", source: "Module 4", image: "/low_hall.png", hint: "Learn the Smoke Crawling technique in Module 4.", target: "/kids/safescape/4" },
-  { id: 'module_5', moduleNum: 5, name: "Home Guard", source: "Module 5", image: "/home_hall.png", hint: "Complete the final Module 5 training session.", target: "/kids/safescape/5" },
+  { id: 'module_1', moduleNum: 1, name: "Fire Triangle", alias: "Fire Scout", source: "Module 1", image: "/fire_hall.png", hint: "Complete Module 1: Fire is a Tool, Not a Toy and pass the quiz.", target: "/kids/safescape/1" },
+  { id: 'module_2', moduleNum: 2, name: "Safety Leader", alias: "Fire Marshal", source: "Module 2", image: "/shield_hall.png", hint: "Master the Fire Drill in Module 2 to earn this badge.", target: "/kids/safescape/2" },
+  { id: 'module_3', moduleNum: 3, name: "Plan Master", alias: "Escape Planner", source: "Module 3", image: "/plan_hall.png", hint: "Create your Family Escape Plan in Module 3.", target: "/kids/safescape/3" },
+  { id: 'module_4', moduleNum: 4, name: "Low & Go!", alias: "Smoke Crawler", source: "Module 4", image: "/low_hall.png", hint: "Learn the Smoke Crawling technique in Module 4.", target: "/kids/safescape/4" },
+  { id: 'module_5', moduleNum: 5, name: "Home Guard", alias: "Fire Prevention", source: "Module 5", image: "/home_hall.png", hint: "Complete the final Module 5 training session.", target: "/kids/safescape/5" },
   { id: 'quiz_hero', name: "Quiz Hero", source: "Fire Quiz", image: "/quiz_hall.png", hint: "Score 100% on any Fire Safety Quiz.", target: "/kids/quiz" },
   { id: 'memory_master', name: "Memory Master", source: "Memory Game", image: "/memory_hall.png", hint: "Finish the Memory Match game with zero mistakes.", target: "/kids/memory-game" },
   { id: 'smoke_scout', name: "Smoke Scout", source: "Smoke Crawl", image: "/smoke_hall.png", hint: "Stay low and find your way out of the smoke-filled maze!", target: "/kids/smoke-crawl" },
@@ -33,15 +33,21 @@ const BadgeHallPage = ({ completedModules = [], earnedBadges = [] }: BadgeHallPr
     const highlight = params.get('highlight');
     if (highlight) {
       const decodedName = decodeURIComponent(highlight).toLowerCase();
-      const index = ALL_BADGES.findIndex(b => b.name.toLowerCase() === decodedName);
+      const index = ALL_BADGES.findIndex(b => 
+        b.name.toLowerCase() === decodedName || 
+        b.alias?.toLowerCase() === decodedName
+      );
       if (index !== -1) {
         const el = document.getElementById(`badge-card-${index}`);
         if (el) {
           setTimeout(() => {
             el.scrollIntoView({ behavior: 'smooth', block: 'center' });
             el.classList.add('animate-bounce', 'ring-4', 'ring-yellow-400', 'ring-offset-4', 'ring-offset-slate-50', 'dark:ring-offset-slate-900', 'shadow-[0_0_40px_rgba(250,204,21,0.6)]');
+            el.style.animationDuration = '2s'; // Slow down the bounce speed
+            new Audio('/sounds/win.mp3').play().catch(() => {});
             setTimeout(() => {
               el.classList.remove('animate-bounce', 'ring-4', 'ring-yellow-400', 'ring-offset-4', 'ring-offset-slate-50', 'dark:ring-offset-slate-900', 'shadow-[0_0_40px_rgba(250,204,21,0.6)]');
+              el.style.animationDuration = ''; // Reset
             }, 3000);
           }, 400); // slight delay to ensure smooth scrolling starts after layout
         }
@@ -104,8 +110,13 @@ const BadgeHallPage = ({ completedModules = [], earnedBadges = [] }: BadgeHallPr
                 <div 
                   key={i} 
                   id={`badge-card-${i}`}
+                  onClick={() => {
+                    if (state.isEarned) {
+                      new Audio('/sounds/tap.mp3').play().catch(() => {});
+                    }
+                  }}
                   className={cn(
-                    "group relative p-4 sm:p-6 rounded-2xl sm:rounded-[2.5rem] border-2 sm:border-[3px] transition-all duration-500 flex flex-col min-h-[240px] sm:min-h-[300px] h-auto overflow-hidden",
+                    "group relative p-4 sm:p-6 rounded-2xl sm:rounded-[2.5rem] border-2 sm:border-[3px] transition-all duration-500 flex flex-col min-h-[240px] sm:min-h-[300px] h-auto overflow-hidden cursor-pointer",
                     state.isEarned 
                       ? "bg-white dark:bg-slate-800 border-slate-200 dark:border-white/10 shadow-xl hover:-translate-y-1.5 sm:hover:-translate-y-2" 
                       : "bg-white dark:bg-slate-950/40 border-slate-200 dark:border-slate-800/40"

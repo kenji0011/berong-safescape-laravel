@@ -70,6 +70,7 @@ Route::middleware(['auth:sanctum', 'throttle:api'])->group(function () {
         Route::get('/blogs/{id}', [ContentController::class, 'showBlog']);
         Route::get('/videos', [ContentController::class, 'videos']);
         Route::get('/questions', [ContentController::class, 'questions']);
+        Route::get('/manuals', [ContentController::class, 'manuals']);
         // Removed duplicate /carousel route as it needs to be public
     });
 
@@ -133,6 +134,7 @@ Route::middleware(['auth:sanctum', 'throttle:api'])->group(function () {
 
         // Content management
         Route::post('/upload', [AdminController::class, 'uploadImage']);
+        Route::post('/upload-manual', [AdminController::class, 'uploadManual']);
         
         Route::get('/posts', [ContentController::class, 'blogs']);
         Route::post('/posts', [AdminController::class, 'createPost']);

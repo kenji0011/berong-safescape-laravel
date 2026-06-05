@@ -20,6 +20,7 @@ export default function TaskMaster() {
     const handleMessage = async (event: MessageEvent) => {
       // The Godot game should send something like: window.parent.postMessage("TASK_MASTER_WON", "*");
       if (event.data === "TASK_MASTER_WON" || event.data?.type === "TASK_MASTER_WON") {
+        new Audio('/sounds/win.mp3').play().catch(() => {});
         setShowWinNotification(true);
         // Save the badge via API
         try {

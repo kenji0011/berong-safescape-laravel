@@ -65,46 +65,16 @@ function determineRedirectPath(user: User | null): string {
 }
 
 // Helper function to determine permissions
-function determinePermissions(role: UserRole) {
-  if (role === 'admin') {
-    return {
-      accessKids: true,
-      accessAdult: true,
-      accessProfessional: true,
-      isAdmin: true,
-    }
-  }
-
-  switch (role) {
-    case "professional":
-      return {
-        accessKids: false,
-        accessAdult: true,
-        accessProfessional: true,
-        isAdmin: false,
-      }
-    case "adult":
-      return {
-        accessKids: false,
-        accessAdult: true,
-        accessProfessional: false,
-        isAdmin: false,
-      }
-    case "kid":
-      return {
-        accessKids: true,
-        accessAdult: false,
-        accessProfessional: false,
-        isAdmin: false,
-      }
-    default:
-      return {
-        accessKids: false,
-        accessAdult: false,
-        accessProfessional: false,
-        isAdmin: false,
-      }
-  }
+function determinePermissions(role: string) {
+  const roles = (role ?? "guest").split(",");
+  const isAdmin = roles.includes("admin");
+  const isProfessional = roles.includes("professional") || isAdmin;
+  return {
+    accessKids: roles.includes("kid") || isProfessional,
+    accessAdult: roles.includes("adult") || isProfessional,
+    accessProfessional: isProfessional,
+    isAdmin: isAdmin,
+  };
 }
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {

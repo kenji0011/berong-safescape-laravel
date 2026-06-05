@@ -50,6 +50,7 @@ const KidsDashboardPage = ({ modules, progress }: KidsPageProps) => {
       if (!tutorialSeen) {
         const timer = setTimeout(() => {
           setShowFirstTimeTutorial(true)
+          new Audio('/sounds/combo.mp3').play().catch(() => {})
         }, 1200) // Small delay to let the dashboard render
         return () => clearTimeout(timer)
       } else if (!firstModuleClicked) {
@@ -61,6 +62,7 @@ const KidsDashboardPage = ({ modules, progress }: KidsPageProps) => {
 
   const dismissTutorial = () => {
     if (!user) return
+    new Audio('/sounds/click.mp3').play().catch(() => {})
     const tutorialSeenKey = `safescape_kid_tutorial_seen_${user.id}`
     const firstModuleClickedKey = `safescape_first_module_clicked_${user.id}`
     localStorage.setItem(tutorialSeenKey, 'true')
@@ -71,7 +73,7 @@ const KidsDashboardPage = ({ modules, progress }: KidsPageProps) => {
     }
   }
 
-  const buildContent = (completedIds: number[], shouldPulse: boolean): ContentCardData[] => [
+  const buildContent = (completedIds: number[], badges: any[], shouldPulse: boolean): ContentCardData[] => [
     {
       id: "safescape-course",
       title: "SafeScape Fire Safety Course",
@@ -97,20 +99,14 @@ const KidsDashboardPage = ({ modules, progress }: KidsPageProps) => {
     {
       id: "video-game",
       title: "Task Master",
-      description: "Complete daily missions and earn legendary rewards! Show your skills as a top fire safety expert.",
+      description: "Complete tasks and learn about fire safety.",
       type: "game",
       imageUrl: "/task_master.png",
+      videoPreviewUrl: "/task_master_preview.mp4",
       href: "/kids/task-master",
-      category: "games"
-    },
-    {
-      id: "escape-room-game",
-      title: "The Right Call",
-      description: "Answer emergency calls and dispatch the right team! Do you have what it takes to be a dispatching hero?",
-      type: "game",
-      imageUrl: "/therightcall_kids.png",
-      href: "/kids/the-right-call",
-      category: "games"
+      isLocked: completedIds.length < 5,
+      category: "games",
+      unlockRequirement: "Complete 5 Modules"
     },
     {
       id: "video-portal",
@@ -121,6 +117,17 @@ const KidsDashboardPage = ({ modules, progress }: KidsPageProps) => {
       href: "/kids/videos",
       duration: "Full Library",
       category: "videos"
+    },
+    {
+      id: "escape-room-game",
+      title: "The Right Call",
+      description: "Answer emergency calls and dispatch the right team! Do you have what it takes to be a dispatching hero?",
+      type: "game",
+      imageUrl: "/therightcall_kids.png",
+      href: "/kids/the-right-call",
+      isLocked: !badges.some(b => b.badge_id === 'intel_analyst'),
+      category: "games",
+      unlockRequirement: "Watch all Fire Safety Videos"
     },
     {
       id: "activity-portal",
@@ -136,17 +143,15 @@ const KidsDashboardPage = ({ modules, progress }: KidsPageProps) => {
   ]
 
   const allContent = useMemo(() => {
-    return buildContent(progress?.completedModules || [], pulseFirstModule)
+    return buildContent(progress?.completedModules || [], progress?.badges || [], pulseFirstModule)
   }, [progress, pulseFirstModule])
 
   const handleContentClick = (content: ContentCardData) => {
     if (content.isLocked) {
-      if (content.id === "edith-simulation") {
-        toast.error("Access Denied!", {
-          description: "You must complete all 5 modules of the SafeScape Fire Safety Course to unlock this simulation!",
-          duration: 5000,
-        })
-      }
+      toast.error("Access Denied!", {
+        description: `You must ${content.unlockRequirement?.toLowerCase() || 'complete the requirements'} to unlock ${content.title}!`,
+        duration: 5000,
+      })
       return
     }
 
@@ -155,6 +160,8 @@ const KidsDashboardPage = ({ modules, progress }: KidsPageProps) => {
       localStorage.setItem(firstModuleClickedKey, 'true')
       setPulseFirstModule(false)
     }
+
+    new Audio('/sounds/tap.mp3').play().catch(() => {})
 
     if (content.href !== "#") {
       router.visit(content.href)

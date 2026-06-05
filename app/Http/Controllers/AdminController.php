@@ -120,23 +120,24 @@ class AdminController extends Controller
             return response()->json(['success' => false, 'error' => 'Invalid permission'], 400);
         }
 
+        $targetRole = $permissionToRoleMap[$request->permission];
+        $currentRoles = array_filter(array_map('trim', explode(',', $user->role ?? 'guest')));
+
         if ($action === 'remove') {
-            // Downgrade the user's role because permissions are cumulative and hierarchical
-            $newRole = 'guest';
-            if ($request->permission === 'isAdmin') {
-                $newRole = 'professional';
-            } elseif ($request->permission === 'accessProfessional') {
-                $newRole = 'adult';
-            } elseif ($request->permission === 'accessAdult') {
-                $newRole = 'kid';
-            } elseif ($request->permission === 'accessKids') {
-                $newRole = 'guest';
+            $currentRoles = array_diff($currentRoles, [$targetRole]);
+            if (empty($currentRoles)) {
+                $currentRoles = ['guest'];
             }
-            
-            $user->update(['role' => $newRole]);
         } else {
-            $user->update(['role' => $permissionToRoleMap[$request->permission]]);
+            $currentRoles = array_diff($currentRoles, ['guest']);
+            if (!in_array($targetRole, $currentRoles)) {
+                $currentRoles[] = $targetRole;
+            }
         }
+
+        $currentRoles = array_unique($currentRoles);
+        $newRoleString = implode(',', $currentRoles);
+        $user->update(['role' => $newRoleString]);
 
         return response()->json(['success' => true, 'user' => $user]);
     }
@@ -580,19 +581,55 @@ class AdminController extends Controller
         return response()->json(['success' => true, 'sections' => $sections]);
     }
 
+    public function uploadManual(Request $request)
+    {
+        $request->validate([
+            'file' => 'required|file|mimes:pdf,doc,docx|max:102400', // 100MB max
+        ]);
+
+        if ($request->hasFile('file')) {
+            $file = $request->file('file');
+            $filename = time() . '_' . str_replace(' ', '_', $file->getClientOriginalName());
+            
+            // Ensure the directory exists
+            $destinationPath = public_path('modules/bfp_manuals');
+            if (!file_exists($destinationPath)) {
+                mkdir($destinationPath, 0755, true);
+            }
+            
+            $file->move($destinationPath, $filename);
+
+            return response()->json([
+                'success' => true,
+                'filename' => $filename,
+                'url' => asset('modules/bfp_manuals/' . $filename)
+            ]);
+        }
+
+        return response()->json(['success' => false, 'error' => 'No file uploaded'], 400);
+    }
+
     public function createFireCode(Request $request)
     {
         $request->validate([
             'title' => 'required|string|max:255',
-            'sectionNum' => 'required|string|max:100',
-            'content' => 'required|string',
+            'category' => 'required|string|max:100',
+            'sectionNum' => 'nullable|string|max:100',
+            'content' => 'nullable|string',
+            'description' => 'nullable|string',
+            'filename' => 'nullable|string|max:255',
+            'parentSectionId' => 'nullable|integer',
         ]);
 
         $section = \App\Models\FireCodeSection::create([
             'title' => strip_tags($request->title),
-            'sectionNum' => strip_tags($request->sectionNum),
-            'content' => strip_tags($request->input('content')),
+            'category' => strip_tags($request->category),
+            'sectionNum' => $request->sectionNum ? strip_tags($request->sectionNum) : null,
+            'content' => $request->input('content') ? strip_tags($request->input('content')) : null,
+            'description' => $request->description ? strip_tags($request->description) : null,
+            'filename' => $request->filename ? strip_tags($request->filename) : null,
             'parentSectionId' => $request->parentSectionId,
+            'order' => $request->order ?? 0,
         ]);
 
         return response()->json(['success' => true, 'section' => $section], 201);
@@ -604,19 +641,32 @@ class AdminController extends Controller
         
         $request->validate([
             'title' => 'sometimes|required|string|max:255',
-            'sectionNum' => 'sometimes|required|string|max:100',
-            'content' => 'sometimes|required|string',
+            'category' => 'sometimes|required|string|max:100',
+            'sectionNum' => 'nullable|string|max:100',
+            'content' => 'nullable|string',
+            'description' => 'nullable|string',
+            'filename' => 'nullable|string|max:255',
+            'parentSectionId' => 'nullable|integer',
         ]);
 
         $updates = [];
         if ($request->has('title')) {
             $updates['title'] = strip_tags($request->title);
         }
+        if ($request->has('category')) {
+            $updates['category'] = strip_tags($request->category);
+        }
         if ($request->has('sectionNum')) {
-            $updates['sectionNum'] = strip_tags($request->sectionNum);
+            $updates['sectionNum'] = $request->sectionNum ? strip_tags($request->sectionNum) : null;
         }
         if ($request->has('content')) {
-            $updates['content'] = strip_tags($request->input('content'));
+            $updates['content'] = $request->input('content') ? strip_tags($request->input('content')) : null;
+        }
+        if ($request->has('description')) {
+            $updates['description'] = $request->description ? strip_tags($request->description) : null;
+        }
+        if ($request->has('filename')) {
+            $updates['filename'] = $request->filename ? strip_tags($request->filename) : null;
         }
         if ($request->has('parentSectionId')) {
             $updates['parentSectionId'] = $request->parentSectionId;
@@ -718,7 +768,7 @@ class AdminController extends Controller
                 foreach ($withBoth as $u) {
                     $sum += ($u->postTestScore - $u->preTestScore);
                 }
-                $avgImprovement = $sum / $withBoth->count();
+                $avgImprovement = (($sum / $withBoth->count()) / 15) * 100;
             }
 
             $barangayData[] = [
@@ -726,7 +776,7 @@ class AdminController extends Controller
                 'userCount' => $users->count(),
                 'avgPreTestScore' => round($avgPre, 2),
                 'avgPostTestScore' => round($avgPost, 2),
-                'avgImprovement' => round($avgImprovement, 2),
+                'avgImprovement' => round($avgImprovement, 1),
                 'profilesCompleted' => $users->filter(fn($u) => $u->profileCompleted)->count(),
             ];
         }
@@ -848,6 +898,13 @@ class AdminController extends Controller
         $callback = function () use ($summary, $barangay, $demographics, $knowledge, $schoolData, $feedbackData) {
             $out = fopen('php://output', 'w');
 
+            // ── HEADER & TITLE ─────────────────────────────────────────
+            fputcsv($out, ['SAFESCAPE PLATFORM ANALYTICS REPORT']);
+            fputcsv($out, ['Exported Date:', now()->format('Y-m-d')]);
+            fputcsv($out, ['Exported Time:', now()->format('H:i:s')]);
+            fputcsv($out, ['Location:', 'Santa Cruz, Laguna, Philippines']);
+            fputcsv($out, []);
+
             // ── SUMMARY ──────────────────────────────────────────────
             fputcsv($out, ['=== SUMMARY STATISTICS ===']);
             fputcsv($out, ['Metric', 'Value']);
@@ -866,7 +923,7 @@ class AdminController extends Controller
 
             // ── BY BARANGAY ───────────────────────────────────────────
             fputcsv($out, ['=== USERS BY BARANGAY ===']);
-            fputcsv($out, ['Barangay', 'Users', 'Profiles Completed', 'Avg Pre-Test', 'Avg Post-Test', 'Avg Improvement']);
+            fputcsv($out, ['Barangay', 'Users', 'Profiles Completed', 'Avg Pre-Test', 'Avg Post-Test', 'Percentage']);
             foreach ($barangay as $b) {
                 if (($b['userCount'] ?? 0) === 0) continue;
                 fputcsv($out, [
@@ -875,7 +932,7 @@ class AdminController extends Controller
                     $b['profilesCompleted'],
                     $b['avgPreTestScore'],
                     $b['avgPostTestScore'],
-                    $b['avgImprovement'],
+                    ($b['avgImprovement'] >= 0 ? '+' : '') . $b['avgImprovement'] . '%',
                 ]);
             }
             fputcsv($out, []);
@@ -963,6 +1020,97 @@ class AdminController extends Controller
                 }
             }
             fputcsv($out, []);
+
+            // Calculate highlights for narrative
+            $lowestCategory = 'N/A';
+            $lowestScore = 100;
+            $highestCategory = 'N/A';
+            $highestScore = 0;
+            if (!empty($knowledge)) {
+                foreach ($knowledge as $k) {
+                    $score = $k['avgScore'];
+                    if ($score < $lowestScore) {
+                        $lowestScore = $score;
+                        $lowestCategory = $k['category'];
+                    }
+                    if ($score > $highestScore) {
+                        $highestScore = $score;
+                        $highestCategory = $k['category'];
+                    }
+                }
+            }
+
+            $topSchool = 'N/A';
+            $topSchoolScore = 0;
+            if (isset($schoolData['schools']) && is_array($schoolData['schools']) && !empty($schoolData['schools'])) {
+                $topS = $schoolData['schools'][0];
+                $topSchool = $topS['name'] ?? 'Unknown';
+                $topSchoolScore = $topS['averagePostTestScore'] ?? 0;
+            }
+
+            $topFeature = 'N/A';
+            $topFeatureRating = 0;
+            if (isset($feedbackData['byFeatureName']) && is_array($feedbackData['byFeatureName']) && !empty($feedbackData['byFeatureName'])) {
+                $features = $feedbackData['byFeatureName'];
+                usort($features, fn($a, $b) => ($b['avgRating'] ?? 0) <=> ($a['avgRating'] ?? 0));
+                $topF = $features[0];
+                $topFeature = $topF['featureName'] ?? 'Unknown';
+                $topFeatureRating = $topF['avgRating'] ?? 0;
+            }
+
+            // ── EXECUTIVE SUMMARY & NARRATIVE REPORT ──────────────────
+            fputcsv($out, ['=== EXECUTIVE SUMMARY & NARRATIVE REPORT ===']);
+            
+            fputcsv($out, ['Report Summary:']);
+            $lines = explode("\n", wordwrap("This report details the learning and engagement progress on the Berong Safescape E-Learning platform in Santa Cruz, Laguna.", 80));
+            foreach ($lines as $l) {
+                fputcsv($out, [$l]);
+            }
+            fputcsv($out, []);
+
+            fputcsv($out, ['1. PLATFORM REACH:']);
+            $lines = explode("\n", wordwrap("A total of {$summary['totalUsers']} users are registered on the platform. Out of these, {$summary['profilesCompleted']} users have fully completed their profiles, showing strong adoption across targeted demographics.", 80));
+            foreach ($lines as $l) {
+                fputcsv($out, [$l]);
+            }
+            fputcsv($out, []);
+
+            fputcsv($out, ['2. ASSESSMENT GRADUATION:']);
+            $lines = explode("\n", wordwrap("{$summary['preTestsTaken']} users completed the pre-test, while {$summary['postTestsTaken']} users completed the post-test. The average score increased from {$summary['averagePreTestScore']}/15 to {$summary['averagePostTestScore']}/15, representing an average points improvement of +{$summary['averageImprovement']} per user.", 80));
+            foreach ($lines as $l) {
+                fputcsv($out, [$l]);
+            }
+            fputcsv($out, []);
+
+            if ($lowestCategory !== 'N/A') {
+                fputcsv($out, ['3. KNOWLEDGE GAP EVALUATION:']);
+                $lines = explode("\n", wordwrap("The category requiring the most focus is '{$lowestCategory}' (average score of {$lowestScore}%), indicating an area for curriculum expansion. Conversely, users showed the highest mastery in '{$highestCategory}' (average score of {$highestScore}%).", 80));
+                foreach ($lines as $l) {
+                    fputcsv($out, [$l]);
+                }
+                fputcsv($out, []);
+            }
+
+            if ($topSchool !== 'N/A') {
+                fputcsv($out, ['4. SCHOOL ADOPTION:']);
+                $lines = explode("\n", wordwrap("'{$topSchool}' is the leading educational institution on the platform, achieving a top average post-test score of {$topSchoolScore}/15.", 80));
+                foreach ($lines as $l) {
+                    fputcsv($out, [$l]);
+                }
+                fputcsv($out, []);
+            }
+
+            if ($topFeature !== 'N/A') {
+                fputcsv($out, ['5. USER FEEDBACK:']);
+                $lines = explode("\n", wordwrap("The platform has received positive reviews. The highest-rated interactive feature is '{$topFeature}' with an average rating of {$topFeatureRating}/5.", 80));
+                foreach ($lines as $l) {
+                    fputcsv($out, [$l]);
+                }
+                fputcsv($out, []);
+            }
+
+            fputcsv($out, ['Conclusion:']);
+            fputcsv($out, ['Report concluded successfully. Exported by Safescape Administrator.']);
 
             fclose($out);
         };

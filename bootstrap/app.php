@@ -23,6 +23,7 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
         $middleware->alias([
             'admin' => \App\Http\Middleware\AdminRole::class,
+            'role' => \App\Http\Middleware\CheckRole::class,
         ]);
         // Exclude password reset API from CSRF since guest users resetting passwords use standard fetch() without CSRF tokens.
         $middleware->validateCsrfTokens(except: [

@@ -39,8 +39,11 @@ export interface QuickQuestion {
 export interface FireCodeSection {
   id: number
   title: string
-  sectionNum: string
-  content: string
+  category: string
+  sectionNum?: string
+  content?: string
+  description?: string
+  filename?: string
   parentSectionId?: string
   updatedAt: string | null
 }

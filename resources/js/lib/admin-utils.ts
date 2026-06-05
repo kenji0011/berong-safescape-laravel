@@ -1,11 +1,16 @@
 import type { CarouselImage, BlogPost, User, Video, FireCodeSection } from "@/types/admin"
 
-export const getPermissionsForRole = (role?: string) => ({
-  accessKids: role === "admin" || role === "kid" || role === "professional",
-  accessAdult: role === "admin" || role === "adult" || role === "professional",
-  accessProfessional: role === "admin" || role === "professional",
-  isAdmin: role === "admin",
-})
+export const getPermissionsForRole = (role?: string) => {
+  const roles = (role ?? "guest").split(",");
+  const isAdmin = roles.includes("admin");
+  const isProfessional = roles.includes("professional") || isAdmin;
+  return {
+    accessKids: roles.includes("kid") || isProfessional,
+    accessAdult: roles.includes("adult") || isProfessional,
+    accessProfessional: isProfessional,
+    isAdmin: isAdmin,
+  };
+}
 
 export const normalizeCarouselImage = (image: any): CarouselImage => ({
   id: image?.id,
@@ -70,6 +75,10 @@ export const normalizeUser = (user: any): User => ({
 
 export const normalizeFireCodeSection = (section: any): FireCodeSection => ({
   ...section,
+  category: section?.category ?? "Fire Code",
   sectionNum: section?.sectionNum ?? section?.section_num ?? "",
+  content: section?.content ?? "",
+  description: section?.description ?? "",
+  filename: section?.filename ?? "",
   updatedAt: section?.updatedAt ?? section?.updated_at ?? null,
 })
