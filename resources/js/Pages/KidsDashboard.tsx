@@ -124,6 +124,7 @@ const KidsDashboardPage = ({ modules, progress }: KidsPageProps) => {
       description: "Answer emergency calls and dispatch the right team! Do you have what it takes to be a dispatching hero?",
       type: "game",
       imageUrl: "/therightcall_kids.png",
+      videoPreviewUrl: "/right_call_preview.mp4",
       href: "/kids/the-right-call",
       isLocked: !badges.some(b => b.badge_id === 'intel_analyst'),
       category: "games",
@@ -135,6 +136,7 @@ const KidsDashboardPage = ({ modules, progress }: KidsPageProps) => {
       description: "Play fun quizzes and memory games! Earn extra points and show off your knowledge.",
       type: "activity",
       illustrationUrl: "/games.png",
+      videoPreviewUrl: "/mini_games_preview.mp4",
       href: "/kids/challenges",
       difficulty: "medium",
       category: "activities"

@@ -442,14 +442,6 @@ export default function Assessment({ type }: AssessmentProps) {
                                     <strong className="text-slate-900 dark:text-white">20-Minute Time Limit:</strong> You have exactly 20 minutes to complete the test. Once started, the countdown cannot be paused.
                                 </p>
                             </div>
-                            
-                            <div className="flex gap-2.5 sm:gap-3">
-                                <span className="text-sm sm:text-lg shrink-0 mt-0.5">🚫</span>
-                                <p className="text-[11px] sm:text-sm font-bold text-slate-700 dark:text-slate-300 leading-normal">
-                                    <strong className="text-slate-900 dark:text-white">No Review Backtracking:</strong> You cannot turn back or review module lessons once you begin taking this assessment.
-                                </p>
-                            </div>
-
                             <div className="flex gap-2.5 sm:gap-3 pt-1 border-t border-slate-100 dark:border-slate-800/80">
                                 <span className="text-sm sm:text-lg shrink-0 mt-0.5">❓</span>
                                 <p className="text-[11px] sm:text-sm font-bold text-[#ff4b3e] dark:text-red-400 leading-normal">

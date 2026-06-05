@@ -43,7 +43,7 @@ export const ContentCard = React.memo(({ content, onClick }: ContentCardProps) =
 
   // Premium Gradients
   const typeGradients: Record<string, string> = {
-    game: "bg-[#14B8A6]", // Teal 
+    game: "bg-[#1e3a8a]", // Dark Blue
     video: "bg-[#EC4899]", // Pink/Rose
     activity: "bg-[#f59e0b]", // Bright Vibrant Gold/Amber
     module: "bg-[#4F46E5]", // Indigo/Violet
@@ -71,7 +71,7 @@ export const ContentCard = React.memo(({ content, onClick }: ContentCardProps) =
         {/* Background Color Layer */}
         <div className={cn(
           "absolute inset-0 transition-all duration-700 z-0",
-          content.videoPreviewUrl ? "bg-white dark:bg-slate-800" : (typeGradients[content.type] || "bg-slate-400"),
+          typeGradients[content.type] || "bg-slate-400",
           content.videoPreviewUrl && "group-hover:opacity-0"
         )} />
 
