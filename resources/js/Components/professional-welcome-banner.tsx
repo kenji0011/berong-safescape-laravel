@@ -1,7 +1,7 @@
 "use client"
 
 import { useAuth } from "@/lib/auth-context"
-import { Shield, FileText, CheckCircle, Video, BookOpen } from "lucide-react"
+import { Shield, FileText, CheckCircle, Video, BookOpen, Gamepad2 } from "lucide-react"
 
 export function ProfessionalWelcomeBanner() {
     const { user } = useAuth()
@@ -38,8 +38,8 @@ export function ProfessionalWelcomeBanner() {
 
                 <div className="flex flex-row flex-wrap justify-center gap-2 sm:gap-3 w-full sm:w-auto px-2 sm:px-0">
                     <span className="inline-flex flex-1 sm:flex-initial items-center justify-center gap-1.5 sm:gap-2 px-3 py-1.5 sm:px-5 sm:py-2.5 rounded-full bg-white dark:bg-white/10 border-[2px] border-slate-200 dark:border-white/20 text-slate-700 dark:text-white text-[10px] sm:text-xs md:text-sm font-black tracking-wide shadow-sm dark:shadow-xl transition-all hover:bg-slate-50 dark:hover:bg-white/20 whitespace-nowrap">
-                        <Video className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-emerald-500 dark:text-emerald-400" strokeWidth={2.5} />
-                        Training Videos
+                        <Gamepad2 className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-emerald-500 dark:text-emerald-400" strokeWidth={2.5} />
+                        The Right Call
                     </span>
                     <span className="inline-flex flex-1 sm:flex-initial items-center justify-center gap-1.5 sm:gap-2 px-3 py-1.5 sm:px-5 sm:py-2.5 rounded-full bg-white dark:bg-white/10 border-[2px] border-slate-200 dark:border-white/20 text-slate-700 dark:text-white text-[10px] sm:text-xs md:text-sm font-black tracking-wide shadow-sm dark:shadow-xl transition-all hover:bg-slate-50 dark:hover:bg-white/20 whitespace-nowrap">
                         <BookOpen className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-blue-500 dark:text-blue-400" strokeWidth={2.5} />

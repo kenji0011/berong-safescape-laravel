@@ -24,6 +24,12 @@ export const AdminFireCodesTab: React.FC<FireCodesTabProps> = ({
     const file = e.target.files?.[0]
     if (!file) return
 
+    if (file.type !== "application/pdf" && !file.name.toLowerCase().endsWith(".pdf")) {
+      setUploadError("Please select a PDF file only.")
+      e.target.value = ""
+      return
+    }
+
     setUploading(true)
     setUploadError("")
 

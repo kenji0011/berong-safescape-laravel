@@ -11,7 +11,7 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Alert, AlertDescription } from "@/components/ui/alert"
-import { Trophy, Star, Shield, Zap, Medal, Video, Clock, Search, BookOpen, FileText, AlertCircle, Play, CheckCircle2, GraduationCap, ArrowRight, CircleHelp } from "lucide-react"
+import { Trophy, Star, Shield, Zap, Medal, Video, Clock, Search, BookOpen, FileText, AlertCircle, Play, CheckCircle2, GraduationCap, ArrowRight, CircleHelp, Gamepad2 } from "lucide-react"
 import {
   Dialog,
   DialogContent,
@@ -253,14 +253,14 @@ const ProfessionalDashboard = ({ initialVideos, watchedVideoIds = [] }: Professi
 
     const filteredVideos = videos.filter(
         (video) =>
-            video.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            video.description.toLowerCase().includes(searchQuery.toLowerCase()),
+            (video.title?.toLowerCase() || "").includes(searchQuery.toLowerCase()) ||
+            (video.description?.toLowerCase() || "").includes(searchQuery.toLowerCase()),
     )
 
     return (
         <div className="min-h-screen relative transition-colors duration-500">
             {/* Background Overlay - Dynamic based on theme */}
-
+            <div className="fixed inset-0 z-0 pointer-events-none bg-slate-50/85 dark:bg-slate-950/90 transition-colors duration-500" />
 
             <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4 sm:pt-6 pb-8 w-full relative z-10">
                 {/* Welcome Banner */}
@@ -268,25 +268,25 @@ const ProfessionalDashboard = ({ initialVideos, watchedVideoIds = [] }: Professi
 
                 {/* Quick Links - Horizontal on mobile, grid on desktop */}
                 <div className="space-y-3 sm:space-y-0 sm:grid sm:grid-cols-2 sm:gap-5 mb-8 sm:mb-10">
-                    <Link href="#training-videos-section" onClick={(e) => { e.preventDefault(); document.getElementById('training-videos-section')?.scrollIntoView({ behavior: 'smooth' }) }} className="block group h-full outline-none">
+                    <Link href="/professional/the-right-call" className="block group h-full outline-none">
                         <div className="relative overflow-hidden bg-white dark:bg-slate-800 rounded-[1.5rem] sm:rounded-[2rem] p-3 sm:p-4 flex items-center gap-3 sm:gap-6 shadow-[0_6px_0_#cbd5e1] dark:shadow-[0_6px_0_#1e293b] sm:shadow-[0_8px_0_#cbd5e1] sm:dark:shadow-[0_8px_0_#1e293b] border-[3px] border-white dark:border-slate-700 h-full hover:translate-y-[2px] active:translate-y-[6px] sm:hover:translate-y-[2px] sm:active:translate-y-[8px] hover:shadow-[0_4px_0_#cbd5e1] dark:hover:shadow-[0_4px_0_#1e293b] sm:hover:shadow-[0_6px_0_#cbd5e1] sm:dark:hover:shadow-[0_6px_0_#1e293b] active:shadow-none transition-all duration-200">
                             {/* Subtle Background Image */}
                             <div className="absolute inset-0 z-0 opacity-[0.05] dark:opacity-[0.1] group-hover:opacity-[0.08] dark:group-hover:opacity-[0.15] transition-opacity duration-500">
-                                <img src="/Training Vidoes Modal.png" className="w-full h-full object-cover dark:brightness-50" alt="" />
+                                <img src="/therightcall_kids.png" className="w-full h-full object-cover dark:brightness-50" alt="" />
                             </div>
                             
                             {/* Icon Box */}
                             <div className="h-12 w-12 sm:h-20 sm:w-20 rounded-xl sm:rounded-[1.5rem] bg-white dark:bg-slate-900 border-[2px] sm:border-[3px] border-slate-100 dark:border-slate-700 flex items-center justify-center shrink-0 shadow-sm z-10 group-hover:scale-105 transition-all">
-                                <Video className="h-6 w-6 sm:h-10 sm:w-10 text-red-500" strokeWidth={2.5} />
+                                <Gamepad2 className="h-6 w-6 sm:h-10 sm:w-10 text-red-500" strokeWidth={2.5} />
                             </div>
                             
                             {/* Content */}
                             <div className="flex-1 z-10 min-w-0">
                                 <h3 className="text-base sm:text-2xl font-black text-slate-800 dark:text-white leading-tight group-hover:text-red-600 dark:group-hover:text-red-400 transition-colors truncate">
-                                    Training Videos
+                                    The Right Call
                                 </h3>
                                 <p className="text-slate-500 dark:text-slate-400 font-bold text-[10px] sm:text-sm mt-0.5 sm:mt-1.5 line-clamp-1 transition-colors">
-                                    {videos.length} professional training videos
+                                    Answer emergency calls and dispatch the right team!
                                 </p>
                             </div>
                             
@@ -400,14 +400,14 @@ const ProfessionalDashboard = ({ initialVideos, watchedVideoIds = [] }: Professi
                 </div>
 
                 {/* Search Bar */}
-                <div className="mb-10 relative group">
-                    <Search className="absolute left-6 top-1/2 transform -translate-y-1/2 h-5 w-5 text-slate-400 group-focus-within:text-red-500 transition-colors duration-300" />
+                <div className="mb-10 relative group max-w-md w-full">
+                    <Search className="absolute left-5 top-1/2 transform -translate-y-1/2 h-5 w-5 text-slate-400 group-focus-within:text-red-500 transition-colors duration-300" />
                     <input
                         type="text"
                         placeholder="Search training videos..."
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
-                        className="w-full pl-14 py-6 rounded-full border-[3px] border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 bg-white dark:bg-slate-900 text-slate-800 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 shadow-[0_4px_0_#cbd5e1] dark:shadow-[0_4px_0_#0f172a] focus:outline-none focus:border-red-500 focus:ring-4 focus:ring-red-500/20 text-base transition-all duration-300"
+                        className="w-full pl-12 py-3.5 rounded-full border-[3px] border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 bg-white dark:bg-slate-900 text-slate-800 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 shadow-[0_4px_0_#cbd5e1] dark:shadow-[0_4px_0_#0f172a] focus:outline-none focus:border-red-500 focus:ring-4 focus:ring-red-500/20 text-sm transition-all duration-300"
                     />
                 </div>
 

@@ -240,7 +240,11 @@ Route::get('/about', function () {
                 ->unique()
                 ->values()),
         ]);
-    })->name('professional');
+        })->name('professional');
+
+        Route::get('/professional/the-right-call', function () {
+            return Inertia::render('Kids/Games/RightCall');
+        })->name('professional.right_call');
     }); // End Professional role group
 
     // Admin routing

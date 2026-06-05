@@ -2,8 +2,11 @@ import React, { useEffect, useState } from "react"
 import { Head, Link } from '@inertiajs/react'
 import { ArrowLeft, Maximize, RotateCcw } from "lucide-react"
 import axios from "axios"
+import { useAuth } from "@/lib/auth-context"
 
 export default function RightCall() {
+  const { user } = useAuth();
+  const isProfessional = user?.role === 'professional';
   const [isPortrait, setIsPortrait] = useState(false);
   const [showWinNotification, setShowWinNotification] = useState(false);
 
@@ -45,7 +48,7 @@ export default function RightCall() {
         
         <div className="absolute top-4 left-4 z-[10000] flex items-center gap-3">
           <Link 
-            href="/kids" 
+            href={isProfessional ? "/professional" : "/kids"} 
             className="bg-black/50 hover:bg-black/80 text-white p-3 rounded-full backdrop-blur-sm transition-all border border-white/20 shadow-xl flex items-center gap-2 group"
           >
             <ArrowLeft className="h-5 w-5 group-hover:-translate-x-1 transition-transform" />
@@ -95,15 +98,19 @@ export default function RightCall() {
               <div className="w-24 h-24 mx-auto bg-gradient-to-br from-yellow-300 to-amber-500 rounded-full flex items-center justify-center shadow-inner border-4 border-white dark:border-slate-800 mb-6 relative overflow-hidden">
                 <span className="text-4xl">🏆</span>
               </div>
-              <h2 className="text-3xl font-black text-slate-800 dark:text-white uppercase mb-2">Badge Earned!</h2>
+              <h2 className="text-3xl font-black text-slate-800 dark:text-white uppercase mb-2">
+                {isProfessional ? "Simulation Complete!" : "Badge Earned!"}
+              </h2>
               <p className="text-slate-500 dark:text-slate-400 font-bold mb-8">
-                Congratulations! You completed The Right Call and earned the Dispatch Hero Badge!
+                {isProfessional 
+                  ? "Congratulations! You completed The Right Call and successfully handled the emergency calls!"
+                  : "Congratulations! You completed The Right Call and earned the Dispatch Hero Badge!"}
               </p>
               <Link 
-                href="/kids/badges?highlight=dispatch%20hero" 
+                href={isProfessional ? "/professional" : "/kids/badges?highlight=dispatch%20hero"} 
                 className="w-full inline-flex items-center justify-center py-4 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-black uppercase tracking-widest transition-colors shadow-lg"
               >
-                View in Badge Hall
+                {isProfessional ? "Return to Dashboard" : "View in Badge Hall"}
               </Link>
             </div>
           </div>
