@@ -269,9 +269,6 @@ const ModuleOnePage = ({ initialProgress }: { initialProgress?: any }) => {
 
       setModuleCompleted(true)
       setShowBadgeModal(true)
-      
-      // Play a success sound for the badge
-      new Audio('/sounds/finish.mp3').play().catch(e => console.warn("Failed to play audio:", e))
     } catch (error: any) {
       console.error("Failed to complete module:", error.response?.data || error.message)
       showToast("Error saving progress. Try again.", "info")
@@ -353,35 +350,19 @@ const ModuleOnePage = ({ initialProgress }: { initialProgress?: any }) => {
   const handleQuizSubmit = async () => {
     if (!allQuizAnswered || quizSubmitted) return
     
-    const passed = quizScore >= 4;
     setQuizSubmitted(true)
-    setQuizPassed(passed)
+    setQuizPassed(true)
     setLoadedScore(quizScore)
-    
-    // Play celebratory or fail sounds based on score
-    if (passed) {
-      new Audio('/sounds/finish.mp3').play().catch(e => console.warn("Failed to play audio:", e))
-    } else {
-      new Audio('/sounds/failed.mp3').play().catch(e => console.warn("Failed to play audio:", e))
-    }
 
     try {
-      await saveSection({ videoWatched: true, section1Read: true, section2Read: true, section3Read: true, elementMixerCompleted: true, quizPassed: passed, quizAnswers: quizAnswers, quizScore: quizScore }, false)
+      await saveSection({ videoWatched: true, section1Read: true, section2Read: true, section3Read: true, elementMixerCompleted: true, quizPassed: true, quizAnswers: quizAnswers, quizScore: quizScore }, false)
       await axios.post("/api/kids/quiz", { quizType: "module_1_quiz", score: quizScore, maxScore: 5 }).catch(() => {})
     } catch {}
     
-    if (passed) {
-      showToast("Quiz completed! Module 2 unlocked!")
-    } else {
-      showToast("Keep trying! Review your answers and retake.")
-    }
+    showToast("Quiz completed! Module 2 unlocked!")
 
     setTimeout(() => {
-      if (passed) {
-        resultCardRef.current?.scrollIntoView({ behavior: "smooth", block: "center" })
-      } else {
-        quizSectionRef.current?.scrollIntoView({ behavior: "smooth", block: "start" })
-      }
+      resultCardRef.current?.scrollIntoView({ behavior: "smooth", block: "center" })
     }, 100)
   }
 
@@ -1129,8 +1110,8 @@ const ModuleOnePage = ({ initialProgress }: { initialProgress?: any }) => {
                     </button>
                   ) : (
                     <div className="text-center space-y-4">
-                      <p className="text-lg sm:text-xl font-black text-red-500">
-                        You scored {quizScore}/5. You need 4/5 to pass.
+                      <p className="text-lg sm:text-xl font-black text-[#ff4b3e]">
+                        You scored {quizScore}/5.
                       </p>
 
                     </div>
@@ -1158,7 +1139,7 @@ const ModuleOnePage = ({ initialProgress }: { initialProgress?: any }) => {
           <div className="bg-white dark:bg-slate-900 rounded-[2rem] max-w-sm w-full p-8 flex flex-col items-center text-center shadow-2xl border-[4px] border-amber-200 dark:border-amber-900/50 animate-in zoom-in-95 duration-500">
             <div className="h-24 w-24 bg-amber-50 dark:bg-amber-900/20 rounded-full border-[4px] border-amber-100 dark:border-amber-800 flex items-center justify-center mb-6 shadow-inner relative overflow-hidden">
               <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,theme(colors.amber.300/20)_0%,transparent_70%)] animate-pulse"></div>
-              <img src="/fire_hall.png" alt="Fire Scout Badge" className="h-16 w-16 object-contain relative z-10 drop-shadow-md animate-bounce" />
+              <img src="/fire_hall.png" alt="Fire Scout Badge" className="h-16 w-16 object-contain relative z-10 drop-shadow-md" />
             </div>
             <h2 className="text-2xl font-black text-slate-800 dark:text-white mb-2">Badge Unlocked!</h2>
             <p className="text-amber-600 dark:text-amber-400 font-bold uppercase tracking-widest text-sm mb-4">Fire Scout</p>

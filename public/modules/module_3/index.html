@@ -1411,6 +1411,10 @@
                 showToast('success', 'Module 3 complete! Module 4 unlocked!');
                 new Audio('../../sounds/win.mp3').play().catch(e => {});
             }
+
+            setTimeout(() => {
+                document.getElementById('final-quiz').scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }, 100);
         }
 
         function scanObject(text, color) {

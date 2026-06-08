@@ -13,10 +13,13 @@ const ModuleFourPage = ({ moduleNum, initialProgress }: { moduleNum: number; ini
   const [saving, setSaving] = useState(false)
   const [fullProgress, setFullProgress] = useState<any>(initialProgress || null)
   const completedRef = React.useRef(moduleCompleted)
+  const recentlyCompletedRef = React.useRef(false)
+  const badgeShownRef = React.useRef(false)
   const badgeAwardedRef = React.useRef(false)
   const quizSubmittedRef = React.useRef(false)
   const syncingRef = React.useRef(false)
   const iframeRef = React.useRef<HTMLIFrameElement>(null)
+  const [showBadgeModal, setShowBadgeModal] = useState(false)
   const [toast, setToast] = useState<{ msg: string; type: "success" | "info" } | null>(null)
 
   // Automatically clear toast
@@ -112,6 +115,7 @@ const ModuleFourPage = ({ moduleNum, initialProgress }: { moduleNum: number; ini
           if (data.completed && !completedRef.current) {
             console.log(`Module ${currentModule} marked as completed!`);
             setModuleCompleted(true)
+            recentlyCompletedRef.current = true;
           }
           loadState() // Sync full state in real-time for progress bar & checkboxes
         } catch (error: any) {
@@ -136,6 +140,7 @@ const ModuleFourPage = ({ moduleNum, initialProgress }: { moduleNum: number; ini
           if (res.data.passed) {
              if (!completedRef.current) {
                setModuleCompleted(true);
+               recentlyCompletedRef.current = true;
                loadState(); 
              }
           } else {
@@ -315,6 +320,7 @@ const ModuleFourPage = ({ moduleNum, initialProgress }: { moduleNum: number; ini
         if (text.includes('MARSHAL CERTIFIED') || text.includes('CONGRATULATIONS') || text.includes('PASSED')) {
           if (!completedRef.current) {
              setModuleCompleted(true);
+             recentlyCompletedRef.current = true;
           }
         }
       };
@@ -339,11 +345,20 @@ const ModuleFourPage = ({ moduleNum, initialProgress }: { moduleNum: number; ini
             return;
           }
 
-          if (href.includes('index.html')) {
+          if (href.includes('index.html') || href.includes('post-test')) {
             ev.preventDefault();
+            
+            if (recentlyCompletedRef.current && !badgeShownRef.current) {
+               badgeShownRef.current = true;
+               setShowBadgeModal(true);
+               return;
+            }
+
             const match = href.match(/module_(\d+)/);
             if (match) {
               router.visit(`/kids/safescape/${match[1]}`);
+            } else if (href.includes('post-test')) {
+              router.visit('/assessment/post-test');
             } else {
               router.visit('/kids/safescape');
             }
@@ -421,6 +436,30 @@ const ModuleFourPage = ({ moduleNum, initialProgress }: { moduleNum: number; ini
         />
 
       </div>
+
+      {/* ── Badge Earned Modal ── */}
+      {showBadgeModal && (
+        <div className="fixed inset-0 z-[999] flex items-center justify-center bg-slate-950/60 backdrop-blur-sm px-4 animate-in fade-in duration-300">
+          <div className="bg-white dark:bg-slate-900 rounded-[2rem] max-w-sm w-full p-8 flex flex-col items-center text-center shadow-2xl border-[4px] border-amber-200 dark:border-amber-900/50 animate-in zoom-in-95 duration-500">
+            <div className="h-24 w-24 bg-amber-50 dark:bg-amber-900/20 rounded-full border-[4px] border-amber-100 dark:border-amber-800 flex items-center justify-center mb-6 shadow-inner relative overflow-hidden">
+              <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,theme(colors.amber.300/20)_0%,transparent_70%)] animate-pulse"></div>
+              <img src="/low_hall.png" alt="Low & Go! Badge" className="h-16 w-16 object-contain relative z-10 drop-shadow-md" />
+            </div>
+            <h2 className="text-2xl font-black text-slate-800 dark:text-white mb-2">Badge Unlocked!</h2>
+            <p className="text-amber-600 dark:text-amber-400 font-bold uppercase tracking-widest text-sm mb-4">Low & Go!</p>
+            <p className="text-slate-600 dark:text-slate-400 text-sm font-medium mb-8 leading-relaxed">
+              Congratulations! You've learned the Smoke Crawling technique and earned your Low & Go! badge.
+            </p>
+            <button
+              onClick={() => router.visit('/kids/safescape/5')}
+              className="w-full bg-amber-500 hover:bg-amber-400 text-white font-black px-6 py-4 rounded-[1.25rem] border-b-[5px] border-amber-700 active:border-b-[1px] active:mt-[4px] transition-all uppercase tracking-wider text-sm flex items-center justify-center gap-2"
+            >
+              Continue to Module 5
+              <ArrowLeft className="h-4 w-4 rotate-180" />
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* ── Toast ── */}
       {toast && (

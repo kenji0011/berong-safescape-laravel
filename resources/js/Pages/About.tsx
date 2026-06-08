@@ -222,11 +222,7 @@ function TeamCard({ member, index }: { member: typeof teamMembers[0]; index: num
                 ease: "easeOut",
                 delay: index * 0.1
             }}
-            whileHover={{
-                scale: 1.02,
-                transition: { duration: 0.3 }
-            }}
-            className="group relative bg-white dark:bg-slate-800 rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 border border-slate-200 dark:border-slate-700 h-full flex flex-col cursor-pointer transition-colors"
+            className="group relative bg-white dark:bg-slate-800 rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl hover:scale-[1.02] transition-all duration-500 border border-slate-200 dark:border-slate-700 h-full flex flex-col cursor-pointer"
         >
             {/* Gradient Header */}
             <div className={`h-32 bg-gradient-to-r ${member.color} relative`}>
@@ -253,7 +249,7 @@ function TeamCard({ member, index }: { member: typeof teamMembers[0]; index: num
                             src={member.image}
                             alt={member.name}
                             fill
-                            className="object-cover"
+                            className="object-cover transition-transform duration-500 ease-out group-hover:scale-110"
                         />
                     </div>
                 </div>
@@ -539,7 +535,7 @@ export default function AboutPage() {
                 <motion.section
                     ref={platformRef}
                     className="py-10 sm:py-14 bg-red-600 dark:bg-red-950 text-white relative overflow-hidden shadow-sm mx-0 transition-colors duration-500"
-                    style={{ opacity: platformOpacity, scale: platformScale }}
+                    style={{ opacity: platformOpacity }}
                 >
                     {/* Background Pattern */}
                     <div className="absolute inset-0 opacity-10">
@@ -575,7 +571,7 @@ export default function AboutPage() {
                 <motion.section
                     ref={partnershipRef}
                     className="py-16 sm:py-20 bg-gray-900 text-white relative overflow-hidden"
-                    style={{ opacity: partnershipOpacity, scale: partnershipScale }}
+                    style={{ opacity: partnershipOpacity }}
                 >
                     {/* Animated Background decoration */}
                     <motion.div
@@ -691,7 +687,7 @@ export default function AboutPage() {
                 <motion.section
                     ref={teamRef}
                     className="py-16 sm:py-20 bg-white dark:bg-slate-900 transition-colors duration-500"
-                    style={{ opacity: teamOpacity, scale: teamScale }}
+                    style={{ opacity: teamOpacity }}
                 >
                     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                         <motion.div

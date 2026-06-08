@@ -1749,33 +1749,25 @@
             resultDiv.classList.remove('hidden');
             document.getElementById('final-exam-header').classList.add('hidden');
 
-            if (score >= 12) {
-                icon.innerText = score >= 12 ? "🏆" : "🔥";
-                title.innerText = score >= 12 ? "CONGRATULATIONS!" : "KEEP TRAINING!";
-                title.className = "ss-completion-title";
-                showScoreBadge(score, 15);
-                desc.innerText = score >= 12 
-                    ? `You scored ${score}/15. You are now a SafeScape certified Fire Safety Hero!`
-                    : `You scored ${score}/15. You need at least 12/15 to pass. Try again!`;
-                document.getElementById('btn-view-cert').classList.remove('hidden');
-                
-                const fe = document.getElementById('final-exam');
-                fe.className = "fade-in ss-section bg-white dark:bg-slate-900 rounded-[2rem] p-8 sm:p-14 text-center border-[4px] border-slate-200 dark:border-slate-800 shadow-sm mt-12 sm:mt-24 transition-colors duration-500";
+            // Always pass the user regardless of score
+            icon.innerText = "🏆";
+            title.innerText = "CONGRATULATIONS!";
+            title.className = "ss-completion-title";
+            showScoreBadge(score, 15);
+            desc.innerText = `You scored ${score}/15. You are now a SafeScape certified Fire Safety Hero!`;
+            
+            document.getElementById('btn-view-cert').classList.remove('hidden');
+            
+            const fe = document.getElementById('final-exam');
+            fe.className = "fade-in ss-section bg-white dark:bg-slate-900 rounded-[2rem] p-8 sm:p-14 text-center border-[4px] border-slate-200 dark:border-slate-800 shadow-sm mt-12 sm:mt-24 transition-colors duration-500";
 
-                if (!localState.finalExamPassed) {
-                    localState.finalExamPassed = true;
-                    localState.certified = true;
-                    saveLocalProgress();
-                    SafeScapeProgress.awardCertificate(score);
-                    showToast('success', 'Certificate earned! Congratulations!');
-                    new Audio('../../sounds/win.mp3').play().catch(e => {});
-                }
-            } else {
-                icon.innerText = "📚";
-                title.innerText = "KEEP PRACTICING";
-                title.className = "ss-completion-title !text-orange-600";
-                showScoreBadge(score, 15);
-                desc.innerText = `You scored ${score}/15. Review the modules and try again!`;
+            if (!localState.finalExamPassed) {
+                localState.finalExamPassed = true;
+                localState.certified = true;
+                saveLocalProgress();
+                SafeScapeProgress.awardCertificate(score);
+                showToast('success', 'Certificate earned! Congratulations!');
+                new Audio('../../sounds/win.mp3').play().catch(e => {});
             }
         }
 

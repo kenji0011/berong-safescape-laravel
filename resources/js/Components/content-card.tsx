@@ -114,7 +114,7 @@ export const ContentCard = React.memo(({ content, onClick }: ContentCardProps) =
 
         {/* Lock overlay */}
         {content.isLocked && (
-          <div className="absolute inset-0 bg-slate-900/80 backdrop-blur-sm flex flex-col items-center justify-center z-30 p-2 sm:p-4 text-center">
+          <div className="absolute inset-0 bg-slate-900/80 backdrop-blur-sm flex flex-col items-center justify-center z-30 p-2 sm:p-4 text-center transition-all duration-500 group-hover:opacity-0 group-hover:backdrop-blur-none">
             <div className="bg-white/10 p-3 sm:p-4 rounded-full border-2 border-white/20 mb-2 sm:mb-3 shadow-2xl">
               <Lock className="h-6 w-6 sm:h-10 sm:w-10 text-white drop-shadow-2xl" />
             </div>
@@ -292,8 +292,9 @@ export const ContentCard = React.memo(({ content, onClick }: ContentCardProps) =
         onClick={(e) => { e.preventDefault(); if (onClick) onClick(); }}
         whileHover={{ scale: 1.01 }}
         className={cn(
-          "group relative flex flex-col h-full w-full rounded-2xl sm:rounded-[2.5rem] overflow-hidden bg-white dark:bg-slate-800",
-          "opacity-60 cursor-not-allowed filter grayscale-[0.3]",
+          "group relative flex flex-col h-full w-full rounded-2xl sm:rounded-[2.5rem] overflow-hidden bg-white dark:bg-slate-800 transition-all duration-500",
+          "opacity-60 cursor-not-allowed filter grayscale-[0.3] group-hover:opacity-100 group-hover:grayscale-0",
+          "shadow-[0_8px_30px_rgba(0,0,0,0.06)] border-2 border-slate-200 dark:border-slate-700/50",
           content.shouldPulse 
             ? "ring-[6px] ring-yellow-400 animate-pulse shadow-[0_0_40px_rgba(250,204,21,0.6)]" 
             : (content.type === "module" && "ring-4 ring-yellow-400 shadow-[0_10px_30px_rgba(250,204,21,0.2)]")
@@ -317,7 +318,7 @@ export const ContentCard = React.memo(({ content, onClick }: ContentCardProps) =
         whileTap={{ scale: 0.98 }}
         className={cn(
            "group relative flex flex-col h-full w-full rounded-2xl sm:rounded-[2.5rem] overflow-hidden bg-white dark:bg-slate-800",
-           "cursor-pointer shadow-[0_8px_30px_rgba(0,0,0,0.06)] border border-slate-100 dark:border-slate-700/50",
+           "cursor-pointer shadow-[0_8px_30px_rgba(0,0,0,0.06)] border-2 border-slate-200 dark:border-slate-700/50",
            content.shouldPulse 
              ? "ring-[6px] ring-yellow-400 animate-pulse shadow-[0_0_45px_rgba(250,204,21,0.7)]" 
              : (content.type === "module" && "ring-4 ring-yellow-400 shadow-[0_10px_30px_rgba(250,204,21,0.2)]")
@@ -342,7 +343,7 @@ export const ContentCard = React.memo(({ content, onClick }: ContentCardProps) =
       whileTap={{ scale: 0.98 }}
       className={cn(
          "group relative flex flex-col h-full w-full rounded-2xl sm:rounded-[2.5rem] overflow-hidden bg-white dark:bg-slate-800",
-         "cursor-pointer shadow-[0_8px_30px_rgba(0,0,0,0.06)] border border-slate-100 dark:border-slate-700/50",
+         "cursor-pointer shadow-[0_8px_30px_rgba(0,0,0,0.06)] border-2 border-slate-200 dark:border-slate-700/50",
          content.shouldPulse 
            ? "ring-[6px] ring-yellow-400 animate-pulse shadow-[0_0_45px_rgba(250,204,21,0.7)]" 
            : (content.type === "module" && "ring-4 ring-yellow-400 shadow-[0_10px_30px_rgba(250,204,21,0.2)]")

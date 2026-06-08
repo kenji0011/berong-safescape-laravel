@@ -6,6 +6,7 @@ import { FooterDialogContent } from '@/components/ui/footer-dialog';
 import { useRef, useState, useEffect } from 'react';
 import { motion, useInView, useReducedMotion } from 'motion/react';
 import { ArrowRight } from 'lucide-react';
+import { useAuth, User } from '@/lib/auth-context';
 
 // Define types for footer links
 type FooterLink = {
@@ -51,18 +52,18 @@ const socialMediaLinks = [
   { name: 'Facebook', url: 'https://www.facebook.com/bfpsantacruzfslaguna' },
 ];
 
-const isLinkRestricted = (linkName: string, userRole: string | undefined): boolean => {
-  if (!userRole) return false;
-  if (userRole === 'admin') return false; // Admin has full access
+const isLinkRestricted = (linkName: string, user: User | null): boolean => {
+  if (!user) return false;
+  if (user.role && user.role.split(',').includes('admin')) return false; // Admin has full access
 
-  if (userRole === 'kid') {
-    return linkName === 'For Professionals' || linkName === 'For Adults';
+  if (linkName === 'For Professionals') {
+    return !user.permissions?.accessProfessional;
   }
-  if (userRole === 'adult') {
-    return linkName === 'For Kids' || linkName === 'For Professionals';
+  if (linkName === 'For Adults') {
+    return !user.permissions?.accessAdult;
   }
-  if (userRole === 'professional') {
-    return linkName === 'For Kids';
+  if (linkName === 'For Kids') {
+    return !user.permissions?.accessKids;
   }
 
   return false;
@@ -98,8 +99,7 @@ export function Footer() {
   const [dialogType, setDialogType] = useState<'contact' | 'about' | 'faq' | 'report' | 'privacy' | 'terms' | null>(null);
   const prefersReducedMotion = useReducedMotion();
 
-  const { auth } = usePage().props as any;
-  const userRole = auth?.user?.role;
+  const { user } = useAuth();
 
   // Scroll-into-view detection for desktop footer
   const desktopFooterRef = useRef(null);
@@ -113,7 +113,7 @@ export function Footer() {
 
   const handleLinkClick = (link: FooterLink) => {
     // Extra safety check in JS handler
-    if (isLinkRestricted(link.name, userRole)) return;
+    if (isLinkRestricted(link.name, user)) return;
 
     if (link.dialogType) {
       setDialogType(link.dialogType);
@@ -177,7 +177,7 @@ export function Footer() {
                     <FooterLinkItem
                       key={linkIndex}
                       link={link}
-                      isRestricted={isLinkRestricted(link.name, userRole)}
+                      isRestricted={isLinkRestricted(link.name, user)}
                       onClick={() => handleLinkClick(link)}
                       isMobile
                     />
@@ -300,7 +300,7 @@ export function Footer() {
                     <FooterLinkItem
                       key={linkIndex}
                       link={link}
-                      isRestricted={isLinkRestricted(link.name, userRole)}
+                      isRestricted={isLinkRestricted(link.name, user)}
                       onClick={() => handleLinkClick(link)}
                     />
                   ))}

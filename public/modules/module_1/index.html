@@ -1073,6 +1073,10 @@
                 document.getElementById('btn-review').classList.remove('hidden');
                 nextBtn.classList.add('hidden');
             }
+
+            setTimeout(() => {
+                document.getElementById('final-quiz').scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }, 100);
         }
 
         function scrollToQuiz() { document.getElementById('final-quiz').scrollIntoView({ behavior: 'smooth' }); }

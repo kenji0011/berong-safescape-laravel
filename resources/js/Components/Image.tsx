@@ -21,10 +21,8 @@ export default function Image({
 }: ImageProps) {
     const style: React.CSSProperties = {
         ...(fill ? { width: '100%', height: '100%', objectFit: 'cover' } : {}),
-        imageRendering: 'auto',
+        imageRendering: 'high-quality',
         WebkitFontSmoothing: 'antialiased',
-        backfaceVisibility: 'hidden',
-        transform: 'translateZ(0)',
     };
     const resolvedLoading = loading || (priority ? 'eager' : 'lazy');
     const resolvedDecoding = decoding || (priority ? 'sync' : 'async');
