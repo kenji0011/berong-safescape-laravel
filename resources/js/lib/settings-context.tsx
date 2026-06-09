@@ -20,6 +20,9 @@ interface SettingsContextType {
   toggleFocusMode: () => void;
   colorBlindness: ColorBlindness;
   setColorBlindness: (value: ColorBlindness) => void;
+  magnifyingMouse: boolean;
+  setMagnifyingMouse: (value: boolean) => void;
+  toggleMagnifyingMouse: () => void;
 }
 
 const SettingsContext = createContext<SettingsContextType | undefined>(undefined);
@@ -31,6 +34,7 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
   const [dyslexiaFont, setDyslexiaFontState] = useState<boolean>(false);
   const [focusMode, setFocusModeState] = useState<boolean>(false);
   const [colorBlindness, setColorBlindnessState] = useState<ColorBlindness>('none');
+  const [magnifyingMouse, setMagnifyingMouseState] = useState<boolean>(false);
 
   useEffect(() => {
     // Check local storage or system preference on mount
@@ -69,6 +73,11 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
     const savedColorBlindness = localStorage.getItem("safescape-color-blindness") as ColorBlindness | null;
     if (savedColorBlindness && ['none', 'protanopia', 'deuteranopia', 'tritanopia'].includes(savedColorBlindness)) {
       setColorBlindnessState(savedColorBlindness);
+    }
+
+    const savedMagnifyingMouse = localStorage.getItem("safescape-magnifying-mouse");
+    if (savedMagnifyingMouse !== null) {
+      setMagnifyingMouseState(savedMagnifyingMouse === "true");
     }
   }, []);
 
@@ -133,6 +142,19 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
   const setColorBlindness = React.useCallback((value: ColorBlindness) => {
     setColorBlindnessState(value);
     setTimeout(() => localStorage.setItem("safescape-color-blindness", value), 0);
+  }, []);
+
+  const setMagnifyingMouse = React.useCallback((value: boolean) => {
+    setMagnifyingMouseState(value);
+    setTimeout(() => localStorage.setItem("safescape-magnifying-mouse", String(value)), 0);
+  }, []);
+
+  const toggleMagnifyingMouse = React.useCallback(() => {
+    setMagnifyingMouseState(prev => {
+      const newValue = !prev;
+      setTimeout(() => localStorage.setItem("safescape-magnifying-mouse", String(newValue)), 0);
+      return newValue;
+    });
   }, []);
 
   // Sync the CSS class on <html> for global CSS animation kill-switch
@@ -225,8 +247,11 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
     setFocusMode,
     toggleFocusMode,
     colorBlindness,
-    setColorBlindness
-  }), [reduceMotion, setReduceMotion, toggleReduceMotion, textSize, setTextSize, isDarkMode, setIsDarkMode, toggleDarkMode, dyslexiaFont, setDyslexiaFont, toggleDyslexiaFont, focusMode, setFocusMode, toggleFocusMode, colorBlindness, setColorBlindness]);
+    setColorBlindness,
+    magnifyingMouse,
+    setMagnifyingMouse,
+    toggleMagnifyingMouse
+  }), [reduceMotion, setReduceMotion, toggleReduceMotion, textSize, setTextSize, isDarkMode, setIsDarkMode, toggleDarkMode, dyslexiaFont, setDyslexiaFont, toggleDyslexiaFont, focusMode, setFocusMode, toggleFocusMode, colorBlindness, setColorBlindness, magnifyingMouse, setMagnifyingMouse, toggleMagnifyingMouse]);
 
   return (
     <SettingsContext.Provider value={value}>

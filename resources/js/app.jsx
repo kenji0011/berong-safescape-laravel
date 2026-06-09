@@ -7,6 +7,7 @@ import { createRoot } from 'react-dom/client';
 import RootLayout from '@/Layouts/RootLayout';
 import { SettingsProvider, useSettings } from '@/lib/settings-context';
 import { MotionConfig } from 'motion/react';
+import { MagnifyingMouse } from '@/Components/magnifying-mouse';
 
 function AppWrapper({ App, props }) {
     const { reduceMotion } = useSettings();
@@ -43,6 +44,7 @@ createInertiaApp({
         root.render(
             <SettingsProvider>
                 <AppWrapper App={App} props={props} />
+                <MagnifyingMouse />
             </SettingsProvider>
         );
     },

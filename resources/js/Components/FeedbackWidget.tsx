@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { MessageSquare, Star, X, CheckCircle, Loader2 } from 'lucide-react'
 import axios from 'axios'
 import { cn } from '@/lib/utils'
+import { motion, AnimatePresence } from 'motion/react'
 
 export const FeedbackWidget = () => {
     const [isOpen, setIsOpen] = useState(false)
@@ -43,19 +44,32 @@ export const FeedbackWidget = () => {
     return (
         <div className="fixed bottom-6 left-6 sm:left-8 z-50 ss-feedback-widget">
             {/* Toggle Button */}
-            {!isOpen && (
-                <button
-                    onClick={() => setIsOpen(true)}
-                    className="bg-yellow-400 hover:bg-yellow-500 text-yellow-900 border-2 border-yellow-500 shadow-[0_4px_0_0_#ca8a04] dark:shadow-[0_4px_0_0_#854d0e] active:translate-y-1 active:shadow-none hover:-translate-y-1 transition-all rounded-full px-4 py-3 font-black text-sm flex items-center gap-2"
-                >
-                    <MessageSquare className="h-5 w-5" />
-                    <span className="hidden sm:inline">Send Feedback</span>
-                </button>
-            )}
+            <AnimatePresence>
+                {!isOpen && (
+                    <motion.button
+                        initial={{ opacity: 0, scale: 0.9, y: 20 }}
+                        animate={{ opacity: 1, scale: 1, y: 0 }}
+                        exit={{ opacity: 0, scale: 0.9, y: 20 }}
+                        transition={{ duration: 0.2 }}
+                        onClick={() => setIsOpen(true)}
+                        className="absolute bottom-0 left-0 bg-yellow-400 hover:bg-yellow-500 text-yellow-900 border-2 border-yellow-500 shadow-[0_4px_0_0_#ca8a04] dark:shadow-[0_4px_0_0_#854d0e] active:translate-y-1 active:shadow-none hover:-translate-y-1 transition-all rounded-full px-6 py-3 font-black text-sm flex items-center gap-3 w-max"
+                    >
+                        <MessageSquare className="h-5 w-5 shrink-0" />
+                        <span className="hidden sm:inline whitespace-nowrap">Send Feedback</span>
+                    </motion.button>
+                )}
+            </AnimatePresence>
 
             {/* Modal Box */}
-            {isOpen && (
-                <div className="bg-white dark:bg-slate-900 rounded-[2rem] border-4 border-slate-200 dark:border-slate-800 shadow-2xl w-80 sm:w-96 overflow-hidden animate-in slide-in-from-bottom-8 fade-in flex flex-col transition-colors duration-500">
+            <AnimatePresence>
+                {isOpen && (
+                    <motion.div 
+                        initial={{ opacity: 0, y: 20, scale: 0.95 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        exit={{ opacity: 0, y: 20, scale: 0.95 }}
+                        transition={{ duration: 0.2 }}
+                        className="bg-white dark:bg-slate-900 rounded-[2rem] border-4 border-slate-200 dark:border-slate-800 shadow-2xl w-80 sm:w-96 overflow-hidden flex flex-col transition-colors duration-500 origin-bottom-left"
+                    >
                     <div className="bg-slate-50 dark:bg-slate-950 border-b-2 border-slate-200 dark:border-slate-800 p-4 flex items-center justify-between">
                         <div className="flex items-center gap-2 text-slate-700 dark:text-white font-black">
                             <MessageSquare className="h-5 w-5 text-blue-500" />
@@ -126,8 +140,9 @@ export const FeedbackWidget = () => {
                             </form>
                         )}
                     </div>
-                </div>
-            )}
+                </motion.div>
+                )}
+            </AnimatePresence>
         </div>
     )
 }

@@ -5,7 +5,7 @@ import { useState, useEffect } from "react"
 import { useAuth } from "@/lib/auth-context"
 import { useSettings } from "@/lib/settings-context"
 import { Button } from "@/components/ui/button"
-import { LogOut, User, Menu, X, Home, Users, Briefcase, Baby, Shield, Info, Settings, ChevronDown, ArrowRight, Clock, Sliders, BookOpen, Eye, Focus, Type, Zap, Sun, Moon } from "lucide-react"
+import { LogOut, User, Menu, X, Home, Users, Briefcase, Baby, Shield, Info, Settings, ChevronDown, ArrowRight, Clock, Sliders, BookOpen, Eye, Focus, Type, Zap, Sun, Moon, ZoomIn } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { NotificationPopover } from "@/components/ui/notification-popover"
 import { SettingsPanel } from "@/components/settings-panel"
@@ -95,7 +95,9 @@ export function Navigation() {
     focusMode,
     toggleFocusMode,
     colorBlindness,
-    setColorBlindness
+    setColorBlindness,
+    magnifyingMouse,
+    toggleMagnifyingMouse
   } = useSettings()
 
   const accessibleItems = [];
@@ -657,6 +659,23 @@ export function Navigation() {
                 </div>
                 <div className={`relative w-10 h-6 shrink-0 rounded-full transition-colors duration-200 ${dyslexiaFont ? 'bg-emerald-500' : 'bg-slate-300 dark:bg-slate-600'}`}>
                   <div className={`absolute top-1 left-1 w-4 h-4 bg-white rounded-full shadow transition-transform duration-200 ${dyslexiaFont ? 'translate-x-4' : 'translate-x-0'}`} />
+                </div>
+              </div>
+
+              {/* Hover Reader */}
+              <div
+                onClick={() => toggleMagnifyingMouse()}
+                className="hidden md:flex items-center justify-between cursor-pointer py-1"
+              >
+                <div className="flex flex-col min-w-0 pr-2">
+                  <span className="flex items-center gap-1.5 sm:gap-2 text-sm sm:text-base font-bold text-slate-800 dark:text-white">
+                    <ZoomIn className="h-4 w-4 sm:h-4.5 sm:w-4.5 text-cyan-600 dark:text-cyan-400 shrink-0" />
+                    Hover Reader
+                  </span>
+                  <span className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 font-medium leading-normal mt-1">Magnify text on hover for easier reading</span>
+                </div>
+                <div className={`relative w-10 h-6 shrink-0 rounded-full transition-colors duration-200 ${magnifyingMouse ? 'bg-cyan-500' : 'bg-slate-300 dark:bg-slate-600'}`}>
+                  <div className={`absolute top-1 left-1 w-4 h-4 bg-white rounded-full shadow transition-transform duration-200 ${magnifyingMouse ? 'translate-x-4' : 'translate-x-0'}`} />
                 </div>
               </div>
 

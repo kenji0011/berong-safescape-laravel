@@ -1,7 +1,7 @@
 "use client"
 
 import { useSettings } from "@/lib/settings-context"
-import { Moon, Sun, Zap, Type, BookOpen, Focus, Eye } from "lucide-react"
+import { Moon, Sun, Zap, Type, BookOpen, Focus, Eye, ZoomIn } from "lucide-react"
 
 /**
  * Reusable settings panel for the navigation component.
@@ -15,7 +15,7 @@ interface SettingsPanelProps {
 }
 
 export function SettingsPanel({ variant }: SettingsPanelProps) {
-  const { reduceMotion, toggleReduceMotion, textSize, setTextSize, isDarkMode, toggleDarkMode, dyslexiaFont, toggleDyslexiaFont, focusMode, toggleFocusMode, colorBlindness, setColorBlindness } = useSettings()
+  const { reduceMotion, toggleReduceMotion, textSize, setTextSize, isDarkMode, toggleDarkMode, dyslexiaFont, toggleDyslexiaFont, focusMode, toggleFocusMode, colorBlindness, setColorBlindness, magnifyingMouse, toggleMagnifyingMouse } = useSettings()
 
   if (variant === 'mobile') {
     return (
@@ -73,6 +73,20 @@ export function SettingsPanel({ variant }: SettingsPanelProps) {
           </span>
           <div className={`relative w-10 h-6 rounded-full transition-colors duration-200 ${focusMode ? 'bg-teal-500' : 'bg-slate-600'}`}>
             <div className={`absolute top-1 left-1 w-4 h-4 bg-white rounded-full shadow transition-transform duration-200 ${focusMode ? 'translate-x-4' : 'translate-x-0'}`} />
+          </div>
+        </div>
+
+        {/* Magnifying Mouse Toggle (Mobile) */}
+        <div
+          onClick={toggleMagnifyingMouse}
+          className="hidden md:flex items-center justify-between px-6 py-3 cursor-pointer hover:bg-white/5 transition-colors"
+        >
+          <span className="flex items-center gap-3 text-[0.9375rem] font-bold text-white">
+            <ZoomIn className="h-5 w-5 text-cyan-400 shrink-0" strokeWidth={2.5} />
+            Hover Reader
+          </span>
+          <div className={`relative w-10 h-6 rounded-full transition-colors duration-200 ${magnifyingMouse ? 'bg-cyan-500' : 'bg-slate-600'}`}>
+            <div className={`absolute top-1 left-1 w-4 h-4 bg-white rounded-full shadow transition-transform duration-200 ${magnifyingMouse ? 'translate-x-4' : 'translate-x-0'}`} />
           </div>
         </div>
 
@@ -209,6 +223,22 @@ export function SettingsPanel({ variant }: SettingsPanelProps) {
       </div>
 
       <div className="h-[1px] bg-slate-100 dark:bg-slate-800 my-1 transition-colors" />
+
+      {/* Magnifying Mouse Toggle */}
+      <div
+        onClick={(e) => { e.preventDefault(); toggleMagnifyingMouse(); }}
+        className="hidden md:flex items-center justify-between rounded-lg cursor-pointer py-2.5 px-3 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
+      >
+        <span className="flex items-center gap-2 text-sm font-medium text-slate-700 dark:text-slate-300">
+          <ZoomIn className="h-4 w-4 text-cyan-500" />
+          Hover Reader
+        </span>
+        <div className={`relative w-9 h-5 rounded-full transition-colors duration-200 ${magnifyingMouse ? 'bg-cyan-500' : 'bg-slate-300'}`}>
+          <div className={`absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform duration-200 ${magnifyingMouse ? 'translate-x-4' : 'translate-x-0'}`} />
+        </div>
+      </div>
+
+      <div className="h-[1px] bg-slate-100 dark:bg-slate-800 my-1 transition-colors hidden md:block" />
 
       {/* Color Blindness Filter */}
       <div className="py-2.5 px-3">
