@@ -77,7 +77,7 @@ df = pd.DataFrame(data, columns=[
 csv_filename = 'synthetic_final_exam_data.csv'
 df.to_csv(csv_filename, index=False)
 
-print(f"✅ Successfully generated {csv_filename}!")
+print(f" Successfully generated {csv_filename}!")
 print("\nSample Data:")
 print(df.head(10))
 print("\nDifficulty Distribution:")

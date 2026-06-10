@@ -1,11 +1,6 @@
 # -------------------------------------------------------------------------
 # GOOGLE COLAB SCRIPT: FINAL EXAM MODEL TRAINING
 # -------------------------------------------------------------------------
-# Instructions:
-# 1. Open Google Colab (colab.research.google.com) and create a New Notebook.
-# 2. Paste this entire code into a cell.
-# 3. Upload 'synthetic_final_exam_data.csv' to the Colab files panel.
-# 4. Click 'Run'. It will train 3 models, show evaluation metrics, plot a learning curve, and download the best one!
 
 import pandas as pd
 import numpy as np

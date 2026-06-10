@@ -1,12 +1,6 @@
 # -------------------------------------------------------------------------
 # GOOGLE COLAB SCRIPT: PRE-ASSESSMENT MODEL TRAINING
 # -------------------------------------------------------------------------
-# Instructions:
-# 1. Open Google Colab (colab.research.google.com) and create a New Notebook.
-# 2. Paste this entire code into a cell.
-# 3. Upload 'synthetic_pre_assessment_data.csv' to the Colab files panel.
-# 4. Click 'Run'. It will train 3 models, show evaluation metrics, plot a learning curve, and download the best one!
-
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
@@ -120,7 +114,7 @@ plot_learning_curve(best_model_obj, f"Learning Curve: {best_model_name}", X_scal
 # -------------------------------------------------------------------------
 # EXPORT MODELS
 # -------------------------------------------------------------------------
-# Save the best model and the scaler (you need the scaler in Laravel later)
+# Save the best model and the scaler 
 print("\nExporting Best Model...")
 joblib.dump(best_model_obj, 'best_pre_assessment_model.joblib')
 joblib.dump(scaler, 'pre_assessment_scaler.joblib')
