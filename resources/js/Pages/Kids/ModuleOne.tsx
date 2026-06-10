@@ -9,6 +9,7 @@ import axios from "axios"
 import { cn } from "@/lib/utils"
 import { ModuleNavigation } from "@/Components/module-navigation"
 import { RotateCcw as RotateCcwIcon } from "lucide-react"
+import { AdaptiveQuiz } from "@/Components/AdaptiveQuiz"
 
 // ─────────────────────────────────────────────
 // Types
@@ -52,28 +53,11 @@ const ModuleOnePage = ({ initialProgress }: { initialProgress?: any }) => {
   const [completedModules, setCompletedModules] = useState<number[]>(initialProgress?.completedModules || [])
 
   // Quiz state
-  const [quizAnswers,     setQuizAnswers]     = useState<(number | null)[]>(initialProgress?.sectionData?.module1?.quizAnswers || [null, null, null, null, null])
-  const [quizSubmitted,   setQuizSubmitted]   = useState(initialProgress?.sectionData?.module1?.quizPassed || false)
   const [quizPassed,      setQuizPassed]      = useState(initialProgress?.sectionData?.module1?.quizPassed || false)
-  const [quizStarted,     setQuizStarted]     = useState(initialProgress?.sectionData?.module1?.quizPassed || false)
-  const [reviewMode,      setReviewMode]      = useState(false)
-  const [loadedScore,     setLoadedScore]     = useState<number | null>(initialProgress?.sectionData?.module1?.quizScore !== undefined ? Number(initialProgress?.sectionData?.module1?.quizScore) : null)
+  const [quizScore,       setQuizScore]       = useState<number | null>(initialProgress?.sectionData?.module1?.quizScore !== undefined ? Number(initialProgress?.sectionData?.module1?.quizScore) : null)
+  const [quizAnswers,     setQuizAnswers]     = useState<(number | null)[]>(initialProgress?.sectionData?.module1?.quizAnswers || [])
   const [pitItems,        setPitItems]        = useState<string[]>(initialProgress?.sectionData?.module1?.elementMixerCompleted ? CORRECT_IDS : [])
   const [showBadgeModal,  setShowBadgeModal]  = useState(false)
-
-  const handleToggleReview = () => {
-    const nextMode = !reviewMode
-    setReviewMode(nextMode)
-    if (nextMode) {
-      setTimeout(() => {
-        reviewQuestionsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" })
-      }, 150)
-    } else {
-      setTimeout(() => {
-        resultCardRef.current?.scrollIntoView({ behavior: "smooth", block: "center" })
-      }, 50)
-    }
-  }
 
   // Simulated loading to match the skeleton experience of other modules
   useEffect(() => {
@@ -97,9 +81,9 @@ const ModuleOnePage = ({ initialProgress }: { initialProgress?: any }) => {
         if (m1.section2Read)           setSection2Done(true)
         if (m1.section3Read)           setSection3Done(true)
         if (m1.elementMixerCompleted)  { setLabCompleted(true); setMixerEverCompleted(true); setPitItems(CORRECT_IDS) }
-        if (m1.quizPassed)             { setQuizPassed(true); setQuizSubmitted(true) }
+        if (m1.quizPassed)             { setQuizPassed(true) }
         if (m1.quizAnswers)            { setQuizAnswers(m1.quizAnswers) }
-        if (m1.quizScore !== undefined && m1.quizScore !== null) { setLoadedScore(Number(m1.quizScore)) }
+        if (m1.quizScore !== undefined && m1.quizScore !== null) { setQuizScore(Number(m1.quizScore)) }
         if (data.completedModules) setCompletedModules(data.completedModules)
         if (data.completedModules?.includes(1)) setModuleCompleted(true)
       } catch (error) {
@@ -277,96 +261,10 @@ const ModuleOnePage = ({ initialProgress }: { initialProgress?: any }) => {
     }
   }
 
-  // ── Quiz data & logic ──
-  const QUIZ_QUESTIONS = [
-    { q: "What are the three things fire needs to burn (The Fire Triangle)?", options: ["Heat, Fuel, Oxygen", "Wood, Water, Air", "Smoke, Ash, Sparks"], correct: 0 },
-    { q: "Why are matches and lighters considered 'tools' and not toys?", options: ["They are too expensive for kids", "They create heat and can start dangerous fires", "Only teachers are allowed to use them"], correct: 1 },
-    { q: "What should you do if you find matches or a lighter?", options: ["Hide them in your bag", "Try to light them carefully", "Do not touch them and tell a grown-up right away"], correct: 2 },
-    { q: "What happens to a fire if you take away one part of the Fire Triangle?", options: ["It gets bigger", "It goes out", "It changes color"], correct: 1 },
-    { q: "Which of these is an example of 'Fuel' in the Fire Triangle?", options: ["A spark from a lighter", "The wind blowing", "Paper, wood, or cloth"], correct: 2 }
-  ]
-
-  const quizScore = useMemo(() => {
-    return quizAnswers.reduce((score, answer, idx) => {
-      return score + (answer === QUIZ_QUESTIONS[idx].correct ? 1 : 0)
-    }, 0)
-  }, [quizAnswers])
-
-  const allQuizAnswered = quizAnswers.every(a => a !== null)
-
-  const displayScore = useMemo(() => {
-    if (loadedScore !== null) return loadedScore
-    if (quizAnswers.some(a => a !== null) && quizSubmitted) return quizScore
-    if (quizPassed) return 5 // Default fallback for legacy passed quiz
-    return null
-  }, [loadedScore, quizSubmitted, quizScore, quizPassed, quizAnswers])
-
-  const resultDetails = useMemo(() => {
-    const score = displayScore ?? 0
-    if (score === 5) {
-      return {
-        icon: "🏆",
-        title: "Fire Safety Champion!",
-        titleColor: "text-yellow-500 dark:text-yellow-400",
-        pillStyles: "border-yellow-500/30 bg-gradient-to-br from-yellow-500/10 to-amber-500/10 text-yellow-600 dark:text-yellow-400 shadow-[0_8px_32px_rgba(234,179,8,0.12)]",
-        desc: "A perfect score! You are an absolute master of fire safety rules!"
-      }
-    } else if (score >= 3) {
-      return {
-        icon: "🎉",
-        title: "Fire Safety Certified!",
-        titleColor: "text-green-500 dark:text-green-400",
-        pillStyles: "border-green-500/30 bg-gradient-to-br from-green-500/10 to-emerald-500/10 text-green-600 dark:text-green-400 shadow-[0_8px_32px_rgba(34,197,94,0.12)]",
-        desc: "Well done! You have successfully completed this module quiz!"
-      }
-    } else if (score >= 1) {
-      return {
-        icon: "👍",
-        title: "Great Effort!",
-        titleColor: "text-orange-500 dark:text-orange-400",
-        pillStyles: "border-orange-500/30 bg-gradient-to-br from-orange-500/10 to-amber-500/10 text-orange-600 dark:text-orange-400 shadow-[0_8px_32px_rgba(249,115,22,0.12)]",
-        desc: "You completed the quiz! Review your answers below to learn how to keep your home safe!"
-      }
-    } else {
-      return {
-        icon: "💡",
-        title: "Keep Learning!",
-        titleColor: "text-blue-500 dark:text-blue-400",
-        pillStyles: "border-blue-500/30 bg-gradient-to-br from-blue-500/10 to-indigo-500/10 text-blue-600 dark:text-blue-400 shadow-[0_8px_32px_rgba(59,130,246,0.12)]",
-        desc: "You completed the quiz! Click 'Review Answers' below to discover the correct fire safety tips."
-      }
-    }
-  }, [displayScore])
-
-  const handleQuizAnswer = (qIdx: number, optIdx: number) => {
-    if (quizSubmitted) return
-    setQuizAnswers(prev => {
-      const next = [...prev]
-      next[qIdx] = optIdx
-      return next
-    })
-  }
-
-  const handleQuizSubmit = async () => {
-    if (!allQuizAnswered || quizSubmitted) return
-    
-    setQuizSubmitted(true)
-    setQuizPassed(true)
-    setLoadedScore(quizScore)
-
-    try {
-      await saveSection({ videoWatched: true, section1Read: true, section2Read: true, section3Read: true, elementMixerCompleted: true, quizPassed: true, quizAnswers: quizAnswers, quizScore: quizScore }, false)
-      await axios.post("/api/kids/quiz", { quizType: "module_1_quiz", score: quizScore, maxScore: 5 }).catch(() => {})
-    } catch {}
-    
-    showToast("Quiz completed! Module 2 unlocked!")
-
-    setTimeout(() => {
-      resultCardRef.current?.scrollIntoView({ behavior: "smooth", block: "center" })
-    }, 100)
-  }
 
   // ─────────────────────────────────────────────
+
+  
   return (
     <div className="min-h-screen bg-white dark:bg-slate-950 bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] dark:bg-[radial-gradient(#1e293b_1px,transparent_1px)] [background-size:16px_16px] font-sans flex flex-col transition-colors duration-500">
 
@@ -895,234 +793,23 @@ const ModuleOnePage = ({ initialProgress }: { initialProgress?: any }) => {
           </section>
           </div>
 
-          <section ref={quizSectionRef} className={cn(
-            "relative rounded-[2rem] border-[4px] shadow-sm transition-all duration-500 overflow-hidden",
-            quizPassed
-              ? "bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800/80 p-8 sm:p-14 text-center"
-              : "bg-yellow-50 dark:bg-yellow-950/20 border-yellow-300 dark:border-yellow-900/30 p-5 sm:p-8 md:p-12",
-            (!section3Done || !mixerEverCompleted) && "pointer-events-none select-none"
-          )}>
-            {(!section3Done || !mixerEverCompleted) && (
-              <div className="absolute inset-0 rounded-[2rem] bg-slate-950/40 dark:bg-slate-950/60 backdrop-blur-[3px] flex items-center justify-center z-20 transition-all duration-300">
-                <p className="text-amber-600 dark:text-amber-400 font-black text-sm sm:text-base md:text-lg bg-white dark:bg-slate-800 px-6 py-3.5 sm:px-8 sm:py-4 rounded-full border-[3px] border-amber-500 shadow-2xl flex items-center gap-2.5 transition-all">
-                  🔒 {!section3Done ? "Complete Section 1.3 first" : "Complete the Element Mixer first"}
-                </p>
-              </div>
-            )}
-
-            <div className={cn("transition-all duration-500", (!section3Done || !mixerEverCompleted) && "opacity-20 blur-[1px]")}>
-
-            {/* Header (hidden when quiz passed and not in review mode) */}
-            {!(quizPassed && !reviewMode) && (
-              <div className="text-center mb-6 sm:mb-10">
-                <h2 className={cn(
-                  "text-xl sm:text-2xl md:text-3xl font-black mb-2 sm:mb-3 drop-shadow-sm transition-colors",
-                  quizPassed ? "text-green-400" : "text-yellow-900 dark:text-yellow-300"
-                )}>
-                  <Trophy className="h-6 w-6 sm:h-7 sm:w-7 inline-block mr-2 -mt-1" />
-                  Fire Safety Certification
-                </h2>
-
-              </div>
-            )}
-
-            {/* Review Mode: show questions with correct answers ABOVE the result card */}
-            {quizPassed && reviewMode && (
-              <div
-                ref={reviewQuestionsRef}
-                className="max-w-2xl mx-auto space-y-5 sm:space-y-6 mb-8 sm:mb-12 animate-fade-in"
-              >
-                {QUIZ_QUESTIONS.map((question, qIdx) => (
-                  <div
-                    key={qIdx}
-                    className="bg-white dark:bg-slate-800 p-4 sm:p-6 rounded-2xl sm:rounded-3xl border-[3px] border-slate-200 dark:border-slate-700 shadow-sm transition-colors"
-                  >
-                    <h3 className="text-slate-800 dark:text-white font-black mb-3 sm:mb-4 text-sm sm:text-lg transition-colors">
-                      {qIdx + 1}. {question.q}
-                    </h3>
-                    <div className="grid grid-cols-1 gap-2 sm:gap-3">
-                      {question.options.map((opt, optIdx) => {
-                        const isCorrect = optIdx === question.correct
-                        const isSelected = quizAnswers[qIdx] === optIdx
-                        
-                        return (
-                          <button
-                            key={optIdx}
-                            disabled
-                            className={cn(
-                              "w-full text-left p-3 sm:p-4 rounded-xl border-2 font-bold text-sm sm:text-base transition-all flex items-center justify-between",
-                              isCorrect
-                                ? "bg-green-500 border-green-600 text-white shadow-sm"
-                                : isSelected
-                                ? "bg-red-500 border-red-600 text-white shadow-sm"
-                                : "border-slate-200 dark:border-slate-700 text-slate-400 dark:text-slate-500 bg-slate-50 dark:bg-slate-900 opacity-50 cursor-not-allowed"
-                            )}
-                          >
-                            <span>{opt}</span>
-                            {isSelected && !isCorrect && (
-                              <span className="text-[10px] bg-red-700/50 px-2.5 py-1 rounded-lg font-black uppercase tracking-wider ml-2 shrink-0">
-                                Your Answer ✗
-                              </span>
-                            )}
-                            {isCorrect && (
-                              <span className="text-[10px] bg-green-700/50 px-2.5 py-1 rounded-lg font-black uppercase tracking-wider ml-2 shrink-0">
-                                Correct ✓
-                              </span>
-                            )}
-                          </button>
-                        )
-                      })}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-
-            {/* Quiz Passed Result Card - Always shown when quiz passed */}
-            {quizPassed && (
-              <div
-                ref={resultCardRef}
-                className="w-full text-center max-w-xl mx-auto transition-colors"
-              >
-                <div className="text-5xl sm:text-7xl mb-5" style={{ filter: 'drop-shadow(0 10px 8px rgba(0,0,0,0.2))' }}>
-                  {resultDetails.icon}
-                </div>
-                <h3 className={cn("text-2xl sm:text-[2.75rem] font-black mb-2 uppercase leading-none tracking-tight", resultDetails.titleColor)}>
-                  {resultDetails.title}
-                </h3>
-                
-                {displayScore !== null && (
-                  <div className={cn("my-6 inline-flex flex-col items-center justify-center border-2 rounded-2xl px-8 py-3.5 backdrop-blur-sm", resultDetails.pillStyles)}>
-                    <span className="opacity-70 text-[10px] font-black uppercase tracking-widest mb-0.5">
-                      Quiz Score
-                    </span>
-                    <span className="font-extrabold text-3xl sm:text-4xl tracking-tight font-mono">
-                      {displayScore} <span className="opacity-50 text-xl font-normal">/ 5</span>
-                    </span>
-                  </div>
-                )}
-
-                <p className="text-slate-600 dark:text-slate-400 font-semibold text-base sm:text-lg mb-8 sm:mb-10">
-                  {resultDetails.desc}
-                </p>
-                <div className="flex flex-col sm:flex-row justify-center gap-3 sm:gap-5">
-                  <button
-                    onClick={handleToggleReview}
-                    className="bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-700 hover:text-slate-900 dark:text-slate-300 dark:hover:text-white font-black px-6 sm:px-8 py-3 sm:py-4 rounded-[1.25rem] border-b-[5px] border-slate-300 dark:border-slate-950 active:border-b-[1px] active:mt-[4px] transition-all uppercase tracking-wider text-sm min-w-[210px] flex items-center justify-center gap-2"
-                  >
-                    {reviewMode ? "Hide Answers" : "Review Answers"}
-                  </button>
-                  {!moduleCompleted ? (
-                    <button
-                      onClick={completeModule}
-                      disabled={saving}
-                      className="bg-amber-500 hover:bg-amber-400 text-white font-black px-6 sm:px-8 py-3 sm:py-4 rounded-[1.25rem] border-b-[5px] border-amber-700 active:border-b-[1px] active:mt-[4px] transition-all uppercase tracking-wider text-sm flex items-center justify-center gap-2 min-w-[210px] disabled:opacity-60"
-                    >
-                      {saving ? "Saving..." : "Go to Module 2"}
-                      <ArrowLeft className="h-4 w-4 rotate-180" />
-                    </button>
-                  ) : (
-                    <Link
-                      href="/kids/safescape/2"
-                      className="bg-amber-500 hover:bg-amber-400 text-white font-black px-6 sm:px-8 py-3 sm:py-4 rounded-[1.25rem] border-b-[5px] border-amber-700 active:border-b-[1px] active:mt-[4px] transition-all uppercase tracking-wider text-sm flex items-center justify-center gap-2 min-w-[210px]"
-                    >
-                      Go to Module 2
-                      <ArrowLeft className="h-4 w-4 rotate-180" />
-                    </Link>
-                  )}
-                </div>
-              </div>
-            )}
-
-            {/* Quiz Questions (not yet passed) */}
-            {!quizPassed && (
-              <div className="max-w-2xl mx-auto space-y-5 sm:space-y-6">
-                {!quizStarted ? (
-                  <div className="text-center p-8 sm:p-12 bg-white dark:bg-slate-900 rounded-3xl border-[3px] border-yellow-300 shadow-sm transition-colors animate-fade-in">
-                    <h3 className="text-2xl sm:text-3xl font-black mb-4 text-slate-800 dark:text-white">Ready to test your knowledge?</h3>
-                    <p className="mb-8 text-slate-600 dark:text-slate-400 font-bold text-sm sm:text-base">Review the module content above and start when you're ready!</p>
-                    <button onClick={() => setQuizStarted(true)} className="font-black px-8 sm:px-10 py-3 sm:py-4 rounded-full bg-yellow-400 text-red-600 shadow-[0_4px_0_#b45309] hover:-translate-y-0.5 active:translate-y-1 active:shadow-none transition-all uppercase tracking-wide text-sm sm:text-base">
-                      Start Quiz
-                    </button>
-                  </div>
-                ) : (
-                  <>
-                    {QUIZ_QUESTIONS.map((question, qIdx) => (
-                  <div
-                    key={qIdx}
-                    className="bg-white dark:bg-slate-900 p-4 sm:p-6 rounded-2xl sm:rounded-3xl border-[3px] border-yellow-200 dark:border-yellow-900/30 shadow-sm transition-colors"
-                  >
-                    <h3 className="text-slate-800 dark:text-white font-black mb-3 sm:mb-4 text-sm sm:text-lg transition-colors">
-                      {qIdx + 1}. {question.q}
-                    </h3>
-                    <div className="grid grid-cols-1 gap-2 sm:gap-3">
-                      {question.options.map((opt, optIdx) => {
-                        const isSelected = quizAnswers[qIdx] === optIdx
-                        const isCorrect = optIdx === question.correct
-                        let btnClass = "w-full text-left p-3 sm:p-4 rounded-xl border-2 font-bold transition-all text-sm sm:text-base "
-
-                        if (quizSubmitted) {
-                          if (isCorrect) {
-                            btnClass += "bg-green-500 border-green-600 text-white shadow-sm"
-                          } else if (isSelected && !isCorrect) {
-                            btnClass += "bg-red-800 border-red-600 text-white opacity-70"
-                          } else {
-                            btnClass += "border-slate-200 dark:border-slate-800 text-slate-400 dark:text-slate-600 bg-white dark:bg-slate-950 opacity-50 cursor-not-allowed"
-                          }
-                        } else {
-                          if (isSelected) {
-                            btnClass += "border-yellow-400 dark:border-yellow-600 bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-300 shadow-sm"
-                          } else {
-                            btnClass += "border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800 shadow-sm hover:-translate-y-0.5 active:translate-y-0.5"
-                          }
-                        }
-
-                        return (
-                          <button
-                            key={optIdx}
-                            onClick={() => handleQuizAnswer(qIdx, optIdx)}
-                            disabled={quizSubmitted}
-                            className={btnClass}
-                          >
-                            {opt}
-                          </button>
-                        )
-                      })}
-                    </div>
-                  </div>
-                ))}
-
-                {/* Submit / Retake */}
-                <div className="flex justify-center pt-2 sm:pt-4">
-                  {!quizSubmitted ? (
-                    <button
-                      onClick={handleQuizSubmit}
-                      disabled={!allQuizAnswered}
-                      className={cn(
-                        "font-black px-8 sm:px-10 py-3 sm:py-4 rounded-full uppercase tracking-wide text-sm sm:text-base transition-all flex items-center gap-2",
-                        allQuizAnswered
-                          ? "bg-yellow-400 text-red-600 shadow-[0_4px_0_#b45309] hover:-translate-y-0.5 active:translate-y-1 active:shadow-none"
-                          : "bg-slate-200 dark:bg-slate-800 text-slate-400 dark:text-slate-600 cursor-not-allowed border-[3px] border-slate-300 dark:border-slate-700"
-                      )}
-                    >
-                      <Shield className="h-4 w-4 sm:h-5 sm:w-5" />
-                      Submit Answers
-                    </button>
-                  ) : (
-                    <div className="text-center space-y-4">
-                      <p className="text-lg sm:text-xl font-black text-[#ff4b3e]">
-                        You scored {quizScore}/5.
-                      </p>
-
-                    </div>
-                  )}
-                </div>
-                  </>
-                )}
-              </div>
-            )}
-            </div>
-          </section>
+          <AdaptiveQuiz 
+            moduleNumber={1}
+            isLocked={!section3Done || !mixerEverCompleted}
+            lockMessage="Complete Section 1.4 first"
+            initialQuizPassed={quizPassed}
+            initialQuizScore={quizScore ?? undefined}
+            initialQuizAnswers={quizAnswers}
+            initialQuizQuestions={initialProgress?.sectionData?.module1?.quizQuestions}
+            onComplete={(score) => {
+              setQuizPassed(true);
+              setQuizScore(score);
+              setModuleCompleted(true);
+              setShowBadgeModal(true);
+            }}
+            nextModuleUrl="/kids/safescape/2"
+            nextModuleText="Go to Module 2"
+          />
 
           {/* ── Footer ── */}
           <div className="text-center py-8 border-t-2 border-slate-200 dark:border-slate-800 transition-colors">

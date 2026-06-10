@@ -1576,7 +1576,7 @@
         }
 
         // --- FINAL EXAM ---
-        const finalQuestions = [
+        let finalQuestions = [
             { q: "1. What 3 things make up the Fire Triangle?", o: ["Heat, Fuel, Oxygen", "Wood, Matches, Air", "Water, Wind, Earth"], a: 0 },
             { q: "2. Matches and lighters are:", o: ["Toys for fun", "Tools for adults", "Candy"], a: 1 },
             { q: "3. If you take away Oxygen, the fire:", o: ["Gets bigger", "Goes out", "Turns blue"], a: 1 },
@@ -1596,7 +1596,7 @@
 
         function loadExam() {
             if (localState.finalExamPassed) {
-                startExamNow();
+                window.parent.postMessage({ type: 'SAFESCAPE_START_FINAL_EXAM' }, '*');
                 return;
             }
 
@@ -1608,14 +1608,14 @@
             startDiv.innerHTML = `
                 <h3 class="text-2xl sm:text-3xl font-black mb-4 text-slate-800 dark:text-white">Ready to take the final exam?</h3>
                 <p class="mb-8 text-slate-600 dark:text-slate-400 font-bold text-sm sm:text-base">Review the module content above and start when you're ready!</p>
-                <button onclick="startExamNow()" class="font-black px-8 sm:px-10 py-3 sm:py-4 rounded-full bg-yellow-400 text-red-600 shadow-[0_4px_0_#b45309] hover:-translate-y-0.5 active:translate-y-1 active:shadow-none transition-all uppercase tracking-wide text-sm sm:text-base">
+                <button onclick="startExam()" class="font-black px-8 sm:px-10 py-3 sm:py-4 rounded-full bg-yellow-400 text-red-600 shadow-[0_4px_0_#b45309] hover:-translate-y-0.5 active:translate-y-1 active:shadow-none transition-all uppercase tracking-wide text-sm sm:text-base">
                     Start Exam
                 </button>
             `;
             container.appendChild(startDiv);
         }
 
-        function startExamNow() {
+        async function startExam() {
             document.body.classList.add('quiz-active');
             
             const container = document.getElementById('quiz-container');
@@ -1640,6 +1640,29 @@
                 document.body.classList.remove('quiz-active');
                 return;
             }
+
+            const loadingDiv = document.createElement('div');
+            loadingDiv.className = "text-center p-8 sm:p-12 text-slate-500 animate-pulse font-bold";
+            loadingDiv.innerText = "Generating AI Questions...";
+            container.appendChild(loadingDiv);
+
+            try {
+                const response = await fetch('/api/kids/adaptive-quiz/5', {
+                    headers: { 'Accept': 'application/json' }
+                });
+                const data = await response.json();
+                if (data && data.questions && data.questions.length > 0) {
+                    finalQuestions = data.questions.map((q, i) => ({
+                        q: `${i+1}. ${q.text}`,
+                        o: q.options,
+                        a: q.correctAnswer
+                    }));
+                }
+            } catch (err) {
+                console.error("Failed to load adaptive quiz", err);
+            }
+
+            container.innerHTML = '';
 
             document.getElementById('exam-result').classList.add('hidden');
             document.getElementById('exam-submit').classList.remove('hidden');

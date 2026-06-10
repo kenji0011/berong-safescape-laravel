@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\KidsModule;
 use App\Models\SafeScapeProgress;
+use App\Models\AssessmentQuestion;
+use App\Services\AdaptiveLearningService;
 
 class KidsController extends Controller
 {
@@ -251,11 +253,21 @@ class KidsController extends Controller
             'quizType' => 'required|string', // e.g. "module_2_quiz"
             'score'    => 'required|integer',
             'maxScore' => 'required|integer',
+            'quizAnswers'   => 'nullable|array',
+            'quizQuestions' => 'nullable|array',
         ]);
 
         // Extract module number from quizType (module_X_quiz)
         preg_match('/module_(\d+)_quiz/', $validated['quizType'], $matches);
         $moduleNum = isset($matches[1]) ? (int)$matches[1] : null;
+
+        // Save to quiz_results table as a log
+        \App\Models\QuizResult::create([
+            'userId' => $user->id,
+            'quizType' => $validated['quizType'],
+            'score' => $validated['score'],
+            'maxScore' => $validated['maxScore'],
+        ]);
 
         if ($moduleNum) {
             $passed = true; // Any quiz submission is a pass/completion
@@ -272,6 +284,12 @@ class KidsController extends Controller
             
             $sectionData['quizScore'] = $validated['score'];
             $sectionData['quizPassed'] = $passed;
+            if (!empty($validated['quizAnswers'])) {
+                $sectionData['quizAnswers'] = $validated['quizAnswers'];
+            }
+            if (!empty($validated['quizQuestions'])) {
+                $sectionData['quizQuestions'] = $validated['quizQuestions'];
+            }
             if ($moduleNum === 4) {
                 $sectionData['finalCheckPassed'] = true;
             }
@@ -292,5 +310,106 @@ class KidsController extends Controller
         }
 
         return response()->json(['success' => true, 'passed' => $passed ?? false]);
+    }
+
+    /**
+     * GET /api/kids/adaptive-quiz/{module}
+     * Generate an AI-curated quiz based on the user's performance.
+     */
+    public function adaptiveQuiz(Request $request, $module)
+    {
+        $user = $request->user();
+        $service = new AdaptiveLearningService();
+        $difficulty = 'Medium'; // Default
+
+        if ($module == 5) {
+            // Final Exam: Predict based on age, grade, pre-assessment + Module 1-4 quiz scores
+            $age = $user->age ?? 10;
+            $preScore = $user->preTestScore ?? 0;
+            
+            $grade = 5;
+            if (isset($user->gradeLevel) && preg_match('/(\d+)/', $user->gradeLevel, $matches)) {
+                $grade = (int) $matches[1];
+            } else {
+                $grade = max(1, $age - 5);
+            }
+
+            $progressRecords = SafeScapeProgress::where('userId', $user->id)
+                ->whereIn('moduleNum', [1, 2, 3, 4])
+                ->get()
+                ->keyBy('moduleNum');
+
+            $scores = [];
+            for ($i = 1; $i <= 4; $i++) {
+                $p = $progressRecords->get($i);
+                $score = 0;
+                if ($p && $p->sectionData) {
+                    $sd = json_decode($p->sectionData, true) ?? [];
+                    $score = $sd['quizScore'] ?? 0;
+                }
+                $scores[] = $score;
+            }
+
+            $difficulty = $service->getFinalExamDifficulty($age, $grade, $preScore, $scores[0], $scores[1], $scores[2], $scores[3]);
+        } else {
+            // Modules 1-4: Predict based on pre-assessment score
+            $preScore = $user->preTestScore ?? 0;
+            $age = $user->age ?? 10;
+            
+            $grade = 5;
+            if (isset($user->gradeLevel) && preg_match('/(\d+)/', $user->gradeLevel, $matches)) {
+                $grade = (int) $matches[1];
+            } else {
+                $grade = max(1, $age - 5);
+            }
+
+            $difficulty = $service->getModuleDifficulty($age, $grade, $preScore);
+        }
+
+        // Fetch questions from database
+        $categoryMap = [
+            1 => 'Fire Basics',
+            2 => 'Emergency Response',
+            3 => 'Smoke Detector Knowledge',
+            4 => 'Evacuation Planning',
+            5 => 'Final Exam' // Fetch mix of questions for final exam
+        ];
+
+        $query = AssessmentQuestion::where('isActive', true)
+            ->where('type', 'moduleQuiz')
+            ->where('difficulty', $difficulty);
+            
+        if (isset($categoryMap[$module])) {
+            $query->where('category', $categoryMap[$module]);
+        }
+        
+        if ($module == 5) {
+            $query->inRandomOrder()->limit(15);
+        } else {
+            $query->inRandomOrder()->limit(5);
+        }
+
+        $questions = $query->get()->map(function ($q) {
+            // Randomize options
+            $originalOptions = $q->options;
+            $correctOptionText = $originalOptions[$q->correctAnswer];
+            $opts = $originalOptions;
+            shuffle($opts);
+            $newCorrectIndex = array_search($correctOptionText, $opts);
+            
+            return [
+                'id' => $q->id,
+                'text' => $q->question,
+                'options' => $opts,
+                'correctAnswer' => $newCorrectIndex,
+                'explanation' => $q->explanation ?? 'Good job!',
+                'difficulty' => $q->difficulty,
+            ];
+        });
+
+        return response()->json([
+            'predictedDifficulty' => $difficulty,
+            'questions' => $questions
+        ]);
     }
 }

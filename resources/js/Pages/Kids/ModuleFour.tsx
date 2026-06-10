@@ -5,6 +5,7 @@ import { ArrowLeft, BookOpen, Flame, Trophy, CheckCircle, Info } from "lucide-re
 import axios from "axios"
 import { cn } from "@/lib/utils"
 import { ModuleNavigation } from "@/Components/module-navigation"
+import { AdaptiveQuiz } from "@/Components/AdaptiveQuiz"
 
 const ModuleFourPage = ({ moduleNum, initialProgress }: { moduleNum: number; initialProgress?: any }) => {
   const currentModule = moduleNum || 4
@@ -12,6 +13,7 @@ const ModuleFourPage = ({ moduleNum, initialProgress }: { moduleNum: number; ini
   const [moduleCompleted, setModuleCompleted] = useState(initialProgress?.completedModules?.includes(currentModule) || false)
   const [saving, setSaving] = useState(false)
   const [fullProgress, setFullProgress] = useState<any>(initialProgress || null)
+  const moduleData = fullProgress?.sectionData?.module4 || {};
   const completedRef = React.useRef(moduleCompleted)
   const recentlyCompletedRef = React.useRef(false)
   const badgeShownRef = React.useRef(false)
@@ -165,7 +167,6 @@ const ModuleFourPage = ({ moduleNum, initialProgress }: { moduleNum: number; ini
 
   const progressPercent = useMemo(() => {
     if (moduleCompleted) return 100;
-    const moduleData = fullProgress?.sectionData?.module4 || {};
     
     const cardsCompleted = Array.isArray(moduleData.cardsCompleted) 
       ? moduleData.cardsCompleted.filter(Boolean).length 
@@ -281,6 +282,14 @@ const ModuleFourPage = ({ moduleNum, initialProgress }: { moduleNum: number; ini
 
       const nav = iframeDoc.querySelector('.ss-nav') as HTMLElement;
       if (nav) nav.style.display = 'none';
+
+      // Hide iframe footer
+      const footer = iframeDoc.querySelector('footer');
+      if (footer) footer.style.display = 'none';
+
+      // Hide iframe final quiz (replaced by AdaptiveQuiz component)
+      const finalQuiz = iframeDoc.querySelector('#section-check') as HTMLElement;
+      if (finalQuiz) finalQuiz.style.display = 'none';
       
       // Dynamically resize iframe to content height without breaking scroll momentum
       const resizeIframe = () => {
@@ -434,6 +443,26 @@ const ModuleFourPage = ({ moduleNum, initialProgress }: { moduleNum: number; ini
           allow="fullscreen; autoplay; encrypted-media"
           title={`SafeScape Module ${currentModule}`}
         />
+
+        {!iframeLoading && (
+          <div className="max-w-5xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-10 z-20">
+            <AdaptiveQuiz
+              moduleNumber={currentModule}
+              isLocked={!moduleData?.allCardsCompleted}
+              lockMessage="Complete Section 4.4 first"
+              initialQuizPassed={fullProgress?.sectionData?.[`module${currentModule}`]?.quizPassed}
+              initialQuizScore={fullProgress?.sectionData?.[`module${currentModule}`]?.quizScore}
+              initialQuizAnswers={fullProgress?.sectionData?.[`module${currentModule}`]?.quizAnswers}
+              initialQuizQuestions={fullProgress?.sectionData?.[`module${currentModule}`]?.quizQuestions}
+              onComplete={(score) => {
+                setModuleCompleted(true);
+                setShowBadgeModal(true);
+              }}
+              nextModuleUrl="/kids/safescape/5"
+              nextModuleText="Go to Module 5"
+            />
+          </div>
+        )}
 
       </div>
 

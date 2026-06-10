@@ -95,6 +95,7 @@ Route::middleware(['auth:sanctum', 'throttle:api'])->group(function () {
         Route::get('/safescape', [KidsController::class, 'safeScapeProgress']);
         Route::post('/safescape', [KidsController::class, 'updateSafeScape']);
         Route::post('/quiz', [KidsController::class, 'submitQuiz']);
+        Route::get('/adaptive-quiz/{module}', [KidsController::class, 'adaptiveQuiz']);
     });
 
     // ==========================================

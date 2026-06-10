@@ -29,7 +29,11 @@
             "App\\": "app/",
             "Database\\Factories\\": "database/factories/",
             "Database\\Seeders\\": "database/seeders/"
-        }
+        },
+        "files": [
+            "ml_scripts/pre_assessment_model.php",
+            "ml_scripts/final_exam_model.php"
+        ]
     },
     "autoload-dev": {
         "psr-4": {

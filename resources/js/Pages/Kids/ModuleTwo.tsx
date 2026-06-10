@@ -5,6 +5,7 @@ import { ArrowLeft, BookOpen, Flame, Trophy, CheckCircle, Info } from "lucide-re
 import axios from "axios"
 import { cn } from "@/lib/utils"
 import { ModuleNavigation } from "@/Components/module-navigation"
+import { AdaptiveQuiz } from "@/Components/AdaptiveQuiz"
 
 const ModuleTwoPage = ({ moduleNum, initialProgress }: { moduleNum: number; initialProgress?: any }) => {
   const currentModule = moduleNum || 2
@@ -299,6 +300,14 @@ const ModuleTwoPage = ({ moduleNum, initialProgress }: { moduleNum: number; init
       const nav = iframeDoc.querySelector('.ss-nav') as HTMLElement;
       if (nav) nav.style.display = 'none';
 
+      // Hide iframe footer
+      const footer = iframeDoc.querySelector('footer');
+      if (footer) footer.style.display = 'none';
+
+      // Hide iframe final quiz (replaced by AdaptiveQuiz component)
+      const finalQuiz = iframeDoc.querySelector('#final-quiz') as HTMLElement;
+      if (finalQuiz) finalQuiz.style.display = 'none';
+
       // Dynamically resize iframe to content height without breaking scroll momentum
       const resizeIframe = () => {
         try {
@@ -451,6 +460,26 @@ const ModuleTwoPage = ({ moduleNum, initialProgress }: { moduleNum: number; init
           allow="fullscreen; autoplay; encrypted-media"
           title={`SafeScape Module ${currentModule}`}
         />
+
+        {!iframeLoading && (
+          <div className="max-w-5xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-10 z-20">
+            <AdaptiveQuiz
+              moduleNumber={currentModule}
+              isLocked={!fullProgress?.sectionData?.module2?.safeMeetingPlaceRead}
+              lockMessage="Complete Section 2.4 first"
+              initialQuizPassed={fullProgress?.sectionData?.[`module${currentModule}`]?.quizPassed}
+              initialQuizScore={fullProgress?.sectionData?.[`module${currentModule}`]?.quizScore}
+              initialQuizAnswers={fullProgress?.sectionData?.[`module${currentModule}`]?.quizAnswers}
+              initialQuizQuestions={fullProgress?.sectionData?.[`module${currentModule}`]?.quizQuestions}
+              onComplete={(score) => {
+                setModuleCompleted(true);
+                setShowBadgeModal(true);
+              }}
+              nextModuleUrl="/kids/safescape/3"
+              nextModuleText="Go to Module 3"
+            />
+          </div>
+        )}
 
       </div>
 

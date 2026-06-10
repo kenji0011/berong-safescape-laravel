@@ -33,3 +33,4 @@ make_models.php
 migrate_react.cjs
 q_out.json
 test_scores.php
+/utils/
