@@ -1041,11 +1041,16 @@ export function RegistrationWizard({ onBackToLogin }: RegistrationWizardProps) {
         {currentStep === 4 && questions.length > 0 && (
           <div className="flex justify-between items-center mt-6 sm:mt-8">
             <button
-              onClick={handleBack}
-              className="flex items-center gap-1 font-bold px-5 py-2.5 rounded-full border-[3px] border-gray-300 dark:border-slate-700 text-slate-600 dark:text-slate-400 shadow-[0_3px_0_#94a3b8] dark:shadow-[0_3px_0_#1e293b] hover:-translate-y-0.5 hover:shadow-[0_5px_0_#94a3b8] dark:hover:shadow-[0_5px_0_#1e293b] active:translate-y-1 active:shadow-[0_0px_0_#94a3b8] transition-all text-sm"
+              onClick={() => setCurrentQuestionIndex(prev => prev - 1)}
+              disabled={currentQuestionIndex === 0}
+              className={`flex items-center gap-1 font-bold px-5 py-2.5 rounded-full border-[3px] transition-all text-sm ${
+                currentQuestionIndex === 0
+                  ? "border-gray-200 dark:border-slate-800 text-gray-300 dark:text-slate-700 cursor-not-allowed"
+                  : "border-gray-300 dark:border-slate-700 text-slate-600 dark:text-slate-400 shadow-[0_3px_0_#94a3b8] dark:shadow-[0_3px_0_#1e293b] hover:-translate-y-0.5 hover:shadow-[0_5px_0_#94a3b8] dark:hover:shadow-[0_5px_0_#1e293b] active:translate-y-1 active:shadow-[0_0px_0_#94a3b8]"
+              }`}
             >
               <ChevronLeft className="h-4 w-4" />
-              Back
+              {currentQuestionIndex === 0 ? "Back" : `Question ${currentQuestionIndex}`}
             </button>
 
             {currentQuestionIndex === questions.length - 1 && (

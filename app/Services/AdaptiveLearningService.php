@@ -35,6 +35,7 @@ class AdaptiveLearningService
 
         // 2. Predict using the generated PHP function
         /** @noinspection PhpUndefinedFunctionInspection - loaded via composer autoload */
+        require_once base_path('ml_scripts/pre_assessment_model.php');
         $predictionVector = \scorePreAssessment($scaledFeatures);
 
         // 3. Find the argmax of the prediction vector
@@ -67,6 +68,7 @@ class AdaptiveLearningService
 
         // 2. Predict using the generated PHP function
         /** @noinspection PhpUndefinedFunctionInspection - loaded via composer autoload */
+        require_once base_path('ml_scripts/final_exam_model.php');
         $predictionVector = \scoreFinalExam($scaledFeatures);
 
         // 3. Find the argmax of the prediction vector

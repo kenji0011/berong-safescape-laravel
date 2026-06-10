@@ -1,4 +1,4 @@
-import React, { useMemo, useEffect } from "react"
+import React, { useMemo, useEffect, useState } from "react"
 import { Link, Deferred } from '@inertiajs/react'
 import { ArrowLeft, ArrowRight, BookOpen, Trophy, Shield, CheckCircle, Lock, Flame, ChevronRight, ClipboardCheck } from "lucide-react"
 import { useAuth } from "@/lib/auth-context"
@@ -118,6 +118,17 @@ const STATIC_MODULES: ModuleData[] = [
 // ─────────────────────────────────────────────
 const CourseHubPage = ({ initialModules }: CourseHubProps) => {
   const { user } = useAuth()
+  const [showCertModal, setShowCertModal] = useState(false)
+  
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search)
+      if (params.get('show_cert_modal') === 'true') {
+        setShowCertModal(true)
+        window.history.replaceState({}, '', '/kids/safescape')
+      }
+    }
+  }, [])
   
   const modules = initialModules || STATIC_MODULES
 
@@ -557,6 +568,36 @@ const CourseHubPage = ({ initialModules }: CourseHubProps) => {
 
         </div>
       </div>
+
+      {/* ── Certificate Unlocked Modal ── */}
+      {showCertModal && (
+        <div className="fixed inset-0 z-[999] flex items-center justify-center bg-slate-950/80 backdrop-blur-sm px-4 animate-in fade-in duration-300">
+          <div className="bg-white dark:bg-slate-900 rounded-[2rem] max-w-sm w-full p-8 flex flex-col items-center text-center shadow-2xl border-[4px] border-yellow-400 animate-in zoom-in-95 duration-500">
+            <div className="h-24 w-24 bg-yellow-50 dark:bg-yellow-900/20 rounded-full border-[4px] border-yellow-200 flex items-center justify-center mb-6 shadow-inner relative overflow-hidden">
+              <Trophy className="h-12 w-12 text-yellow-500" />
+            </div>
+            <h2 className="text-2xl font-black text-slate-800 dark:text-white mb-2 uppercase tracking-tight">Course Completed!</h2>
+            <p className="text-slate-500 dark:text-slate-400 font-bold mb-8">
+              Congratulations! You have mastered all 5 modules. You can now view your official Fire Safety Hero Certificate!
+            </p>
+            <div className="flex flex-col gap-3 w-full">
+              <Link 
+                href="/kids/certificate" 
+                className="w-full bg-yellow-500 hover:bg-yellow-400 text-yellow-950 font-black px-6 py-4 rounded-[1.25rem] border-b-[5px] border-yellow-700 active:border-b-[1px] active:mt-[4px] transition-all uppercase tracking-widest text-sm flex justify-center items-center gap-2"
+              >
+                View Certificate
+                <ArrowRight className="h-5 w-5" />
+              </Link>
+              <button 
+                onClick={() => setShowCertModal(false)}
+                className="w-full bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-500 dark:text-slate-400 font-bold px-6 py-3 rounded-[1rem] transition-colors uppercase tracking-widest text-xs"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

@@ -59,6 +59,15 @@ const ModuleOnePage = ({ initialProgress }: { initialProgress?: any }) => {
   const [pitItems,        setPitItems]        = useState<string[]>(initialProgress?.sectionData?.module1?.elementMixerCompleted ? CORRECT_IDS : [])
   const [showBadgeModal,  setShowBadgeModal]  = useState(false)
 
+  useEffect(() => {
+    if (showBadgeModal) {
+      try {
+        const audio = new Audio('/sounds/finish.mp3')
+        audio.play().catch(e => console.error("Audio play failed:", e))
+      } catch (e) {}
+    }
+  }, [showBadgeModal])
+
   // Simulated loading to match the skeleton experience of other modules
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -834,11 +843,11 @@ const ModuleOnePage = ({ initialProgress }: { initialProgress?: any }) => {
               Congratulations! You've mastered the Fire Triangle and earned your first official SafeScape badge.
             </p>
             <button
-              onClick={() => router.visit('/kids/safescape/2')}
+              onClick={() => setShowBadgeModal(false)}
               className="w-full bg-amber-500 hover:bg-amber-400 text-white font-black px-6 py-4 rounded-[1.25rem] border-b-[5px] border-amber-700 active:border-b-[1px] active:mt-[4px] transition-all uppercase tracking-wider text-sm flex items-center justify-center gap-2"
             >
-              Continue to Module 2
-              <ArrowLeft className="h-4 w-4 rotate-180" />
+              Obtain Badge
+              <Trophy className="h-4 w-4" />
             </button>
           </div>
         </div>

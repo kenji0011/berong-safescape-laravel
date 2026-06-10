@@ -599,7 +599,7 @@ export default function Assessment({ type }: AssessmentProps) {
                                     currentQuestionIndex === 0 || submitting ? 'opacity-50 border-slate-200 dark:border-slate-700 shadow-none' : 'border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 hover:bg-slate-100 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200'
                                 }`}
                             >
-                                <ChevronLeft className="h-4 w-4 md:h-5 md:w-5 mr-1" /> Back
+                                <ChevronLeft className="h-4 w-4 md:h-5 md:w-5 mr-1" /> {currentQuestionIndex === 0 ? "Back" : `Question ${currentQuestionIndex}`}
                             </Button>
 
                             {currentQuestionIndex === questions.length - 1 ? (

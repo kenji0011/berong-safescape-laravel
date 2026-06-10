@@ -25,6 +25,15 @@ const ModuleFivePage = ({ moduleNum, initialProgress }: { moduleNum: number; ini
   const pendingSyncRef = React.useRef<any>(null)
   const iframeRef = React.useRef<HTMLIFrameElement>(null)
   const [showBadgeModal, setShowBadgeModal] = useState(false)
+
+  useEffect(() => {
+    if (showBadgeModal) {
+      try {
+        const audio = new Audio('/sounds/finish.mp3')
+        audio.play().catch(e => console.error("Audio play failed:", e))
+      } catch (e) {}
+    }
+  }, [showBadgeModal])
   const [toast, setToast] = useState<{ msg: string; type: "success" | "info" } | null>(null)
 
   // Automatically clear toast
@@ -495,7 +504,7 @@ const ModuleFivePage = ({ moduleNum, initialProgress }: { moduleNum: number; ini
                 setModuleCompleted(true);
                 setShowBadgeModal(true);
               }}
-              nextModuleUrl="/kids/safescape"
+              nextModuleUrl="/kids/safescape?show_cert_modal=true"
               nextModuleText="Back to Dashboard"
             />
           </div>
@@ -522,8 +531,8 @@ const ModuleFivePage = ({ moduleNum, initialProgress }: { moduleNum: number; ini
               }}
               className="w-full bg-amber-500 hover:bg-amber-400 text-white font-black px-6 py-4 rounded-[1.25rem] border-b-[5px] border-amber-700 active:border-b-[1px] active:mt-[4px] transition-all uppercase tracking-wider text-sm flex items-center justify-center gap-2"
             >
-              Take Post-Test
-              <ArrowLeft className="h-4 w-4 rotate-180" />
+              Obtain Badge
+              <Trophy className="h-4 w-4" />
             </button>
           </div>
         </div>

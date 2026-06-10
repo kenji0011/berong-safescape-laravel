@@ -22,6 +22,15 @@ const ModuleFourPage = ({ moduleNum, initialProgress }: { moduleNum: number; ini
   const syncingRef = React.useRef(false)
   const iframeRef = React.useRef<HTMLIFrameElement>(null)
   const [showBadgeModal, setShowBadgeModal] = useState(false)
+
+  useEffect(() => {
+    if (showBadgeModal) {
+      try {
+        const audio = new Audio('/sounds/finish.mp3')
+        audio.play().catch(e => console.error("Audio play failed:", e))
+      } catch (e) {}
+    }
+  }, [showBadgeModal])
   const [toast, setToast] = useState<{ msg: string; type: "success" | "info" } | null>(null)
 
   // Automatically clear toast
@@ -480,11 +489,11 @@ const ModuleFourPage = ({ moduleNum, initialProgress }: { moduleNum: number; ini
               Congratulations! You've learned the Smoke Crawling technique and earned your Low & Go! badge.
             </p>
             <button
-              onClick={() => router.visit('/kids/safescape/5')}
+              onClick={() => setShowBadgeModal(false)}
               className="w-full bg-amber-500 hover:bg-amber-400 text-white font-black px-6 py-4 rounded-[1.25rem] border-b-[5px] border-amber-700 active:border-b-[1px] active:mt-[4px] transition-all uppercase tracking-wider text-sm flex items-center justify-center gap-2"
             >
-              Continue to Module 5
-              <ArrowLeft className="h-4 w-4 rotate-180" />
+              Obtain Badge
+              <Trophy className="h-4 w-4" />
             </button>
           </div>
         </div>

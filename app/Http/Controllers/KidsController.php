@@ -390,11 +390,18 @@ class KidsController extends Controller
         }
 
         $questions = $query->get()->map(function ($q) {
-            // Randomize options
+            // Randomize options unless it is a True/False question
             $originalOptions = $q->options;
             $correctOptionText = $originalOptions[$q->correctAnswer];
             $opts = $originalOptions;
-            shuffle($opts);
+            
+            $isTrueFalse = count($opts) == 2 && in_array('True', $opts) && in_array('False', $opts);
+            if (!$isTrueFalse) {
+                shuffle($opts);
+            } else {
+                $opts = ['True', 'False'];
+            }
+            
             $newCorrectIndex = array_search($correctOptionText, $opts);
             
             return [
