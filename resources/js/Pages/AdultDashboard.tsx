@@ -40,8 +40,8 @@ const AdultPageClient = ({ initialBlogs }: AdultPageClientProps) => {
     return (
         <>
             <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4 sm:pt-6 pb-8 w-full relative min-h-screen">
-            {/* Background Overlay - Dynamic based on theme */}
-            <div className="fixed inset-0 z-0 pointer-events-none bg-slate-50/85 dark:bg-slate-950/90 transition-colors duration-500" />
+            {/* Background Overlay - 70% opacity to let background be 30% visible */}
+            <div className="fixed inset-0 z-0 pointer-events-none bg-slate-50/70 dark:bg-slate-950/70 transition-colors duration-500" />
 
             <div className="relative z-10">
                     {/* Welcome Banner */}

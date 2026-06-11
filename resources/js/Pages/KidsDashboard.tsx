@@ -200,7 +200,7 @@ const KidsDashboardPage = ({ modules, progress }: KidsPageProps) => {
       )}
 
       <div className="relative z-10 w-full h-full flex-1">
-        <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4 sm:pt-6 pb-8">
+        <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-0 pb-8">
           {/* Deferred Welcome Banner */}
           <Deferred data="progress" fallback={<KidsWelcomeBannerSkeleton />}>
             <KidsWelcomeBanner 

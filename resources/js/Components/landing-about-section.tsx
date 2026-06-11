@@ -890,10 +890,10 @@ export function LandingAboutSection({ carouselNode }: { carouselNode?: React.Rea
 
             {/* Research Team Section */}
             {reduceMotion ? (
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full scroll-mt-24">
+                <div className="w-full" id="meet-the-developers">
                     <motion.section
                         ref={teamRef}
-                        className="py-10 sm:py-14 bg-white dark:bg-slate-950 text-slate-900 dark:text-white relative overflow-hidden rounded-[2.5rem] shadow-xl dark:shadow-md border border-slate-200 dark:border-transparent transition-colors duration-500"
+                        className="pt-10 sm:pt-12 pb-20 sm:pb-24 bg-white dark:bg-slate-950 text-slate-900 dark:text-white relative overflow-hidden transition-colors duration-500"
                         style={reduceMotion ? {} : { opacity: teamOpacity }}
                     >
                         {/* Dynamic Dotted Pattern Background */}
@@ -936,14 +936,15 @@ export function LandingAboutSection({ carouselNode }: { carouselNode?: React.Rea
                 </div>
             ) : (
                 <motion.section
+                    id="meet-the-developers"
                     ref={teamRef}
-                    className="bg-transparent rounded-3xl relative h-[400vh] mt-16 sm:mt-24"
+                    className="bg-transparent relative h-[400vh]"
                     style={{ opacity: teamOpacity }}
                 >
-                    <div className="w-full relative z-10 sticky top-[64px] sm:top-[72px] h-[calc(100vh-64px)] sm:h-[calc(100vh-72px)] flex flex-col justify-start pt-4 sm:pt-12 overflow-hidden rounded-3xl">
+                    <div className="w-full relative z-10 sticky top-0 h-screen flex flex-col justify-start pt-[60px] sm:pt-[80px] overflow-hidden">
                         {/* Dynamic Dotted Pattern Background using Tailwind classes */}
                         <motion.div 
-                            className="absolute inset-0 pointer-events-none z-[-1] rounded-3xl bg-white dark:bg-slate-950 bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] dark:bg-[radial-gradient(#1e293b_1px,transparent_1px)] [background-size:16px_16px]"
+                            className="absolute inset-0 pointer-events-none z-[-1] bg-white dark:bg-slate-950 bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] dark:bg-[radial-gradient(#1e293b_1px,transparent_1px)] [background-size:16px_16px]"
                             style={{ opacity: patternOpacity }}
                         />
                         <motion.div

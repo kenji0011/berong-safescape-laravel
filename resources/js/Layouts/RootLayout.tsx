@@ -10,7 +10,7 @@ import { usePage } from '@inertiajs/react';
 import { Toaster } from "@/Components/ui/sonner";
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
-  const { url } = usePage();
+  const { url, component } = usePage();
   const isAuthPage = url.startsWith('/login') || url.startsWith('/register');
   
   const isMiniGame = url.startsWith('/kids/quiz') || 
@@ -20,6 +20,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                      url.startsWith('/kids/hazard-blitz') ||
                      url.startsWith('/assessment');
 
+  const isHighOpacityBg = component === 'ProfessionalDashboard' || component === 'AdultDashboard' || component === 'AdultPageClient';
+
   return (
     <AuthProvider>
       <div className="antialiased relative min-h-screen font-sans bg-slate-50 dark:bg-slate-950 transition-colors duration-500">
@@ -27,9 +29,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <PageLoader />
         </Suspense>
 
-        {/* Background Image Layer - 20% opacity */}
+        {/* Background Image Layer */}
         <div
-          className="fixed inset-0 opacity-10 sm:opacity-20 bg-cover z-0 pointer-events-none transform-gpu"
+          className={`fixed inset-0 bg-cover z-0 pointer-events-none transform-gpu ${isHighOpacityBg ? 'opacity-100' : 'opacity-10 sm:opacity-20'}`}
           style={{ 
             backgroundImage: "url('/web-background-image.jpg')", 
             backgroundPosition: 'center 80%',

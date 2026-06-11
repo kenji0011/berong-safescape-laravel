@@ -375,8 +375,22 @@ html.module-focus-mode [id*="feedback-widget"] {
 html.module-focus-mode nav,
 html.module-focus-mode header,
 html.module-focus-mode footer,
-html.module-focus-mode .ss-nav {
+html.module-focus-mode .ss-nav,
+html.module-focus-mode .ss-back-button {
   display: none !important;
+}
+
+@layer utilities {
+  .wood-board {
+    background-color: #8b5a2b;
+    background-image: url("data:image/svg+xml,%3Csvg width='100' height='20' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 10 Q 25 5, 50 10 T 100 10' stroke='rgba(74, 46, 21, 0.4)' fill='none' stroke-width='2'/%3E%3Cpath d='M0 20 Q 25 15, 50 20 T 100 20' stroke='rgba(74, 46, 21, 0.3)' fill='none' stroke-width='1'/%3E%3C/svg%3E");
+    background-size: 100px 20px;
+  }
+  .dark .wood-board {
+    background-color: #5c3a1b;
+    background-image: url("data:image/svg+xml,%3Csvg width='100' height='20' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 10 Q 25 5, 50 10 T 100 10' stroke='rgba(30, 20, 10, 0.6)' fill='none' stroke-width='2'/%3E%3Cpath d='M0 20 Q 25 15, 50 20 T 100 20' stroke='rgba(30, 20, 10, 0.4)' fill='none' stroke-width='1'/%3E%3C/svg%3E");
+    background-size: 100px 20px;
+  }
 }
 
 html.module-focus-mode .text-scalable {
@@ -385,8 +399,7 @@ html.module-focus-mode .text-scalable {
 }
 
 html.module-focus-mode .ss-sub-header {
-  top: 0 !important;
-  padding-top: calc(env(safe-area-inset-top) + 0.75rem) !important;
+  top: 1rem !important;
 }
 
 /* Shift sticky sub-headers and layouts up EXCLUSIVELY in Module Focus Mission since parent navbar is hidden */

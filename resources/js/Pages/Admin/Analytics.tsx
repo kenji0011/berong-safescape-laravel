@@ -81,6 +81,7 @@ export default function AnalyticsDashboard({
   const [feedbackAnalytics, setFeedbackAnalytics] = useState<any>(null)
   const [activeTab, setActiveTab] = useState("overview")
   const [expandedFeature, setExpandedFeature] = useState<string | null>(null)
+  const [feedbackStarFilter, setFeedbackStarFilter] = useState<number | 'all'>('all')
 
   const toggleFeature = (featureName: string) => {
     setExpandedFeature(expandedFeature === featureName ? null : featureName)
@@ -279,7 +280,7 @@ export default function AnalyticsDashboard({
                       }
                     >
                        <span className={`font-black tracking-widest uppercase text-[10px] sm:text-xs pt-0.5 truncate drop-shadow-sm ${activeTab !== 'overview' ? 'text-slate-900 drop-shadow-none' : 'text-slate-300 group-hover:text-white'}`}>
-                          {activeTab === 'overview' ? 'Menu' : activeTab === 'barangay' ? 'By Barangay' : activeTab === 'demographics' ? 'Demographics' : 'Data Gaps'}
+                          {activeTab === 'overview' ? 'Menu' : activeTab === 'barangay' ? 'By Barangay' : activeTab === 'demographics' ? 'Demographics' : activeTab === 'knowledge' ? 'Data Gaps' : activeTab === 'schools' ? 'Schools' : activeTab === 'feedback' ? 'Feedback' : 'Menu'}
                        </span>
                        <ChevronDown className={`h-4 w-4 sm:h-5 sm:w-5 transition-transform duration-300 group-data-[state=open]:rotate-180 drop-shadow-sm shrink-0 ${activeTab !== 'overview' ? 'text-slate-900 drop-shadow-none' : 'text-slate-300 group-hover:text-white'}`} strokeWidth={3} />
                     </button>
@@ -945,24 +946,24 @@ export default function AnalyticsDashboard({
                               {school.type}
                             </span>
                           </div>
-                          <div className="grid grid-cols-4 gap-2 mt-3">
-                            <div className="bg-orange-50 dark:bg-orange-900/30 rounded-lg border border-orange-200 dark:border-orange-800 p-2 text-center">
-                              <div className="text-[9px] font-extrabold text-orange-400 dark:text-orange-500 uppercase tracking-tighter">Pre-Test</div>
-                              <div className="text-[13px] sm:text-sm font-black text-orange-600 dark:text-orange-400">{formatValue(school.averagePreTestScore)}</div>
+                          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3 mt-3 sm:mt-4">
+                            <div className="bg-orange-50 dark:bg-orange-900/30 rounded-xl border-2 border-orange-200 dark:border-orange-800 p-2.5 sm:p-3 text-center flex flex-col justify-center">
+                              <div className="text-[10px] sm:text-[11px] font-extrabold text-orange-400 dark:text-orange-500 uppercase tracking-tight mb-0.5">Pre-Test</div>
+                              <div className="text-base sm:text-lg font-black text-orange-600 dark:text-orange-400 leading-none">{formatValue(school.averagePreTestScore)}</div>
                             </div>
-                            <div className="bg-emerald-50 dark:bg-emerald-900/30 rounded-lg border border-emerald-200 dark:border-emerald-800 p-2 text-center">
-                              <div className="text-[9px] font-extrabold text-emerald-400 dark:text-emerald-500 uppercase tracking-tighter">Post-Test</div>
-                              <div className="text-[13px] sm:text-sm font-black text-emerald-600 dark:text-emerald-400">{formatValue(school.averagePostTestScore)}</div>
+                            <div className="bg-emerald-50 dark:bg-emerald-900/30 rounded-xl border-2 border-emerald-200 dark:border-emerald-800 p-2.5 sm:p-3 text-center flex flex-col justify-center">
+                              <div className="text-[10px] sm:text-[11px] font-extrabold text-emerald-400 dark:text-emerald-500 uppercase tracking-tight mb-0.5">Post-Test</div>
+                              <div className="text-base sm:text-lg font-black text-emerald-600 dark:text-emerald-400 leading-none">{formatValue(school.averagePostTestScore)}</div>
                             </div>
-                            <div className="bg-yellow-50 dark:bg-yellow-900/30 rounded-lg border border-yellow-200 dark:border-yellow-800 p-2 text-center">
-                              <div className="text-[9px] font-extrabold text-yellow-500 dark:text-yellow-400 uppercase tracking-tighter">Increase</div>
-                              <div className="text-[13px] sm:text-sm font-black text-yellow-600 dark:text-yellow-400">
+                            <div className="bg-yellow-50 dark:bg-yellow-900/30 rounded-xl border-2 border-yellow-200 dark:border-yellow-800 p-2.5 sm:p-3 text-center flex flex-col justify-center">
+                              <div className="text-[10px] sm:text-[11px] font-extrabold text-yellow-500 dark:text-yellow-400 uppercase tracking-tight mb-0.5">Increase</div>
+                              <div className="text-base sm:text-lg font-black text-yellow-600 dark:text-yellow-400 leading-none">
                                 {school.averagePreTestScore > 0 ? `+${Math.round(((school.averagePostTestScore - school.averagePreTestScore) / school.averagePreTestScore) * 100)}%` : '+0%'}
                               </div>
                             </div>
-                            <div className="bg-blue-50 dark:bg-blue-900/30 rounded-lg border border-blue-200 dark:border-blue-800 p-2 text-center">
-                              <div className="text-[9px] font-extrabold text-blue-400 dark:text-blue-500 uppercase tracking-tighter">Complete</div>
-                              <div className="text-[13px] sm:text-sm font-black text-blue-600 dark:text-blue-400">{formatValue(school.averageCompletionRate)}%</div>
+                            <div className="bg-blue-50 dark:bg-blue-900/30 rounded-xl border-2 border-blue-200 dark:border-blue-800 p-2.5 sm:p-3 text-center flex flex-col justify-center">
+                              <div className="text-[10px] sm:text-[11px] font-extrabold text-blue-400 dark:text-blue-500 uppercase tracking-tight mb-0.5">Complete</div>
+                              <div className="text-base sm:text-lg font-black text-blue-600 dark:text-blue-400 leading-none">{formatValue(school.averageCompletionRate)}%</div>
                             </div>
                           </div>
                         </div>
@@ -1032,74 +1033,94 @@ export default function AnalyticsDashboard({
                     <p className="font-bold text-slate-400 dark:text-slate-500 text-xs sm:text-sm mt-1 sm:mt-1.5 uppercase tracking-wide">How users rate different features</p>
                   </div>
                 </div>
-                <div className="space-y-3 sm:space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
                   {(feedbackAnalytics?.byFeatureName || []).map((f: any) => (
-                    <div key={f.featureName} className="bg-slate-50 dark:bg-slate-900/50 rounded-xl sm:rounded-2xl border-2 border-slate-100 dark:border-slate-800 p-4 sm:p-5 transition-colors hover:bg-slate-100 dark:hover:bg-slate-800">
+                    <div key={f.featureName} className="bg-slate-50 dark:bg-slate-900/50 rounded-xl border-2 border-slate-100 dark:border-slate-800 p-4 transition-colors hover:bg-slate-100 dark:hover:bg-slate-800">
                       <div 
                         className="flex items-center justify-between mb-2 cursor-pointer group" 
                         onClick={() => toggleFeature(f.featureName)}
                       >
-                        <div>
-                          <span className="font-black text-slate-700 dark:text-slate-300 text-sm sm:text-base uppercase tracking-tight group-hover:text-slate-900 dark:group-hover:text-white transition-colors">{f.featureName}</span>
-                          <span className="ml-2 bg-slate-200 dark:bg-slate-800 text-slate-500 dark:text-slate-400 px-2 py-0.5 rounded-full font-bold text-[10px] capitalize border border-slate-300 dark:border-slate-700">{f.featureType}</span>
+                        <div className="flex-1 pr-2">
+                          <div className="font-black text-slate-700 dark:text-slate-300 text-sm uppercase tracking-tight group-hover:text-slate-900 dark:group-hover:text-white transition-colors">{f.featureName}</div>
+                          <div className="font-bold text-slate-400 dark:text-slate-500 text-[10px] capitalize mt-0.5">{f.featureType} • {f.totalCount} reviews</div>
                         </div>
-                        <div className="flex items-center gap-3">
-                          <span className="font-black text-yellow-600 dark:text-yellow-400 text-base sm:text-lg">
-                            {formatValue(f.avgRating)}★
-                          </span>
-                          <div className={`flex items-center gap-1.5 px-4 py-2 rounded-xl border-[3px] transition-all duration-200 shadow-[0_3px_0_rgba(0,0,0,0.1)] active:translate-y-[3px] active:shadow-none ${expandedFeature === f.featureName ? 'bg-slate-800 dark:bg-slate-700 text-white border-slate-900 dark:border-slate-600 shadow-[0_3px_0_#0f172a] dark:shadow-[0_3px_0_#1e293b]' : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-700 group-hover:border-slate-300 dark:group-hover:border-slate-600 shadow-[0_3px_0_#e2e8f0] dark:shadow-[0_3px_0_#0f172a]'}`}>
-                            <span className="text-xs sm:text-sm font-black uppercase tracking-wider">
-                              {expandedFeature === f.featureName ? 'Hide' : 'View Reviews'}
+                        <div className="flex flex-col items-end">
+                          <div className="flex items-center gap-1">
+                            <span className="font-black text-yellow-500 dark:text-yellow-400 text-lg">
+                              {formatValue(f.avgRating)}
                             </span>
-                            <ChevronDown className={`h-4 w-4 sm:h-5 sm:w-5 transition-transform duration-300 ${expandedFeature === f.featureName ? 'rotate-180' : ''}`} strokeWidth={3} />
+                            <Star className="h-4 w-4 text-yellow-400 fill-yellow-400" />
+                          </div>
+                          <div className="flex items-center text-[10px] font-bold text-blue-500 mt-1 uppercase tracking-wider">
+                            {expandedFeature === f.featureName ? 'Hide' : 'View'} 
+                            <ChevronDown className={`h-3 w-3 ml-0.5 transition-transform ${expandedFeature === f.featureName ? 'rotate-180' : ''}`} />
                           </div>
                         </div>
                       </div>
-                      <div className="w-full h-3 bg-slate-200 dark:bg-slate-800 rounded-full overflow-hidden border border-slate-300 dark:border-slate-700 shadow-inner">
-                        <div className="h-full bg-yellow-400 rounded-full transition-all duration-1000" style={{ width: `${(f.avgRating / 5) * 100}%` }} />
-                      </div>
-                      <p className="font-bold text-slate-400 dark:text-slate-500 text-[10px] sm:text-xs mt-1.5">{f.totalCount} reviews</p>
                       
                       {/* Accordion Content for Reviews */}
                       {expandedFeature === f.featureName && (
-                        <div className="mt-4 space-y-3 border-t-2 border-slate-200 dark:border-slate-700 pt-4 animate-in slide-in-from-top-2 fade-in duration-200">
+                        <div className="mt-3 space-y-2 border-t-2 border-slate-200 dark:border-slate-700 pt-3 animate-in slide-in-from-top-2 fade-in duration-200">
                           {(f.reviews && f.reviews.length > 0) ? (
                             f.reviews.map((review: any) => (
-                              <div key={review.id} className="bg-white dark:bg-slate-900 rounded-xl p-3 border-2 border-slate-100 dark:border-slate-800 shadow-sm">
+                              <div key={review.id} className="bg-white dark:bg-slate-800 rounded-lg p-2.5 border border-slate-200 dark:border-slate-700 shadow-sm">
                                 <div className="flex items-center justify-between mb-1">
-                                  <span className="font-bold text-slate-700 dark:text-slate-300 text-xs sm:text-sm">{review.user?.name || 'Anonymous'}</span>
+                                  <span className="font-bold text-slate-700 dark:text-slate-300 text-[11px]">{review.user?.name || 'Anonymous'}</span>
                                   <div className="flex items-center gap-0.5">
                                     {Array.from({ length: 5 }).map((_, i) => (
-                                      <Star key={i} className={`h-3 w-3 ${i < review.rating ? 'text-yellow-400 fill-yellow-400' : 'text-slate-200 dark:text-slate-700'}`} />
+                                      <Star key={i} className={`h-2.5 w-2.5 ${i < review.rating ? 'text-yellow-400 fill-yellow-400' : 'text-slate-200 dark:text-slate-700'}`} />
                                     ))}
                                   </div>
                                 </div>
                                 {review.comments ? (
-                                  <p className="text-slate-600 dark:text-slate-400 text-xs mt-1.5 leading-relaxed">{review.comments}</p>
+                                  <p className="text-slate-600 dark:text-slate-400 text-[11px] mt-1 leading-relaxed">{review.comments}</p>
                                 ) : (
-                                  <p className="text-slate-400 dark:text-slate-500 text-xs italic mt-1.5">No comment provided</p>
+                                  <p className="text-slate-400 dark:text-slate-500 text-[11px] italic mt-1">No comment</p>
                                 )}
-                                <p className="text-slate-400 dark:text-slate-500 text-[9px] mt-2.5 font-bold uppercase tracking-wider">{new Date(review.created_at).toLocaleDateString()}</p>
                               </div>
                             ))
                           ) : (
-                            <p className="text-slate-400 dark:text-slate-500 text-xs font-bold text-center py-4 bg-white dark:bg-slate-900 rounded-xl border-2 border-slate-100 dark:border-slate-800 border-dashed">No written reviews yet.</p>
+                            <p className="text-slate-400 dark:text-slate-500 text-[11px] font-bold text-center py-2">No written reviews.</p>
                           )}
                         </div>
                       )}
                     </div>
                   ))}
                   {(!feedbackAnalytics?.byFeatureName || feedbackAnalytics.byFeatureName.length === 0) && (
-                    <p className="text-center text-slate-400 font-bold py-8 text-sm">No feedback data available yet. Users can submit feedback after completing modules.</p>
+                    <p className="text-center text-slate-400 font-bold py-8 text-sm col-span-full">No feedback data available yet.</p>
                   )}
                 </div>
               </div>
 
               {/* Recent Feedback */}
               <div className="bg-white dark:bg-slate-800 rounded-2xl sm:rounded-[2rem] border-2 border-slate-200 dark:border-slate-700 border-b-[4px] dark:border-b-[6px] sm:border-b-[6px] p-5 sm:p-8 shadow-[0_8px_0_#cbd5e1] dark:shadow-[0_8px_0_#0f172a]">
-                <h3 className="font-black text-slate-800 dark:text-white text-lg sm:text-xl uppercase tracking-tight mb-4 sm:mb-6">Recent Feedback</h3>
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4 sm:mb-6">
+                  <h3 className="font-black text-slate-800 dark:text-white text-lg sm:text-xl uppercase tracking-tight">Recent Feedback</h3>
+                  
+                  {/* Star Filter */}
+                  <div className="flex flex-wrap gap-1.5">
+                    <button 
+                      onClick={() => setFeedbackStarFilter('all')}
+                      className={`px-3 py-1.5 rounded-full text-[10px] font-bold border-2 transition-all uppercase tracking-wider ${feedbackStarFilter === 'all' ? 'bg-slate-800 text-white border-slate-800 dark:bg-white dark:text-slate-900 dark:border-white' : 'bg-transparent text-slate-500 border-slate-200 hover:border-slate-300 dark:border-slate-700 dark:hover:border-slate-600'}`}
+                    >
+                      All
+                    </button>
+                    {[5, 4, 3, 2, 1].map(star => (
+                      <button 
+                        key={star}
+                        onClick={() => setFeedbackStarFilter(star)}
+                        className={`flex items-center gap-1 px-2.5 py-1.5 rounded-full text-[10px] font-bold border-2 transition-all ${feedbackStarFilter === star ? 'bg-yellow-100 text-yellow-700 border-yellow-400 dark:bg-yellow-900/40 dark:text-yellow-400 dark:border-yellow-600' : 'bg-transparent text-slate-500 border-slate-200 hover:border-slate-300 dark:border-slate-700 dark:hover:border-slate-600'}`}
+                      >
+                        {star} <Star className="h-3 w-3 fill-current" />
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
                 <div className="space-y-3">
-                  {(feedbackAnalytics?.recentFeedback || []).slice(0, 10).map((fb: any) => (
+                  {(feedbackAnalytics?.recentFeedback || [])
+                    .filter((fb: any) => feedbackStarFilter === 'all' || fb.rating === feedbackStarFilter)
+                    .slice(0, 10).map((fb: any) => (
                     <div key={fb.id} className="bg-slate-50 dark:bg-slate-900/50 rounded-xl border-2 border-slate-100 dark:border-slate-800 p-4 transition-colors hover:bg-slate-100 dark:hover:bg-slate-800">
                       <div className="flex items-center justify-between mb-1">
                         <span className="font-bold text-slate-700 dark:text-slate-300 text-sm">{fb.user?.name || 'Anonymous'}</span>
@@ -1116,8 +1137,8 @@ export default function AnalyticsDashboard({
                       {fb.comments && <p className="text-slate-500 dark:text-slate-400 text-xs mt-1.5 italic">"{fb.comments}"</p>}
                     </div>
                   ))}
-                  {(!feedbackAnalytics?.recentFeedback || feedbackAnalytics.recentFeedback.length === 0) && (
-                    <p className="text-center text-slate-400 dark:text-slate-500 font-bold py-8 text-sm">No feedback submitted yet</p>
+                  {((feedbackAnalytics?.recentFeedback || []).filter((fb: any) => feedbackStarFilter === 'all' || fb.rating === feedbackStarFilter).length === 0) && (
+                    <p className="text-center text-slate-400 dark:text-slate-500 font-bold py-8 text-sm">No feedback found for the selected filter.</p>
                   )}
                 </div>
               </div>

@@ -260,8 +260,13 @@ export function NotificationPopover() {
         )}
       </AnimatePresence>
 
-      <PopoverContent className="z-[90] w-[calc(100vw-2rem)] sm:w-96 p-0 rounded-[1.25rem] border-2 border-slate-200/60 dark:border-slate-800 shadow-2xl overflow-hidden bg-white dark:bg-slate-900 transition-colors" align="end" sideOffset={12} collisionPadding={16}>
-        <div className="flex items-center justify-between p-4 lg:px-5 border-b border-slate-100 dark:border-slate-800 bg-slate-50/80 dark:bg-slate-950/80 backdrop-blur-sm transition-colors">
+      <PopoverContent className="z-[90] w-[calc(100vw-2rem)] sm:w-96 p-0 rounded-[1.25rem] border-2 border-slate-200/60 dark:border-slate-800 shadow-2xl bg-white dark:bg-slate-900 transition-colors relative" align="end" sideOffset={12} collisionPadding={16}>
+        {/* Caret pointing up to the bell icon */}
+        <div className="absolute -top-[10px] right-[70px] sm:right-4 w-4 h-4 bg-white dark:bg-slate-900 border-t-2 border-l-2 border-slate-200/60 dark:border-slate-800 rotate-45 rounded-tl-[2px] z-[-1] transition-colors"></div>
+        
+        {/* Inner wrapper to contain scroll area and header within rounded corners */}
+        <div className="rounded-[calc(1.25rem-2px)] overflow-hidden w-full h-full relative z-10 bg-white dark:bg-slate-900">
+          <div className="flex items-center justify-between p-4 lg:px-5 border-b border-slate-100 dark:border-slate-800 bg-slate-50/80 dark:bg-slate-950/80 backdrop-blur-sm transition-colors">
           <h3 className="font-extrabold text-slate-800 dark:text-white text-lg tracking-tight transition-colors">Notifications</h3>
           {unreadCount > 0 && (
             <Button variant="outline" size="sm" onClick={markAllAsRead} className="h-auto py-1.5 px-3 text-xs rounded-full font-bold shadow-[0_3px_0_#e2e8f0] dark:shadow-[0_3px_0_#1e293b] hover:-translate-y-0.5 hover:shadow-[0_4px_0_#e2e8f0] dark:hover:shadow-[0_4px_0_#1e293b] active:translate-y-0.5 active:shadow-[0_1px_0_#e2e8f0] dark:active:shadow-none border-2 dark:border-slate-700 dark:bg-slate-800 dark:text-white dark:hover:bg-slate-700 transition-all outline-none">
@@ -351,6 +356,7 @@ export function NotificationPopover() {
             )}
           </div>
         </ScrollArea>
+        </div>
       </PopoverContent>
     </Popover >
   );

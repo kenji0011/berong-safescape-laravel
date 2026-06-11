@@ -429,11 +429,11 @@ export default function AboutPage() {
             <Navigation />
             {!reduceMotion && <SplashCursor />}
 
-            <main className="flex-grow pt-[64px] sm:pt-[72px]">
+            <main className="flex-grow">
                 {/* Hero Section with 3D Parallax */}
                 <motion.section
                     ref={heroRef}
-                    className="relative bg-white dark:bg-slate-950 py-10 sm:py-28 overflow-hidden transition-colors duration-500"
+                    className="relative bg-white dark:bg-slate-950 pt-[104px] pb-10 sm:pt-[150px] sm:pb-28 overflow-hidden transition-colors duration-500"
                     style={{ opacity: heroOpacity, scale: heroScale }}
                 >
                     {/* Background Pattern */}

@@ -87,7 +87,7 @@ export default function HotOrNot() {
   const safeBg = useMotionValue(0)
 
   return (
-    <div className="min-h-screen relative flex flex-col font-sans bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 transition-colors duration-500 overflow-hidden select-none">
+    <div className="-mt-[104px] sm:-mt-[120px] pt-[104px] sm:pt-[120px] min-h-[calc(100vh+104px)] sm:min-h-[calc(100vh+120px)] relative flex flex-col font-sans bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 transition-colors duration-500 overflow-hidden select-none">
       {/* Background Zones */}
       <div className="absolute inset-0 flex pointer-events-none overflow-hidden">
          {/* Danger Zone (Left) */}

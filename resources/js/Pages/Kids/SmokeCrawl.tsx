@@ -348,7 +348,7 @@ const SmokeCrawl = () => {
   }
 
   return (
-    <div className="min-h-screen relative bg-blue-50 dark:bg-slate-950 selection:bg-orange-500 selection:text-white pb-8 sm:pb-32 overflow-x-hidden transition-colors duration-500">
+    <div className="-mt-[104px] sm:-mt-[120px] pt-[104px] sm:pt-[120px] min-h-[calc(100vh+104px)] sm:min-h-[calc(100vh+120px)] relative bg-blue-50 dark:bg-slate-950 selection:bg-orange-500 selection:text-white pb-8 sm:pb-32 overflow-x-hidden transition-colors duration-500">
       <Head title="The Smoke Crawl | SafeScape" />
       
       {/* Background decoration */}

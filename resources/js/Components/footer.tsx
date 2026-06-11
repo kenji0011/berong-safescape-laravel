@@ -223,7 +223,7 @@ export function Footer() {
       {/* ========================================================================= */}
       {/* 2. DESKTOP ONLY FOOTER — Premium Animated Design                          */}
       {/* ========================================================================= */}
-      <footer ref={desktopFooterRef} className="hidden sm:block relative text-white pt-4 pb-10 px-6 sm:px-12 lg:px-20 overflow-hidden w-full min-h-[calc(100vh-60px)]">
+      <footer ref={desktopFooterRef} className="hidden sm:block relative text-white pt-[120px] pb-10 px-6 sm:px-12 lg:px-20 overflow-hidden w-full min-h-screen">
         {/* Breathing gradient background */}
         <style>{`
           @keyframes footerBreathing {
@@ -265,7 +265,7 @@ export function Footer() {
 
 
 
-        <div className="max-w-[1600px] mx-auto relative z-10 w-full flex flex-col items-center min-h-[calc(100vh-60px-5rem)] justify-between">
+        <div className="max-w-[1600px] mx-auto relative z-10 w-full flex flex-col items-center min-h-[calc(100vh-160px)] justify-between">
           
           {/* 1. Tagline (Centered) */}
           <motion.div

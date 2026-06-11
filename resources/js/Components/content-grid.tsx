@@ -35,13 +35,19 @@ export function ContentGrid({
   return (
     <div className={cn(
       "relative mb-24 max-w-7xl mx-auto",
-      isMap ? "p-0 md:p-12 md:pb-32 md:rounded-[3.5rem] md:bg-[#fdf8f1] dark:md:bg-slate-900/90 md:border-4 md:border-[#e7d5b8] dark:md:border-slate-800 md:shadow-inner dark:md:shadow-none overflow-visible transition-colors" : "p-0"
+      isMap ? "p-0 md:p-12 md:pb-32 md:rounded-[3.5rem] md:bg-[#8b5a2b] dark:md:bg-[#5c3a1b] md:wood-board md:border-[8px] md:border-[#4a2e15] dark:md:border-[#2a1a0c] md:shadow-[0_15px_0_#4a2e15] dark:md:shadow-[0_15px_0_#2a1a0c] overflow-visible transition-colors" : "p-0"
     )}>
-      {/* Adventure Path SVG Background (Desktop Only) */}
+      {/* Adventure Path SVG Background & Wood Texture (Desktop Only) */}
       {isMap && (
         <div className="absolute inset-0 z-0 pointer-events-none hidden md:block">
-          {/* Parchment Texture Overlay */}
-          <div className="absolute inset-0 opacity-[0.03] bg-[url('https://www.transparenttextures.com/patterns/p6.png')]"></div>
+          {/* Wood Texture Overlay */}
+          <div 
+            className="absolute inset-0 rounded-[3.5rem] pointer-events-none"
+            style={{
+              backgroundImage: `url("data:image/svg+xml,%3Csvg width='100' height='20' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 10 Q 25 5, 50 10 T 100 10' stroke='rgba(74, 46, 21, 0.4)' fill='none' stroke-width='2'/%3E%3Cpath d='M0 20 Q 25 15, 50 20 T 100 20' stroke='rgba(74, 46, 21, 0.3)' fill='none' stroke-width='1'/%3E%3C/svg%3E")`,
+              backgroundSize: '100px 20px'
+            }}
+          ></div>
           
           <svg width="100%" height="100%" viewBox="0 0 1000 1000" preserveAspectRatio="none" className="overflow-visible">
              <defs>

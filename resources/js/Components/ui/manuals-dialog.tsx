@@ -104,9 +104,14 @@ export function ManualsDialog({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const filteredManuals = activeCategory === "All"
+  const filteredManuals = (activeCategory === "All"
     ? manuals
-    : manuals.filter(m => m.category?.toLowerCase() === activeCategory.toLowerCase());
+    : manuals.filter(m => m.category?.toLowerCase() === activeCategory.toLowerCase()))
+    .sort((a, b) => {
+      const volA = parseInt(a.title.match(/Volume\s+(\d+)/i)?.[1] || "9999", 10);
+      const volB = parseInt(b.title.match(/Volume\s+(\d+)/i)?.[1] || "9999", 10);
+      return volA - volB;
+    });
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
@@ -208,23 +213,23 @@ export function ManualsDialog({ children }: { children: React.ReactNode }) {
                               </span>
                             )}
                           </div>
-                          <p className="hidden sm:block text-[10px] sm:text-xs text-slate-500 dark:text-slate-400 font-medium pl-7 opacity-85 leading-relaxed line-clamp-1">
+                          <p className="block mt-1 sm:mt-0 text-[9px] sm:text-xs text-slate-500 dark:text-slate-400 font-medium pl-6 sm:pl-7 opacity-85 leading-relaxed line-clamp-2 sm:line-clamp-1">
                             {manual.description || "No description provided."}
                           </p>
                         </div>
-                        <div className="flex items-center gap-1 sm:gap-2 shrink-0">
+                        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-1.5 sm:gap-2 shrink-0">
                           <button
                             onClick={() => handleView(manual)}
-                            className="inline-flex items-center justify-center bg-blue-600 hover:bg-blue-500 text-white font-extrabold h-7.5 px-2.5 sm:h-8.5 sm:px-4 rounded-lg text-[9px] sm:text-xs shadow-[0_2px_0_#1d4ed8] sm:shadow-[0_2px_0_#2563eb] hover:-translate-y-0.5 hover:shadow-[0_3px_0_#1d4ed8] active:translate-y-0.5 active:shadow-none transition-all outline-none focus:outline-none focus-visible:outline-none focus-visible:ring-0"
+                            className="inline-flex items-center justify-center bg-blue-600 hover:bg-blue-500 text-white font-extrabold h-7 sm:h-8.5 px-2 sm:px-4 rounded-lg text-[9px] sm:text-xs shadow-[0_2px_0_#1d4ed8] sm:shadow-[0_2px_0_#2563eb] hover:-translate-y-0.5 hover:shadow-[0_3px_0_#1d4ed8] active:translate-y-0.5 active:shadow-none transition-all outline-none focus:outline-none focus-visible:outline-none focus-visible:ring-0"
                           >
-                            <Eye className="h-3 w-3 sm:h-3.5 sm:w-3.5 mr-0.5 sm:mr-1" />
+                            <Eye className="h-3 w-3 sm:h-3.5 sm:w-3.5 mr-1" />
                             View
                           </button>
                           <button
                             onClick={() => handleDownload(manual)}
-                            className="inline-flex items-center justify-center bg-white dark:bg-slate-700 border-2 border-slate-200 dark:border-slate-600 text-slate-600 dark:text-slate-200 font-extrabold h-7.5 px-2.5 sm:h-8.5 sm:px-4 rounded-lg text-[9px] sm:text-xs shadow-[0_2px_0_#cbd5e1] dark:shadow-[0_2px_0_#0f172a] hover:-translate-y-0.5 hover:shadow-[0_3px_0_#cbd5e1] dark:hover:shadow-[0_3px_0_#0f172a] hover:bg-slate-50 dark:hover:bg-slate-600 active:translate-y-0.5 active:shadow-none transition-all outline-none focus:outline-none focus-visible:outline-none focus-visible:ring-0"
+                            className="inline-flex items-center justify-center bg-white dark:bg-slate-700 border-2 border-slate-200 dark:border-slate-600 text-slate-600 dark:text-slate-200 font-extrabold h-7 sm:h-8.5 px-2 sm:px-4 rounded-lg text-[9px] sm:text-xs shadow-[0_2px_0_#cbd5e1] dark:shadow-[0_2px_0_#0f172a] hover:-translate-y-0.5 hover:shadow-[0_3px_0_#cbd5e1] dark:hover:shadow-[0_3px_0_#0f172a] hover:bg-slate-50 dark:hover:bg-slate-600 active:translate-y-0.5 active:shadow-none transition-all outline-none focus:outline-none focus-visible:outline-none focus-visible:ring-0"
                           >
-                            <Download className="h-3 w-3 sm:h-3.5 sm:w-3.5 mr-0.5 sm:mr-1" />
+                            <Download className="h-3 w-3 sm:h-3.5 sm:w-3.5 mr-1" />
                             Save
                           </button>
                         </div>
