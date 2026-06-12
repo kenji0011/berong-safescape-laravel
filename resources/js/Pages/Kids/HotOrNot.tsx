@@ -87,7 +87,7 @@ export default function HotOrNot() {
   const safeBg = useMotionValue(0)
 
   return (
-    <div className="-mt-[104px] sm:-mt-[120px] pt-[104px] sm:pt-[120px] min-h-[calc(100vh+104px)] sm:min-h-[calc(100vh+120px)] relative flex flex-col font-sans bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 transition-colors duration-500 overflow-hidden select-none">
+    <div className="-mt-[104px] sm:-mt-[120px] pt-[104px] sm:pt-[120px] min-h-screen relative flex flex-col font-sans bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 transition-colors duration-500 overflow-hidden select-none">
       {/* Background Zones */}
       <div className="absolute inset-0 flex pointer-events-none overflow-hidden">
          {/* Danger Zone (Left) */}
@@ -119,7 +119,7 @@ export default function HotOrNot() {
       </div>
 
       {/* Ghost Header - absolute positioned to save vertical space */}
-      <div className="absolute top-4 left-4 right-4 z-20 flex items-center justify-between pointer-events-none">
+      <div className="absolute top-[112px] sm:top-[128px] left-4 right-4 z-[60] flex items-center justify-between pointer-events-none">
         <Link 
           href="/kids/challenges" 
           className="inline-flex items-center gap-2 text-slate-500 dark:text-slate-400 font-bold hover:text-blue-600 dark:hover:text-blue-400 transition-all text-sm bg-white dark:bg-slate-800 px-4 py-2 rounded-full border border-white/60 dark:border-slate-700/50 shadow-sm pointer-events-auto"

@@ -105,8 +105,8 @@ export function Navigation() {
   if (user?.permissions?.accessAdult) accessibleItems.push({ name: 'ADULTS', href: '/adult', active: url.startsWith('/adult') });
   if (user?.permissions?.accessKids) accessibleItems.push({ name: 'KIDS', href: '/kids', active: url.startsWith('/kids') });
   if (user?.role === 'admin') accessibleItems.push({ name: 'ADMIN', href: '/admin', active: url.startsWith('/admin') });
-  const [isAtBottom, setIsAtBottom] = useState(false);
   const [isMeetDevsInView, setIsMeetDevsInView] = useState(false);
+  const [isAssessmentInView, setIsAssessmentInView] = useState(false);
   const [isScrollingDown, setIsScrollingDown] = useState(false);
   const lastScrollY = useRef(0);
 
@@ -120,35 +120,46 @@ export function Navigation() {
       const bodyHeight = document.documentElement.scrollHeight;
       const currentScrollY = window.scrollY;
       
-      // Hide if within 150px of the bottom (approx footer height)
-      // Only do this if the page is actually scrollable and the user has scrolled down
-      if (bodyHeight > window.innerHeight && bodyHeight - scrollPosition < 150 && window.scrollY > 50) {
-        setIsAtBottom(true);
-      } else {
-        setIsAtBottom(false);
-      }
-
-      // Check if scrolling down
-      if (currentScrollY > lastScrollY.current && currentScrollY > 100) {
-        setIsScrollingDown(true);
-      } else if (currentScrollY < lastScrollY.current) {
+      // Show navbar if at the top
+      if (currentScrollY <= 20) {
         setIsScrollingDown(false);
+        lastScrollY.current = currentScrollY;
+      } else if (currentScrollY > lastScrollY.current) {
+        // Scrolling down - immediately hide
+        setIsScrollingDown(true);
+        lastScrollY.current = currentScrollY;
+      } else if (currentScrollY < lastScrollY.current - 50) {
+        // Scrolled up by at least 50px since the last reference point
+        setIsScrollingDown(false);
+        lastScrollY.current = currentScrollY;
       }
-      lastScrollY.current = currentScrollY;
 
       // Hide if 'Meet the Developers' section is taking up the screen
       const meetDevsSection = document.getElementById('meet-the-developers');
       if (meetDevsSection) {
         const rect = meetDevsSection.getBoundingClientRect();
         // If the top of the section is near or above the navbar (e.g. 100px)
-        // AND the bottom of the section hasn't passed the navbar yet
-        if (rect.top < 150 && rect.bottom > 100) {
+        // AND the bottom of the section hasn't passed the middle of the screen
+        if (rect.top < 150 && rect.bottom > window.innerHeight * 0.5) {
           setIsMeetDevsInView(true);
         } else {
           setIsMeetDevsInView(false);
         }
       } else {
         setIsMeetDevsInView(false);
+      }
+
+      // Automatically show navbar when at Final Assessment
+      const assessmentSection = document.getElementById('final-assessment');
+      if (assessmentSection) {
+        const rect = assessmentSection.getBoundingClientRect();
+        if (rect.top < window.innerHeight * 0.8 && rect.bottom > 0) {
+          setIsAssessmentInView(true);
+        } else {
+          setIsAssessmentInView(false);
+        }
+      } else {
+        setIsAssessmentInView(false);
       }
     };
 
@@ -158,14 +169,26 @@ export function Navigation() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  // Sync nav-hidden class for other components (like sub-headers) to react to navbar visibility
+  useEffect(() => {
+    if (((isScrollingDown && !isAssessmentInView) || isMeetDevsInView)) {
+      document.documentElement.classList.add('nav-hidden');
+    } else {
+      document.documentElement.classList.remove('nav-hidden');
+    }
+    
+    // Cleanup on unmount
+    return () => document.documentElement.classList.remove('nav-hidden');
+  }, [isScrollingDown, isAssessmentInView, isMeetDevsInView]);
+
+
   return (
     <>
 
 
       <nav className={cn(
-        "fixed left-1/2 -translate-x-1/2 z-[80] transition-all duration-500 h-16 sm:h-[4.5rem] flex items-center rounded-full bg-red-700 dark:bg-red-800 border border-red-600/30 dark:border-red-600/20 shadow-xl shadow-red-900/30 w-[95vw] lg:w-max max-w-[1400px]",
-        (isAtBottom || isScrollingDown) ? "-top-32 opacity-0 pointer-events-none" : "top-4 sm:top-6",
-        (!isAtBottom && !isScrollingDown && isMeetDevsInView) ? "opacity-0 pointer-events-none -translate-y-4" : "opacity-100"
+        "fixed left-1/2 top-4 sm:top-6 z-[80] transition-all duration-300 ease-out h-16 sm:h-[4.5rem] flex items-center rounded-full bg-gradient-to-r from-red-600 to-orange-500 dark:from-red-800 dark:to-orange-700 border border-white/20 dark:border-red-600/20 shadow-xl shadow-red-900/30 w-[95vw] lg:w-max max-w-[1400px]",
+        ((isScrollingDown && !isAssessmentInView) || isMeetDevsInView) ? "-translate-y-[150%] -translate-x-1/2 opacity-0 pointer-events-none" : "translate-y-0 -translate-x-1/2 opacity-100"
       )}>
 
 

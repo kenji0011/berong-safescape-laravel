@@ -58,12 +58,16 @@ const BlogArticleClient = ({ blog }: BlogArticleProps) => {
 
             {/* Exact same background scaling string as RootLayout.tsx for perfect consistency, but at full opacity */}
             <div 
-                className="fixed inset-0 bg-cover -z-10 pointer-events-none"
-                style={{ 
-                    backgroundImage: "url('/web-background-image.jpg')", 
-                    backgroundPosition: 'center 80%'
-                }}
-            />
+                className="fixed top-0 left-0 w-full -z-10 pointer-events-none"
+                style={{ height: '100vh', minHeight: '100lvh' }}
+            >
+                <img 
+                    src="/web-background-image.jpg"
+                    alt=""
+                    className="w-full h-full object-cover"
+                    style={{ objectPosition: 'center 80%' }}
+                />
+            </div>
 
             {/* Frosting overlay to ensure text readability */}
             <div className="fixed inset-0 bg-background/90 -z-10 pointer-events-none transition-colors duration-500"></div>

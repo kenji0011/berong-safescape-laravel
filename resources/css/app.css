@@ -398,13 +398,43 @@ html.module-focus-mode .text-scalable {
   margin-top: 0 !important;
 }
 
-html.module-focus-mode .ss-sub-header {
-  top: 1rem !important;
+html.module-focus-mode .module-page-wrapper {
+  margin-top: 0 !important;
+  padding-top: max(1.5rem, env(safe-area-inset-top)) !important;
 }
 
-/* Shift sticky sub-headers and layouts up EXCLUSIVELY in Module Focus Mission since parent navbar is hidden */
-html.module-focus-mode [class*="sticky top-["],
-html.module-focus-mode [class*="top-["] {
+html.module-focus-mode .ss-sub-header {
+  margin-top: 0 !important;
+  top: max(1.5rem, env(safe-area-inset-top)) !important;
+}
+
+@media (max-width: 639px) {
+  html.module-focus-mode .ss-focus-title {
+    display: flex !important;
+  }
+}
+
+/* Match top navbar background with bottom focus panel */
+html.module-focus-mode .ss-sub-header > div {
+  background-color: rgb(255 255 255 / 0.95) !important;
+  backdrop-filter: blur(24px) !important;
+  -webkit-backdrop-filter: blur(24px) !important;
+  border-width: 1px !important;
+}
+
+.dark html.module-focus-mode .ss-sub-header > div,
+html.dark.module-focus-mode .ss-sub-header > div {
+  background-color: rgb(2 6 23 / 0.95) !important;
+}
+
+/* Slide module sub-headers up seamlessly when the main navbar auto-hides on scroll down */
+html.nav-hidden:not(.module-focus-mode) .ss-sub-header {
+  transform: translateY(calc(-96px + max(1rem, env(safe-area-inset-top))));
+}
+@media (min-width: 640px) {
+  html.nav-hidden:not(.module-focus-mode) .ss-sub-header {
+    transform: translateY(calc(-112px + 1.5rem));
+  }
 }
 
 /* Dotted background pattern for Focus Mode accessibility */

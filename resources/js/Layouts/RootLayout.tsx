@@ -31,14 +31,20 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
         {/* Background Image Layer */}
         <div
-          className={`fixed inset-0 bg-cover z-0 pointer-events-none transform-gpu ${isHighOpacityBg ? 'opacity-100' : 'opacity-10 sm:opacity-20'}`}
-          style={{ 
-            backgroundImage: "url('/web-background-image.jpg')", 
-            backgroundPosition: 'center 80%',
-            backfaceVisibility: 'hidden',
-            WebkitBackfaceVisibility: 'hidden'
-          }}
-        />
+          className={`fixed top-0 left-0 w-full z-0 pointer-events-none transform-gpu ${isHighOpacityBg ? 'opacity-100' : 'opacity-10 sm:opacity-20'}`}
+          style={{ height: '100vh', minHeight: '100lvh' }}
+        >
+          <img 
+            src="/web-background-image.jpg"
+            alt=""
+            className="w-full h-full object-cover"
+            style={{ 
+              objectPosition: 'center 80%',
+              backfaceVisibility: 'hidden',
+              WebkitBackfaceVisibility: 'hidden'
+            }}
+          />
+        </div>
 
         {/* Content Layer - Full opacity */}
         <div className="relative z-10 w-full min-h-screen flex flex-col">

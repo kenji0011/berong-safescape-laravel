@@ -205,9 +205,9 @@ const VideosPage = ({ initialVideos, watchedVideoIds }: VideosPageProps) => {
   // Removed hardcoded moreVideos list as it is now derived from props
 
   return (
-    <div className="min-h-screen relative overflow-hidden bg-blue-50 dark:bg-slate-950 transition-colors duration-500">
+    <div className="-mt-[104px] sm:-mt-[120px] pt-[88px] sm:pt-[120px] min-h-[calc(100vh+104px)] sm:min-h-[calc(100vh+120px)] relative overflow-hidden bg-blue-50 dark:bg-slate-950 transition-colors duration-500">
       {/* Heroic Background */}
-      <div className="absolute inset-0 z-0">
+      <div className="fixed top-0 left-0 w-full z-0 pointer-events-none" style={{ height: '100vh', minHeight: '100lvh' }}>
         <img 
           src="/challenges-bg.png" 
           alt="" 
@@ -229,10 +229,10 @@ const VideosPage = ({ initialVideos, watchedVideoIds }: VideosPageProps) => {
       )}
 
       <div className="relative z-10 w-full h-full flex-1">
-        <main className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <main className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-4 pb-8 sm:py-8">
           
           {/* Premium Header Section */}
-          <div className="relative mb-12 group">
+          <div className="relative mb-8 sm:mb-12 group">
             {/* Background Glow */}
             <div className="absolute -inset-2 bg-red-500/10 rounded-[2.5rem] opacity-20 group-hover:opacity-30 transition-opacity duration-500"></div>
             
@@ -252,15 +252,6 @@ const VideosPage = ({ initialVideos, watchedVideoIds }: VideosPageProps) => {
                   </Link>
                   
                   <div className="flex-1">
-                      <div className="flex items-center gap-3 mb-1.5">
-                        <span className="px-2.5 py-0.5 bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 text-[10px] font-black uppercase tracking-widest rounded-full border border-red-200 dark:border-red-800">
-                           Watch & Learn
-                        </span>
-                        <span className="flex items-center gap-1 text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest">
-                           <div className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse"></div>
-                           Live Comms
-                        </span>
-                     </div>
                      <h1 className="text-2xl sm:text-4xl font-black text-slate-800 dark:text-white tracking-tight mb-1 sm:mb-2 uppercase">
                         Fire Safety <span className="text-primary">Videos</span>
                      </h1>

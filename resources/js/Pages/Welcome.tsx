@@ -58,7 +58,7 @@ export default function Welcome({ carouselImages }: { carouselImages?: any[] }) 
 
         <main className="flex-grow pt-[96px] sm:pt-[120px] pb-6 sm:pb-8 w-full relative z-10 overflow-x-clip">
           {/* Hero Carousel - Topmost Section */}
-          <section className="mb-8 sm:mb-32 w-full">
+          <section className="mb-8 sm:mb-32 w-[95vw] sm:w-full mx-auto sm:px-6 lg:px-8 max-w-7xl">
             <HeroCarousel initialImages={carouselImages} />
           </section>
 
@@ -78,7 +78,7 @@ export default function Welcome({ carouselImages }: { carouselImages?: any[] }) 
           </section>
 
           {/* Assessment Section */}
-          <section className="mb-8 sm:mb-32 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+          <section id="final-assessment" className="mb-8 sm:mb-32 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
             <LandingAssessmentSection serverUser={mappedUser} />
           </section>
         </main>

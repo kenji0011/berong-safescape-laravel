@@ -180,8 +180,15 @@ export function KidsWelcomeBanner({ completedModules = [], earnedBadges = [] }: 
   }, []);
 
   return (
-    <>
-      <div className="relative bg-primary rounded-2xl sm:rounded-[2.5rem] shadow-xl mb-6 sm:mb-8 border-[3px] sm:border-[6px] border-white/90 dark:border-black/20 overflow-hidden transform translate-z-0 transition-colors duration-500">
+    <div className="relative z-20">
+      {/* Mobile Streak Tag - Positioned Absolute Overlapping Top Right */}
+      <div className="absolute -top-3 -right-2 sm:-top-4 sm:-right-2 z-30 lg:hidden">
+        <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-white border-2 border-orange-300 rounded-full text-orange-600 font-extrabold text-xs shadow-lg transform rotate-3 hover:rotate-6 transition-transform">
+          🔥 {streak} Day Streak
+        </span>
+      </div>
+
+      <div className="relative bg-primary rounded-2xl sm:rounded-[2.5rem] shadow-xl border-[3px] sm:border-[6px] border-white/90 dark:border-black/20 overflow-hidden transform translate-z-0 transition-colors duration-500">
         
         {/* Decorative Elements - Simplified */}
         <div className="absolute inset-0 pointer-events-none overflow-hidden opacity-10">
@@ -189,11 +196,13 @@ export function KidsWelcomeBanner({ completedModules = [], earnedBadges = [] }: 
           <div className="absolute bottom-0 left-0 w-80 h-80 bg-white dark:bg-slate-800 rounded-full"></div>
         </div>
 
+
+
         <div className="relative z-10 px-4 sm:px-10 pt-6 sm:pt-8 lg:pt-10 pb-4 sm:pb-6 lg:pb-4 flex flex-col items-center">
           
           {/* ── Header: Now includes Avatar on Mobile ── */}
-          <div className="text-center mb-6 lg:mb-8 flex flex-col items-center gap-3">
-            <div className="sm:hidden h-16 w-16 rounded-full bg-white dark:bg-red-900/30 shadow-xl flex items-center justify-center text-3xl border-2 border-white dark:border-white/20 transform rotate-3 transition-colors overflow-hidden">
+          <div className="mb-6 lg:mb-8 flex flex-row items-center justify-center gap-4 sm:flex-col sm:text-center w-full max-w-lg mx-auto sm:max-w-none">
+            <div className="sm:hidden h-20 w-20 shrink-0 rounded-full bg-white dark:bg-red-900/30 shadow-xl flex items-center justify-center text-4xl border-[3px] border-white dark:border-white/20 transform rotate-3 transition-colors overflow-hidden">
               {userAvatar.startsWith('/') ? (
                 <img 
                   src={userAvatar} 
@@ -204,19 +213,16 @@ export function KidsWelcomeBanner({ completedModules = [], earnedBadges = [] }: 
                 userAvatar
               )}
             </div>
-            <div>
-              <h1 className="text-3xl sm:text-5xl lg:text-7xl font-black text-white drop-shadow-md tracking-tighter mb-1">
+            <div className="flex flex-col items-start sm:items-center">
+              <h1 className="text-3xl sm:text-5xl lg:text-7xl font-black text-white drop-shadow-md tracking-tighter mb-0.5 sm:mb-1 leading-tight">
                 Welcome, <span className="text-yellow-300">{firstName}!</span>
               </h1>
-              <div className="flex flex-wrap items-center justify-center gap-2.5 text-yellow-50/90 font-black text-sm sm:text-xl tracking-tight">
-                <span className="flex items-center gap-2">
-                  You are a <span className="text-yellow-300 underline underline-offset-4 decoration-yellow-400/50">{currentRank.name}</span> <RankIcon className="h-5 w-5 sm:h-6 sm:w-6 fill-yellow-300 text-yellow-300" />
-                </span>
-                <span className="hidden sm:inline lg:hidden opacity-30">|</span>
-                <span className="inline-flex lg:hidden items-center gap-1.5 px-3 py-1 bg-white border border-orange-200 rounded-full text-orange-600 font-extrabold text-xs sm:text-sm shadow-md">
-                  🔥 {streak} Day Streak
+              <div className="flex flex-wrap items-center justify-start sm:justify-center gap-1.5 sm:gap-2.5 text-yellow-50/90 font-black text-[13px] sm:text-xl tracking-tight">
+                <span className="flex items-center gap-1.5 sm:gap-2">
+                  You are a <span className="text-yellow-300 underline underline-offset-4 decoration-yellow-400/50">{currentRank.name}</span> <RankIcon className="h-4 w-4 sm:h-6 sm:w-6 fill-yellow-300 text-yellow-300" />
                 </span>
                 
+
                 <Dialog open={showRankGuide} onOpenChange={setShowRankGuide}>
                   <DialogTrigger asChild>
                     <button 
@@ -452,6 +458,6 @@ export function KidsWelcomeBanner({ completedModules = [], earnedBadges = [] }: 
           </motion.div>
         )}
       </AnimatePresence>
-    </>
+    </div>
   )
 }

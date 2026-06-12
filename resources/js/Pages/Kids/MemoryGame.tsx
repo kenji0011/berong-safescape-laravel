@@ -119,7 +119,7 @@ const MemoryGamePage = () => {
     return (
       <div className="-mt-[104px] sm:-mt-[120px] pt-[104px] sm:pt-[120px] min-h-[calc(100vh+104px)] sm:min-h-[calc(100vh+120px)] relative flex flex-col font-sans bg-blue-50 dark:bg-slate-950 selection:bg-teal-300 selection:text-teal-900 transition-colors duration-500">
         {/* Heroic Background */}
-        <div className="absolute inset-0 z-0 overflow-hidden">
+        <div className="fixed top-0 left-0 w-full z-0 overflow-hidden pointer-events-none" style={{ height: '100vh', minHeight: '100lvh' }}>
           <img 
             src="/challenges-bg.png" 
             alt="" 
@@ -162,19 +162,20 @@ const MemoryGamePage = () => {
 
   if (!hasStarted) {
     return (
-      <div className="-mt-[104px] sm:-mt-[120px] pt-[104px] sm:pt-[120px] min-h-[calc(100vh+104px)] sm:min-h-[calc(100vh+120px)] relative flex flex-col font-sans bg-blue-50 dark:bg-slate-950 selection:bg-teal-300 selection:text-teal-900 transition-colors duration-500">
-        <div className="absolute inset-0 z-0">
+      <div className="-mt-[104px] sm:-mt-[120px] pt-[104px] sm:pt-[120px] min-h-screen relative flex flex-col font-sans bg-blue-50 dark:bg-slate-950 selection:bg-teal-300 selection:text-teal-900 transition-colors duration-500">
+        <div className="fixed top-0 left-0 w-full z-0 pointer-events-none" style={{ height: '100vh', minHeight: '100lvh' }}>
           <img src="/challenges-bg.png" alt="" className="w-full h-full object-cover opacity-100 dark:opacity-50 transition-opacity duration-500" />
           <div className="absolute inset-0 bg-white/40 dark:bg-slate-950/60 transition-colors duration-500"></div>
         </div>
         
-        <div className="relative z-10 flex-1 flex flex-col items-center justify-center p-4">
-          <div className="absolute top-4 left-4 z-20">
-            <Link href="/kids/challenges" className="inline-flex items-center gap-2 text-slate-500 dark:text-slate-400 font-bold hover:text-teal-600 dark:hover:text-teal-400 transition-all text-sm bg-white dark:bg-slate-800 px-4 py-2 rounded-full border border-white/60 dark:border-slate-700/60 shadow-sm">
-              <ArrowLeft className="h-4 w-4" />
-              Back to Activities
-            </Link>
-          </div>
+        <div className="absolute top-[112px] sm:top-[128px] left-4 z-[60]">
+          <Link href="/kids/challenges" className="inline-flex items-center gap-2 text-slate-500 dark:text-slate-400 font-bold hover:text-teal-600 dark:hover:text-teal-400 transition-all text-sm bg-white dark:bg-slate-800 px-4 py-2 rounded-full border border-white/60 dark:border-slate-700/60 shadow-sm">
+            <ArrowLeft className="h-4 w-4" />
+            Back to Activities
+          </Link>
+        </div>
+        
+        <div className="relative z-10 flex-1 flex flex-col items-center justify-center p-4 pb-16 sm:pb-24">
           
           <div className="max-w-md w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-8 rounded-[3rem] shadow-2xl text-center animate-in zoom-in duration-500 transition-colors">
             <div className="w-24 h-24 bg-teal-100 dark:bg-teal-500/20 rounded-3xl flex items-center justify-center mx-auto mb-6">
@@ -198,9 +199,9 @@ const MemoryGamePage = () => {
   }
 
   return (
-    <div className="-mt-[104px] sm:-mt-[120px] pt-[104px] sm:pt-[120px] min-h-[calc(100vh+104px)] sm:min-h-[calc(100vh+120px)] relative flex flex-col font-sans bg-blue-50 dark:bg-slate-950 selection:bg-teal-300 selection:text-teal-900 transition-colors duration-500">
+    <div className="-mt-[104px] sm:-mt-[120px] pt-[104px] sm:pt-[120px] min-h-screen relative flex flex-col font-sans bg-blue-50 dark:bg-slate-950 selection:bg-teal-300 selection:text-teal-900 transition-colors duration-500">
       {/* Heroic Background */}
-      <div className="absolute inset-0 z-0">
+      <div className="fixed top-0 left-0 w-full z-0 pointer-events-none" style={{ height: '100vh', minHeight: '100lvh' }}>
         <img 
           src="/challenges-bg.png" 
           alt="" 
@@ -209,19 +210,19 @@ const MemoryGamePage = () => {
         <div className="absolute inset-0 bg-white/40 dark:bg-slate-950/60 transition-colors duration-500"></div>
       </div>
 
-      <div className="relative z-10 w-full flex-1 flex flex-col py-4 pb-28 sm:pb-4">
-        {/* Ghost Header - absolute positioned to save vertical space */}
-        <div className="absolute top-2 left-4 z-20">
-          <Link 
-            href="/kids/challenges" 
-            className="inline-flex items-center gap-2 text-slate-500 dark:text-slate-400 font-bold hover:text-teal-600 dark:hover:text-teal-400 transition-all text-sm bg-white dark:bg-slate-800 px-4 py-2 rounded-full border border-white/60 dark:border-slate-700/60 shadow-sm"
-          >
-            <ArrowLeft className="h-4 w-4" />
-            Back to Activities
-          </Link>
-        </div>
+      <div className="absolute top-[112px] sm:top-[128px] left-4 z-[60]">
+        <Link 
+          href="/kids/challenges" 
+          className="inline-flex items-center gap-2 text-slate-500 dark:text-slate-400 font-bold hover:text-teal-600 dark:hover:text-teal-400 transition-all text-sm bg-white dark:bg-slate-800 px-4 py-2 rounded-full border border-white/60 dark:border-slate-700/60 shadow-sm"
+        >
+          <ArrowLeft className="h-4 w-4" />
+          Back to Activities
+        </Link>
+      </div>
 
-        <div className="max-w-4xl mx-auto w-full px-4 sm:px-6 flex-1 flex items-start justify-center pt-12 sm:pt-4">
+      <div className="relative z-10 w-full flex-1 flex flex-col py-4 pb-28 sm:pb-4">
+
+        <div className="max-w-[calc(60vh)] sm:max-w-4xl mx-auto w-full px-4 sm:px-6 flex-1 flex items-start justify-center pt-12 sm:pt-4">
           <div className="w-full bg-white dark:bg-slate-900 border border-white/60 dark:border-slate-800/60 rounded-[2.5rem] p-6 sm:p-8 shadow-[0_25px_60px_rgba(20,184,166,0.15)] overflow-hidden lg:max-h-[85vh] flex flex-col animate-in fade-in slide-in-from-bottom-8 duration-700 transition-colors">
             
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-6">

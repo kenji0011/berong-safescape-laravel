@@ -186,19 +186,23 @@ const CourseHubPage = ({ initialModules }: CourseHubProps) => {
     <div className="-mt-[104px] sm:-mt-[120px] pt-[104px] sm:pt-[120px] min-h-[calc(100vh+104px)] sm:min-h-[calc(100vh+120px)] bg-slate-50 dark:bg-slate-950 bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] dark:bg-[radial-gradient(#1e293b_1px,transparent_1px)] [background-size:16px_16px] font-sans flex flex-col">
       {/* ── Post-Test Available Banner (Hanging Wooden Sign) ── */}
       {completedCount === 5 && (user?.postTestScore === null || user?.postTestScore === undefined) && (
-        <div className="relative max-w-[95vw] lg:max-w-6xl mx-auto mt-10 sm:mt-14 mb-2 animate-in slide-in-from-top fade-in duration-700">
+        <div className="relative z-10 max-w-[95vw] lg:max-w-6xl mx-auto mt-6 sm:mt-14 mb-8 sm:mb-12 animate-swing-drop">
           
-          {/* Chains */}
-          <div className="absolute -top-20 sm:-top-24 left-8 sm:left-16 w-4 flex flex-col items-center z-0">
-            {[...Array(8)].map((_, i) => (
-              <div key={`chain-l-av-${i}`} className={`w-2.5 sm:w-3.5 h-4 sm:h-6 border-2 sm:border-[3px] border-slate-400 rounded-full bg-slate-200/50 shadow-sm ${i > 0 ? '-mt-1 sm:-mt-1.5' : ''}`}></div>
-            ))}
+          {/* Ropes */}
+          <div className="absolute -top-16 sm:-top-28 left-8 sm:left-16 w-4 sm:w-8 flex flex-col items-center z-[-1]">
+            <div className="w-3 sm:w-5 h-20 sm:h-32 bg-[#d2b48c] dark:bg-[#a67c52] rounded-full border-x-2 sm:border-x-[3px] border-[#8b5a2b] dark:border-[#4a2e15] shadow-[0_4px_8px_rgba(0,0,0,0.3)] flex flex-col justify-evenly overflow-hidden relative">
+               {[...Array(12)].map((_, i) => (
+                 <div key={`rope-l-av-${i}`} className="w-[150%] h-1 sm:h-1.5 bg-[#8b5a2b]/50 dark:bg-[#4a2e15]/50 -rotate-[25deg] transform -translate-x-1"></div>
+               ))}
+            </div>
           </div>
           
-          <div className="absolute -top-20 sm:-top-24 right-8 sm:right-16 w-4 flex flex-col items-center z-0">
-            {[...Array(8)].map((_, i) => (
-              <div key={`chain-r-av-${i}`} className={`w-2.5 sm:w-3.5 h-4 sm:h-6 border-2 sm:border-[3px] border-slate-400 rounded-full bg-slate-200/50 shadow-sm ${i > 0 ? '-mt-1 sm:-mt-1.5' : ''}`}></div>
-            ))}
+          <div className="absolute -top-16 sm:-top-28 right-8 sm:right-16 w-4 sm:w-8 flex flex-col items-center z-[-1]">
+            <div className="w-3 sm:w-5 h-20 sm:h-32 bg-[#d2b48c] dark:bg-[#a67c52] rounded-full border-x-2 sm:border-x-[3px] border-[#8b5a2b] dark:border-[#4a2e15] shadow-[0_4px_8px_rgba(0,0,0,0.3)] flex flex-col justify-evenly overflow-hidden relative">
+               {[...Array(12)].map((_, i) => (
+                 <div key={`rope-r-av-${i}`} className="w-[150%] h-1 sm:h-1.5 bg-[#8b5a2b]/50 dark:bg-[#4a2e15]/50 -rotate-[25deg] transform -translate-x-1"></div>
+               ))}
+            </div>
           </div>
 
           {/* Wooden Sign Body */}
@@ -239,19 +243,23 @@ const CourseHubPage = ({ initialModules }: CourseHubProps) => {
 
       {/* ── Post-Test Completed Banner (Hanging Wooden Sign) ── */}
       {completedCount === 5 && user?.postTestScore !== null && user?.postTestScore !== undefined && (
-        <div className="relative max-w-[95vw] lg:max-w-6xl mx-auto mt-10 sm:mt-14 mb-2 animate-in slide-in-from-top fade-in duration-700">
+        <div className="relative z-10 max-w-[95vw] lg:max-w-6xl mx-auto mt-6 sm:mt-14 mb-8 sm:mb-12 animate-swing-drop">
           
-          {/* Chains */}
-          <div className="absolute -top-20 sm:-top-24 left-8 sm:left-16 w-4 flex flex-col items-center z-0">
-            {[...Array(8)].map((_, i) => (
-              <div key={`chain-l-co-${i}`} className={`w-2.5 sm:w-3.5 h-4 sm:h-6 border-2 sm:border-[3px] border-slate-400 rounded-full bg-slate-200/50 shadow-sm ${i > 0 ? '-mt-1 sm:-mt-1.5' : ''}`}></div>
-            ))}
+          {/* Ropes */}
+          <div className="absolute -top-16 sm:-top-28 left-8 sm:left-16 w-4 sm:w-8 flex flex-col items-center z-[-1]">
+            <div className="w-3 sm:w-5 h-20 sm:h-32 bg-[#d2b48c] dark:bg-[#a67c52] rounded-full border-x-2 sm:border-x-[3px] border-[#8b5a2b] dark:border-[#4a2e15] shadow-[0_4px_8px_rgba(0,0,0,0.3)] flex flex-col justify-evenly overflow-hidden relative">
+               {[...Array(12)].map((_, i) => (
+                 <div key={`rope-l-co-${i}`} className="w-[150%] h-1 sm:h-1.5 bg-[#8b5a2b]/50 dark:bg-[#4a2e15]/50 -rotate-[25deg] transform -translate-x-1"></div>
+               ))}
+            </div>
           </div>
           
-          <div className="absolute -top-20 sm:-top-24 right-8 sm:right-16 w-4 flex flex-col items-center z-0">
-            {[...Array(8)].map((_, i) => (
-              <div key={`chain-r-co-${i}`} className={`w-2.5 sm:w-3.5 h-4 sm:h-6 border-2 sm:border-[3px] border-slate-400 rounded-full bg-slate-200/50 shadow-sm ${i > 0 ? '-mt-1 sm:-mt-1.5' : ''}`}></div>
-            ))}
+          <div className="absolute -top-16 sm:-top-28 right-8 sm:right-16 w-4 sm:w-8 flex flex-col items-center z-[-1]">
+            <div className="w-3 sm:w-5 h-20 sm:h-32 bg-[#d2b48c] dark:bg-[#a67c52] rounded-full border-x-2 sm:border-x-[3px] border-[#8b5a2b] dark:border-[#4a2e15] shadow-[0_4px_8px_rgba(0,0,0,0.3)] flex flex-col justify-evenly overflow-hidden relative">
+               {[...Array(12)].map((_, i) => (
+                 <div key={`rope-r-co-${i}`} className="w-[150%] h-1 sm:h-1.5 bg-[#8b5a2b]/50 dark:bg-[#4a2e15]/50 -rotate-[25deg] transform -translate-x-1"></div>
+               ))}
+            </div>
           </div>
 
           {/* Wooden Sign Body */}
@@ -301,6 +309,18 @@ const CourseHubPage = ({ initialModules }: CourseHubProps) => {
             100% { transform: translateY(0px) rotate(0deg); }
           }
           .floating-icon { animation: float 8s ease-in-out infinite; }
+          
+          @keyframes swing-drop {
+            0% { transform: translateY(-60px) rotate(-8deg); opacity: 0; }
+            40% { transform: translateY(0px) rotate(5deg); opacity: 1; }
+            60% { transform: translateY(0px) rotate(-3deg); }
+            80% { transform: translateY(0px) rotate(1.5deg); }
+            100% { transform: translateY(0px) rotate(0deg); opacity: 1; }
+          }
+          .animate-swing-drop {
+            transform-origin: 50% -80px;
+            animation: swing-drop 1.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+          }
         `}} />
         <div className="absolute inset-0 overflow-hidden pointer-events-none opacity-20 dark:opacity-10 z-0">
           <div className="absolute top-[5%] left-[5%] text-6xl floating-icon" style={{ animationDelay: '0s' }}>🚒</div>
@@ -337,7 +357,7 @@ const CourseHubPage = ({ initialModules }: CourseHubProps) => {
 
           {/* ── Hero Section ── */}
           {completedCount === 5 ? (
-            <div className="flex flex-col items-center text-center mb-6 sm:mb-8 space-y-2 relative">
+            <div className="flex flex-col items-center text-center mb-10 sm:mb-12 space-y-3 sm:space-y-4 relative">
               <div className="absolute top-0 right-0 lg:-right-12 text-3xl sm:text-5xl opacity-10 transform rotate-12 pointer-events-none">✨</div>
               <div className="absolute bottom-4 left-0 lg:-left-12 text-3xl sm:text-5xl opacity-10 transform -rotate-12 pointer-events-none">🔥</div>
               
@@ -347,9 +367,12 @@ const CourseHubPage = ({ initialModules }: CourseHubProps) => {
               <h1 className="text-3xl sm:text-5xl font-black text-primary leading-tight drop-shadow-sm px-2">
                 You are a Fire Safety Hero!
               </h1>
+              <p className="text-sm sm:text-base font-bold text-slate-500 dark:text-slate-400 max-w-xl leading-relaxed px-4">
+                You did it! You are now an official Fire Safety Hero. You know exactly how to outsmart fire and keep your family safe!
+              </p>
             </div>
           ) : (
-            <div className="flex flex-col items-center text-center mb-6 sm:mb-8 space-y-3 sm:space-y-4 relative">
+            <div className="flex flex-col items-center text-center mb-10 sm:mb-12 space-y-3 sm:space-y-4 relative">
               <div className="absolute top-0 right-0 lg:-right-12 text-4xl sm:text-6xl opacity-20 transform rotate-12 pointer-events-none">✨</div>
               <div className="absolute bottom-10 left-0 lg:-left-12 text-4xl sm:text-6xl opacity-20 transform -rotate-12 pointer-events-none">🔥</div>
               
@@ -360,18 +383,13 @@ const CourseHubPage = ({ initialModules }: CourseHubProps) => {
                 Become a Fire Safety Hero!
               </h1>
               <p className="text-sm sm:text-base font-bold text-slate-500 dark:text-slate-400 max-w-xl leading-relaxed px-4">
-                Complete 5 modules to learn fire safety and protect your home.
+                Are you ready for an adventure? Complete all 5 fun training missions to learn how to outsmart fire and protect your home!
               </p>
-
-              <div className="flex items-center gap-2 bg-yellow-400/10 dark:bg-yellow-400/5 px-4 py-1.5 rounded-full border border-yellow-400/30 text-yellow-700 dark:text-yellow-400 font-extrabold text-xs sm:text-sm shadow-sm mt-1">
-                <span>👨‍🚒</span>
-                <span>{user?.name || "Fire Safety Hero"}</span>
-              </div>
             </div>
           )}
 
-          {/* ── Modules Grid ── */}
-          <div className="mb-10 text-center">
+          {/* ── Modules Grid Header ── */}
+          <div className="mb-6 sm:mb-8 text-center">
             <h2 className="text-2xl sm:text-3xl font-black text-slate-800 dark:text-white flex items-center justify-center gap-3">
               <BookOpen className="h-6 w-6 text-blue-500" /> Your Training Modules
             </h2>

@@ -184,7 +184,7 @@ export function LandingAssessmentSection({ serverUser }: LandingAssessmentProps 
             initial={{ opacity: 0, y: 40 }}
             animate={isInView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94] }}
-            className="w-full bg-gradient-to-br from-slate-100 via-slate-50 to-orange-50 dark:from-slate-900 dark:via-slate-900 dark:to-slate-800 rounded-[2.5rem] py-16 px-6 sm:px-12 border border-slate-200/80 dark:border-slate-700/50 shadow-sm relative overflow-hidden transition-colors duration-500"
+            className="w-full bg-gradient-to-br from-slate-100 via-slate-50 to-orange-50 dark:from-slate-900 dark:via-slate-900 dark:to-slate-800 rounded-[2.5rem] py-8 sm:py-16 px-6 sm:px-12 border border-slate-200/80 dark:border-slate-700/50 shadow-sm relative overflow-hidden transition-colors duration-500"
         >
             {/* Background Decorations */}
             <div className="absolute top-0 right-0 w-64 h-64 bg-orange-200/30 dark:bg-orange-900/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
@@ -196,7 +196,7 @@ export function LandingAssessmentSection({ serverUser }: LandingAssessmentProps 
             }} />
             
             <div className="max-w-4xl mx-auto relative z-10">
-                <div className="text-center mb-12 sm:mb-16">
+                <div className="text-center mb-8 sm:mb-16">
                     <motion.div
                         initial={{ opacity: 0, y: 15 }}
                         animate={isInView ? { opacity: 1, y: 0 } : {}}
@@ -212,7 +212,7 @@ export function LandingAssessmentSection({ serverUser }: LandingAssessmentProps 
                         transition={{ duration: 0.5, delay: 0.25 }}
                         className="text-4xl sm:text-5xl font-black text-slate-800 dark:text-white mb-4 sm:mb-6"
                     >
-                        Final Assessment
+                        Become a SafeScape Hero
                     </motion.h2>
                     <motion.p
                         initial={{ opacity: 0, y: 15 }}
@@ -220,7 +220,7 @@ export function LandingAssessmentSection({ serverUser }: LandingAssessmentProps 
                         transition={{ duration: 0.5, delay: 0.35 }}
                         className="text-lg sm:text-xl text-slate-600 dark:text-slate-400 font-medium max-w-2xl mx-auto"
                     >
-                        Completed your training? Take the official post-test to certify your knowledge and become a SafeScape Hero.
+                        Take the official post-test to validate your fire safety knowledge and earn your verified certificate.
                     </motion.p>
                 </div>
 
@@ -244,18 +244,18 @@ export function LandingAssessmentSection({ serverUser }: LandingAssessmentProps 
                                 >
                                     <Trophy className="w-7 h-7 sm:w-10 sm:h-10 text-white drop-shadow-md" strokeWidth={2.5} />
                                 </motion.div>
-                                <h3 className="text-2xl sm:text-3xl font-black mb-1 sm:mb-2 tracking-tight drop-shadow-sm relative z-10">SafeScape Hero</h3>
+                                <h3 className="text-2xl sm:text-3xl font-black mb-1 sm:mb-2 tracking-tight drop-shadow-sm relative z-10">Final Assessment</h3>
                                 <div className="bg-white/20 px-3 sm:px-4 py-1 sm:py-1.5 rounded-full border border-white/20 backdrop-blur-sm relative z-10 mt-1 sm:mt-2">
-                                    <p className="text-white text-[9px] sm:text-[10px] font-black tracking-widest uppercase drop-shadow-sm">Post-Test Assessment</p>
+                                    <p className="text-white text-[9px] sm:text-[10px] font-black tracking-widest uppercase drop-shadow-sm">Official Certification</p>
                                 </div>
                             </div>
 
-                            <div className="md:w-7/12 p-8 sm:p-10 flex flex-col justify-center bg-white dark:bg-slate-800 rounded-none z-0">
+                            <div className="md:w-7/12 p-6 sm:p-10 flex flex-col justify-center bg-white dark:bg-slate-800 rounded-none z-0">
                             {!isAuthenticated ? (
                                 <div className="space-y-4">
-                                    <h4 className="text-2xl font-bold text-slate-800 dark:text-white">Ready to prove your skills?</h4>
+                                    <h4 className="text-2xl font-bold text-slate-800 dark:text-white">Ready for the challenge?</h4>
                                     <p className="text-slate-600 dark:text-slate-400 font-medium">
-                                        Log in to access the final assessment. You'll need to complete the learning modules first!
+                                        Log in to unlock the exam. Remember, you must complete all learning activities first!
                                     </p>
                                     <button onClick={handleStartClick} className="w-full bg-[#1e293b] hover:bg-slate-800 dark:bg-slate-700 dark:hover:bg-slate-600 text-white font-black h-12 rounded-full mt-4 border-2 border-slate-900 dark:border-slate-600 border-b-[4px] active:border-b-2 active:translate-y-[2px] shadow-sm transition-all flex items-center justify-center gap-2 uppercase tracking-wider text-sm">
                                         <Shield className="h-5 w-5" /> Login to Start

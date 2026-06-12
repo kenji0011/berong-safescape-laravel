@@ -389,7 +389,7 @@ const ModuleFourPage = ({ moduleNum, initialProgress }: { moduleNum: number; ini
   }
 
   return (
-    <div className="-mt-[104px] sm:-mt-[120px] pt-[104px] sm:pt-[120px] min-h-[calc(100vh+104px)] sm:min-h-[calc(100vh+120px)] bg-white dark:bg-slate-950 font-sans flex flex-col transition-colors duration-500">
+    <div className="module-page-wrapper -mt-[104px] sm:-mt-[120px] pt-[104px] sm:pt-[120px] min-h-[calc(100vh+104px)] sm:min-h-[calc(100vh+120px)] bg-white dark:bg-slate-950 bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] dark:bg-[radial-gradient(#1e293b_1px,transparent_1px)] [background-size:16px_16px] font-sans flex flex-col transition-colors duration-500">
       <Head title={`Module ${currentModule} | SafeScape`} />
 
       {/* ── Sub Header ── */}
@@ -400,6 +400,11 @@ const ModuleFourPage = ({ moduleNum, initialProgress }: { moduleNum: number; ini
             <div className="hidden sm:flex items-center gap-2">
               <Flame className="h-5 w-5 text-[#ff4b3e]" />
               <h1 className="text-xl font-black text-slate-800 dark:text-white transition-colors">SafeScape Fire Safety Course</h1>
+            </div>
+            {/* Added for focus mode mobile */}
+            <div className="hidden ss-focus-title items-center gap-1.5 sm:hidden">
+              <Flame className="h-4 w-4 text-[#ff4b3e]" />
+              <h1 className="text-sm font-black text-slate-800 dark:text-white transition-colors">SafeScape</h1>
             </div>
           </div>
           <div className="flex items-center gap-2 sm:gap-6">
@@ -418,7 +423,7 @@ const ModuleFourPage = ({ moduleNum, initialProgress }: { moduleNum: number; ini
       </div>
 
       {/* ── Dark Module Content Area ── */}
-      <div className="flex-1 bg-white dark:bg-slate-950 bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] dark:bg-[radial-gradient(#1e293b_1px,transparent_1px)] [background-size:16px_16px] flex flex-col w-full relative transition-colors">
+      <div className="flex-1 flex flex-col w-full relative transition-colors">
         
         {/* Skeleton Loader */}
         {iframeLoading && (

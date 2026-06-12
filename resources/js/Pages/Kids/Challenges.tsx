@@ -131,15 +131,15 @@ const KidsChallengesPage = ({ progress }: ChallengesProps) => {
   }, [progress])
 
   return (
-    <div className="min-h-screen relative bg-background transition-colors duration-500">
+    <div className="-mt-[104px] sm:-mt-[120px] pt-[88px] sm:pt-[120px] min-h-[calc(100vh+104px)] sm:min-h-[calc(100vh+120px)] relative bg-background transition-colors duration-500">
       {/* Background Image with Overlay */}
-      <div className="absolute inset-0 z-0">
+      <div className="fixed top-0 left-0 w-full z-0 pointer-events-none" style={{ height: '100vh', minHeight: '100lvh' }}>
         <img 
           src="/challenges-bg.png" 
           alt="" 
-          className="w-full h-full object-cover opacity-40 dark:opacity-20 mix-blend-multiply" 
+          className="w-full h-full object-cover opacity-20 dark:opacity-10 mix-blend-multiply grayscale-[20%]" 
         />
-        <div className="absolute inset-0 bg-background/80"></div>
+        <div className="absolute inset-0 bg-background/90"></div>
       </div>
       {/* Animated Particles Background */}
       {!isMobile && !reduceMotion && (
@@ -154,9 +154,9 @@ const KidsChallengesPage = ({ progress }: ChallengesProps) => {
       )}
 
       <div className="relative z-10 w-full h-full flex-1">
-        <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4 pb-8 sm:py-8">
           {/* Premium Header Section */}
-          <div className="relative mb-12 group">
+          <div className="relative mb-8 sm:mb-12 group">
             {/* Background Glow */}
             <div className="absolute -inset-2 bg-blue-500/10 rounded-[2.5rem] opacity-20 group-hover:opacity-30 transition-opacity duration-500"></div>
             

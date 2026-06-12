@@ -174,17 +174,15 @@ const KidsDashboardPage = ({ modules, progress }: KidsPageProps) => {
     <div className="min-h-screen relative bg-background transition-colors duration-500">
       {/* Optimized Background */}
       {focusMode ? (
-        <div className="fixed inset-0 z-0 pointer-events-none transition-colors duration-500 bg-white dark:bg-slate-950 ss-dotted-grid" />
+        <div className="fixed top-0 left-0 w-full z-0 pointer-events-none transition-colors duration-500 bg-white dark:bg-slate-950 ss-dotted-grid" style={{ height: '100vh', minHeight: '100lvh' }} />
       ) : (
-        <div 
-          className="fixed inset-0 z-0 bg-cover bg-center pointer-events-none transform-gpu"
-          style={{ 
-            backgroundImage: "url('/challenges-bg.png')",
-            backfaceVisibility: 'hidden',
-            WebkitBackfaceVisibility: 'hidden'
-          }}
-        >
-          <div className="absolute inset-0 bg-white/10 dark:bg-slate-900/60"></div>
+        <div className="fixed top-0 left-0 w-full z-0 pointer-events-none" style={{ height: '100vh', minHeight: '100lvh' }}>
+          <img 
+            src="/challenges-bg.png" 
+            alt="" 
+            className="w-full h-full object-cover" 
+          />
+          <div className="absolute inset-0 bg-white/10 dark:bg-slate-900/60 transition-colors duration-500"></div>
         </div>
       )}
 

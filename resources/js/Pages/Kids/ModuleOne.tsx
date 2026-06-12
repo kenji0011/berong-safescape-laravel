@@ -275,7 +275,7 @@ const ModuleOnePage = ({ initialProgress }: { initialProgress?: any }) => {
 
   
   return (
-    <div className="-mt-[104px] sm:-mt-[120px] pt-[104px] sm:pt-[120px] min-h-[calc(100vh+104px)] sm:min-h-[calc(100vh+120px)] bg-white dark:bg-slate-950 bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] dark:bg-[radial-gradient(#1e293b_1px,transparent_1px)] [background-size:16px_16px] font-sans flex flex-col transition-colors duration-500">
+    <div className="module-page-wrapper -mt-[104px] sm:-mt-[120px] pt-[104px] sm:pt-[120px] min-h-[calc(100vh+104px)] sm:min-h-[calc(100vh+120px)] bg-white dark:bg-slate-950 bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] dark:bg-[radial-gradient(#1e293b_1px,transparent_1px)] [background-size:16px_16px] font-sans flex flex-col transition-colors duration-500">
 
       {/* ── Sub Header ── */}
       <div className="z-[50] sticky top-[96px] sm:top-[112px] ss-sub-header transition-all duration-500 w-full flex justify-center px-2 sm:px-4 -mt-2 mb-4 sm:mb-8 pointer-events-none">
@@ -288,6 +288,11 @@ const ModuleOnePage = ({ initialProgress }: { initialProgress?: any }) => {
             <div className="hidden sm:flex items-center gap-2">
               <Flame className="h-5 w-5 text-[#ff4b3e]" />
               <h1 className="text-xl font-black text-slate-800 dark:text-white transition-colors">SafeScape Fire Safety Course</h1>
+            </div>
+            {/* Added for focus mode mobile */}
+            <div className="hidden ss-focus-title items-center gap-1.5 sm:hidden">
+              <Flame className="h-4 w-4 text-[#ff4b3e]" />
+              <h1 className="text-sm font-black text-slate-800 dark:text-white transition-colors">SafeScape</h1>
             </div>
           </div>
           <div className="flex items-center gap-2 sm:gap-6">
