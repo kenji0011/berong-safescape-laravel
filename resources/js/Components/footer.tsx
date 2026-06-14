@@ -132,12 +132,33 @@ export function Footer() {
       {/* ========================================================================= */}
       <footer ref={mobileFooterRef} className="block sm:hidden relative text-white pt-8 pb-5 overflow-hidden">
         {/* Breathing gradient background */}
-        <div className="absolute inset-0 bg-gradient-to-b from-[#0a0f1c] via-[#0f172a] to-[#0a0f1c] footer-breathing-bg" />
+        <div className="absolute inset-0 bg-gradient-to-br from-[#0a0f1c] via-[#0f1729] to-[#0a0f1c] footer-breathing-bg" />
+        
+        {/* Floating ambient blobs */}
+        <motion.div
+          className="absolute top-[-10%] right-[-5%] w-[60%] h-[40%] bg-red-500/[0.04] rounded-full blur-3xl pointer-events-none"
+          animate={reduceMotion ? {} : { x: [0, 20, 0], y: [0, -15, 0], scale: [1, 1.1, 1] }}
+          transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
+        />
+        <motion.div
+          className="absolute bottom-[-10%] left-[-5%] w-[50%] h-[35%] bg-orange-500/[0.04] rounded-full blur-3xl pointer-events-none"
+          animate={reduceMotion ? {} : { x: [0, -15, 0], y: [0, 10, 0], scale: [1, 1.15, 1] }}
+          transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }}
+        />
+
         {/* Dot pattern */}
         <div className="absolute inset-0 opacity-[0.04]" style={{
           backgroundImage: "radial-gradient(circle at 1.5px 1.5px, rgba(255,255,255,0.4) 1px, transparent 0)",
           backgroundSize: "20px 20px",
         }} />
+
+        {/* Premium Bottom Edge Glow */}
+        <div className="absolute bottom-0 left-0 right-0 h-[200px] bg-gradient-to-t from-red-600/10 via-orange-500/5 to-transparent pointer-events-none" />
+        <motion.div 
+          className="absolute bottom-[-100px] left-1/2 -translate-x-1/2 w-[100%] h-[200px] bg-gradient-to-r from-red-600/20 via-orange-500/20 to-red-600/20 blur-[80px] rounded-[100%] pointer-events-none"
+          animate={reduceMotion ? {} : { opacity: [0.4, 0.7, 0.4], scale: [1, 1.05, 1] }}
+          transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
+        />
 
         <div className="max-w-7xl mx-auto px-5 relative z-10">
           {/* Brand Section */}
@@ -223,7 +244,7 @@ export function Footer() {
       {/* ========================================================================= */}
       {/* 2. DESKTOP ONLY FOOTER — Premium Animated Design                          */}
       {/* ========================================================================= */}
-      <footer ref={desktopFooterRef} className="hidden sm:block relative text-white pt-4 pb-10 px-6 sm:px-12 lg:px-20 overflow-hidden w-full min-h-[calc(100vh-60px)]">
+      <footer ref={desktopFooterRef} className="hidden sm:block relative text-white pt-[120px] pb-10 px-6 sm:px-12 lg:px-20 overflow-hidden w-full min-h-screen">
         {/* Breathing gradient background */}
         <style>{`
           @keyframes footerBreathing {
@@ -265,7 +286,7 @@ export function Footer() {
 
 
 
-        <div className="max-w-[1600px] mx-auto relative z-10 w-full flex flex-col items-center min-h-[calc(100vh-60px-5rem)] justify-between">
+        <div className="max-w-[1600px] mx-auto relative z-10 w-full flex flex-col items-center min-h-[calc(100vh-160px)] justify-between">
           
           {/* 1. Tagline (Centered) */}
           <motion.div

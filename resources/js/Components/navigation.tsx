@@ -1,7 +1,7 @@
 "use client"
 
 import { Link, usePage } from '@inertiajs/react';
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import { useAuth } from "@/lib/auth-context"
 import { useSettings } from "@/lib/settings-context"
 import { Button } from "@/components/ui/button"
@@ -59,7 +59,7 @@ function TimeDisplay({ mobile = false }: { mobile?: boolean }) {
 
   if (mobile) {
     return (
-      <p className="text-slate-200 text-[11px] leading-relaxed drop-shadow-sm font-medium">
+      <p className="text-slate-600 dark:text-slate-300 text-[11px] leading-relaxed drop-shadow-sm font-medium transition-colors">
         {currentTime.split(' • ')[0] || 'Loading date...'} <br/> {currentTime.split(' • ')[1] || '...'}
       </p>
     )
@@ -105,22 +105,99 @@ export function Navigation() {
   if (user?.permissions?.accessAdult) accessibleItems.push({ name: 'ADULTS', href: '/adult', active: url.startsWith('/adult') });
   if (user?.permissions?.accessKids) accessibleItems.push({ name: 'KIDS', href: '/kids', active: url.startsWith('/kids') });
   if (user?.role === 'admin') accessibleItems.push({ name: 'ADMIN', href: '/admin', active: url.startsWith('/admin') });
+  const [isMeetDevsInView, setIsMeetDevsInView] = useState(false);
+  const [isAssessmentInView, setIsAssessmentInView] = useState(false);
+  const [isScrollingDown, setIsScrollingDown] = useState(false);
+  const lastScrollY = useRef(0);
+
+  useEffect(() => {
+    lastScrollY.current = window.scrollY;
+  }, []);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollPosition = window.innerHeight + window.scrollY;
+      const bodyHeight = document.documentElement.scrollHeight;
+      const currentScrollY = window.scrollY;
+      
+      // Show navbar if at the top
+      if (currentScrollY <= 20) {
+        setIsScrollingDown(false);
+        lastScrollY.current = currentScrollY;
+      } else if (currentScrollY > lastScrollY.current) {
+        // Scrolling down - immediately hide
+        setIsScrollingDown(true);
+        lastScrollY.current = currentScrollY;
+      } else if (currentScrollY < lastScrollY.current - 50) {
+        // Scrolled up by at least 50px since the last reference point
+        setIsScrollingDown(false);
+        lastScrollY.current = currentScrollY;
+      }
+
+      // Hide if 'Meet the Developers' section is taking up the screen
+      const meetDevsSection = document.getElementById('meet-the-developers');
+      if (meetDevsSection) {
+        const rect = meetDevsSection.getBoundingClientRect();
+        // If the top of the section is near or above the navbar (e.g. 100px)
+        // AND the bottom of the section hasn't passed the middle of the screen
+        if (rect.top < 150 && rect.bottom > window.innerHeight * 0.5) {
+          setIsMeetDevsInView(true);
+        } else {
+          setIsMeetDevsInView(false);
+        }
+      } else {
+        setIsMeetDevsInView(false);
+      }
+
+      // Automatically show navbar when at Final Assessment
+      const assessmentSection = document.getElementById('final-assessment');
+      if (assessmentSection) {
+        const rect = assessmentSection.getBoundingClientRect();
+        if (rect.top < window.innerHeight * 0.8 && rect.bottom > 0) {
+          setIsAssessmentInView(true);
+        } else {
+          setIsAssessmentInView(false);
+        }
+      } else {
+        setIsAssessmentInView(false);
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    handleScroll(); // Initial check
+
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  // Sync nav-hidden class for other components (like sub-headers) to react to navbar visibility
+  useEffect(() => {
+    if (((isScrollingDown && !isAssessmentInView) || isMeetDevsInView)) {
+      document.documentElement.classList.add('nav-hidden');
+    } else {
+      document.documentElement.classList.remove('nav-hidden');
+    }
+    
+    // Cleanup on unmount
+    return () => document.documentElement.classList.remove('nav-hidden');
+  }, [isScrollingDown, isAssessmentInView, isMeetDevsInView]);
+
 
   return (
-    <nav className="bg-primary fixed inset-x-0 top-0 z-[80] shadow-md dark:shadow-none dark:border-b dark:border-black/20 transition-colors duration-500 h-16 sm:h-[4.5rem] flex items-center">
-      {/* Background Image Layer - 10% opacity */}
-      <div
-        className="absolute inset-0 opacity-5 bg-cover bg-center"
-        style={{ backgroundImage: "url('/web-background-image.jpg')" }}
-      />
+    <>
+
+
+      <nav className={cn(
+        "fixed left-1/2 top-4 sm:top-6 z-[80] transition-all duration-300 ease-out h-16 sm:h-[4.5rem] flex items-center rounded-full bg-gradient-to-r from-red-600 to-orange-500 dark:from-red-800 dark:to-orange-700 border border-white/20 dark:border-red-600/20 shadow-xl shadow-red-900/30 w-[95vw] lg:w-max max-w-[1400px]",
+        ((isScrollingDown && !isAssessmentInView) || isMeetDevsInView) ? "-translate-y-[150%] -translate-x-1/2 opacity-0 pointer-events-none" : "translate-y-0 -translate-x-1/2 opacity-100"
+      )}>
+
 
       {/* Content Layer - Full opacity */}
-      <div className="relative z-10 w-full">
-        <div className="max-w-7xl mx-auto px-3 sm:px-4 py-2.5 sm:py-3">
-          <div className="flex items-center justify-between w-full gap-2 sm:gap-4 relative">
+      <div className="relative z-10 w-full px-4 sm:px-6 py-2.5 sm:py-3">
+        <div className="flex items-center justify-between w-full lg:gap-8 gap-2 sm:gap-4 relative">
 
-            {/* LEFT SECTION: Logo + Branding */}
-            <div className="flex-1 flex justify-start min-w-0">
+          {/* LEFT SECTION: Logo + Branding */}
+          <div className="flex-1 flex justify-start min-w-0">
               <Link href="/" className="flex items-center gap-1.5 sm:gap-3 md:hover:opacity-90 transition-opacity cursor-pointer">
                 {/* Logos */}
                 <div className="flex items-center gap-1 sm:gap-2 flex-shrink-0">
@@ -141,14 +218,13 @@ export function Navigation() {
                 </div>
 
                 {/* Branding - Compact on mobile */}
-                <div className="min-w-0 max-w-[170px] sm:max-w-none shrink">
-                  <p className="text-white font-bold text-xs leading-none sm:text-sm truncate">Berong E-Learning</p>
+                <div className="min-w-0 shrink">
+                  <p className="text-white font-extrabold text-[13px] leading-none sm:text-[15px] whitespace-nowrap">Berong E-Learning</p>
                   <h1 className="text-yellow-400 font-bold leading-tight text-[0.625rem] xl:text-xs hidden sm:block truncate">
                     Fire Safety Education Platform
                   </h1>
                   <p className="text-white text-[0.5625rem] xl:text-[0.625rem] hidden sm:block opacity-90 uppercase tracking-widest mt-0.5 truncate">
-                    <span className="hidden xl:inline">BUREAU OF FIRE PROTECTION STA CRUZ LAGUNA</span>
-                    <span className="xl:hidden">BFP Sta. Cruz</span>
+                    BUREAU OF FIRE PROTECTION STA CRUZ LAGUNA
                   </p>
                 </div>
               </Link>
@@ -270,7 +346,10 @@ export function Navigation() {
                       <Settings className="h-5 w-5 sm:h-6 sm:w-6" strokeWidth={2.5} />
                     </DropdownMenuTrigger>
                     
-                    <DropdownMenuContent className="w-56 bg-white dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-800 shadow-xl rounded-[14px] p-1.5 z-[100] mt-2 mr-2 transition-colors" align="end" sideOffset={8}>
+                    <DropdownMenuContent className="w-56 bg-white dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-800 shadow-xl rounded-[14px] p-1.5 z-[100] mr-2 transition-colors" align="end" sideOffset={8}>
+                      {/* Caret pointing up */}
+                      <div className="absolute -top-[9px] right-[18px] w-4 h-4 bg-white dark:bg-slate-900 border-t-2 border-l-2 border-slate-200 dark:border-slate-800 rotate-45 -z-10 rounded-tl-[2px] pointer-events-none" />
+                      
                       <div className="px-2 py-1.5 mb-1 border-b border-slate-100 dark:border-slate-800 transition-colors">
                         <p className="text-sm font-semibold text-slate-800 dark:text-white transition-colors">Menu Options</p>
                       </div>
@@ -390,22 +469,21 @@ export function Navigation() {
               </button>
             </div>
           </div>
-        </div>
 
         {/* Mobile Navigation Menu Overlay Card */}
         <div
           id="mobile-nav-menu"
-          className={`lg:hidden absolute top-[calc(100%+8px)] left-4 right-4 bg-[#334155] rounded-[1.25rem] shadow-2xl transition-all duration-300 ease-in-out origin-top-right z-[100] border-2 border-[#1e293b]/50 ${
+          className={`lg:hidden absolute top-[calc(100%+8px)] left-4 right-4 bg-white dark:bg-slate-900 rounded-[1.25rem] shadow-2xl transition-all duration-300 ease-in-out origin-top-right z-[100] border-2 border-slate-200 dark:border-slate-800 ${
             mobileMenuOpen ? "opacity-100 visible scale-100 translate-y-0" : "opacity-0 invisible scale-95 -translate-y-4"
           }`}
         >
           {/* Caret pointing up to the hamburger */}
-          <div className="absolute -top-2.5 right-[18px] w-6 h-6 bg-[#334155] rotate-45 rounded-[3px] z-[-1] border-l-2 border-t-2 border-[#1e293b]/50"></div>
+          <div className="absolute -top-2.5 right-2 w-6 h-6 bg-white dark:bg-slate-900 rotate-45 rounded-[3px] z-[-1] border-l-2 border-t-2 border-slate-200 dark:border-slate-800"></div>
           
-          <div className="max-h-[calc(100vh-120px)] overflow-y-auto py-3 flex flex-col scrollbar-thin scrollbar-thumb-slate-600 scrollbar-track-transparent">
+          <div className="max-h-[calc(100vh-120px)] overflow-y-auto py-3 flex flex-col scrollbar-thin scrollbar-thumb-slate-200 dark:scrollbar-thumb-slate-800 scrollbar-track-transparent">
             <Link
               href="/"
-              className={`flex items-center gap-4 px-6 py-3.5 font-bold text-[0.9375rem] transition-colors ${url === '/' ? 'text-yellow-400 bg-white/5' : 'text-white hover:bg-white/5'}`}
+              className={`flex items-center gap-4 px-6 py-3.5 font-bold text-[0.9375rem] transition-colors ${url === '/' ? 'text-yellow-600 dark:text-yellow-400 bg-slate-100 dark:bg-slate-800' : 'text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/50'}`}
               onClick={() => setMobileMenuOpen(false)}
             >
               <Home className="h-5 w-5 shrink-0" strokeWidth={2.5} />
@@ -415,7 +493,7 @@ export function Navigation() {
 
             <Link
               href="/about"
-              className={`flex items-center gap-4 px-6 py-3.5 font-bold text-[15px] transition-colors ${url === '/about' ? 'text-yellow-400 bg-white/5' : 'text-white hover:bg-white/5'}`}
+              className={`flex items-center gap-4 px-6 py-3.5 font-bold text-[15px] transition-colors ${url === '/about' ? 'text-yellow-600 dark:text-yellow-400 bg-slate-100 dark:bg-slate-800' : 'text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/50'}`}
               onClick={() => setMobileMenuOpen(false)}
             >
               <Info className="h-5 w-5 shrink-0" strokeWidth={2.5} />
@@ -426,7 +504,7 @@ export function Navigation() {
             {isAuthenticated && user?.permissions.accessProfessional && (
               <Link
                 href="/professional"
-                className={`flex items-center gap-4 px-6 py-3.5 font-bold text-[15px] transition-colors ${url.startsWith('/professional') ? 'text-yellow-400 bg-white/5' : 'text-white hover:bg-white/5'}`}
+                className={`flex items-center gap-4 px-6 py-3.5 font-bold text-[15px] transition-colors ${url.startsWith('/professional') ? 'text-yellow-600 dark:text-yellow-400 bg-slate-100 dark:bg-slate-800' : 'text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/50'}`}
                 onClick={() => setMobileMenuOpen(false)}
               >
                 <Briefcase className="h-5 w-5 shrink-0" strokeWidth={2.5} />
@@ -438,7 +516,7 @@ export function Navigation() {
             {isAuthenticated && user?.permissions.accessAdult && (
               <Link
                 href="/adult"
-                className={`flex items-center gap-4 px-6 py-3.5 font-bold text-[15px] transition-colors ${url.startsWith('/adult') ? 'text-yellow-400 bg-white/5' : 'text-white hover:bg-white/5'}`}
+                className={`flex items-center gap-4 px-6 py-3.5 font-bold text-[15px] transition-colors ${url.startsWith('/adult') ? 'text-yellow-600 dark:text-yellow-400 bg-slate-100 dark:bg-slate-800' : 'text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/50'}`}
                 onClick={() => setMobileMenuOpen(false)}
               >
                 <User className="h-5 w-5 shrink-0" strokeWidth={2.5} />
@@ -450,7 +528,7 @@ export function Navigation() {
             {isAuthenticated && user?.permissions.accessKids && (
               <Link
                 href="/kids"
-                className={`flex items-center gap-4 px-6 py-3.5 font-bold text-[15px] transition-colors ${url.startsWith('/kids') ? 'text-yellow-400 bg-white/5' : 'text-white hover:bg-white/5'}`}
+                className={`flex items-center gap-4 px-6 py-3.5 font-bold text-[15px] transition-colors ${url.startsWith('/kids') ? 'text-yellow-600 dark:text-yellow-400 bg-slate-100 dark:bg-slate-800' : 'text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/50'}`}
                 onClick={() => setMobileMenuOpen(false)}
               >
                 <Baby className="h-5 w-5 shrink-0" strokeWidth={2.5} />
@@ -462,7 +540,7 @@ export function Navigation() {
             {isAuthenticated && user?.role === "admin" && (
               <Link
                 href="/admin"
-                className={`flex items-center gap-4 px-6 py-3.5 font-bold text-[0.9375rem] transition-colors ${url.startsWith('/admin') ? 'text-yellow-400 bg-white/5' : 'text-white hover:bg-white/5'}`}
+                className={`flex items-center gap-4 px-6 py-3.5 font-bold text-[0.9375rem] transition-colors ${url.startsWith('/admin') ? 'text-yellow-600 dark:text-yellow-400 bg-slate-100 dark:bg-slate-800' : 'text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/50'}`}
                 onClick={() => setMobileMenuOpen(false)}
               >
                 <Shield className="h-5 w-5 shrink-0" strokeWidth={2.5} />
@@ -472,7 +550,7 @@ export function Navigation() {
             )}
 
             {/* DateTime Divider */}
-            <div className="h-[1px] bg-slate-800/60 w-full my-2"></div>
+            <div className="h-[1px] bg-slate-200 dark:bg-slate-800 w-full my-2"></div>
             
             <div className="px-6 py-2">
               <TimeDisplay mobile />
@@ -484,9 +562,9 @@ export function Navigation() {
                 setMobileMenuOpen(false)
                 setShowAccessibilityModal(true)
               }}
-              className="flex items-center gap-4 px-6 py-3.5 font-bold text-[0.9375rem] text-white hover:bg-white/5 transition-colors w-full text-left outline-none"
+              className="flex items-center gap-4 px-6 py-3.5 font-bold text-[0.9375rem] text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors w-full text-left outline-none"
             >
-              <Sliders className="h-5 w-5 text-emerald-400 shrink-0" strokeWidth={2.5} />
+              <Sliders className="h-5 w-5 text-emerald-600 dark:text-emerald-400 shrink-0" strokeWidth={2.5} />
               <span className="flex-1">Accessibility Settings</span>
               <ArrowRight className="h-4 w-4 text-slate-400 shrink-0" />
             </button>
@@ -494,7 +572,7 @@ export function Navigation() {
             {/* Mobile User Info */}
             {isAuthenticated && (
               <>
-                <div className="h-[1px] bg-slate-800/60 w-full my-2"></div>
+                <div className="h-[1px] bg-slate-200 dark:bg-slate-800 w-full my-2"></div>
                 
                 <div className="flex items-center justify-between px-6 py-3 pb-2">
                   <div className="flex items-center gap-2.5">
@@ -505,9 +583,9 @@ export function Navigation() {
                     </Link>
                     
                     {/* Dark Badge for role */}
-                    <div className="bg-[#1e293b] rounded-lg px-3 py-1.5 flex flex-col justify-center border border-slate-700/50 shadow-inner">
-                      <p className="text-white font-bold text-[0.6875rem] sm:text-xs leading-tight drop-shadow-sm truncate max-w-[80px] sm:max-w-[100px]">{user?.name || "User"}</p>
-                      <p className="text-yellow-400 font-semibold text-[0.625rem] sm:text-xs leading-tight capitalize drop-shadow-sm truncate">{user?.role || "Role"}</p>
+                    <div className="bg-slate-100 dark:bg-slate-800 rounded-lg px-3 py-1.5 flex flex-col justify-center border border-slate-200 dark:border-slate-700 shadow-inner">
+                      <p className="text-slate-800 dark:text-white font-bold text-[0.6875rem] sm:text-xs leading-tight drop-shadow-sm truncate max-w-[80px] sm:max-w-[100px]">{user?.name || "User"}</p>
+                      <p className="text-yellow-600 dark:text-yellow-400 font-semibold text-[0.625rem] sm:text-xs leading-tight capitalize drop-shadow-sm truncate">{user?.role || "Role"}</p>
                     </div>
                   </div>
 
@@ -744,5 +822,6 @@ export function Navigation() {
         </DialogContent>
       </Dialog>
     </nav>
+    </>
   )
 }

@@ -10,7 +10,7 @@ import { usePage } from '@inertiajs/react';
 import { Toaster } from "@/Components/ui/sonner";
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
-  const { url } = usePage();
+  const { url, component } = usePage();
   const isAuthPage = url.startsWith('/login') || url.startsWith('/register');
   
   const isMiniGame = url.startsWith('/kids/quiz') || 
@@ -20,6 +20,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                      url.startsWith('/kids/hazard-blitz') ||
                      url.startsWith('/assessment');
 
+  const isHighOpacityBg = component === 'ProfessionalDashboard' || component === 'AdultDashboard' || component === 'AdultPageClient';
+
   return (
     <AuthProvider>
       <div className="antialiased relative min-h-screen font-sans bg-slate-50 dark:bg-slate-950 transition-colors duration-500">
@@ -27,16 +29,22 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <PageLoader />
         </Suspense>
 
-        {/* Background Image Layer - 20% opacity */}
+        {/* Background Image Layer */}
         <div
-          className="fixed inset-0 opacity-10 sm:opacity-20 bg-cover z-0 pointer-events-none transform-gpu"
-          style={{ 
-            backgroundImage: "url('/web-background-image.jpg')", 
-            backgroundPosition: 'center 80%',
-            backfaceVisibility: 'hidden',
-            WebkitBackfaceVisibility: 'hidden'
-          }}
-        />
+          className={`fixed top-0 left-0 w-full z-0 pointer-events-none transform-gpu ${isHighOpacityBg ? 'opacity-100' : 'opacity-10 sm:opacity-20'}`}
+          style={{ height: '100vh', minHeight: '100lvh' }}
+        >
+          <img 
+            src="/web-background-image.jpg"
+            alt=""
+            className="w-full h-full object-cover"
+            style={{ 
+              objectPosition: 'center 80%',
+              backfaceVisibility: 'hidden',
+              WebkitBackfaceVisibility: 'hidden'
+            }}
+          />
+        </div>
 
         {/* Content Layer - Full opacity */}
         <div className="relative z-10 w-full min-h-screen flex flex-col">

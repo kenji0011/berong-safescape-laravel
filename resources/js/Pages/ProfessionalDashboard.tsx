@@ -259,8 +259,8 @@ const ProfessionalDashboard = ({ initialVideos, watchedVideoIds = [] }: Professi
 
     return (
         <div className="min-h-screen relative transition-colors duration-500">
-            {/* Background Overlay - Dynamic based on theme */}
-            <div className="fixed inset-0 z-0 pointer-events-none bg-slate-50/85 dark:bg-slate-950/90 transition-colors duration-500" />
+            {/* Background Overlay - 70% opacity to let background be 30% visible */}
+            <div className="fixed inset-0 z-0 pointer-events-none bg-slate-50/70 dark:bg-slate-950/70 transition-colors duration-500" />
 
             <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4 sm:pt-6 pb-8 w-full relative z-10">
                 {/* Welcome Banner */}
@@ -451,19 +451,19 @@ const ProfessionalDashboard = ({ initialVideos, watchedVideoIds = [] }: Professi
                     <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-6 mb-10">
                         <h2 className="text-3xl font-black text-slate-800 dark:text-white tracking-tight">Training Videos</h2>
                         
-                        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4 w-full xl:w-auto">
-                            {/* Rank Badge */}
-                            <div className={`flex items-center gap-3 px-5 py-3 rounded-2xl border-2 bg-white dark:bg-slate-800 ${currentRank.border} dark:border-slate-700 shadow-sm animate-in fade-in slide-in-from-right-4 duration-500 flex-1 sm:flex-initial min-w-[200px]`}>
-                                <div className={`p-2 rounded-xl bg-slate-50 dark:bg-slate-900 shadow-inner ${currentRank.color} shrink-0`}>
-                                    <RankIcon className="h-5 w-5" />
+                        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 sm:gap-6 w-full xl:w-auto">
+                            {/* Enhanced Rank Badge */}
+                            <div className={`group relative flex items-center gap-3.5 px-5 py-3 sm:py-3.5 rounded-[1.5rem] border-[3px] border-b-[6px] bg-white dark:bg-slate-800 ${currentRank.border} dark:border-slate-700 shadow-sm hover:translate-y-[-2px] active:translate-y-[2px] transition-all duration-200 animate-in fade-in slide-in-from-right-4 flex-1 sm:flex-initial min-w-[220px] cursor-default`}>
+                                <div className={`h-12 w-12 rounded-[1rem] bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-800 dark:to-slate-900 shadow-inner border-2 ${currentRank.border} flex items-center justify-center ${currentRank.color} shrink-0 group-hover:scale-110 transition-transform duration-300`}>
+                                    <RankIcon className="h-6 w-6 drop-shadow-sm" />
                                 </div>
-                                <div className="flex flex-col">
-                                    <div className="flex items-center gap-1">
-                                        <span className="text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-300">Professional Rank</span>
+                                <div className="flex flex-col z-10">
+                                    <div className="flex items-center gap-1.5">
+                                        <span className="text-[10px] sm:text-[11px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-400">Professional Rank</span>
                                         <Dialog open={showRankGuide} onOpenChange={setShowRankGuide}>
                                             <DialogTrigger asChild>
-                                                <button className="p-0.5 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-full transition-colors group">
-                                                    <CircleHelp className="h-3 w-3 text-slate-400 group-hover:text-red-500" />
+                                                <button className="p-0.5 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-full transition-colors group/btn cursor-pointer">
+                                                    <CircleHelp className="h-3.5 w-3.5 text-slate-400 group-hover/btn:text-red-500" />
                                                 </button>
                                             </DialogTrigger>
                                             <DialogContent className="max-w-md bg-slate-50 dark:bg-slate-950 border-[4px] border-red-500 rounded-[2.5rem] p-0 overflow-hidden">
@@ -521,21 +521,26 @@ const ProfessionalDashboard = ({ initialVideos, watchedVideoIds = [] }: Professi
                                             </DialogContent>
                                         </Dialog>
                                     </div>
-                                    <span className={`text-[15px] font-black ${currentRank.color} dark:text-white whitespace-nowrap`}>{currentRank.name}</span>
+                                    <span className={`text-[15px] sm:text-[17px] font-black ${currentRank.color} drop-shadow-sm whitespace-nowrap`}>{currentRank.name}</span>
                                 </div>
                             </div>
 
-                            {/* Progress Tracker */}
-                            <div className="bg-white dark:bg-slate-800 px-5 py-3 rounded-2xl border-2 border-slate-100 dark:border-slate-700 shadow-sm flex items-center gap-4 flex-1 sm:flex-initial sm:min-w-[300px]">
-                                <div className="h-10 w-10 rounded-full bg-emerald-50 dark:bg-emerald-950/30 flex items-center justify-center shrink-0 shadow-inner">
-                                    <GraduationCap className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
+                            {/* Enhanced Progress Tracker */}
+                            <div className="group flex items-center gap-4 px-5 py-3 sm:py-3.5 rounded-[1.5rem] border-[3px] border-b-[6px] border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 shadow-sm hover:translate-y-[-2px] active:translate-y-[2px] transition-all duration-200 flex-1 sm:flex-initial sm:min-w-[320px] cursor-default">
+                                <div className="h-12 w-12 rounded-[1rem] bg-gradient-to-br from-emerald-50 to-emerald-100 dark:from-emerald-900/40 dark:to-emerald-800/40 border-2 border-emerald-200 dark:border-emerald-700/50 flex items-center justify-center shrink-0 shadow-inner group-hover:scale-110 transition-transform duration-300">
+                                    <GraduationCap className="h-6 w-6 text-emerald-600 dark:text-emerald-400 drop-shadow-sm" />
                                 </div>
-                                <div className="flex-1 space-y-1.5">
-                                    <div className="flex justify-between text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-300">
+                                <div className="flex-1 space-y-2">
+                                    <div className="flex justify-between items-center text-[10px] sm:text-[11px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400">
                                         <span>Training Progress</span>
-                                        <span className="text-emerald-600 dark:text-emerald-400 font-bold">{watchedCount} / {videos.length}</span>
+                                        <span className="text-emerald-600 dark:text-emerald-400 font-black bg-emerald-50 dark:bg-emerald-900/30 px-2 py-0.5 rounded-md">{watchedCount} / {videos.length}</span>
                                     </div>
-                                    <Progress value={progressPercent} className="h-2.5 bg-slate-100 dark:bg-slate-700" />
+                                    <div className="relative h-3 w-full bg-slate-100 dark:bg-slate-700 rounded-full overflow-hidden shadow-inner border border-slate-200 dark:border-slate-600">
+                                        <div 
+                                            className="absolute top-0 left-0 h-full bg-gradient-to-r from-red-500 to-red-400 dark:from-red-600 dark:to-red-500 transition-all duration-1000 ease-out" 
+                                            style={{ width: `${progressPercent}%` }}
+                                        />
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -553,7 +558,7 @@ const ProfessionalDashboard = ({ initialVideos, watchedVideoIds = [] }: Professi
                                 {filteredVideos.map((video) => (
                                     <Card
                                         key={video.id}
-                                        className="flex flex-row sm:flex-col cursor-pointer group bg-transparent sm:bg-white dark:sm:bg-slate-800 rounded-xl sm:rounded-[1.5rem] border-none sm:border-[3px] sm:border-b-[6px] border-slate-200 dark:border-slate-700 shadow-none sm:shadow-sm sm:hover:translate-y-[-4px] sm:active:translate-y-[2px] transition-all duration-200 h-auto items-stretch py-2 sm:p-0 hover:shadow-lg dark:hover:shadow-[0_10px_25px_-5px_rgba(239,68,68,0.15)]"
+                                        className="flex flex-row sm:flex-col cursor-pointer group bg-white/85 dark:bg-slate-800/85 backdrop-blur-md sm:bg-white dark:sm:bg-slate-800 rounded-[1.2rem] sm:rounded-[1.5rem] border border-white/50 dark:border-slate-700/50 sm:border-[3px] sm:border-b-[6px] sm:border-slate-200 dark:sm:border-slate-700 shadow-md sm:shadow-sm sm:hover:translate-y-[-4px] sm:active:translate-y-[2px] transition-all duration-200 h-[110px] xs:h-[120px] sm:h-auto items-stretch p-2 sm:p-0 hover:shadow-lg dark:hover:shadow-[0_10px_25px_-5px_rgba(239,68,68,0.15)] mb-2 sm:mb-0"
                                         onClick={() => handleVideoSelect(video)}
                                     >
                                         <CardHeader className="p-0 w-[160px] xs:w-[180px] sm:w-full shrink-0 flex items-center justify-center relative">
@@ -573,43 +578,36 @@ const ProfessionalDashboard = ({ initialVideos, watchedVideoIds = [] }: Professi
                                                     )}
                                                 </div>
 
-                                                {/* Play Button Overlay */}
-                                                <div className="absolute inset-0 bg-black/10 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                                                    <div className="w-10 h-10 bg-red-600/90 rounded-full flex items-center justify-center shadow-lg">
-                                                        <Play className="h-4 w-4 text-white ml-0.5" fill="currentColor" />
+                                                {/* Premium Play Button Overlay */}
+                                                <div className="absolute inset-0 bg-gradient-to-t from-slate-900/60 via-slate-900/10 to-transparent flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 backdrop-blur-[1.5px] z-10">
+                                                    <div className="w-12 h-12 bg-red-500/90 backdrop-blur-md rounded-full flex items-center justify-center shadow-[0_0_20px_rgba(239,68,68,0.6)] border-2 border-white/30 transform scale-50 opacity-0 group-hover:scale-100 group-hover:opacity-100 transition-all duration-300 ease-out delay-75">
+                                                        <Play className="h-5 w-5 text-white ml-1 drop-shadow-md" fill="currentColor" />
                                                     </div>
                                                 </div>
-                                                {/* Duration Badge - YouTube Style */}
-                                                <div className="absolute bottom-1.5 right-1.5 bg-black/80 text-[10px] font-bold text-white px-1.5 py-0.5 rounded-md backdrop-blur-sm">
-                                                    {video.duration}
-                                                </div>
+                                                
+                                                {/* Persistent Subtle Gradient at bottom of image for depth */}
+                                                <div className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-black/40 to-transparent pointer-events-none opacity-60 sm:opacity-0 sm:group-hover:opacity-40 transition-opacity duration-300" />
                                             </div>
                                         </CardHeader>
-                                        <CardContent className="flex flex-col flex-1 py-1 px-3 sm:px-5 sm:pb-5 sm:pt-0 justify-start">
+                                        <CardContent className="flex flex-col flex-1 py-1 px-3 sm:px-5 sm:pb-5 sm:pt-0 justify-start overflow-hidden">
                                             <div className="flex justify-between items-start mb-1">
-                                                <CardTitle className="text-[15px] sm:text-[17px] font-bold text-slate-900 dark:text-white line-clamp-2 leading-tight group-hover:text-red-600 dark:group-hover:text-red-400 transition-colors pr-4">
+                                                <CardTitle className="text-[14px] sm:text-[17px] font-bold text-slate-900 dark:text-white line-clamp-2 leading-tight group-hover:text-red-600 dark:group-hover:text-red-400 transition-colors pr-2 sm:pr-4">
                                                     {video.title}
                                                 </CardTitle>
-                                                <div className="sm:hidden text-slate-400 dark:text-slate-500 pt-1">
-                                                    <svg viewBox="0 0 24 24" className="w-5 h-5 fill-current"><path d="M12 16.5c.83 0 1.5.67 1.5 1.5s-.67 1.5-1.5 1.5-1.5-.67-1.5-1.5.67-1.5 1.5-1.5zM10.5 12c0 .83.67 1.5 1.5 1.5s1.5-.67 1.5-1.5-.67-1.5-1.5-1.5-1.5.67-1.5 1.5zm0-4.5c0 .83.67 1.5 1.5 1.5s1.5-.67 1.5-1.5-.67-1.5-1.5-1.5-1.5.67-1.5 1.5z"/></svg>
-                                                </div>
                                             </div>
                                             
-                                            <p className="hidden sm:block text-sm text-slate-600 dark:text-slate-400 font-medium line-clamp-2 mb-4 leading-relaxed">{video.description}</p>
+                                            <p className="block text-[11px] sm:text-sm text-slate-500 sm:text-slate-600 dark:text-slate-400 font-medium line-clamp-2 mb-1 sm:mb-4 leading-relaxed mt-1 sm:mt-0">{video.description}</p>
                                             
-                                            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mt-auto gap-1">
-                                                <div className="flex items-center gap-1.5 text-[12px] sm:text-sm text-slate-500 dark:text-slate-400 font-medium">
-                                                    <span className="sm:hidden uppercase font-black text-red-500 text-[10px] tracking-tight mr-1">Professional</span>
-                                                    <span className="hidden sm:inline-flex items-center gap-1">
+                                            <div className="hidden sm:flex flex-row items-center justify-between mt-auto gap-1">
+                                                <div className="flex items-center gap-1.5 text-sm text-slate-500 dark:text-slate-400 font-medium">
+                                                    <span className="inline-flex items-center gap-1">
                                                         <Clock className="h-3.5 w-3.5 text-red-500" />
                                                         {video.duration}
                                                     </span>
-                                                    <span className="sm:hidden opacity-50">•</span>
-                                                    <span className="sm:hidden">Video Training</span>
                                                 </div>
                                                 
                                                 {/* Desktop Professional Badge */}
-                                                <span className="hidden sm:inline-flex items-center rounded-full px-2.5 py-0.5 font-black bg-red-50 dark:bg-red-900/30 text-red-600 dark:text-red-400 text-[10px] tracking-widest uppercase border border-red-200 dark:border-red-800">
+                                                <span className="inline-flex items-center rounded-full px-2.5 py-0.5 font-black bg-red-50 dark:bg-red-900/30 text-red-600 dark:text-red-400 text-[10px] tracking-widest uppercase border border-red-200 dark:border-red-800">
                                                     Professional
                                                 </span>
                                             </div>

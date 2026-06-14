@@ -348,11 +348,11 @@ const SmokeCrawl = () => {
   }
 
   return (
-    <div className="min-h-screen relative bg-blue-50 dark:bg-slate-950 selection:bg-orange-500 selection:text-white pb-8 sm:pb-32 overflow-x-hidden transition-colors duration-500">
+    <div className="-mt-[104px] sm:-mt-[120px] pt-[104px] sm:pt-[120px] min-h-screen relative bg-blue-50 dark:bg-slate-950 selection:bg-orange-500 selection:text-white pb-8 sm:pb-32 overflow-x-hidden transition-colors duration-500">
       <Head title="The Smoke Crawl | SafeScape" />
       
       {/* Background decoration */}
-      <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden">
+      <div className="fixed top-0 left-0 w-full pointer-events-none z-0 overflow-hidden" style={{ height: '100vh', minHeight: '100lvh' }}>
         <img 
           src="/challenges-bg.png" 
           alt="" 
@@ -364,7 +364,7 @@ const SmokeCrawl = () => {
       </div>
 
       {/* Ghost Header - absolute positioned to save vertical space and maintain consistency */}
-      <div className="absolute top-4 left-4 z-20">
+      <div className="absolute top-[112px] sm:top-[128px] left-4 z-[60]">
         <Link 
           href="/kids/challenges" 
           className="inline-flex items-center gap-2 text-slate-500 dark:text-slate-400 font-bold hover:text-orange-600 dark:hover:text-orange-400 transition-all text-sm bg-white dark:bg-slate-800 px-4 py-2 rounded-full border border-white/60 dark:border-slate-700/60 shadow-sm"
@@ -396,7 +396,7 @@ const SmokeCrawl = () => {
                </div>
             </div>
 
-            <div className="relative bg-white dark:bg-slate-900 rounded-2xl sm:rounded-[2rem] p-1.5 sm:p-4 shadow-xl border-2 sm:border-4 border-slate-100 dark:border-slate-800 overflow-hidden aspect-square flex items-center justify-center w-full transition-colors">
+            <div className="relative bg-white dark:bg-slate-900 rounded-2xl sm:rounded-[2rem] p-1.5 sm:p-4 shadow-xl border-2 sm:border-4 border-slate-100 dark:border-slate-800 overflow-hidden aspect-square flex items-center justify-center w-full max-w-[calc(60vh)] sm:max-w-none mx-auto transition-colors">
               <canvas 
                 ref={canvasRef} 
                 width={15 * TILE_SIZE} 

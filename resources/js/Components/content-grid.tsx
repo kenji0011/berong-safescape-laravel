@@ -35,13 +35,49 @@ export function ContentGrid({
   return (
     <div className={cn(
       "relative mb-24 max-w-7xl mx-auto",
-      isMap ? "p-0 md:p-12 md:pb-32 md:rounded-[3.5rem] md:bg-[#fdf8f1] dark:md:bg-slate-900/90 md:border-4 md:border-[#e7d5b8] dark:md:border-slate-800 md:shadow-inner dark:md:shadow-none overflow-visible transition-colors" : "p-0"
+      isMap ? "p-0 md:p-12 md:pb-32 md:rounded-[3.5rem] md:bg-[#8b5a2b] dark:md:bg-[#5c3a1b] md:wood-board md:border-[8px] md:border-[#4a2e15] dark:md:border-[#2a1a0c] md:shadow-[0_15px_0_#4a2e15] dark:md:shadow-[0_15px_0_#2a1a0c] overflow-visible transition-colors mt-8 md:mt-24" : "p-0"
     )}>
-      {/* Adventure Path SVG Background (Desktop Only) */}
+      {/* Adventure Ropes holding the wooden board */}
+      {isMap && (
+        <>
+          <div className="absolute -top-12 md:-top-32 left-[10%] md:left-[15%] w-4 md:w-8 flex flex-col items-center z-[-1] hidden md:flex">
+            <div className="w-3 md:w-6 h-16 md:h-40 bg-[#d2b48c] dark:bg-[#a67c52] rounded-full border-x-2 md:border-x-4 border-[#8b5a2b] dark:border-[#4a2e15] shadow-[0_4px_8px_rgba(0,0,0,0.3)] flex flex-col justify-evenly overflow-hidden relative">
+               {/* Diagonal rope lines */}
+               {[...Array(14)].map((_, i) => (
+                 <div key={`rope-l-${i}`} className="w-[150%] h-1 md:h-1.5 bg-[#8b5a2b]/50 dark:bg-[#4a2e15]/50 -rotate-[25deg] transform -translate-x-1"></div>
+               ))}
+            </div>
+            {/* Nail holding it to the board */}
+            <div className="absolute -bottom-2 md:-bottom-4 w-6 h-6 md:w-10 md:h-10 rounded-full bg-slate-300 dark:bg-slate-400 border-2 md:border-4 border-slate-500 dark:border-slate-600 shadow-[inset_0_-2px_4px_rgba(0,0,0,0.5),0_4px_4px_rgba(0,0,0,0.4)] flex items-center justify-center z-10">
+               <div className="w-2 h-2 md:w-4 md:h-4 rounded-full bg-slate-800/30"></div>
+            </div>
+          </div>
+          <div className="absolute -top-12 md:-top-32 right-[10%] md:right-[15%] w-4 md:w-8 flex flex-col items-center z-[-1] hidden md:flex">
+            <div className="w-3 md:w-6 h-16 md:h-40 bg-[#d2b48c] dark:bg-[#a67c52] rounded-full border-x-2 md:border-x-4 border-[#8b5a2b] dark:border-[#4a2e15] shadow-[0_4px_8px_rgba(0,0,0,0.3)] flex flex-col justify-evenly overflow-hidden relative">
+               {/* Diagonal rope lines */}
+               {[...Array(14)].map((_, i) => (
+                 <div key={`rope-r-${i}`} className="w-[150%] h-1 md:h-1.5 bg-[#8b5a2b]/50 dark:bg-[#4a2e15]/50 -rotate-[25deg] transform -translate-x-1"></div>
+               ))}
+            </div>
+            {/* Nail holding it to the board */}
+            <div className="absolute -bottom-2 md:-bottom-4 w-6 h-6 md:w-10 md:h-10 rounded-full bg-slate-300 dark:bg-slate-400 border-2 md:border-4 border-slate-500 dark:border-slate-600 shadow-[inset_0_-2px_4px_rgba(0,0,0,0.5),0_4px_4px_rgba(0,0,0,0.4)] flex items-center justify-center z-10">
+               <div className="w-2 h-2 md:w-4 md:h-4 rounded-full bg-slate-800/30"></div>
+            </div>
+          </div>
+        </>
+      )}
+
+      {/* Adventure Path SVG Background & Wood Texture (Desktop Only) */}
       {isMap && (
         <div className="absolute inset-0 z-0 pointer-events-none hidden md:block">
-          {/* Parchment Texture Overlay */}
-          <div className="absolute inset-0 opacity-[0.03] bg-[url('https://www.transparenttextures.com/patterns/p6.png')]"></div>
+          {/* Wood Texture Overlay */}
+          <div 
+            className="absolute inset-0 rounded-[3.5rem] pointer-events-none"
+            style={{
+              backgroundImage: `url("data:image/svg+xml,%3Csvg width='100' height='20' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 10 Q 25 5, 50 10 T 100 10' stroke='rgba(74, 46, 21, 0.4)' fill='none' stroke-width='2'/%3E%3Cpath d='M0 20 Q 25 15, 50 20 T 100 20' stroke='rgba(74, 46, 21, 0.3)' fill='none' stroke-width='1'/%3E%3C/svg%3E")`,
+              backgroundSize: '100px 20px'
+            }}
+          ></div>
           
           <svg width="100%" height="100%" viewBox="0 0 1000 1000" preserveAspectRatio="none" className="overflow-visible">
              <defs>

@@ -66,7 +66,7 @@ const CertificatePage = () => {
   }
 
   return (
-    <div className="min-h-screen relative flex flex-col font-sans bg-background selection:bg-amber-300 selection:text-amber-900 transition-colors duration-500">
+    <div className="-mt-[104px] sm:-mt-[120px] pt-[104px] sm:pt-[120px] min-h-[calc(100vh+104px)] sm:min-h-[calc(100vh+120px)] relative flex flex-col font-sans bg-background selection:bg-amber-300 selection:text-amber-900 transition-colors duration-500">
       <Head title="Your Certificate | SafeScape" />
       
       {/* Decorative Background - Premium Ambient Glows */}

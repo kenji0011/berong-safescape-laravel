@@ -270,7 +270,7 @@ const HazardBlitz = () => {
   return (
     <div className="relative w-full flex-1 flex flex-col py-4 pb-28 sm:pb-4">
       {/* Standardized Back Button - Upper Left */}
-      <div className="absolute top-2 left-4 z-[60] flex gap-2">
+      <div className="absolute top-[112px] sm:top-[128px] left-4 z-[60] flex gap-2">
         <Link 
           href="/kids/challenges" 
           className="inline-flex items-center gap-2 text-slate-500 dark:text-slate-400 font-bold hover:text-orange-600 dark:hover:text-orange-400 transition-all text-sm bg-white dark:bg-slate-800 px-4 py-2 rounded-full border border-white/60 dark:border-slate-700/60 shadow-sm"
@@ -281,7 +281,7 @@ const HazardBlitz = () => {
       </div>
 
       <div className="max-w-7xl mx-auto w-full px-4 pt-12 sm:pt-4 flex-1 flex flex-col">
-        <div className="w-full bg-slate-900 rounded-[2.5rem] border-4 border-slate-800 overflow-hidden shadow-2xl relative select-none">
+        <div className="w-full flex-1 flex flex-col bg-slate-900 rounded-[2.5rem] border-4 border-slate-800 overflow-hidden shadow-2xl relative select-none">
         <Head title="Hazard Blitz - Fire Safety Game" />
         
         {/* ── Game UI Header ── */}
@@ -324,7 +324,7 @@ const HazardBlitz = () => {
         {/* ── Game Area ── */}
         <div 
           ref={containerRef}
-          className="relative w-full h-[550px] sm:h-[700px] cursor-crosshair overflow-hidden touch-none"
+          className="relative w-full flex-1 min-h-[400px] sm:min-h-[700px] cursor-crosshair overflow-hidden touch-none"
         >
           {/* Smoke Overlay */}
           <motion.div 

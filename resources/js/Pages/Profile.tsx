@@ -351,7 +351,7 @@ export default function ProfilePage() {
     <div className="min-h-screen relative">
       <Navigation />
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-[80px] sm:pt-[96px] pb-8 relative z-10">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-[104px] sm:pt-[120px] pb-8 relative z-10">
         {/* Background Layer with Dotted Pattern */}
         <div className="fixed inset-0 pointer-events-none transition-colors duration-500 bg-white dark:bg-slate-950 bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] dark:bg-[radial-gradient(#1e293b_1px,transparent_1px)] [background-size:16px_16px]" />
 

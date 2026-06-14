@@ -142,28 +142,33 @@ const CourseHubPage = ({ initialModules }: CourseHubProps) => {
     if (saved !== null) {
       const savedCount = parseInt(saved, 10)
       if (currentCompleted > savedCount) {
-        // Play synthesized happy chime
-        try {
-          const AudioContextClass = window.AudioContext || (window as any).webkitAudioContext
-          if (AudioContextClass) {
-            const ctx = new AudioContextClass()
-            const now = ctx.currentTime
-            const notes = [261.63, 329.63, 392.00, 523.25] // C4, E4, G4, C5 arpeggio
-            notes.forEach((freq, idx) => {
-              const osc = ctx.createOscillator()
-              const gain = ctx.createGain()
-              osc.type = "sine"
-              osc.frequency.setValueAtTime(freq, now + idx * 0.1)
-              gain.gain.setValueAtTime(0.15, now + idx * 0.1)
-              gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.1 + 0.4)
-              osc.connect(gain)
-              gain.connect(ctx.destination)
-              osc.start(now + idx * 0.1)
-              osc.stop(now + idx * 0.1 + 0.4)
-            })
+        // Prevent AudioContext warning if user hasn't interacted yet (like on a hard refresh)
+        if (typeof navigator !== 'undefined' && 'userActivation' in navigator && !navigator.userActivation.hasBeenActive) {
+          console.log("Skipping completion chime (no user interaction yet).");
+        } else {
+          // Play synthesized happy chime
+          try {
+            const AudioContextClass = window.AudioContext || (window as any).webkitAudioContext
+            if (AudioContextClass) {
+              const ctx = new AudioContextClass()
+              const now = ctx.currentTime
+              const notes = [261.63, 329.63, 392.00, 523.25] // C4, E4, G4, C5 arpeggio
+              notes.forEach((freq, idx) => {
+                const osc = ctx.createOscillator()
+                const gain = ctx.createGain()
+                osc.type = "sine"
+                osc.frequency.setValueAtTime(freq, now + idx * 0.1)
+                gain.gain.setValueAtTime(0.15, now + idx * 0.1)
+                gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.1 + 0.4)
+                osc.connect(gain)
+                gain.connect(ctx.destination)
+                osc.start(now + idx * 0.1)
+                osc.stop(now + idx * 0.1 + 0.4)
+              })
+            }
+          } catch (e) {
+            console.warn("Chime failed to synthesize:", e)
           }
-        } catch (e) {
-          console.warn("Chime failed to synthesize:", e)
         }
       }
     }
@@ -178,59 +183,123 @@ const CourseHubPage = ({ initialModules }: CourseHubProps) => {
 
   // ─────────────────────────────────────────────
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 font-sans flex flex-col">
-      {/* ── Post-Test Available Banner ── */}
+    <div className="-mt-[104px] sm:-mt-[120px] pt-[104px] sm:pt-[120px] min-h-[calc(100vh+104px)] sm:min-h-[calc(100vh+120px)] bg-slate-50 dark:bg-slate-950 bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] dark:bg-[radial-gradient(#1e293b_1px,transparent_1px)] [background-size:16px_16px] font-sans flex flex-col">
+      {/* ── Post-Test Available Banner (Hanging Wooden Sign) ── */}
       {completedCount === 5 && (user?.postTestScore === null || user?.postTestScore === undefined) && (
-        <div className="bg-emerald-600 px-4 sm:px-6 py-6 sm:py-8 relative overflow-hidden animate-in slide-in-from-top fade-in duration-500">
-          <div className="max-w-6xl mx-auto relative z-10 flex flex-col sm:flex-row items-center gap-4 sm:gap-8">
-            <div className="flex items-center gap-4 flex-1">
-              <div className="h-14 w-14 sm:h-16 sm:w-16 bg-white/20 rounded-2xl flex items-center justify-center shrink-0 border-2 border-white/30">
-                <Trophy className="h-7 w-7 sm:h-8 sm:w-8 text-yellow-200" />
-              </div>
-              <div>
-                <h3 className="text-lg sm:text-xl font-black text-white tracking-tight">All Modules Complete!</h3>
-                <p className="text-white/80 text-xs sm:text-sm font-bold mt-0.5">You've finished all 5 fire safety modules. Take the final Post-Test to earn your certificate!</p>
-              </div>
+        <div className="relative z-10 max-w-[95vw] lg:max-w-6xl mx-auto mt-6 sm:mt-14 mb-8 sm:mb-12 animate-swing-drop">
+          
+          {/* Ropes */}
+          <div className="absolute -top-16 sm:-top-28 left-8 sm:left-16 w-4 sm:w-8 flex flex-col items-center z-[-1]">
+            <div className="w-3 sm:w-5 h-20 sm:h-32 bg-[#d2b48c] dark:bg-[#a67c52] rounded-full border-x-2 sm:border-x-[3px] border-[#8b5a2b] dark:border-[#4a2e15] shadow-[0_4px_8px_rgba(0,0,0,0.3)] flex flex-col justify-evenly overflow-hidden relative">
+               {[...Array(12)].map((_, i) => (
+                 <div key={`rope-l-av-${i}`} className="w-[150%] h-1 sm:h-1.5 bg-[#8b5a2b]/50 dark:bg-[#4a2e15]/50 -rotate-[25deg] transform -translate-x-1"></div>
+               ))}
             </div>
-            <Link
-              href="/assessment/post-test"
-              className="w-full sm:w-auto bg-white hover:bg-yellow-50 text-green-700 font-black px-6 py-3.5 rounded-full border-2 border-white border-b-[4px] border-b-green-200 active:border-b-2 active:translate-y-[2px] shadow-lg transition-all flex items-center justify-center gap-2 text-sm sm:text-base shrink-0 uppercase tracking-wider"
-            >
-              <ClipboardCheck className="h-5 w-5" />
-              Take Post-Test
-              <ChevronRight className="h-4 w-4" />
-            </Link>
+          </div>
+          
+          <div className="absolute -top-16 sm:-top-28 right-8 sm:right-16 w-4 sm:w-8 flex flex-col items-center z-[-1]">
+            <div className="w-3 sm:w-5 h-20 sm:h-32 bg-[#d2b48c] dark:bg-[#a67c52] rounded-full border-x-2 sm:border-x-[3px] border-[#8b5a2b] dark:border-[#4a2e15] shadow-[0_4px_8px_rgba(0,0,0,0.3)] flex flex-col justify-evenly overflow-hidden relative">
+               {[...Array(12)].map((_, i) => (
+                 <div key={`rope-r-av-${i}`} className="w-[150%] h-1 sm:h-1.5 bg-[#8b5a2b]/50 dark:bg-[#4a2e15]/50 -rotate-[25deg] transform -translate-x-1"></div>
+               ))}
+            </div>
+          </div>
+
+          {/* Wooden Sign Body */}
+          <div className="bg-[#8b5a2b] px-5 sm:px-8 py-5 sm:py-7 relative overflow-hidden rounded-xl sm:rounded-2xl border-[3px] sm:border-[4px] border-[#4a2e15] shadow-[0_8px_0_#4a2e15] w-full z-10 transform origin-top hover:rotate-1 transition-transform duration-300"
+            style={{ 
+              backgroundImage: `url("data:image/svg+xml,%3Csvg width='100' height='20' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 10 Q 25 5, 50 10 T 100 10' stroke='rgba(74, 46, 21, 0.4)' fill='none' stroke-width='2'/%3E%3Cpath d='M0 20 Q 25 15, 50 20 T 100 20' stroke='rgba(74, 46, 21, 0.3)' fill='none' stroke-width='1'/%3E%3C/svg%3E")`,
+              backgroundSize: '100px 20px'
+            }}
+          >
+            {/* Nails */}
+            <div className="absolute top-2 left-2 sm:top-3 sm:left-3 w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-slate-300 border border-slate-500 shadow-[inset_0_-1px_2px_rgba(0,0,0,0.5)]"></div>
+            <div className="absolute top-2 right-2 sm:top-3 sm:right-3 w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-slate-300 border border-slate-500 shadow-[inset_0_-1px_2px_rgba(0,0,0,0.5)]"></div>
+            <div className="absolute bottom-2 left-2 sm:bottom-3 sm:left-3 w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-slate-300 border border-slate-500 shadow-[inset_0_-1px_2px_rgba(0,0,0,0.5)]"></div>
+            <div className="absolute bottom-2 right-2 sm:bottom-3 sm:right-3 w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-slate-300 border border-slate-500 shadow-[inset_0_-1px_2px_rgba(0,0,0,0.5)]"></div>
+
+            <div className="w-full relative z-10 flex flex-col sm:flex-row items-center sm:items-center gap-4 sm:gap-8">
+              <div className="flex items-center gap-3 sm:gap-4 flex-1 w-full justify-center sm:justify-start">
+                <div className="h-10 w-10 sm:h-16 sm:w-16 bg-[#4a2e15]/40 rounded-xl sm:rounded-2xl flex items-center justify-center shrink-0 border-2 border-[#4a2e15]/50 shadow-inner">
+                  <Trophy className="h-5 w-5 sm:h-8 sm:w-8 text-amber-300" />
+                </div>
+                <div className="flex-1 text-center sm:text-left">
+                  <h3 className="text-lg sm:text-2xl font-black text-amber-50 tracking-tight uppercase leading-tight drop-shadow-md">All Modules Complete!</h3>
+                  <p className="text-amber-100 text-[10px] sm:text-sm font-bold mt-0.5 line-clamp-2 sm:line-clamp-none drop-shadow-sm">You've finished all 5 fire safety modules. Take the final Post-Test to earn your certificate!</p>
+                </div>
+              </div>
+              <Link
+                href="/assessment/post-test"
+                className="w-full sm:w-auto bg-amber-100 hover:bg-white text-[#4a2e15] font-black px-6 sm:px-8 py-3 sm:py-4 rounded-xl border-2 border-[#4a2e15] border-b-[4px] active:border-b-2 active:translate-y-[2px] shadow-lg transition-all flex items-center justify-center gap-2 text-xs sm:text-base shrink-0 uppercase tracking-widest"
+              >
+                <ClipboardCheck className="h-4 w-4 sm:h-5 sm:w-5 text-amber-600" />
+                Take Post-Test
+                <ChevronRight className="h-4 w-4" />
+              </Link>
+            </div>
           </div>
         </div>
       )}
 
-      {/* ── Post-Test Completed Banner ── */}
+      {/* ── Post-Test Completed Banner (Hanging Wooden Sign) ── */}
       {completedCount === 5 && user?.postTestScore !== null && user?.postTestScore !== undefined && (
-        <div className="bg-orange-600 px-4 sm:px-6 py-3 sm:py-6 relative overflow-hidden animate-in slide-in-from-top fade-in duration-500">
-          <div className="max-w-6xl mx-auto relative z-10 flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-8">
-            <div className="flex items-center gap-3 sm:gap-4 flex-1 w-full">
-              <div className="h-10 w-10 sm:h-16 sm:w-16 bg-white/20 rounded-xl sm:rounded-2xl flex items-center justify-center shrink-0 border-2 border-white/30">
-                <CheckCircle className="h-5 w-5 sm:h-10 sm:w-10 text-white" />
-              </div>
-              <div className="flex-1">
-                <h3 className="text-base sm:text-xl font-black text-white tracking-tight uppercase leading-tight">Course Completed!</h3>
-                <p className="text-white/90 text-[10px] sm:text-sm font-bold mt-0.5 line-clamp-1 sm:line-clamp-none">You've successfully finished your fire safety training!</p>
-              </div>
+        <div className="relative z-10 max-w-[95vw] lg:max-w-6xl mx-auto mt-6 sm:mt-14 mb-8 sm:mb-12 animate-swing-drop">
+          
+          {/* Ropes */}
+          <div className="absolute -top-16 sm:-top-28 left-8 sm:left-16 w-4 sm:w-8 flex flex-col items-center z-[-1]">
+            <div className="w-3 sm:w-5 h-20 sm:h-32 bg-[#d2b48c] dark:bg-[#a67c52] rounded-full border-x-2 sm:border-x-[3px] border-[#8b5a2b] dark:border-[#4a2e15] shadow-[0_4px_8px_rgba(0,0,0,0.3)] flex flex-col justify-evenly overflow-hidden relative">
+               {[...Array(12)].map((_, i) => (
+                 <div key={`rope-l-co-${i}`} className="w-[150%] h-1 sm:h-1.5 bg-[#8b5a2b]/50 dark:bg-[#4a2e15]/50 -rotate-[25deg] transform -translate-x-1"></div>
+               ))}
             </div>
-            <Link
-              href="/kids/certificate"
-              className="w-auto sm:w-auto bg-white hover:bg-orange-50 text-orange-700 font-black px-5 sm:px-6 py-2 sm:py-3.5 rounded-full border-2 border-white border-b-[4px] border-b-orange-200 active:border-b-2 active:translate-y-[2px] shadow-lg transition-all flex items-center justify-center gap-2 text-[10px] sm:text-base shrink-0 uppercase tracking-wider"
-            >
-              <Trophy className="h-4 w-4 sm:h-5 sm:w-5 text-yellow-500" />
-              View Certificate
-              <ChevronRight className="h-3 w-3 sm:h-4 sm:w-4" />
-            </Link>
+          </div>
+          
+          <div className="absolute -top-16 sm:-top-28 right-8 sm:right-16 w-4 sm:w-8 flex flex-col items-center z-[-1]">
+            <div className="w-3 sm:w-5 h-20 sm:h-32 bg-[#d2b48c] dark:bg-[#a67c52] rounded-full border-x-2 sm:border-x-[3px] border-[#8b5a2b] dark:border-[#4a2e15] shadow-[0_4px_8px_rgba(0,0,0,0.3)] flex flex-col justify-evenly overflow-hidden relative">
+               {[...Array(12)].map((_, i) => (
+                 <div key={`rope-r-co-${i}`} className="w-[150%] h-1 sm:h-1.5 bg-[#8b5a2b]/50 dark:bg-[#4a2e15]/50 -rotate-[25deg] transform -translate-x-1"></div>
+               ))}
+            </div>
+          </div>
+
+          {/* Wooden Sign Body */}
+          <div className="bg-[#8b5a2b] px-5 sm:px-8 py-5 sm:py-7 relative overflow-hidden rounded-xl sm:rounded-2xl border-[3px] sm:border-[4px] border-[#4a2e15] shadow-[0_8px_0_#4a2e15] w-full z-10 transform origin-top hover:rotate-1 transition-transform duration-300"
+            style={{ 
+              backgroundImage: `url("data:image/svg+xml,%3Csvg width='100' height='20' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 10 Q 25 5, 50 10 T 100 10' stroke='rgba(74, 46, 21, 0.4)' fill='none' stroke-width='2'/%3E%3Cpath d='M0 20 Q 25 15, 50 20 T 100 20' stroke='rgba(74, 46, 21, 0.3)' fill='none' stroke-width='1'/%3E%3C/svg%3E")`,
+              backgroundSize: '100px 20px'
+            }}
+          >
+            {/* Nails */}
+            <div className="absolute top-2 left-2 sm:top-3 sm:left-3 w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-slate-300 border border-slate-500 shadow-[inset_0_-1px_2px_rgba(0,0,0,0.5)]"></div>
+            <div className="absolute top-2 right-2 sm:top-3 sm:right-3 w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-slate-300 border border-slate-500 shadow-[inset_0_-1px_2px_rgba(0,0,0,0.5)]"></div>
+            <div className="absolute bottom-2 left-2 sm:bottom-3 sm:left-3 w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-slate-300 border border-slate-500 shadow-[inset_0_-1px_2px_rgba(0,0,0,0.5)]"></div>
+            <div className="absolute bottom-2 right-2 sm:bottom-3 sm:right-3 w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-slate-300 border border-slate-500 shadow-[inset_0_-1px_2px_rgba(0,0,0,0.5)]"></div>
+
+            <div className="w-full relative z-10 flex flex-col sm:flex-row items-center sm:items-center gap-4 sm:gap-8">
+              <div className="flex items-center gap-3 sm:gap-4 flex-1 w-full justify-center sm:justify-start">
+                <div className="h-10 w-10 sm:h-16 sm:w-16 bg-[#4a2e15]/40 rounded-xl sm:rounded-2xl flex items-center justify-center shrink-0 border-2 border-[#4a2e15]/50 shadow-inner">
+                  <CheckCircle className="h-5 w-5 sm:h-10 sm:w-10 text-amber-300" />
+                </div>
+                <div className="flex-1 text-center sm:text-left">
+                  <h3 className="text-lg sm:text-2xl font-black text-amber-50 tracking-tight uppercase leading-tight drop-shadow-md">Course Completed!</h3>
+                  <p className="text-amber-100 text-[10px] sm:text-sm font-bold mt-0.5 line-clamp-2 sm:line-clamp-none drop-shadow-sm">You've successfully finished your fire safety training!</p>
+                </div>
+              </div>
+              <Link
+                href="/kids/certificate"
+                className="w-full sm:w-auto bg-amber-100 hover:bg-white text-[#4a2e15] font-black px-6 sm:px-8 py-3 sm:py-4 rounded-xl border-2 border-[#4a2e15] border-b-[4px] active:border-b-2 active:translate-y-[2px] shadow-lg transition-all flex items-center justify-center gap-2 text-xs sm:text-base shrink-0 uppercase tracking-widest"
+              >
+                <Trophy className="h-4 w-4 sm:h-5 sm:w-5 text-amber-600" />
+                View Certificate
+                <ChevronRight className="h-4 w-4" />
+              </Link>
+            </div>
           </div>
         </div>
       )}
 
       {/* ── Bright Module Content Area ── */}
-      <div className="relative flex-1 bg-white dark:bg-slate-950 bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] dark:bg-[radial-gradient(#1e293b_1px,transparent_1px)] [background-size:16px_16px] py-8 sm:py-12 px-4 sm:px-6 lg:px-8 border-t border-border overflow-hidden">
+      <div className="relative flex-1 bg-transparent pt-2 sm:pt-4 pb-8 sm:pb-12 px-4 sm:px-6 lg:px-8 overflow-hidden">
         
         {/* Floating Themed Elements for Empty Space */}
         <style dangerouslySetInnerHTML={{__html: `
@@ -240,6 +309,18 @@ const CourseHubPage = ({ initialModules }: CourseHubProps) => {
             100% { transform: translateY(0px) rotate(0deg); }
           }
           .floating-icon { animation: float 8s ease-in-out infinite; }
+          
+          @keyframes swing-drop {
+            0% { transform: translateY(-60px) rotate(-8deg); opacity: 0; }
+            40% { transform: translateY(0px) rotate(5deg); opacity: 1; }
+            60% { transform: translateY(0px) rotate(-3deg); }
+            80% { transform: translateY(0px) rotate(1.5deg); }
+            100% { transform: translateY(0px) rotate(0deg); opacity: 1; }
+          }
+          .animate-swing-drop {
+            transform-origin: 50% -80px;
+            animation: swing-drop 1.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+          }
         `}} />
         <div className="absolute inset-0 overflow-hidden pointer-events-none opacity-20 dark:opacity-10 z-0">
           <div className="absolute top-[5%] left-[5%] text-6xl floating-icon" style={{ animationDelay: '0s' }}>🚒</div>
@@ -276,7 +357,7 @@ const CourseHubPage = ({ initialModules }: CourseHubProps) => {
 
           {/* ── Hero Section ── */}
           {completedCount === 5 ? (
-            <div className="flex flex-col items-center text-center mb-6 sm:mb-8 space-y-2 relative">
+            <div className="flex flex-col items-center text-center mb-10 sm:mb-12 space-y-3 sm:space-y-4 relative">
               <div className="absolute top-0 right-0 lg:-right-12 text-3xl sm:text-5xl opacity-10 transform rotate-12 pointer-events-none">✨</div>
               <div className="absolute bottom-4 left-0 lg:-left-12 text-3xl sm:text-5xl opacity-10 transform -rotate-12 pointer-events-none">🔥</div>
               
@@ -286,9 +367,12 @@ const CourseHubPage = ({ initialModules }: CourseHubProps) => {
               <h1 className="text-3xl sm:text-5xl font-black text-primary leading-tight drop-shadow-sm px-2">
                 You are a Fire Safety Hero!
               </h1>
+              <p className="text-sm sm:text-base font-bold text-slate-500 dark:text-slate-400 max-w-xl leading-relaxed px-4">
+                You did it! You are now an official Fire Safety Hero. You know exactly how to outsmart fire and keep your family safe!
+              </p>
             </div>
           ) : (
-            <div className="flex flex-col items-center text-center mb-6 sm:mb-8 space-y-3 sm:space-y-4 relative">
+            <div className="flex flex-col items-center text-center mb-10 sm:mb-12 space-y-3 sm:space-y-4 relative">
               <div className="absolute top-0 right-0 lg:-right-12 text-4xl sm:text-6xl opacity-20 transform rotate-12 pointer-events-none">✨</div>
               <div className="absolute bottom-10 left-0 lg:-left-12 text-4xl sm:text-6xl opacity-20 transform -rotate-12 pointer-events-none">🔥</div>
               
@@ -299,18 +383,13 @@ const CourseHubPage = ({ initialModules }: CourseHubProps) => {
                 Become a Fire Safety Hero!
               </h1>
               <p className="text-sm sm:text-base font-bold text-slate-500 dark:text-slate-400 max-w-xl leading-relaxed px-4">
-                Complete 5 modules to learn fire safety and protect your home.
+                Are you ready for an adventure? Complete all 5 fun training missions to learn how to outsmart fire and protect your home!
               </p>
-
-              <div className="flex items-center gap-2 bg-yellow-400/10 dark:bg-yellow-400/5 px-4 py-1.5 rounded-full border border-yellow-400/30 text-yellow-700 dark:text-yellow-400 font-extrabold text-xs sm:text-sm shadow-sm mt-1">
-                <span>👨‍🚒</span>
-                <span>{user?.name || "Fire Safety Hero"}</span>
-              </div>
             </div>
           )}
 
-          {/* ── Modules Grid ── */}
-          <div className="mb-10 text-center">
+          {/* ── Modules Grid Header ── */}
+          <div className="mb-6 sm:mb-8 text-center">
             <h2 className="text-2xl sm:text-3xl font-black text-slate-800 dark:text-white flex items-center justify-center gap-3">
               <BookOpen className="h-6 w-6 text-blue-500" /> Your Training Modules
             </h2>
@@ -492,7 +571,6 @@ const CourseHubPage = ({ initialModules }: CourseHubProps) => {
                                 )}
                               >
                                 {module.progress > 0 ? "Continue Mission" : "Start Learning"}
-                                <ArrowRight className="h-5 w-5" />
                               </Link>
                             )}
                           </div>
@@ -586,7 +664,6 @@ const CourseHubPage = ({ initialModules }: CourseHubProps) => {
                 className="w-full bg-yellow-500 hover:bg-yellow-400 text-yellow-950 font-black px-6 py-4 rounded-[1.25rem] border-b-[5px] border-yellow-700 active:border-b-[1px] active:mt-[4px] transition-all uppercase tracking-widest text-sm flex justify-center items-center gap-2"
               >
                 View Certificate
-                <ArrowRight className="h-5 w-5" />
               </Link>
               <button 
                 onClick={() => setShowCertModal(false)}

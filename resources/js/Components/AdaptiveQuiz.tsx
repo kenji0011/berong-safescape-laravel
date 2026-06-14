@@ -15,6 +15,7 @@ export interface AdaptiveQuizProps {
   onComplete?: (score: number) => void
   nextModuleUrl?: string
   nextModuleText?: string
+  isStandalone?: boolean
 }
 
 export function AdaptiveQuiz({
@@ -27,7 +28,8 @@ export function AdaptiveQuiz({
   lockMessage = "Complete the lesson above first",
   onComplete,
   nextModuleUrl,
-  nextModuleText = "Go to Next Module"
+  nextModuleText = "Go to Next Module",
+  isStandalone = false
 }: AdaptiveQuizProps) {
   const reviewQuestionsRef = useRef<HTMLDivElement>(null)
   const resultCardRef = useRef<HTMLDivElement>(null)
@@ -42,7 +44,7 @@ export function AdaptiveQuiz({
   )
   const [quizSubmitted, setQuizSubmitted] = useState(initialQuizPassed)
   const [quizPassed, setQuizPassed] = useState(initialQuizPassed)
-  const [quizStarted, setQuizStarted] = useState(initialQuizPassed)
+  const [quizStarted, setQuizStarted] = useState(initialQuizPassed || isStandalone)
   const [reviewMode, setReviewMode] = useState(false)
   const [loadedScore, setLoadedScore] = useState<number | null>(
     initialQuizScore !== undefined ? Number(initialQuizScore) : null
@@ -323,7 +325,9 @@ export function AdaptiveQuiz({
             {!quizStarted ? (
               <div className="text-center p-8 sm:p-12 bg-white dark:bg-slate-900 rounded-3xl border-[3px] border-yellow-300 shadow-sm transition-colors animate-fade-in">
                 <h3 className="text-2xl sm:text-3xl font-black mb-4 text-slate-800 dark:text-white">Ready to test your knowledge?</h3>
-                <p className="mb-2 text-slate-600 dark:text-slate-400 font-bold text-sm sm:text-base">Review the module content above and start when you're ready!</p>
+                <p className="mb-2 text-slate-600 dark:text-slate-400 font-bold text-sm sm:text-base">
+                  {isStandalone ? "Start the quiz when you're ready!" : "Review the module content above and start when you're ready!"}
+                </p>
                 {predictedDifficulty && (
                   <p className="mb-8 text-indigo-500 dark:text-indigo-400 font-black text-sm">
                     ✨ AI Personalized Quiz Ready! ✨
