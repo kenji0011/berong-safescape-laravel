@@ -747,7 +747,7 @@ export function LandingAboutSection({ carouselNode }: { carouselNode?: React.Rea
                             transition={{ duration: 0.7 }}
                         >
                             <h2 className="text-3xl sm:text-6xl font-black text-white mb-4 sm:mb-6 drop-shadow-lg uppercase tracking-tight italic">
-                                What is <span className="text-yellow-400 drop-shadow-[0_4px_0_#b45309]">SafeScape</span>?
+                                What is <span className="text-yellow-400 drop-shadow-[0_4px_0_#b45309]">SafeScape 2.0</span>?
                             </h2>
                             <p className="text-white font-bold max-w-2xl mx-auto text-sm sm:text-2xl px-4 leading-relaxed opacity-95">
                                 A comprehensive fire safety education platform designed to empower communities with knowledge and skills.
@@ -916,7 +916,7 @@ export function LandingAboutSection({ carouselNode }: { carouselNode?: React.Rea
                                     <BinaryScrambleText text="Meet the Developers" />
                                 </h2>
                                 <p className="text-slate-600 dark:text-slate-400 font-medium max-w-2xl mx-auto text-lg transition-colors">
-                                    Computer Science researchers majoring in Intelligent Systems who designed and developed SafeScape.
+                                    Computer Science researchers majoring in Intelligent Systems who designed and developed SafeScape and SafeScape 2.0.
                                 </p>
                             </motion.div>
 
@@ -963,7 +963,7 @@ export function LandingAboutSection({ carouselNode }: { carouselNode?: React.Rea
                                 <BinaryScrambleText text="Meet the Developers" />
                             </h2>
                             <p className="text-slate-600 dark:text-slate-400 font-medium max-w-2xl mx-auto text-lg transition-colors">
-                                Computer Science researchers majoring in Intelligent Systems who designed and developed SafeScape.
+                                Computer Science researchers majoring in Intelligent Systems who designed and developed SafeScape and SafeScape 2.0.
                             </p>
                         </motion.div>
 

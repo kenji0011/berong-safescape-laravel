@@ -109,6 +109,18 @@ const KidsChallengesPage = ({ progress }: ChallengesProps) => {
               badgeImageUrl: "/hazard_hall.png",
               badgeName: "Hazard Hero",
               badgeHint: "Neutralize hazards and reach 500 points in Hazard Blitz."
+            },
+            {
+              id: "activity-9",
+              title: "3D Hazard Hunt",
+              description: "Explore a 3D room, identify dangerous fire hazards, and clear the area before time runs out!",
+              type: "activity",
+              imageUrl: "/hazard_hunt_pr.jpg",
+              href: "/game",
+              difficulty: "medium",
+              category: "activities",
+              isCompleted: false,
+              badgeLabel: "Early Access"
             }
           ]
 
@@ -202,7 +214,7 @@ const KidsChallengesPage = ({ progress }: ChallengesProps) => {
               contents={challenges}
               variant="grid"
               isLoading={isLoadingContent}
-              skeletonCount={5}
+              skeletonCount={6}
               emptyMessage="More challenges coming soon! 🎉"
             />
           </div>

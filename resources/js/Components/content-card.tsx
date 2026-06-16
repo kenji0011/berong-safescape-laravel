@@ -30,6 +30,7 @@ export interface ContentCardData {
   badgeImageUrl?: string
   badgeName?: string
   badgeHint?: string
+  badgeLabel?: string
 }
 
 interface ContentCardProps {
@@ -231,7 +232,7 @@ export const ContentCard = React.memo(({ content, onClick }: ContentCardProps) =
                    "text-[8px] sm:text-[10px] font-black uppercase tracking-wider",
                    content.isCompleted ? "text-white" : "text-slate-500 dark:text-slate-400"
                  )}>
-                    {content.isCompleted ? "Earned" : "Badge"}
+                    {content.badgeLabel || (content.isCompleted ? "Earned" : "Badge")}
                  </span>
                  
                  {/* Tooltip Content */}

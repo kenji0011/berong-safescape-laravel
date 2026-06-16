@@ -102,7 +102,7 @@ export function HeroSection() {
                     <span className="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-red-500/10 border border-red-500/20 text-red-400 font-black text-[10px] sm:text-xs uppercase tracking-[0.2em] shadow-sm leading-snug">
                         <Shield className="h-3.5 w-3.5 sm:h-4 sm:w-4 shrink-0 text-red-500" strokeWidth={2.5} />
                         <span className="sm:hidden">BFP — Sta. Cruz</span>
-                        <span className="hidden sm:inline">Bureau of Fire Protection — Sta. Cruz, Laguna</span>
+                        <span className="hidden sm:inline">Bureau of Fire Protection - Sta. Cruz, Laguna</span>
                     </span>
                 </motion.div>
 
@@ -136,7 +136,7 @@ export function HeroSection() {
                     transition={{ duration: 0.6, delay: 0.8 }}
                     className="text-base sm:text-xl md:text-2xl text-slate-700 dark:text-white/90 font-medium max-w-2xl leading-relaxed mb-8 sm:mb-10 px-2 transition-colors duration-500"
                 >
-                    Empowering every Filipino with interactive fire safety education — 
+                    Empowering every Filipino with interactive fire safety education - 
                     from kids to professionals.
                 </motion.p>
 

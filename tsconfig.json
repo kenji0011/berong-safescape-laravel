@@ -17,7 +17,7 @@
         "paths": {
             "@/*": ["./resources/js/*"]
         },
-        "types": ["vite/client"]
+        "types": ["vite/client", "@react-three/fiber"]
     },
     "include": ["resources/js/**/*.ts", "resources/js/**/*.tsx", "resources/js/**/*.jsx"],
     "exclude": ["node_modules"]

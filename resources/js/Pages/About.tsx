@@ -704,7 +704,7 @@ export default function AboutPage() {
                                 Meet the Developers
                             </h2>
                             <p className="text-slate-600 dark:text-slate-400 max-w-2xl mx-auto text-lg transition-colors">
-                                Computer Science researchers majoring in Intelligent Systems who designed and developed SafeScape.
+                                Computer Science researchers majoring in Intelligent Systems who designed and developed SafeScape and SafeScape 2.0.
                             </p>
                         </motion.div>
 

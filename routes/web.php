@@ -24,6 +24,10 @@ Route::get('/about', function () {
     return Inertia::render('About');
 });
 
+Route::get('/game', function () {
+    return Inertia::render('GameDemo');
+});
+
     // Primary User Flow Routes
     Route::middleware(['auth'])->group(function () {
         Route::get('/assessment/{type}', function ($type) {

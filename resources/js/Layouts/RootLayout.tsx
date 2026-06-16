@@ -18,7 +18,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                      url.startsWith('/kids/smoke-crawl') || 
                      url.startsWith('/kids/hot-or-not') || 
                      url.startsWith('/kids/hazard-blitz') ||
-                     url.startsWith('/assessment');
+                     url.startsWith('/assessment') ||
+                     url.startsWith('/game');
 
   const isHighOpacityBg = component === 'ProfessionalDashboard' || component === 'AdultDashboard' || component === 'AdultPageClient';
 
