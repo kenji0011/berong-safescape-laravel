@@ -346,50 +346,53 @@ export function Navigation() {
                       <Settings className="h-5 w-5 sm:h-6 sm:w-6" strokeWidth={2.5} />
                     </DropdownMenuTrigger>
                     
-                    <DropdownMenuContent className="w-56 bg-white dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-800 shadow-xl rounded-[14px] p-1.5 z-[100] mr-2 transition-colors" align="end" sideOffset={8}>
+                    <DropdownMenuContent className="w-56 bg-white dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-800 shadow-xl rounded-[14px] p-0 z-[100] transition-colors relative !overflow-visible" align="end" sideOffset={12} style={{ overflow: 'visible' }}>
                       {/* Caret pointing up */}
-                      <div className="absolute -top-[9px] right-[18px] w-4 h-4 bg-white dark:bg-slate-900 border-t-2 border-l-2 border-slate-200 dark:border-slate-800 rotate-45 -z-10 rounded-tl-[2px] pointer-events-none" />
+                      <div className="absolute -top-[10px] right-4 w-4 h-4 bg-white dark:bg-slate-900 border-t-2 border-l-2 border-slate-200 dark:border-slate-800 rotate-45 rounded-tl-[2px] z-[1] pointer-events-none" />
                       
-                      <div className="px-2 py-1.5 mb-1 border-b border-slate-100 dark:border-slate-800 transition-colors">
-                        <p className="text-sm font-semibold text-slate-800 dark:text-white transition-colors">Menu Options</p>
-                      </div>
+                      {/* Inner wrapper to match notification popover behavior */}
+                      <div className="rounded-[calc(14px-2px)] overflow-hidden w-full h-full relative z-10 bg-white dark:bg-slate-900 p-1.5">
+                        <div className="px-2 py-1.5 mb-1 border-b border-slate-100 dark:border-slate-800 transition-colors">
+                          <p className="text-sm font-semibold text-slate-800 dark:text-white transition-colors">Menu Options</p>
+                        </div>
 
-                      {/* Accessibility Settings Modal Trigger */}
-                      <DropdownMenuItem 
-                        onClick={(e) => { e.preventDefault(); setShowAccessibilityModal(true); }}
-                        className="cursor-pointer font-bold rounded-lg py-2.5 px-3 flex items-center justify-between hover:bg-slate-50 dark:hover:bg-slate-800 focus:bg-slate-50 dark:focus:bg-slate-800 transition-colors group"
-                      >
-                        <span className="flex items-center gap-2 text-sm text-slate-700 dark:text-slate-300">
-                          <Sliders className="h-4 w-4 text-emerald-500 group-hover:text-emerald-600 transition-colors" strokeWidth={2.5} />
-                          Accessibility Center
-                        </span>
-                        <ArrowRight className="h-3.5 w-3.5 text-slate-400 group-hover:translate-x-0.5 transition-transform" />
-                      </DropdownMenuItem>
-                      
-                      <div className="h-[1px] bg-slate-100 dark:bg-slate-800 my-1 transition-colors" />
-
-                      {/* About Link */}
-                      <Link href="/about" className="block w-full outline-none">
-                        <DropdownMenuItem className="cursor-pointer font-bold rounded-lg py-2.5 px-3 flex items-center justify-between hover:bg-slate-50 dark:hover:bg-slate-800 focus:bg-slate-50 dark:focus:bg-slate-800 transition-colors group">
+                        {/* Accessibility Settings Modal Trigger */}
+                        <DropdownMenuItem 
+                          onClick={(e) => { e.preventDefault(); setShowAccessibilityModal(true); }}
+                          className="cursor-pointer font-bold rounded-lg py-2.5 px-3 flex items-center justify-between hover:bg-slate-50 dark:hover:bg-slate-800 focus:bg-slate-50 dark:focus:bg-slate-800 transition-colors group"
+                        >
                           <span className="flex items-center gap-2 text-sm text-slate-700 dark:text-slate-300">
-                            <Info className="h-4 w-4 text-blue-500 group-hover:text-blue-600 transition-colors" />
-                            About Platform
+                            <Sliders className="h-4 w-4 text-emerald-500 group-hover:text-emerald-600 transition-colors" strokeWidth={2.5} />
+                            Accessibility Center
+                          </span>
+                          <ArrowRight className="h-3.5 w-3.5 text-slate-400 group-hover:translate-x-0.5 transition-transform" />
+                        </DropdownMenuItem>
+                        
+                        <div className="h-[1px] bg-slate-100 dark:bg-slate-800 my-1 transition-colors" />
+
+                        {/* About Link */}
+                        <Link href="/about" className="block w-full outline-none">
+                          <DropdownMenuItem className="cursor-pointer font-bold rounded-lg py-2.5 px-3 flex items-center justify-between hover:bg-slate-50 dark:hover:bg-slate-800 focus:bg-slate-50 dark:focus:bg-slate-800 transition-colors group">
+                            <span className="flex items-center gap-2 text-sm text-slate-700 dark:text-slate-300">
+                              <Info className="h-4 w-4 text-blue-500 group-hover:text-blue-600 transition-colors" />
+                              About Platform
+                            </span>
+                          </DropdownMenuItem>
+                        </Link>
+
+                        <div className="h-[1px] bg-slate-100 dark:bg-slate-800 my-1 transition-colors" />
+
+                        {/* Logout Button */}
+                        <DropdownMenuItem 
+                          onClick={(e) => { e.preventDefault(); setShowLogoutConfirm(true); }}
+                          className="cursor-pointer font-bold rounded-lg py-2.5 px-3 flex items-center justify-between hover:bg-red-50 dark:hover:bg-red-950/30 focus:bg-red-50 dark:focus:bg-red-950/30 transition-colors group"
+                        >
+                          <span className="flex items-center gap-2 text-sm text-red-600 font-bold">
+                            <LogOut className="h-4 w-4 transition-transform group-hover:-translate-x-1" strokeWidth={2.5} />
+                            Log Out
                           </span>
                         </DropdownMenuItem>
-                      </Link>
-
-                      <div className="h-[1px] bg-slate-100 dark:bg-slate-800 my-1 transition-colors" />
-
-                      {/* Logout Button */}
-                      <DropdownMenuItem 
-                        onClick={(e) => { e.preventDefault(); setShowLogoutConfirm(true); }}
-                        className="cursor-pointer font-bold rounded-lg py-2.5 px-3 flex items-center justify-between hover:bg-red-50 dark:hover:bg-red-950/30 focus:bg-red-50 dark:focus:bg-red-950/30 transition-colors group"
-                      >
-                        <span className="flex items-center gap-2 text-sm text-red-600 font-bold">
-                          <LogOut className="h-4 w-4 transition-transform group-hover:-translate-x-1" strokeWidth={2.5} />
-                          Log Out
-                        </span>
-                      </DropdownMenuItem>
+                      </div>
                     </DropdownMenuContent>
                   </DropdownMenu>
                 </div>
@@ -397,39 +400,45 @@ export function Navigation() {
                 <div className="hidden lg:flex items-center gap-3">
                   <DropdownMenu modal={false}>
                     <DropdownMenuTrigger
-                      className="p-2 flex items-center justify-center rounded-full bg-[#e11d48] border-[3px] border-white text-white shadow-[0_4px_0_#9f1239] data-[state=closed]:md:hover:-translate-y-0.5 data-[state=closed]:md:hover:shadow-[0_6px_0_#9f1239] active:translate-y-1 active:shadow-none data-[state=open]:translate-y-1 data-[state=open]:shadow-none dark:data-[state=open]:shadow-none transition-all duration-200 active:duration-75 outline-none cursor-pointer"
+                      className="flex items-center justify-center p-0 h-10 w-10 sm:h-12 sm:w-12 rounded-full bg-[#e11d48] border-[3px] border-white text-white shadow-[0_4px_0_#9f1239] data-[state=closed]:md:hover:-translate-y-0.5 data-[state=closed]:md:hover:shadow-[0_6px_0_#9f1239] active:translate-y-1 active:shadow-none data-[state=open]:translate-y-1 data-[state=open]:shadow-none dark:data-[state=open]:shadow-none transition-all duration-200 active:duration-75 outline-none cursor-pointer"
                     >
-                      <Settings className="h-5 w-5" strokeWidth={2.5} />
+                      <Settings className="h-5 w-5 sm:h-6 sm:w-6" strokeWidth={2.5} />
                     </DropdownMenuTrigger>
                     
-                    <DropdownMenuContent className="w-56 bg-white dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-800 shadow-xl rounded-[14px] p-1.5 z-[100] mt-2 mr-2 transition-colors" align="end" sideOffset={8}>
-                      <div className="px-2 py-1.5 mb-1 border-b border-slate-100 dark:border-slate-800">
-                        <p className="text-sm font-semibold text-slate-800 dark:text-white transition-colors">Menu Options</p>
-                      </div>
+                    <DropdownMenuContent className="w-56 bg-white dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-800 shadow-xl rounded-[14px] p-0 z-[100] transition-colors relative !overflow-visible" align="end" sideOffset={12} style={{ overflow: 'visible' }}>
+                      {/* Caret pointing up */}
+                      <div className="absolute -top-[10px] right-4 w-4 h-4 bg-white dark:bg-slate-900 border-t-2 border-l-2 border-slate-200 dark:border-slate-800 rotate-45 rounded-tl-[2px] z-[1] pointer-events-none" />
+                      
+                      {/* Inner wrapper to match notification popover behavior */}
+                      <div className="rounded-[calc(14px-2px)] overflow-hidden w-full h-full relative z-10 bg-white dark:bg-slate-900 p-1.5">
+                        <div className="px-2 py-1.5 mb-1 border-b border-slate-100 dark:border-slate-800">
+                          <p className="text-sm font-semibold text-slate-800 dark:text-white transition-colors">Menu Options</p>
+                        </div>
 
-                      {/* Accessibility Settings Modal Trigger */}
-                      <DropdownMenuItem 
-                        onClick={(e) => { e.preventDefault(); setShowAccessibilityModal(true); }}
-                        className="cursor-pointer font-bold rounded-lg py-2.5 px-3 flex items-center justify-between hover:bg-slate-50 dark:hover:bg-slate-800 focus:bg-slate-50 dark:focus:bg-slate-800 transition-colors group"
-                      >
-                        <span className="flex items-center gap-2 text-sm text-slate-700 dark:text-slate-300">
-                          <Sliders className="h-4 w-4 text-emerald-500 group-hover:text-emerald-600 transition-colors" strokeWidth={2.5} />
-                          Accessibility Center
-                        </span>
-                        <ArrowRight className="h-3.5 w-3.5 text-slate-400 group-hover:translate-x-0.5 transition-transform" />
-                      </DropdownMenuItem>
-
-                      <div className="h-[1px] bg-slate-100 dark:bg-slate-800 my-1 transition-colors" />
-
-                      {/* About Link */}
-                      <Link href="/about" className="block w-full outline-none">
-                        <DropdownMenuItem className="cursor-pointer font-bold rounded-lg py-2.5 px-3 flex items-center justify-between hover:bg-slate-50 dark:hover:bg-slate-800 focus:bg-slate-50 dark:focus:bg-slate-800 transition-colors group">
+                        {/* Accessibility Settings Modal Trigger */}
+                        <DropdownMenuItem 
+                          onClick={(e) => { e.preventDefault(); setShowAccessibilityModal(true); }}
+                          className="cursor-pointer font-bold rounded-lg py-2.5 px-3 flex items-center justify-between hover:bg-slate-50 dark:hover:bg-slate-800 focus:bg-slate-50 dark:focus:bg-slate-800 transition-colors group"
+                        >
                           <span className="flex items-center gap-2 text-sm text-slate-700 dark:text-slate-300">
-                            <Info className="h-4 w-4 text-blue-500 group-hover:text-blue-600 transition-colors" />
-                            About Platform
+                            <Sliders className="h-4 w-4 text-emerald-500 group-hover:text-emerald-600 transition-colors" strokeWidth={2.5} />
+                            Accessibility Center
                           </span>
+                          <ArrowRight className="h-3.5 w-3.5 text-slate-400 group-hover:translate-x-0.5 transition-transform" />
                         </DropdownMenuItem>
-                      </Link>
+
+                        <div className="h-[1px] bg-slate-100 dark:bg-slate-800 my-1 transition-colors" />
+
+                        {/* About Link */}
+                        <Link href="/about" className="block w-full outline-none">
+                          <DropdownMenuItem className="cursor-pointer font-bold rounded-lg py-2.5 px-3 flex items-center justify-between hover:bg-slate-50 dark:hover:bg-slate-800 focus:bg-slate-50 dark:focus:bg-slate-800 transition-colors group">
+                            <span className="flex items-center gap-2 text-sm text-slate-700 dark:text-slate-300">
+                              <Info className="h-4 w-4 text-blue-500 group-hover:text-blue-600 transition-colors" />
+                              About Platform
+                            </span>
+                          </DropdownMenuItem>
+                        </Link>
+                      </div>
                     </DropdownMenuContent>
                   </DropdownMenu>
                   <Link href="/login" className="bg-yellow-400 border-[3px] border-white text-red-600 font-extrabold px-6 py-1.5 rounded-full shadow-[0_4px_0_#b45309] md:hover:-translate-y-0.5 md:hover:shadow-[0_6px_0_#b45309] active:translate-y-1 active:shadow-none transition-all duration-200 active:duration-75 text-sm tracking-wide">

@@ -91,7 +91,7 @@ export function KidsWelcomeBanner({ completedModules = [], earnedBadges = [] }: 
 
   // Avatars Mapping
   const AVATAR_MAP: Record<string, string> = {
-    cow: '/berong_pr.png', ff1: '👨‍🚒', ff2: '👩‍🚒', kid1: '🧒', kid2: '👧', adult1: '👨', adult2: '👩',
+    cow: '/berong_pr.png', ff1: '/hero_jack.png', ff2: '/hero_sarah.png', kid1: '🧒', kid2: '👧', adult1: '👨', adult2: '👩',
   }
   const userAvatar = AVATAR_MAP[user?.avatar || 'cow'] || '/berong_pr.png'
 

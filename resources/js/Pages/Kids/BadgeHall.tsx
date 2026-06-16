@@ -66,7 +66,7 @@ const BadgeHallPage = ({ completedModules = [], earnedBadges = [] }: BadgeHallPr
   return (
     <div className="-mt-[104px] sm:-mt-[120px] min-h-[calc(100vh+104px)] sm:min-h-[calc(100vh+120px)] bg-slate-50 dark:bg-slate-950 font-sans flex flex-col text-slate-900 dark:text-white transition-colors duration-500">
       {/* ── High-Impact Hero Header: Optimized for Mobile Readability ── */}
-      <div className="relative pt-[136px] sm:pt-[168px] pb-12 sm:pb-20 px-4 sm:px-10 bg-primary overflow-hidden shrink-0">
+      <div className="relative pt-[104px] sm:pt-[168px] pb-12 sm:pb-20 px-4 sm:px-10 bg-primary overflow-hidden shrink-0">
         <div className="absolute inset-0 opacity-20 bg-[radial-gradient(#fff_1px,transparent_1px)] [background-size:24px_24px]"></div>
         
         <div className="max-w-7xl mx-auto relative z-10">
