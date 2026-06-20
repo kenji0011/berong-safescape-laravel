@@ -102,52 +102,87 @@ const SmokeCrawl = () => {
   const generateMaze = () => {
     const width = 15
     const height = 15
-    const newMaze = Array(height).fill(null).map(() => Array(width).fill(1))
-    
-    const walk = (x: number, y: number) => {
-      newMaze[y][x] = 0
-      const dirs = [
-        [0, -2], [0, 2], [-2, 0], [2, 0]
-      ].sort(() => Math.random() - 0.5)
+    let newMaze: number[][] = []
+    let validMaze = false
 
-      for (const [dx, dy] of dirs) {
-        const nx = x + dx
-        const ny = y + dy
-        if (nx > 0 && nx < width - 1 && ny > 0 && ny < height - 1 && newMaze[ny][nx] === 1) {
-          newMaze[y + dy / 2][x + dx / 2] = 0
-          walk(nx, ny)
+    while (!validMaze) {
+      newMaze = Array(height).fill(null).map(() => Array(width).fill(1))
+      
+      const walk = (x: number, y: number) => {
+        newMaze[y][x] = 0
+        const dirs = [
+          [0, -2], [0, 2], [-2, 0], [2, 0]
+        ].sort(() => Math.random() - 0.5)
+
+        for (const [dx, dy] of dirs) {
+          const nx = x + dx
+          const ny = y + dy
+          if (nx > 0 && nx < width - 1 && ny > 0 && ny < height - 1 && newMaze[ny][nx] === 1) {
+            newMaze[y + dy / 2][x + dx / 2] = 0
+            walk(nx, ny)
+          }
         }
       }
-    }
 
-    walk(1, 1)
+      walk(1, 1)
 
-    // Create alternative paths by breaking some walls (to ensure there's a way around)
-    for (let i = 0; i < 10; i++) {
-      const rx = Math.floor(Math.random() * (width - 2)) + 1
-      const ry = Math.floor(Math.random() * (height - 2)) + 1
-      if (newMaze[ry][rx] === 1) {
-        newMaze[ry][rx] = 0
+      // Create alternative paths by breaking some walls (to ensure there's a way around)
+      for (let i = 0; i < 20; i++) { // Increased from 10 to 20 for more alternate routes
+        const rx = Math.floor(Math.random() * (width - 2)) + 1
+        const ry = Math.floor(Math.random() * (height - 2)) + 1
+        if (newMaze[ry][rx] === 1) {
+          newMaze[ry][rx] = 0
+        }
       }
-    }
 
-    // Set Start (5) and Exit (4)
-    newMaze[1][1] = 5
-    newMaze[height - 2][width - 2] = 4
+      // Set Start (5) and Exit (4)
+      newMaze[1][1] = 5
+      newMaze[height - 2][width - 2] = 4
 
-    // Ensure exit is reachable
-    newMaze[height - 2][width - 3] = 0 
-    newMaze[height - 3][width - 2] = 0
+      // Ensure exit is reachable
+      newMaze[height - 2][width - 3] = 0 
+      newMaze[height - 3][width - 2] = 0
 
-    // Add some random doors (2: Cool, 3: Hot)
-    let doorsCount = 0
-    while (doorsCount < 4) {
-      const rx = Math.floor(Math.random() * (width - 2)) + 1
-      const ry = Math.floor(Math.random() * (height - 2)) + 1
-      if (newMaze[ry][rx] === 0 && (rx !== 1 || ry !== 1)) {
-        newMaze[ry][rx] = Math.random() > 0.4 ? 2 : 3 // 60% chance cool door
-        doorsCount++
+      // Add some random doors (2: Cool, 3: Hot)
+      let doorsCount = 0
+      while (doorsCount < 5) { // Increased to 5 doors for slightly more challenge
+        const rx = Math.floor(Math.random() * (width - 2)) + 1
+        const ry = Math.floor(Math.random() * (height - 2)) + 1
+        if (newMaze[ry][rx] === 0 && (rx !== 1 || ry !== 1) && (rx !== width - 2 || ry !== height - 2)) {
+          newMaze[ry][rx] = Math.random() > 0.4 ? 2 : 3 // 60% chance cool door
+          doorsCount++
+        }
       }
+
+      // Verify that there is a valid path to the exit without passing through hot doors
+      const checkPath = () => {
+        const queue = [{ x: 1, y: 1 }]
+        const visited = new Set(['1,1'])
+
+        while (queue.length > 0) {
+          const current = queue.shift()!
+          const { x, y } = current
+          
+          if (newMaze[y][x] === 4) return true // Reached exit
+          
+          const dirs = [[0, 1], [0, -1], [1, 0], [-1, 0]]
+          for (const [dx, dy] of dirs) {
+            const nx = x + dx
+            const ny = y + dy
+            if (nx > 0 && nx < width - 1 && ny > 0 && ny < height - 1) {
+              const tile = newMaze[ny][nx]
+              // Can walk on floor (0), start (5), exit (4), and cool doors (2)
+              if ((tile === 0 || tile === 2 || tile === 4 || tile === 5) && !visited.has(`${nx},${ny}`)) {
+                visited.add(`${nx},${ny}`)
+                queue.push({ x: nx, y: ny })
+              }
+            }
+          }
+        }
+        return false // No valid path found
+      }
+
+      validMaze = checkPath()
     }
 
     return newMaze

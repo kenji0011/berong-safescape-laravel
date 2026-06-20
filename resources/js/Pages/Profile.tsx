@@ -488,7 +488,7 @@ export default function ProfilePage() {
         <div className="space-y-6 sm:space-y-0 sm:grid sm:grid-cols-2 sm:gap-8 relative z-10">
           {/* Profile Information */}
           <Card className="rounded-[2rem] border-2 border-slate-200 dark:border-slate-700 shadow-[0_8px_0_#e2e8f0] dark:shadow-[0_8px_0_#1e293b] bg-white dark:bg-slate-800 p-0 overflow-hidden transition-colors flex flex-col h-full">
-            <CardHeader className="bg-slate-100/50 dark:bg-slate-900/60 border-b-2 border-slate-100 dark:border-slate-750 pt-8 pb-8 rounded-t-[1.85rem] transition-colors">
+            <CardHeader className="bg-slate-100/50 dark:bg-slate-900/60 border-b-2 border-slate-100 dark:border-slate-700 pt-8 pb-8 rounded-t-[1.85rem] transition-colors">
               <CardTitle className="text-xl font-bold text-slate-800 dark:text-white transition-colors">Profile Information</CardTitle>
               <CardDescription className="text-slate-500 dark:text-slate-400 font-medium transition-colors">Update your personal information</CardDescription>
             </CardHeader>
@@ -557,7 +557,7 @@ export default function ProfilePage() {
 
           {/* Password Management */}
           <Card className="rounded-[2rem] border-2 border-slate-200 dark:border-slate-700 shadow-[0_8px_0_#e2e8f0] dark:shadow-[0_8px_0_#1e293b] bg-white dark:bg-slate-800 p-0 overflow-hidden transition-colors flex flex-col h-full">
-            <CardHeader className="bg-slate-100/50 dark:bg-slate-900/60 border-b-2 border-slate-100 dark:border-slate-750 pt-8 pb-8 rounded-t-[1.85rem] transition-colors">
+            <CardHeader className="bg-slate-100/50 dark:bg-slate-900/60 border-b-2 border-slate-100 dark:border-slate-700 pt-8 pb-8 rounded-t-[1.85rem] transition-colors">
               <CardTitle className="text-xl font-bold text-slate-800 dark:text-white transition-colors">Password Management</CardTitle>
               <CardDescription className="text-slate-500 dark:text-slate-400 font-medium transition-colors">Change your account password</CardDescription>
             </CardHeader>
@@ -1064,7 +1064,7 @@ export default function ProfilePage() {
                     "group relative flex flex-col items-center gap-1.5 sm:gap-3 p-2 sm:p-5 rounded-2xl sm:rounded-[2rem] border-[3px] transition-all duration-300",
                     selectedAvatar === opt.id 
                       ? "bg-white dark:bg-slate-800 border-yellow-400 dark:border-yellow-500 shadow-xl scale-105 z-10" 
-                      : "bg-white/50 dark:bg-slate-800/50 border-slate-100 dark:border-slate-750 hover:border-slate-200 dark:hover:border-slate-600 hover:bg-white dark:hover:bg-slate-800"
+                      : "bg-white/50 dark:bg-slate-800/50 border-slate-100 dark:border-slate-700 hover:border-slate-200 dark:hover:border-slate-600 hover:bg-white dark:hover:bg-slate-800"
                   )}
                 >
                   <div className={cn(

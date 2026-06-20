@@ -132,6 +132,7 @@ export function AdaptiveQuiz({
 
     setQuizSubmitted(true)
     setQuizPassed(true)
+    setLoadedScore(quizScore) // Update loadedScore in real-time
     setSaving(false)
     
     if (onComplete) {
@@ -199,9 +200,9 @@ export function AdaptiveQuiz({
       isLocked && "pointer-events-none select-none"
     )}>
       {isLocked && (
-        <div className="absolute inset-0 rounded-[2rem] bg-slate-950/40 dark:bg-slate-950/60 backdrop-blur-[3px] flex items-center justify-center z-20 transition-all duration-300">
-          <p className="text-amber-600 dark:text-amber-400 font-black text-sm sm:text-base md:text-lg bg-white dark:bg-slate-800 px-6 py-3.5 sm:px-8 sm:py-4 rounded-full border-[3px] border-amber-500 shadow-2xl flex items-center gap-2.5 transition-all">
-            🔒 {lockMessage}
+        <div className="absolute inset-0 rounded-[2rem] bg-slate-950/40 dark:bg-slate-950/60 backdrop-blur-[3px] flex items-center justify-center z-20 transition-all duration-300 p-4 sm:p-8">
+          <p className="text-amber-600 dark:text-amber-400 font-black text-sm sm:text-base md:text-lg bg-white dark:bg-slate-800 px-6 py-3.5 sm:px-8 sm:py-4 rounded-full sm:rounded-3xl border-[3px] border-amber-500 shadow-2xl text-center max-w-[95%] transition-all">
+            {lockMessage}
           </p>
         </div>
       )}

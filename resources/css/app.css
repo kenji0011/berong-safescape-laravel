@@ -374,7 +374,7 @@ html.module-focus-mode [id*="feedback-widget"] {
 /* Hide standard headers, navbars, and footers EXCLUSIVELY in Module Focus Mission */
 html.module-focus-mode nav,
 html.module-focus-mode header,
-html.module-focus-mode footer,
+html.module-focus-mode footer:not(.module-footer),
 html.module-focus-mode .ss-nav,
 html.module-focus-mode .ss-back-button {
   display: none !important;
@@ -401,6 +401,7 @@ html.module-focus-mode .text-scalable {
 html.module-focus-mode .module-page-wrapper {
   margin-top: 0 !important;
   padding-top: max(1.5rem, env(safe-area-inset-top)) !important;
+  padding-bottom: max(5rem, calc(env(safe-area-inset-bottom) + 4rem)) !important;
 }
 
 html.module-focus-mode .ss-sub-header {

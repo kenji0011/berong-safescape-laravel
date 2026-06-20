@@ -303,10 +303,10 @@ export function FocusModeManager() {
 
       {/* Focus Control Panel */}
       {moduleFocusMode && (
-        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-[40] flex items-center gap-4 sm:gap-6 bg-white/95 dark:bg-slate-950/95 backdrop-blur-xl border border-slate-200 dark:border-slate-800 shadow-[0_15px_35px_rgba(0,0,0,0.08)] dark:shadow-[0_20px_50px_rgba(0,0,0,0.5)] px-5 sm:px-8 py-3.5 sm:py-4 rounded-2xl sm:rounded-3xl max-w-[95vw] text-slate-800 dark:text-white animate-in slide-in-from-bottom-6 duration-300 transition-all duration-300">
-          <div className="flex items-center gap-1.5 sm:gap-2 pr-4 sm:pr-5 border-r border-slate-200 dark:border-slate-800">
-            <span className="h-1.5 w-1.5 sm:h-2 sm:w-2 rounded-full bg-emerald-500 animate-pulse"></span>
-            <span className="text-[10px] sm:text-xs font-black uppercase tracking-wider text-emerald-600 dark:text-emerald-400">Focus Mode</span>
+        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-[40] flex items-center justify-center gap-3 sm:gap-6 bg-white/95 dark:bg-slate-950/95 backdrop-blur-xl border border-slate-200 dark:border-slate-800 shadow-[0_15px_35px_rgba(0,0,0,0.08)] dark:shadow-[0_20px_50px_rgba(0,0,0,0.5)] px-4 sm:px-8 py-3.5 sm:py-4 rounded-2xl sm:rounded-3xl w-max max-w-[95vw] text-slate-800 dark:text-white animate-in slide-in-from-bottom-6 duration-300 transition-all">
+          <div className="flex items-center gap-1.5 sm:gap-2 pr-3 sm:pr-5 border-r border-slate-200 dark:border-slate-800 shrink-0">
+            <span className="h-1.5 w-1.5 sm:h-2 sm:w-2 rounded-full bg-emerald-500 animate-pulse shrink-0"></span>
+            <span className="text-[10px] sm:text-xs font-black uppercase tracking-wider text-emerald-600 dark:text-emerald-400 whitespace-nowrap">Focus Mode</span>
           </div>
           
           {/* Sound Toggle */}

@@ -2090,7 +2090,7 @@ export default function GameContainer() {
             
             <h3 className="text-xl sm:text-2xl font-black text-white mb-1 tracking-tight leading-none">Room Cleared!</h3>
             <div className="text-orange-400 font-extrabold text-[10px] sm:text-xs uppercase tracking-widest mb-4 flex items-center justify-center gap-1.5 select-none">
-              <span>🏆</span> Challenge Completed <span>⭐</span>
+              <span></span> Challenge Completed <span></span>
             </div>
             
             <p className="text-slate-400 text-xs sm:text-sm mb-6 leading-relaxed max-w-[280px] mx-auto">
@@ -2135,7 +2135,7 @@ export default function GameContainer() {
             
             <h3 className="text-xl sm:text-2xl font-black text-white mb-1 tracking-tight leading-none">Time's Up!</h3>
             <div className="text-rose-400 font-extrabold text-[10px] sm:text-xs uppercase tracking-widest mb-4 flex items-center justify-center gap-1.5 select-none">
-              <span>⏱️</span> Challenge Failed <span>❌</span>
+              <span></span> Challenge Failed <span></span>
             </div>
             
             <p className="text-slate-400 text-xs sm:text-sm mb-6 leading-relaxed max-w-[280px] mx-auto">

@@ -315,20 +315,22 @@ const ModuleOnePage = ({ initialProgress }: { initialProgress?: any }) => {
         
         {/* Skeleton Loader (Simulated for visual consistency with other modules) */}
         {moduleLoading && (
-          <div className="absolute inset-0 z-10 bg-white dark:bg-slate-950 bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] dark:bg-[radial-gradient(#1e293b_1px,transparent_1px)] [background-size:16px_16px] flex flex-col items-center justify-start pt-32 px-4 pointer-events-none transition-colors">
-            <div className="w-16 h-16 sm:w-20 sm:h-20 bg-white dark:bg-slate-900 rounded-2xl shadow-sm border-[3px] border-blue-200 dark:border-slate-800 flex items-center justify-center mb-6 animate-bounce transition-colors">
-              <Flame className="h-8 w-8 sm:h-10 sm:w-10 text-[#ff4b3e] animate-pulse" />
-            </div>
-            <div className="flex flex-col items-center gap-3 w-full max-w-2xl px-2 sm:px-6">
-              <div className="h-6 sm:h-10 w-48 sm:w-64 bg-blue-200/50 dark:bg-blue-900/30 rounded-full animate-pulse"></div>
-              <div className="h-4 sm:h-5 w-64 sm:w-96 bg-blue-200/50 dark:bg-blue-900/30 rounded-full animate-pulse delay-75 mb-6"></div>
-              
-              <div className="w-full space-y-4">
-                <div className="h-48 sm:h-64 w-full bg-white/60 dark:bg-slate-900/60 rounded-[2rem] border-[3px] border-blue-200/50 dark:border-slate-800/50 animate-pulse delay-150 transition-colors"></div>
-                <div className="h-32 sm:h-48 w-full bg-white/60 dark:bg-slate-900/60 rounded-[2rem] border-[3px] border-blue-200/50 dark:border-slate-800/50 animate-pulse delay-200 transition-colors"></div>
+          <div className="absolute inset-0 z-10 bg-white dark:bg-slate-950 bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] dark:bg-[radial-gradient(#1e293b_1px,transparent_1px)] [background-size:16px_16px] pointer-events-none transition-colors">
+            <div className="sticky top-[20vh] flex flex-col items-center px-4 w-full">
+              <div className="w-16 h-16 sm:w-20 sm:h-20 bg-white dark:bg-slate-900 rounded-2xl shadow-sm border-[3px] border-blue-200 dark:border-slate-800 flex items-center justify-center mb-6 animate-bounce transition-colors">
+                <Flame className="h-8 w-8 sm:h-10 sm:w-10 text-[#ff4b3e] animate-pulse" />
               </div>
+              <div className="flex flex-col items-center gap-3 w-full max-w-2xl px-2 sm:px-6">
+                <div className="h-6 sm:h-10 w-48 sm:w-64 bg-blue-200/50 dark:bg-blue-900/30 rounded-full animate-pulse"></div>
+                <div className="h-4 sm:h-5 w-64 sm:w-96 bg-blue-200/50 dark:bg-blue-900/30 rounded-full animate-pulse delay-75 mb-6"></div>
+                
+                <div className="w-full space-y-4">
+                  <div className="h-48 sm:h-64 w-full bg-white/60 dark:bg-slate-900/60 rounded-[2rem] border-[3px] border-blue-200/50 dark:border-slate-800/50 animate-pulse delay-150 transition-colors"></div>
+                  <div className="h-32 sm:h-48 w-full bg-white/60 dark:bg-slate-900/60 rounded-[2rem] border-[3px] border-blue-200/50 dark:border-slate-800/50 animate-pulse delay-200 transition-colors"></div>
+                </div>
+              </div>
+              <p className="mt-8 text-blue-400 font-bold tracking-widest uppercase text-sm animate-pulse delay-300">Loading Module Content...</p>
             </div>
-            <p className="mt-8 text-blue-400 font-bold tracking-widest uppercase text-sm animate-pulse delay-300">Loading Module Content...</p>
           </div>
         )}
 
@@ -384,9 +386,9 @@ const ModuleOnePage = ({ initialProgress }: { initialProgress?: any }) => {
               </div>
             )}
             {!videoStarted && (
-              <div className="absolute inset-0 rounded-[2rem] bg-slate-950/40 dark:bg-slate-950/60 backdrop-blur-[3px] flex items-center justify-center z-20 transition-all duration-300">
-                <p className="text-amber-600 dark:text-amber-400 font-black text-sm sm:text-base md:text-lg bg-white dark:bg-slate-800 px-6 py-3.5 sm:px-8 sm:py-4 rounded-full border-[3px] border-amber-500 shadow-2xl flex items-center gap-2.5 transition-all">
-                  🔒 Watch the video first to unlock
+              <div className="absolute inset-0 rounded-[2rem] bg-slate-950/40 dark:bg-slate-950/60 backdrop-blur-[3px] flex items-center justify-center z-20 transition-all duration-300 p-4">
+                <p className="text-amber-600 dark:text-amber-400 font-black text-sm sm:text-base md:text-lg bg-white dark:bg-slate-800 px-6 py-3.5 sm:px-8 sm:py-4 rounded-full sm:rounded-3xl border-[3px] border-amber-500 shadow-2xl text-center max-w-[95%] transition-all">
+                  Watch the video first to unlock
                 </p>
               </div>
             )}
@@ -467,9 +469,9 @@ const ModuleOnePage = ({ initialProgress }: { initialProgress?: any }) => {
               </div>
             )}
             {!section1Done && (
-              <div className="absolute inset-0 rounded-[2rem] bg-slate-950/40 dark:bg-slate-950/60 backdrop-blur-[3px] flex items-center justify-center z-20 transition-all duration-300">
-                <p className="text-amber-600 dark:text-amber-400 font-black text-sm sm:text-base md:text-lg bg-white dark:bg-slate-800 px-6 py-3.5 sm:px-8 sm:py-4 rounded-full border-[3px] border-amber-500 shadow-2xl flex items-center gap-2.5 transition-all">
-                  🔒 Complete Section 1.1 first
+              <div className="absolute inset-0 rounded-[2rem] bg-slate-950/40 dark:bg-slate-950/60 backdrop-blur-[3px] flex items-center justify-center z-20 transition-all duration-300 p-4">
+                <p className="text-amber-600 dark:text-amber-400 font-black text-sm sm:text-base md:text-lg bg-white dark:bg-slate-800 px-6 py-3.5 sm:px-8 sm:py-4 rounded-full sm:rounded-3xl border-[3px] border-amber-500 shadow-2xl text-center max-w-[95%] transition-all">
+                  Complete Section 1.1 first
                 </p>
               </div>
             )}
@@ -534,9 +536,9 @@ const ModuleOnePage = ({ initialProgress }: { initialProgress?: any }) => {
               </div>
             )}
             {!section2Done && (
-              <div className="absolute inset-0 rounded-[2rem] bg-slate-950/40 dark:bg-slate-950/60 backdrop-blur-[3px] flex items-center justify-center z-20 transition-all duration-300">
-                <p className="text-amber-600 dark:text-amber-400 font-black text-sm sm:text-base md:text-lg bg-white dark:bg-slate-800 px-6 py-3.5 sm:px-8 sm:py-4 rounded-full border-[3px] border-amber-500 shadow-2xl flex items-center gap-2.5 transition-all">
-                  🔒 Complete Section 1.2 first
+              <div className="absolute inset-0 rounded-[2rem] bg-slate-950/40 dark:bg-slate-950/60 backdrop-blur-[3px] flex items-center justify-center z-20 transition-all duration-300 p-4">
+                <p className="text-amber-600 dark:text-amber-400 font-black text-sm sm:text-base md:text-lg bg-white dark:bg-slate-800 px-6 py-3.5 sm:px-8 sm:py-4 rounded-full sm:rounded-3xl border-[3px] border-amber-500 shadow-2xl text-center max-w-[95%] transition-all">
+                  Complete Section 1.2 first
                 </p>
               </div>
             )}
@@ -611,9 +613,9 @@ const ModuleOnePage = ({ initialProgress }: { initialProgress?: any }) => {
               </div>
             )}
             {!section3Done && (
-              <div className="absolute inset-0 rounded-[2rem] bg-slate-950/40 dark:bg-slate-950/60 backdrop-blur-[3px] flex items-center justify-center z-20 transition-all duration-300">
-                <p className="text-amber-600 dark:text-amber-400 font-black text-sm sm:text-base md:text-lg bg-white dark:bg-slate-800 px-6 py-3.5 sm:px-8 sm:py-4 rounded-full border-[3px] border-amber-500 shadow-2xl flex items-center gap-2.5 transition-all">
-                  🔒 Complete Section 1.3 first
+              <div className="absolute inset-0 rounded-[2rem] bg-slate-950/40 dark:bg-slate-950/60 backdrop-blur-[3px] flex items-center justify-center z-20 transition-all duration-300 p-4">
+                <p className="text-amber-600 dark:text-amber-400 font-black text-sm sm:text-base md:text-lg bg-white dark:bg-slate-800 px-6 py-3.5 sm:px-8 sm:py-4 rounded-full sm:rounded-3xl border-[3px] border-amber-500 shadow-2xl text-center max-w-[95%] transition-all">
+                  Complete Section 1.3 first
                 </p>
               </div>
             )}
@@ -861,7 +863,7 @@ const ModuleOnePage = ({ initialProgress }: { initialProgress?: any }) => {
       {/* ── Toast ── */}
       {toast && (
         <div className={cn(
-          "fixed top-20 left-1/2 -translate-x-1/2 right-auto bottom-auto md:top-28 md:right-8 md:left-auto md:translate-x-0 z-[200] flex items-center gap-3 px-5 py-3.5 rounded-2xl shadow-2xl text-slate-800 dark:text-white font-extrabold text-xs sm:text-sm transition-all animate-in fade-in slide-in-from-top-4 duration-300 bg-white dark:bg-slate-900 border-[3px] shadow-slate-200 dark:shadow-slate-950",
+          "fixed top-20 left-1/2 -translate-x-1/2 right-auto bottom-auto md:top-28 md:right-8 md:left-auto md:translate-x-0 z-[200] flex items-center gap-3 px-5 py-3.5 rounded-2xl shadow-2xl text-slate-800 dark:text-white font-extrabold text-xs sm:text-sm transition-all animate-in fade-in slide-in-from-top-4 duration-300 bg-white dark:bg-slate-900 border-[3px] shadow-slate-200 dark:shadow-slate-950 w-max max-w-[90vw] md:max-w-md",
           toast.type === "success" ? "border-emerald-500" : "border-blue-500"
         )}>
           {toast.type === "success" ? (

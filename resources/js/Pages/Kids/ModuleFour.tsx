@@ -423,24 +423,26 @@ const ModuleFourPage = ({ moduleNum, initialProgress }: { moduleNum: number; ini
       </div>
 
       {/* ── Dark Module Content Area ── */}
-      <div className="flex-1 flex flex-col w-full relative transition-colors">
+      <div className="flex-1 flex flex-col w-full relative transition-colors min-h-[80vh]">
         
         {/* Skeleton Loader */}
         {iframeLoading && (
-          <div className="absolute inset-0 z-10 flex flex-col items-center justify-center pt-10 pb-20 px-4 pointer-events-none transition-colors">
-            <div className="w-16 h-16 sm:w-20 sm:h-20 bg-white dark:bg-slate-900 rounded-2xl shadow-sm border-[3px] border-blue-200 dark:border-slate-800 flex items-center justify-center mb-6 animate-bounce">
-              <Flame className="h-8 w-8 sm:h-10 sm:w-10 text-[#ff4b3e] animate-pulse" />
-            </div>
-            <div className="flex flex-col items-center gap-3 w-full max-w-2xl px-2 sm:px-6">
-              <div className="h-6 sm:h-10 w-48 sm:w-64 bg-blue-200/50 dark:bg-slate-800/50 rounded-full animate-pulse"></div>
-              <div className="h-4 sm:h-5 w-64 sm:w-96 bg-blue-200/50 dark:bg-slate-800/50 rounded-full animate-pulse delay-75 mb-6"></div>
-              
-              <div className="w-full space-y-4">
-                <div className="h-48 sm:h-64 w-full bg-white/60 dark:bg-slate-900/60 rounded-[2rem] border-[3px] border-blue-200/50 dark:border-slate-800/50 animate-pulse delay-150"></div>
-                <div className="h-32 sm:h-48 w-full bg-white/60 dark:bg-slate-900/60 rounded-[2rem] border-[3px] border-blue-200/50 dark:border-slate-800/50 animate-pulse delay-200"></div>
+          <div className="absolute inset-0 z-10 bg-white dark:bg-slate-950 bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] dark:bg-[radial-gradient(#1e293b_1px,transparent_1px)] [background-size:16px_16px] pointer-events-none transition-colors">
+            <div className="sticky top-[20vh] flex flex-col items-center px-4 w-full">
+              <div className="w-16 h-16 sm:w-20 sm:h-20 bg-white dark:bg-slate-900 rounded-2xl shadow-sm border-[3px] border-blue-200 dark:border-slate-800 flex items-center justify-center mb-6 animate-bounce transition-colors">
+                <Flame className="h-8 w-8 sm:h-10 sm:w-10 text-[#ff4b3e] animate-pulse" />
               </div>
+              <div className="flex flex-col items-center gap-3 w-full max-w-2xl px-2 sm:px-6">
+                <div className="h-6 sm:h-10 w-48 sm:w-64 bg-blue-200/50 dark:bg-blue-900/30 rounded-full animate-pulse"></div>
+                <div className="h-4 sm:h-5 w-64 sm:w-96 bg-blue-200/50 dark:bg-blue-900/30 rounded-full animate-pulse delay-75 mb-6"></div>
+                
+                <div className="w-full space-y-4">
+                  <div className="h-48 sm:h-64 w-full bg-white/60 dark:bg-slate-900/60 rounded-[2rem] border-[3px] border-blue-200/50 dark:border-slate-800/50 animate-pulse delay-150 transition-colors"></div>
+                  <div className="h-32 sm:h-48 w-full bg-white/60 dark:bg-slate-900/60 rounded-[2rem] border-[3px] border-blue-200/50 dark:border-slate-800/50 animate-pulse delay-200 transition-colors"></div>
+                </div>
+              </div>
+              <p className="mt-8 text-blue-400 font-bold tracking-widest uppercase text-sm animate-pulse delay-300">Loading Module Content...</p>
             </div>
-            <p className="mt-8 text-blue-400 dark:text-slate-500 font-bold tracking-widest uppercase text-sm animate-pulse delay-300">Loading Module Content...</p>
           </div>
         )}
 
@@ -475,6 +477,10 @@ const ModuleFourPage = ({ moduleNum, initialProgress }: { moduleNum: number; ini
               nextModuleUrl="/kids/safescape/5"
               nextModuleText="Go to Module 5"
             />
+            <footer className="module-footer mt-12 border-t-2 border-slate-200 dark:border-slate-800 py-8 text-center transition-colors">
+              <p className="text-slate-500 dark:text-slate-400 text-sm font-bold uppercase tracking-widest transition-colors">SafeScape Intelligent Systems Project</p>
+              <p className="text-slate-400 dark:text-slate-500 text-xs mt-1 transition-colors">Module 4: Stop, Drop, and Roll</p>
+            </footer>
           </div>
         )}
 
@@ -507,7 +513,7 @@ const ModuleFourPage = ({ moduleNum, initialProgress }: { moduleNum: number; ini
       {/* ── Toast ── */}
       {toast && (
         <div className={cn(
-          "fixed top-20 left-1/2 -translate-x-1/2 right-auto bottom-auto md:top-28 md:right-8 md:left-auto md:translate-x-0 z-[200] flex items-center gap-3 px-5 py-3.5 rounded-2xl shadow-2xl text-slate-800 dark:text-white font-extrabold text-xs sm:text-sm transition-all animate-in fade-in slide-in-from-top-4 duration-300 bg-white dark:bg-slate-900 border-[3px] shadow-slate-200 dark:shadow-slate-950",
+          "fixed top-20 left-1/2 -translate-x-1/2 right-auto bottom-auto md:top-28 md:right-8 md:left-auto md:translate-x-0 z-[200] flex items-center gap-3 px-5 py-3.5 rounded-2xl shadow-2xl text-slate-800 dark:text-white font-extrabold text-xs sm:text-sm transition-all animate-in fade-in slide-in-from-top-4 duration-300 bg-white dark:bg-slate-900 border-[3px] shadow-slate-200 dark:shadow-slate-950 w-max max-w-[90vw] md:max-w-md",
           toast.type === "success" ? "border-emerald-500" : "border-blue-500"
         )}>
           {toast.type === "success" ? (
