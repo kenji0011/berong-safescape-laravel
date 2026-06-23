@@ -301,7 +301,7 @@ export function Footer() {
           </motion.div>
 
           {/* 2. Sub-Category Links */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-12 sm:gap-24 md:gap-32 lg:gap-40 mb-6 w-full max-w-5xl justify-items-center">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-12 sm:gap-20 md:gap-24 lg:gap-32 xl:gap-40 mb-6 w-full max-w-5xl justify-items-center">
             {footerColumns.map((column, index) => (
               <motion.div
                 key={index}

@@ -187,14 +187,14 @@ export function Navigation() {
 
 
       <nav className={cn(
-        "fixed left-1/2 top-4 sm:top-6 z-[80] transition-all duration-300 ease-out h-16 sm:h-[4.5rem] flex items-center rounded-full bg-gradient-to-r from-red-600 to-orange-500 dark:from-red-800 dark:to-orange-700 border border-white/20 dark:border-red-600/20 shadow-xl shadow-red-900/30 w-[95vw] lg:w-max max-w-[1400px]",
+        "fixed left-1/2 top-4 sm:top-6 z-[80] transition-all duration-300 ease-out h-16 sm:h-[4.5rem] flex items-center rounded-full bg-gradient-to-r from-red-600 to-orange-500 dark:from-red-800 dark:to-orange-700 border border-white/20 dark:border-red-600/20 shadow-xl shadow-red-900/30 w-[95vw] lg:w-max max-w-screen-xl",
         ((isScrollingDown && !isAssessmentInView) || isMeetDevsInView) ? "-translate-y-[150%] -translate-x-1/2 opacity-0 pointer-events-none" : "translate-y-0 -translate-x-1/2 opacity-100"
       )}>
 
 
       {/* Content Layer - Full opacity */}
       <div className="relative z-10 w-full px-4 sm:px-6 py-2.5 sm:py-3">
-        <div className="flex items-center justify-between w-full lg:gap-8 gap-2 sm:gap-4 relative">
+        <div className="flex items-center justify-between w-full lg:gap-4 xl:gap-8 gap-2 sm:gap-4 relative">
 
           {/* LEFT SECTION: Logo + Branding */}
           <div className="flex-1 flex justify-start min-w-0">

@@ -591,7 +591,7 @@ export function LandingAboutSection({ carouselNode }: { carouselNode?: React.Rea
                                     scale: mascotScale,
                                 }}
                             >
-                                <div className="relative w-48 h-48 sm:w-80 sm:h-80 lg:w-[400px] lg:h-[400px]">
+                                <div className="relative w-48 h-48 sm:w-80 sm:h-80 lg:w-[320px] lg:h-[320px] xl:w-[400px] xl:h-[400px]">
                                     <motion.div
                                         className="relative w-full h-full"
                                         initial={{ opacity: 0, scale: 0.8 }}
@@ -633,7 +633,7 @@ export function LandingAboutSection({ carouselNode }: { carouselNode?: React.Rea
                                 </motion.div>
                                 
                                 <motion.h1
-                                    className="text-4xl sm:text-6xl lg:text-7xl font-black mb-3 sm:mb-4 text-slate-800 dark:text-white tracking-tight transition-colors flex flex-wrap justify-center lg:justify-start"
+                                    className="text-4xl sm:text-6xl xl:text-7xl font-black mb-3 sm:mb-4 text-slate-800 dark:text-white tracking-tight transition-colors flex flex-wrap justify-center lg:justify-start"
                                     initial="hidden"
                                     whileInView="visible"
                                     viewport={{ once: true }}
@@ -746,10 +746,10 @@ export function LandingAboutSection({ carouselNode }: { carouselNode?: React.Rea
                             viewport={{ once: true }}
                             transition={{ duration: 0.7 }}
                         >
-                            <h2 className="text-3xl sm:text-6xl font-black text-white mb-4 sm:mb-6 drop-shadow-lg uppercase tracking-tight italic">
+                            <h2 className="text-3xl sm:text-5xl xl:text-6xl font-black text-white mb-4 sm:mb-6 drop-shadow-lg uppercase tracking-tight italic">
                                 What is <span className="text-yellow-400 drop-shadow-[0_4px_0_#b45309]">SafeScape 2.0</span>?
                             </h2>
-                            <p className="text-white font-bold max-w-2xl mx-auto text-sm sm:text-2xl px-4 leading-relaxed opacity-95">
+                            <p className="text-white font-bold max-w-2xl mx-auto text-sm sm:text-xl xl:text-2xl px-4 leading-relaxed opacity-95">
                                 A comprehensive fire safety education platform designed to empower communities with knowledge and skills.
                             </p>
                         </motion.div>

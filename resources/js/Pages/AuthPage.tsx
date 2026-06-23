@@ -308,7 +308,7 @@ function AuthContent() {
               />
             </div>
           </div>
-          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-[#d60000] dark:text-red-500 mb-3 sm:mb-4 tracking-tight drop-shadow-sm transition-colors">Berong E-Learning</h1>
+          <h1 className="text-4xl sm:text-5xl xl:text-6xl font-extrabold text-[#d60000] dark:text-red-500 mb-3 sm:mb-4 tracking-tight drop-shadow-sm transition-colors">Berong E-Learning</h1>
           <div className="inline-flex items-center justify-center px-5 sm:px-6 py-2 bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800 rounded-full shadow-[0_2px_10px_rgba(0,0,0,0.05)] transition-colors">
             <p className="text-[10px] sm:text-xs font-bold text-gray-500 dark:text-slate-400 uppercase tracking-widest text-center leading-tight">BFP Sta Cruz Fire Safety Education</p>
           </div>

@@ -279,7 +279,7 @@ const ModuleOnePage = ({ initialProgress }: { initialProgress?: any }) => {
 
       {/* ── Sub Header ── */}
       <div className="z-[50] sticky top-[96px] sm:top-[112px] ss-sub-header transition-all duration-500 w-full flex justify-center px-2 sm:px-4 -mt-2 mb-4 sm:mb-8 pointer-events-none">
-        <div className="bg-white dark:bg-slate-900 border-[3px] border-slate-200 dark:border-slate-800 py-2 sm:py-3 px-3 sm:px-6 shadow-xl shadow-slate-200/50 dark:shadow-slate-900/50 rounded-2xl sm:rounded-3xl w-[95vw] lg:w-max max-w-[1400px] flex flex-row items-center justify-between gap-2 sm:gap-4 transition-colors pointer-events-auto">
+        <div className="bg-white dark:bg-slate-900 border-[3px] border-slate-200 dark:border-slate-800 py-2 sm:py-3 px-3 sm:px-6 shadow-xl shadow-slate-200/50 dark:shadow-slate-900/50 rounded-2xl sm:rounded-3xl w-[95vw] lg:w-max max-w-screen-xl flex flex-row items-center justify-between gap-2 sm:gap-4 transition-colors pointer-events-auto">
           <div className="flex items-center gap-2 sm:gap-4">
             <Link href="/kids/safescape" className="ss-back-button inline-flex items-center justify-center gap-2 p-2 sm:px-4 sm:py-2 bg-white dark:bg-slate-800 rounded-full text-slate-700 dark:text-slate-300 font-bold hover:text-slate-900 dark:hover:text-white border-[3px] border-slate-200 dark:border-slate-700 shadow-[0_3px_0_#cbd5e1] dark:shadow-[0_3px_0_#0f172a] hover:-translate-y-0.5 active:translate-y-1 active:shadow-none transition-all text-sm whitespace-nowrap">
               <ArrowLeft className="h-4 w-4" />

@@ -537,29 +537,27 @@ export function RegistrationWizard({ onBackToLogin }: RegistrationWizardProps) {
   }
 
   return (
-    <Card className="w-full h-full sm:h-auto sm:max-h-[90vh] sm:max-w-3xl mx-auto rounded-none sm:rounded-[2rem] border-none sm:border border-slate-100 dark:border-slate-800/80 shadow-none sm:shadow-2xl bg-white dark:bg-slate-900 overflow-hidden transition-colors duration-500 flex flex-col justify-between sm:justify-start py-0 gap-0 sm:gap-3">
+    <Card className="w-full h-full sm:h-auto sm:max-h-[95vh] sm:max-w-3xl mx-auto rounded-none sm:rounded-[2rem] border-none sm:border border-slate-100 dark:border-slate-800/80 shadow-none sm:shadow-2xl bg-white dark:bg-slate-900 overflow-hidden transition-colors duration-500 flex flex-col justify-between sm:justify-start py-0 gap-0 sm:gap-1">
       {/* Colorful Gradient Header */}
-      <div className="bg-primary px-4 sm:px-8 pt-[calc(1.25rem+env(safe-area-inset-top,0px))] sm:pt-6 pb-5 sm:pb-6 rounded-none sm:rounded-t-[1.85rem]">
-        <div className="flex items-center gap-2 mb-2 sm:mb-3">
-          <div className="w-8 h-8 sm:w-10 sm:h-10 bg-white rounded-full flex items-center justify-center shadow">
-            <Shield className="h-4 w-4 sm:h-5 sm:w-5 text-orange-500" />
+      <div className="bg-primary px-4 sm:px-8 pt-[calc(1rem+env(safe-area-inset-top,0px))] sm:pt-4 pb-3 sm:pb-4 rounded-none sm:rounded-t-[1.85rem]">
+        <div className="flex flex-row items-center justify-between">
+          <div>
+            <h2 className="text-lg sm:text-xl font-bold text-white leading-tight mb-0.5">Create Your Account 🎓</h2>
+            <p className="text-white/80 text-[10px] sm:text-xs">
+              Step {currentStep} of {STEPS.length}: {STEPS[currentStep - 1].description}
+            </p>
           </div>
-          <span className="text-lg sm:text-xl font-bold text-white">SafeScape</span>
         </div>
-        <h2 className="text-xl sm:text-2xl font-bold text-white">Create Your Account 🎓</h2>
-        <p className="text-white/80 text-xs sm:text-sm">
-          Step {currentStep} of {STEPS.length}: {STEPS[currentStep - 1].description}
-        </p>
 
         {/* Progress Bar */}
-        <div className="mt-4">
+        <div className="mt-2 sm:mt-3">
           <div className="w-full bg-white/30 rounded-full h-3 overflow-hidden">
             <div
               className="bg-yellow-400 h-3 rounded-full transition-all duration-500 ease-out"
               style={{ width: `${(currentStep / STEPS.length) * 100}%` }}
             />
           </div>
-          <div className="flex justify-between mt-3">
+          <div className="flex justify-between mt-2">
             {STEPS.map((step) => {
               const Icon = step.icon
               const isCompleted = currentStep > step.id
@@ -571,16 +569,16 @@ export function RegistrationWizard({ onBackToLogin }: RegistrationWizardProps) {
                     isCompleted ? "text-yellow-300" : isCurrent ? "text-white" : "text-white/40"
                   }`}
                 >
-                  <div className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center border-[2px] sm:border-[3px] transition-all ${
+                  <div className={`w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center border-[2px] transition-all ${
                     isCompleted
-                      ? "bg-yellow-400 border-white text-red-600 shadow-[0_2px_0_#b45309] sm:shadow-[0_3px_0_#b45309]"
+                      ? "bg-yellow-400 border-white text-red-600 shadow-[0_2px_0_#b45309]"
                       : isCurrent
-                        ? "bg-white border-yellow-400 text-orange-500 shadow-md sm:shadow-lg"
+                        ? "bg-white border-yellow-400 text-orange-500 shadow-sm"
                         : "bg-white/20 border-white/30 text-white/60"
                   }`}>
-                    {isCompleted ? <Check className="w-4 h-4 sm:w-5 sm:h-5" /> : <Icon className="w-4 h-4 sm:w-5 sm:h-5" />}
+                    {isCompleted ? <Check className="w-3.5 h-3.5 sm:w-4 sm:h-4" /> : <Icon className="w-3.5 h-3.5 sm:w-4 sm:h-4" />}
                   </div>
-                  <span className="text-[10px] sm:text-xs mt-1.5 font-semibold hidden sm:block">{step.title}</span>
+                  <span className="text-[9px] sm:text-[10px] mt-1 font-semibold hidden sm:block uppercase tracking-wider">{step.title}</span>
                 </div>
               )
             })}
@@ -591,7 +589,7 @@ export function RegistrationWizard({ onBackToLogin }: RegistrationWizardProps) {
         <CardTitle>Create Your Account</CardTitle>
       </CardHeader>
 
-      <CardContent className="pt-3 px-5 pb-5 sm:pt-3 sm:px-8 sm:pb-6 flex-1 overflow-y-auto flex flex-col justify-between sm:justify-start">
+      <CardContent className="pt-2 px-5 pb-3 sm:pt-2 sm:px-6 sm:pb-4 flex-1 overflow-y-auto flex flex-col justify-between sm:justify-start">
         {error && (
           <div className="mb-4 p-3 bg-red-50 dark:bg-red-500/10 border-2 border-red-200 dark:border-red-500/20 rounded-2xl flex items-start gap-2 transition-colors">
             <AlertCircle className="h-5 w-5 text-red-500 flex-shrink-0 mt-0.5" />
@@ -952,9 +950,9 @@ export function RegistrationWizard({ onBackToLogin }: RegistrationWizardProps) {
             ) : (
               <>
                 {/* Question Container */}
-                <div className="p-5 sm:p-6 bg-white dark:bg-slate-900 rounded-[2rem] border-2 border-slate-100 dark:border-slate-800 shadow-xl transition-colors">
-                  <div className="flex justify-between items-start mb-4">
-                    <span className="inline-block text-xs font-black text-orange-600 dark:text-orange-400 bg-orange-100 dark:bg-orange-500/20 px-3 py-1 rounded-full uppercase tracking-wider transition-colors">
+                <div className="p-4 sm:p-5 bg-white dark:bg-slate-900 rounded-[1.5rem] border-2 border-slate-100 dark:border-slate-800 shadow-xl transition-colors">
+                  <div className="flex justify-between items-start mb-3">
+                    <span className="inline-block text-[10px] sm:text-xs font-black text-orange-600 dark:text-orange-400 bg-orange-100 dark:bg-orange-500/20 px-3 py-1 rounded-full uppercase tracking-wider transition-colors">
                       {questions[currentQuestionIndex].category}
                     </span>
                     <span className="text-xs font-bold text-slate-400 dark:text-slate-500">
@@ -962,14 +960,14 @@ export function RegistrationWizard({ onBackToLogin }: RegistrationWizardProps) {
                     </span>
                   </div>
                   
-                  <h3 className="text-lg sm:text-xl font-black text-slate-800 dark:text-white mb-6 leading-tight transition-colors">
+                  <h3 className="text-base sm:text-lg font-black text-slate-800 dark:text-white mb-4 leading-tight transition-colors">
                     {questions[currentQuestionIndex].question}
                   </h3>
 
                   <RadioGroup
                     value={data.preTestAnswers[questions[currentQuestionIndex].id]?.toString() || ""}
                     onValueChange={(value) => handleAnswerQuestion(questions[currentQuestionIndex].id, parseInt(value))}
-                    className="gap-3"
+                    className="gap-2"
                   >
                     {questions[currentQuestionIndex].options.map((option, index) => {
                       const isSelected = data.preTestAnswers[questions[currentQuestionIndex].id] === index;
@@ -986,10 +984,10 @@ export function RegistrationWizard({ onBackToLogin }: RegistrationWizardProps) {
                           />
                           <Label 
                             htmlFor={`option-${index}`} 
-                            className={`flex-1 flex items-center p-4 cursor-pointer rounded-2xl border-[3px] transition-all font-bold text-sm sm:text-base ${
+                            className={`flex-1 flex items-center p-3 cursor-pointer rounded-xl border-[2px] transition-all font-bold text-[13px] sm:text-sm ${
                               isSelected 
-                                ? "bg-orange-50 dark:bg-orange-500/10 border-orange-500 text-orange-700 dark:text-orange-300 shadow-[0_4px_0_#ca8a04]" 
-                                : "bg-slate-50 dark:bg-slate-950 border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 hover:border-orange-300 dark:hover:border-orange-500/30 hover:bg-orange-50/50 dark:hover:bg-orange-500/5 shadow-[0_4px_0_#cbd5e1] dark:shadow-[0_4px_0_#1e293b]"
+                                ? "bg-orange-50 dark:bg-orange-500/10 border-orange-500 text-orange-700 dark:text-orange-300 shadow-[0_3px_0_#ca8a04]" 
+                                : "bg-slate-50 dark:bg-slate-950 border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 hover:border-orange-300 dark:hover:border-orange-500/30 hover:bg-orange-50/50 dark:hover:bg-orange-500/5 shadow-[0_3px_0_#cbd5e1] dark:shadow-[0_3px_0_#1e293b]"
                             }`}
                           >
                             <div className={`mr-3 w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 transition-colors ${
@@ -1039,7 +1037,7 @@ export function RegistrationWizard({ onBackToLogin }: RegistrationWizardProps) {
         )}
 
         {currentStep === 4 && questions.length > 0 && (
-          <div className="flex justify-between items-center mt-6 sm:mt-8">
+          <div className="flex justify-between items-center mt-3 sm:mt-4">
             <button
               onClick={() => setCurrentQuestionIndex(prev => prev - 1)}
               disabled={currentQuestionIndex === 0}

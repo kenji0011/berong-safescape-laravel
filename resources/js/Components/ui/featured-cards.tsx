@@ -279,7 +279,7 @@ export function FeaturedCards({ serverUser }: { serverUser?: ServerUser | null }
     const isAdmin = roles.includes("admin");
     const isProfessional = roles.includes("professional") || isAdmin;
     return {
-      accessKids: roles.includes("kid") || isProfessional,
+      accessKids: roles.includes("kid"),
       accessAdult: roles.includes("adult") || isProfessional,
       accessProfessional: isProfessional,
       isAdmin: isAdmin,

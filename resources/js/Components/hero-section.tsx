@@ -107,7 +107,7 @@ export function HeroSection() {
                 </motion.div>
 
                 {/* Animated Headline */}
-                <h1 className="text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-black text-slate-900 dark:text-white leading-[0.95] tracking-tight mb-6 sm:mb-8 drop-shadow-md dark:drop-shadow-xl transition-colors duration-500">
+                <h1 className="text-4xl sm:text-6xl md:text-7xl xl:text-8xl font-black text-slate-900 dark:text-white leading-[0.95] tracking-tight mb-6 sm:mb-8 drop-shadow-md dark:drop-shadow-xl transition-colors duration-500">
                     {headlineWords.map((word, i) => (
                         <motion.span
                             key={i}

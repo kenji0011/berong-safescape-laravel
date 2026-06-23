@@ -33,10 +33,6 @@ class CheckRole
             if (in_array($role, $userRoles)) {
                 return $next($request);
             }
-            // If checking kid role, professional also qualifies
-            if ($role === 'kid' && in_array('professional', $userRoles)) {
-                return $next($request);
-            }
             // If checking adult role, professional also qualifies
             if ($role === 'adult' && in_array('professional', $userRoles)) {
                 return $next($request);
