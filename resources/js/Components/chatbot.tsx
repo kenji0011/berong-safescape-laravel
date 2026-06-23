@@ -102,7 +102,7 @@ export function Chatbot() {
       gain1.connect(ctx.destination)
       osc1.start(now)
       osc1.stop(now + 0.15)
-      
+
       const osc2 = ctx.createOscillator()
       const gain2 = ctx.createGain()
       osc2.type = "sine"
@@ -146,7 +146,7 @@ export function Chatbot() {
 
   const speakText = async (text: string, messageId: string | null = null, force: boolean = false) => {
     if (!readAloudRef.current && !force) return
-    
+
     if (isTTSLoading) return;
 
     // If clicking the button of the currently speaking message, just stop it and return
@@ -161,17 +161,17 @@ export function Chatbot() {
     }
 
     // Stop any current native speech or audio
-    window.speechSynthesis.cancel() 
+    window.speechSynthesis.cancel()
     if (currentAudioRef.current) {
       currentAudioRef.current.pause()
       currentAudioRef.current.currentTime = 0
     }
     setSpeakingMessageId(null)
-    
+
     // Set new speaking message
     setSpeakingMessageId(messageId)
     setIsTTSLoading(true)
-    
+
     try {
       // Call our backend API to get the audio from OpenAI
       const response = await axios.post('/api/chatbot/tts', { text }, {
@@ -181,11 +181,11 @@ export function Chatbot() {
       // Create a URL for the blob and play it
       const audioUrl = URL.createObjectURL(response.data)
       const audio = new Audio(audioUrl)
-      
+
       currentAudioRef.current = audio
       audio.play()
       setIsTTSLoading(false)
-      
+
       // Cleanup URL after playing
       audio.onended = () => {
         URL.revokeObjectURL(audioUrl)
@@ -199,13 +199,13 @@ export function Chatbot() {
     } catch (error) {
       setIsTTSLoading(false)
       console.error("AI Voice Error, falling back to browser voice:", error)
-      
+
       // Fallback to built-in browser voice if the API fails (e.g., missing API key)
       const cleanText = text.replace(/[*#_`]/g, '').replace(/\n+/g, ' ')
       const utterance = new SpeechSynthesisUtterance(cleanText)
-      
+
       const voices = window.speechSynthesis.getVoices()
-      const preferredVoice = voices.find(voice => 
+      const preferredVoice = voices.find(voice =>
         voice.name.includes('Google US English') ||
         voice.name.includes('Samantha') ||
         voice.name.includes('Microsoft Zira') ||
@@ -238,7 +238,7 @@ export function Chatbot() {
       alert("Your browser does not support Speech Recognition. Please try Chrome or Edge.")
       return
     }
-    
+
     // type cast to any to bypass TS window type issues
     const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition
     const recognition = new SpeechRecognition()
@@ -314,11 +314,11 @@ export function Chatbot() {
         // Re-enter from the left side
         const screenWidth = window.innerWidth
         const chatheadWidth = chatheadRef.current?.offsetWidth || 160
-        const leftOffset = screenWidth < 640 
-          ? (useMiniButton ? 24 : 0) 
+        const leftOffset = screenWidth < 640
+          ? (useMiniButton ? 24 : 0)
           : (useMiniButton ? 32 : 0)
         const targetX = -(screenWidth - chatheadWidth) + leftOffset  // adjust berong sides
-        
+
         if (!isMounted.current) {
           dragX.set(targetX)
         } else {
@@ -354,8 +354,8 @@ export function Chatbot() {
 
     if (isCloserToLeft) {
       // Snap to left edge
-      const leftOffset = screenWidth < 640 
-        ? (useMiniButton ? 24 : 0) 
+      const leftOffset = screenWidth < 640
+        ? (useMiniButton ? 24 : 0)
         : (useMiniButton ? 32 : 0)
       const targetX = -(screenWidth - chatheadWidth) + leftOffset  // adjust berong sides
       animate(dragX, targetX, { type: "spring", stiffness: 400, damping: 30 })
@@ -421,14 +421,14 @@ export function Chatbot() {
         const response = await axios.get('/api/quick-questions')
         if (response.data) {
           const questionsArray: QuickQuestion[] = response.data
-          
+
           const grouped: Record<string, QuickQuestion[]> = {}
           questionsArray.forEach((q) => {
             const cat = q.category || 'General'
             if (!grouped[cat]) grouped[cat] = []
             grouped[cat].push(q)
           })
-          
+
           setQuickQuestions(grouped)
         }
       } catch (error) {
@@ -484,7 +484,7 @@ export function Chatbot() {
     // Get bot response and add to messages
     const currentContext = [...messages, userMessage]
     setIsTyping(true)
-    
+
     let botResponse = ""
     try {
       botResponse = await generateBotResponse(inputValue, currentContext, abortControllerRef.current.signal)
@@ -536,9 +536,9 @@ export function Chatbot() {
   }
 
   const generateBotResponse = async (input: string, currentHistory: Message[] = [], signal?: AbortSignal): Promise<string> => {
-    // Only use AI for authenticated users
+    // Guest users cannot use the chatbot (no API, no fallback)
     if (!isAuthenticated) {
-      return generateRuleBasedResponse(input) + "\n\n💡 Sign in for AI-powered responses!"
+      return "💡 Please log in to your account to use the Berong AI Assistant!"
     }
 
     try {
@@ -554,56 +554,82 @@ export function Chatbot() {
         history: recentHistory
       }, { signal });
 
+      // If the backend indicates an error (e.g. missing API key, 503 overload)
+      if (response.data && response.data.error) {
+        console.warn('AI fallback triggered due to backend error:', response.data.response);
+        return generateRuleBasedResponse(input) + "\n\n*(Offline Mode)*";
+      }
+
       if (response.data && response.data.response) {
         return response.data.response;
       } else {
         console.error('AI response data empty:', response);
-        return "I apologize, but my AI system received an unexpected response. Please try asking your question again.";
+        return generateRuleBasedResponse(input) + "\n\n*(Offline Mode)*";
       }
     } catch (error: any) {
       if (axios.isCancel(error)) {
         return "Response generation stopped.";
       }
-      console.error('Error calling AI backend:', error);
-      return "I'm having trouble connecting to my knowledge base right now. For emergencies, please call 911 immediately.";
+      console.error('Error calling AI backend, triggering fallback:', error);
+      return generateRuleBasedResponse(input) + "\n\n*(Offline Mode)*";
     }
   }
 
   const generateRuleBasedResponse = (input: string): string => {
     const lowerInput = input.toLowerCase()
-    const inputWords = lowerInput.split(/\s+/).map(w => w.replace(/[^a-z0-9]/g, "")).filter(w => w.length >= 3)
 
-    // Step 1: Check for exact/near-exact pattern match
+    // Stop words to prevent false positive matches on common conversational words
+    const stopWords = new Set([
+      'what', 'when', 'where', 'how', 'why', 'who', 'is', 'the', 'a', 'an', 'and', 'or', 'do', 'does', 'did',
+      'for', 'to', 'in', 'of', 'on', 'with', 'about', 'should', 'can', 'will', 'would', 'could', 'if', 'my',
+      'your', 'i', 'me', 'you', 'it', 'know', 'are', 'we', 'they', 'them', 'that', 'this', 'then', 'than',
+      'there', 'their', 'was', 'were', 'been', 'has', 'have', 'had', 'got', 'get', 'some', 'any', 'all',
+      'out', 'put', 'up', 'down', 'from', 'by', 'as', 'at', 'so', 'be', 'yout', 'tell', 'make', 'use',
+      'hi', 'hello', 'hey', 'chatbot', 'bot', 'assistant', 'want', 'wanted', 'ask', 'question', 'quick', 'help', 'please'
+    ]);
+
+    // Only consider meaningful words >= 2 chars
+    const inputWords = lowerInput.split(/\s+/).map(w => w.replace(/[^a-z0-9]/g, "")).filter(w => w.length >= 2 && !stopWords.has(w))
+
+    // Step 1: Check for exact/near-exact pattern match using Cosine Similarity
     let bestMatch: { tag: string; score: number } = { tag: "", score: 0 }
 
     for (const intent of processedIntents) {
       // Check if input closely matches any full pattern
       for (const pattern of intent.patterns) {
-        const patternWords = pattern.split(/\s+/).map(w => w.replace(/[^a-z0-9]/g, "")).filter(w => w.length >= 3)
+        const patternWords = pattern.toLowerCase().split(/\s+/).map(w => w.replace(/[^a-z0-9]/g, "")).filter(w => w.length >= 2 && !stopWords.has(w))
+
+        // Skip if pattern only contained stop words
+        if (patternWords.length === 0) continue;
+
         const matchingWords = inputWords.filter(w => patternWords.includes(w))
-        // Score = what fraction of the pattern keywords match, boosted by how many input words match
-        if (patternWords.length > 0) {
-          const patternCoverage = matchingWords.length / patternWords.length
-          const inputCoverage = matchingWords.length / Math.max(inputWords.length, 1)
-          const score = (patternCoverage * 0.7) + (inputCoverage * 0.3)
+
+        if (matchingWords.length > 0) {
+          // Calculate Cosine Similarity: MatchCount / sqrt(PatternLength * InputLength)
+          const denominator = Math.sqrt(patternWords.length * inputWords.length);
+          const score = denominator > 0 ? matchingWords.length / denominator : 0;
+
           if (score > bestMatch.score) {
             bestMatch = { tag: intent.tag, score }
           }
         }
       }
 
-      // Also do keyword overlap scoring
+      // Also do keyword overlap scoring as a secondary measure
       const matchingKeywords = inputWords.filter(w => intent.keywords.includes(w))
-      if (matchingKeywords.length > 0) {
-        const keywordScore = (matchingKeywords.length / Math.max(inputWords.length, 1)) * 0.6
+      if (matchingKeywords.length > 0 && intent.keywords.length > 0) {
+        const keywordDenominator = Math.sqrt(intent.keywords.length * inputWords.length);
+        const keywordScore = keywordDenominator > 0 ? (matchingKeywords.length / keywordDenominator) * 0.8 : 0;
+
         if (keywordScore > bestMatch.score) {
           bestMatch = { tag: intent.tag, score: keywordScore }
         }
       }
     }
 
-    // Step 2: If we have a decent match (score > 0.2), return a response from that intent
-    if (bestMatch.score > 0.2 && bestMatch.tag) {
+    // Step 2: If we have a decent match (Cosine Similarity > 0.55), return a response
+    // 0.55 is a strict threshold that prevents random guesses
+    if (bestMatch.score > 0.55 && bestMatch.tag) {
       const intentData = chatbotIntents[bestMatch.tag as keyof typeof chatbotIntents]
       if (intentData && intentData.responses.length > 0) {
         const randomIndex = Math.floor(Math.random() * intentData.responses.length)
@@ -612,7 +638,7 @@ export function Chatbot() {
     }
 
     // Step 3: Fallback for no match
-    return "Thank you for your question! I can help with fire safety topics like fire prevention, emergency procedures, fire extinguishers, evacuation planning, and more. Try asking about a specific fire safety topic!"
+    return "Thank you for your question! Because I am currently running in offline mode, I can only understand basic English questions right now. Try asking a specific fire safety question in English, like 'how to prevent fires' or 'emergency procedure'."
   }
 
   return (
@@ -691,7 +717,7 @@ export function Chatbot() {
                         initial={{ opacity: 0, scale: 0.5, y: 20 }}
                         animate={{ opacity: 1, scale: 1, y: [0, -8, 0] }}
                         exit={{ opacity: 0, scale: 0.5, y: 20, transition: { delay: 0, duration: 0.2 } }}
-                        transition={{ 
+                        transition={{
                           delay: 1.5,
                           y: { duration: 2.5, repeat: Infinity, ease: "easeInOut" },
                           default: { type: "spring", stiffness: 200 }
@@ -738,112 +764,111 @@ export function Chatbot() {
               }}
             >
               <Card className="chatbot-window w-[480px] max-w-[90vw] h-[70vh] min-h-[450px] max-h-[620px] flex flex-col shadow-2xl p-0 gap-0 overflow-hidden border-[3px] border-[#ff6b00] rounded-2xl dark:bg-slate-900 dark:border-[#ff8c00]">
-              {/* Header — Orange */}
-              <div className="flex items-center justify-between px-4 py-3 bg-orange-600 text-white rounded-t-xl shrink-0">
-                <div className="flex items-center gap-3">
-                  <Image
-                    src="/berong_pr.png"
-                    alt="BFP Assistant"
-                    width={32}
-                    height={32}
-                    className="h-8 w-8 object-contain rounded-full bg-white p-0.5"
-                  />
-                  <h3 className="font-black text-lg tracking-wide">BFP Assistant</h3>
-                </div>
-                <div className="flex items-center gap-1">
-                  {/* Toggle Read Aloud */}
-                  <button
-                    onClick={() => {
-                      setReadAloud(prev => !prev)
-                      if (readAloud) {
-                        window.speechSynthesis.cancel()
-                        if (currentAudioRef.current) {
-                          currentAudioRef.current.pause()
-                          currentAudioRef.current.currentTime = 0
+                {/* Header — Orange */}
+                <div className="flex items-center justify-between px-4 py-3 bg-orange-600 text-white rounded-t-xl shrink-0">
+                  <div className="flex items-center gap-3">
+                    <Image
+                      src="/berong_pr.png"
+                      alt="BFP Assistant"
+                      width={32}
+                      height={32}
+                      className="h-8 w-8 object-contain rounded-full bg-white p-0.5"
+                    />
+                    <h3 className="font-black text-lg tracking-wide">BFP Assistant</h3>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    {/* Toggle Read Aloud */}
+                    <button
+                      onClick={() => {
+                        setReadAloud(prev => !prev)
+                        if (readAloud) {
+                          window.speechSynthesis.cancel()
+                          if (currentAudioRef.current) {
+                            currentAudioRef.current.pause()
+                            currentAudioRef.current.currentTime = 0
+                          }
+                          setSpeakingMessageId(null)
+                          setIsTTSLoading(false)
                         }
-                        setSpeakingMessageId(null)
-                        setIsTTSLoading(false)
-                      }
-                    }}
-                    className={`h-9 w-9 flex items-center justify-center rounded-lg transition-colors ${readAloud ? 'bg-white/30 text-white' : 'text-white/80 hover:bg-white/20'}`}
-                    title={readAloud ? 'Turn off voice' : 'Turn on voice'}
-                  >
-                    {readAloud ? <Volume2 className="h-5 w-5" strokeWidth={2.5} /> : <VolumeX className="h-5 w-5" strokeWidth={2.5} />}
-                  </button>
- 
-                  {/* Toggle mini/full mascot mode */}
-                  <button
-                    onClick={toggleMiniMode}
-                    className="h-9 w-9 flex items-center justify-center text-white hover:bg-white/20 rounded-lg transition-colors"
-                    title={useMiniButton ? 'Switch to full mascot' : 'Switch to mini button'}
-                  >
-                    {useMiniButton ? <Maximize2 className="h-5 w-5" strokeWidth={2.5} /> : <Minimize2 className="h-5 w-5" strokeWidth={2.5} />}
-                  </button>
-                  <button
-                    onClick={() => {
-                      setIsOpen(false)
-                      playClose()
-                    }}
-                    className="h-9 w-9 flex items-center justify-center text-white hover:bg-white/20 rounded-lg transition-colors"
-                  >
-                    <X className="h-6 w-6" strokeWidth={3} />
-                  </button>
-                </div>
-              </div>
- 
-              {/* Quick Questions Section */}
-              {loadingQuestions ? (
-                <div className="p-3 text-center dark:bg-slate-950/50">
-                  <div className="animate-pulse text-xs text-muted-foreground dark:text-slate-500">Loading suggestions...</div>
-                </div>
-              ) : Object.keys(quickQuestions).length > 0 && showQuickQuestions ? (
-                <div className="py-2 px-3 bg-gray-50 dark:bg-slate-950 border-b dark:border-slate-800 shrink-0">
-                  {/* Header with Icon */}
-                  <div className="flex items-center gap-2 mb-2">
-                    <div className="h-1.5 w-1.5 rounded-full bg-green-500 animate-pulse" />
-                    <h4 className="text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase tracking-wider">
-                      Suggested Topics
-                    </h4>
-                  </div>
- 
-                  {/* Scrollable Area */}
-                  <div className="max-h-[110px] overflow-y-auto pr-1 space-y-4 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-gray-200 dark:[&::-webkit-scrollbar-thumb]:bg-slate-800 [&::-webkit-scrollbar-thumb]:rounded-full">
-                    {Object.entries(quickQuestions).map(([category, questions]) => (
-                      <div key={category} className="first:mt-0">
-                        <h5 className="text-[10px] font-bold text-gray-400 dark:text-slate-500 mb-2 pl-1 uppercase">
-                          {category}
-                        </h5>
-                        <div className="flex flex-wrap gap-2">
-                          {questions.slice(0, 4).map((question) => (
-                            <button
-                              key={question.id}
-                              onClick={() => handleQuickQuestion(question.questionText, question.responseText)}
-                              className="text-xs text-left px-3 py-2 rounded-xl bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800 shadow-sm text-gray-700 dark:text-slate-300 transition-all duration-200 hover:border-orange-300 dark:hover:border-orange-500/50 hover:bg-orange-50 dark:hover:bg-orange-500/10 hover:text-orange-700 dark:hover:text-orange-400 hover:shadow-md active:scale-95"
-                            >
-                              {question.questionText}
-                            </button>
-                          ))}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              ) : null}
- 
-              {/* Messages — theme aware background */}
-              <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-white dark:bg-slate-900 scroll-smooth [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-gray-200 dark:[&::-webkit-scrollbar-thumb]:bg-slate-800 [&::-webkit-scrollbar-thumb]:rounded-full">
-                {messages.map((message) => (
-                  <div key={message.id} className={`flex ${message.sender === "user" ? "justify-end" : "justify-start"}`}>
-                    <div
-                      className={`max-w-[85%] rounded-2xl p-3 shadow-sm relative group ${
-                        message.sender === "user"
-                          ? "bg-[#1a6b3c] dark:bg-[#1a6b3c] text-white rounded-br-md"
-                          : "bg-[#1e3a4a] dark:bg-slate-800 text-white border border-[#2a5060] dark:border-slate-700 rounded-bl-md"
-                      }`}
+                      }}
+                      className={`h-9 w-9 flex items-center justify-center rounded-lg transition-colors ${readAloud ? 'bg-white/30 text-white' : 'text-white/80 hover:bg-white/20'}`}
+                      title={readAloud ? 'Turn off voice' : 'Turn on voice'}
                     >
-                      {message.sender === "bot" ? (
-                        <>
-                          <div className="text-sm prose prose-sm prose-invert max-w-none
+                      {readAloud ? <Volume2 className="h-5 w-5" strokeWidth={2.5} /> : <VolumeX className="h-5 w-5" strokeWidth={2.5} />}
+                    </button>
+
+                    {/* Toggle mini/full mascot mode */}
+                    <button
+                      onClick={toggleMiniMode}
+                      className="h-9 w-9 flex items-center justify-center text-white hover:bg-white/20 rounded-lg transition-colors"
+                      title={useMiniButton ? 'Switch to full mascot' : 'Switch to mini button'}
+                    >
+                      {useMiniButton ? <Maximize2 className="h-5 w-5" strokeWidth={2.5} /> : <Minimize2 className="h-5 w-5" strokeWidth={2.5} />}
+                    </button>
+                    <button
+                      onClick={() => {
+                        setIsOpen(false)
+                        playClose()
+                      }}
+                      className="h-9 w-9 flex items-center justify-center text-white hover:bg-white/20 rounded-lg transition-colors"
+                    >
+                      <X className="h-6 w-6" strokeWidth={3} />
+                    </button>
+                  </div>
+                </div>
+
+                {/* Quick Questions Section */}
+                {loadingQuestions ? (
+                  <div className="p-3 text-center dark:bg-slate-950/50">
+                    <div className="animate-pulse text-xs text-muted-foreground dark:text-slate-500">Loading suggestions...</div>
+                  </div>
+                ) : Object.keys(quickQuestions).length > 0 && showQuickQuestions ? (
+                  <div className="py-2 px-3 bg-gray-50 dark:bg-slate-950 border-b dark:border-slate-800 shrink-0">
+                    {/* Header with Icon */}
+                    <div className="flex items-center gap-2 mb-2">
+                      <div className="h-1.5 w-1.5 rounded-full bg-green-500 animate-pulse" />
+                      <h4 className="text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase tracking-wider">
+                        Suggested Topics
+                      </h4>
+                    </div>
+
+                    {/* Scrollable Area */}
+                    <div className="max-h-[110px] overflow-y-auto pr-1 space-y-4 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-gray-200 dark:[&::-webkit-scrollbar-thumb]:bg-slate-800 [&::-webkit-scrollbar-thumb]:rounded-full">
+                      {Object.entries(quickQuestions).map(([category, questions]) => (
+                        <div key={category} className="first:mt-0">
+                          <h5 className="text-[10px] font-bold text-gray-400 dark:text-slate-500 mb-2 pl-1 uppercase">
+                            {category}
+                          </h5>
+                          <div className="flex flex-wrap gap-2">
+                            {questions.slice(0, 4).map((question) => (
+                              <button
+                                key={question.id}
+                                onClick={() => handleQuickQuestion(question.questionText, question.responseText)}
+                                className="text-xs text-left px-3 py-2 rounded-xl bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800 shadow-sm text-gray-700 dark:text-slate-300 transition-all duration-200 hover:border-orange-300 dark:hover:border-orange-500/50 hover:bg-orange-50 dark:hover:bg-orange-500/10 hover:text-orange-700 dark:hover:text-orange-400 hover:shadow-md active:scale-95"
+                              >
+                                {question.questionText}
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ) : null}
+
+                {/* Messages — theme aware background */}
+                <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-white dark:bg-slate-900 scroll-smooth [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-gray-200 dark:[&::-webkit-scrollbar-thumb]:bg-slate-800 [&::-webkit-scrollbar-thumb]:rounded-full">
+                  {messages.map((message) => (
+                    <div key={message.id} className={`flex ${message.sender === "user" ? "justify-end" : "justify-start"}`}>
+                      <div
+                        className={`max-w-[85%] rounded-2xl p-3 shadow-sm relative group ${message.sender === "user"
+                            ? "bg-[#1a6b3c] dark:bg-[#1a6b3c] text-white rounded-br-md"
+                            : "bg-[#1e3a4a] dark:bg-slate-800 text-white border border-[#2a5060] dark:border-slate-700 rounded-bl-md"
+                          }`}
+                      >
+                        {message.sender === "bot" ? (
+                          <>
+                            <div className="text-sm prose prose-sm prose-invert max-w-none
                             [&>p]:my-1 [&>ul]:my-1 [&>ol]:my-1 [&>li]:my-0.5
                             [&>ul]:pl-4 [&>ol]:pl-4 [&>ul]:list-disc [&>ol]:list-decimal
                             [&>h1]:text-base [&>h1]:font-bold [&>h1]:mt-2 [&>h1]:mb-1
@@ -853,106 +878,103 @@ export function Chatbot() {
                             [&>code]:bg-white/10 dark:[&>code]:bg-slate-950/50 [&>code]:px-1 [&>code]:rounded [&>code]:text-xs
                             [&>blockquote]:border-l-2 [&>blockquote]:border-orange-400 [&>blockquote]:pl-2 [&>blockquote]:italic
                           ">
-                            <ReactMarkdown>{message.text}</ReactMarkdown>
-                          </div>
-                          <button
-                            onClick={() => speakText(message.text, message.id, true)}
-                            disabled={isTTSLoading}
-                            className={`absolute -bottom-2 -right-2 h-8 w-8 flex items-center justify-center rounded-full border-2 shadow-md transition-all z-10 ${
-                              isTTSLoading ? 'cursor-not-allowed opacity-70' : 'hover:scale-110 active:scale-90'
-                            } ${
-                              speakingMessageId === message.id 
-                                ? `bg-orange-500 border-orange-200 text-white ${isTTSLoading ? 'animate-pulse' : ''}` 
-                                : "bg-slate-500 dark:bg-slate-700 border-white dark:border-slate-900 text-white"
-                            }`}
-                            title={speakingMessageId === message.id && !isTTSLoading ? "Stop reading" : "Read aloud"}
-                          >
-                            {speakingMessageId === message.id && !isTTSLoading ? (
-                              <Square className="h-3 w-3 fill-current" />
-                            ) : (
-                              <Volume2 className="h-4 w-4" strokeWidth={2.5} />
-                            )}
-                          </button>
-                        </>
-                      ) : (
-                        <p className="text-sm font-medium">{message.text}</p>
-                      )}
+                              <ReactMarkdown>{message.text}</ReactMarkdown>
+                            </div>
+                            <button
+                              onClick={() => speakText(message.text, message.id, true)}
+                              disabled={isTTSLoading}
+                              className={`absolute -bottom-2 -right-2 h-8 w-8 flex items-center justify-center rounded-full border-2 shadow-md transition-all z-10 ${isTTSLoading ? 'cursor-not-allowed opacity-70' : 'hover:scale-110 active:scale-90'
+                                } ${speakingMessageId === message.id
+                                  ? `bg-orange-500 border-orange-200 text-white ${isTTSLoading ? 'animate-pulse' : ''}`
+                                  : "bg-slate-500 dark:bg-slate-700 border-white dark:border-slate-900 text-white"
+                                }`}
+                              title={speakingMessageId === message.id && !isTTSLoading ? "Stop reading" : "Read aloud"}
+                            >
+                              {speakingMessageId === message.id && !isTTSLoading ? (
+                                <Square className="h-3 w-3 fill-current" />
+                              ) : (
+                                <Volume2 className="h-4 w-4" strokeWidth={2.5} />
+                              )}
+                            </button>
+                          </>
+                        ) : (
+                          <p className="text-sm font-medium">{message.text}</p>
+                        )}
+                      </div>
                     </div>
-                  </div>
-                ))}
-                {/* Typing Indicator */}
-                {isTyping && (
-                  <div className="flex justify-start">
-                    <div className="bg-[#1e3a4a] dark:bg-slate-800 text-white border border-[#2a5060] dark:border-slate-700 rounded-2xl rounded-bl-md p-3 px-4 flex items-center gap-1.5 h-10 w-16">
-                      <motion.div
-                        className="w-1.5 h-1.5 bg-orange-400 rounded-full"
-                        animate={{ y: [0, -5, 0] }}
-                        transition={{ duration: 0.6, repeat: Infinity, ease: "easeInOut" }}
-                      />
-                      <motion.div
-                        className="w-1.5 h-1.5 bg-orange-400 rounded-full"
-                        animate={{ y: [0, -5, 0] }}
-                        transition={{ duration: 0.6, repeat: Infinity, ease: "easeInOut", delay: 0.2 }}
-                      />
-                      <motion.div
-                        className="w-1.5 h-1.5 bg-orange-400 rounded-full"
-                        animate={{ y: [0, -5, 0] }}
-                        transition={{ duration: 0.6, repeat: Infinity, ease: "easeInOut", delay: 0.4 }}
-                      />
+                  ))}
+                  {/* Typing Indicator */}
+                  {isTyping && (
+                    <div className="flex justify-start">
+                      <div className="bg-[#1e3a4a] dark:bg-slate-800 text-white border border-[#2a5060] dark:border-slate-700 rounded-2xl rounded-bl-md p-3 px-4 flex items-center gap-1.5 h-10 w-16">
+                        <motion.div
+                          className="w-1.5 h-1.5 bg-orange-400 rounded-full"
+                          animate={{ y: [0, -5, 0] }}
+                          transition={{ duration: 0.6, repeat: Infinity, ease: "easeInOut" }}
+                        />
+                        <motion.div
+                          className="w-1.5 h-1.5 bg-orange-400 rounded-full"
+                          animate={{ y: [0, -5, 0] }}
+                          transition={{ duration: 0.6, repeat: Infinity, ease: "easeInOut", delay: 0.2 }}
+                        />
+                        <motion.div
+                          className="w-1.5 h-1.5 bg-orange-400 rounded-full"
+                          animate={{ y: [0, -5, 0] }}
+                          transition={{ duration: 0.6, repeat: Infinity, ease: "easeInOut", delay: 0.4 }}
+                        />
+                      </div>
                     </div>
-                  </div>
-                )}
- 
-                <div ref={messagesEndRef} />
-              </div>
- 
-              {/* Input Footer — with mic + send */}
-              <div className="px-4 py-3 border-t border-gray-200 dark:border-slate-800 bg-white dark:bg-slate-900 rounded-b-xl shrink-0">
-                <div className="flex items-center gap-2">
-                  <Input
-                    value={inputValue}
-                    onChange={(e) => setInputValue(e.target.value)}
-                    onKeyPress={(e) => e.key === "Enter" && !isTyping && handleSend()}
-                    placeholder={isTyping ? "Berong is thinking..." : "Ask about fire safety..."}
-                    disabled={isTyping}
-                    className="flex-1 border-gray-300 dark:border-slate-800 bg-gray-50 dark:bg-slate-950 rounded-xl focus:ring-orange-400 dark:focus:ring-orange-500 focus:border-orange-400 dark:focus:border-orange-500 text-slate-800 dark:text-slate-200 placeholder:text-slate-400 dark:placeholder:text-slate-600 transition-colors disabled:opacity-70 disabled:cursor-not-allowed"
-                  />
-                  <button
-                    type="button"
-                    onClick={isTyping ? undefined : startListening}
-                    disabled={isTyping}
-                    className={`h-10 w-10 flex items-center justify-center transition-all ${
-                      isListening 
-                        ? 'text-red-500 bg-red-100 dark:bg-red-950/30 rounded-full animate-pulse shadow-[0_0_15px_rgba(239,68,68,0.5)]' 
-                        : 'text-gray-400 dark:text-slate-500 hover:text-orange-500 dark:hover:text-orange-400 disabled:opacity-30 disabled:cursor-not-allowed'
-                    }`}
-                    title={isTyping ? "Generation in progress..." : (isListening ? "Listening..." : "Voice input")}
-                  >
-                    <Mic className="h-5 w-5" strokeWidth={isListening ? 2.5 : 2} />
-                  </button>
-                  {isTyping ? (
-                    <button
-                      onClick={handleStopGeneration}
-                      className="h-10 w-10 flex items-center justify-center text-red-500 hover:bg-red-50 dark:hover:bg-red-950/20 rounded-xl transition-colors"
-                    >
-                      <Square className="h-5 w-5 fill-current" />
-                    </button>
-                  ) : (
-                    <button
-                      onClick={handleSend}
-                      disabled={!inputValue.trim()}
-                      className="h-10 w-10 flex items-center justify-center bg-orange-500 hover:bg-orange-600 dark:bg-orange-600 dark:hover:bg-orange-500 text-white rounded-xl shadow-sm transition-all disabled:opacity-50 disabled:grayscale hover:scale-105 active:scale-95"
-                    >
-                      <Send className="h-5 w-5" strokeWidth={2.5} />
-                    </button>
                   )}
+
+                  <div ref={messagesEndRef} />
                 </div>
-              </div>
-            </Card>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </div>
-  </>
-)
+
+                {/* Input Footer — with mic + send */}
+                <div className="px-4 py-3 border-t border-gray-200 dark:border-slate-800 bg-white dark:bg-slate-900 rounded-b-xl shrink-0">
+                  <div className="flex items-center gap-2">
+                    <Input
+                      value={inputValue}
+                      onChange={(e) => setInputValue(e.target.value)}
+                      onKeyPress={(e) => e.key === "Enter" && !isTyping && handleSend()}
+                      placeholder={isTyping ? "Berong is thinking..." : "Ask about fire safety..."}
+                      disabled={isTyping}
+                      className="flex-1 border-gray-300 dark:border-slate-800 bg-gray-50 dark:bg-slate-950 rounded-xl focus:ring-orange-400 dark:focus:ring-orange-500 focus:border-orange-400 dark:focus:border-orange-500 text-slate-800 dark:text-slate-200 placeholder:text-slate-400 dark:placeholder:text-slate-600 transition-colors disabled:opacity-70 disabled:cursor-not-allowed"
+                    />
+                    <button
+                      type="button"
+                      onClick={isTyping ? undefined : startListening}
+                      disabled={isTyping}
+                      className={`h-10 w-10 flex items-center justify-center transition-all ${isListening
+                          ? 'text-red-500 bg-red-100 dark:bg-red-950/30 rounded-full animate-pulse shadow-[0_0_15px_rgba(239,68,68,0.5)]'
+                          : 'text-gray-400 dark:text-slate-500 hover:text-orange-500 dark:hover:text-orange-400 disabled:opacity-30 disabled:cursor-not-allowed'
+                        }`}
+                      title={isTyping ? "Generation in progress..." : (isListening ? "Listening..." : "Voice input")}
+                    >
+                      <Mic className="h-5 w-5" strokeWidth={isListening ? 2.5 : 2} />
+                    </button>
+                    {isTyping ? (
+                      <button
+                        onClick={handleStopGeneration}
+                        className="h-10 w-10 flex items-center justify-center text-red-500 hover:bg-red-50 dark:hover:bg-red-950/20 rounded-xl transition-colors"
+                      >
+                        <Square className="h-5 w-5 fill-current" />
+                      </button>
+                    ) : (
+                      <button
+                        onClick={handleSend}
+                        disabled={!inputValue.trim()}
+                        className="h-10 w-10 flex items-center justify-center bg-orange-500 hover:bg-orange-600 dark:bg-orange-600 dark:hover:bg-orange-500 text-white rounded-xl shadow-sm transition-all disabled:opacity-50 disabled:grayscale hover:scale-105 active:scale-95"
+                      >
+                        <Send className="h-5 w-5" strokeWidth={2.5} />
+                      </button>
+                    )}
+                  </div>
+                </div>
+              </Card>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+    </>
+  )
 }

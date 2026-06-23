@@ -34,3 +34,11 @@ migrate_react.cjs
 q_out.json
 test_scores.php
 /utils/
+
+# Large Machine Learning Files
+ml_scripts/bfp_chromadb/
+ml_scripts/bfp_llama3_final/
+*.safetensors
+*.sqlite3
+*.pickle
+*.bin
