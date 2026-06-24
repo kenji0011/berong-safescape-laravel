@@ -202,18 +202,30 @@
             "Are there professional training materials available?",
             "Resources for fire safety professionals",
             "Where can I find information for firefighters?",
-            "Where can I read the Fire Code of the Philippines?",
             "Do you have the BFP manuals?",
-            "where is the fire code",
             "BFP manuals for firefighters",
             "training materials for BFP",
             "info for professionals",
-            "fire code of philippines",
             "how to access professional section"
         ],
         "responses": [
             "Professionals can find in-depth resources and official BFP documents in the Professional section of our platform. Please log in with appropriate credentials to access it.",
-            "Our Professional section contains the Fire Code of the Philippines, BFP operational manuals, and advanced training materials. Access to this section requires professional credentials or admin permission."
+            "Our Professional section contains BFP operational manuals, and advanced training materials. Access to this section requires professional credentials or admin permission."
+        ]
+    },
+    "ra_9514": {
+        "patterns": [
+            "ra 9514",
+            "ra9514",
+            "what is ra 9514",
+            "republic act 9514",
+            "where is the fire code",
+            "fire code of philippines",
+            "what is the fire code"
+        ],
+        "responses": [
+            "Republic Act No. 9514, also known as the Fire Code of the Philippines, establishes the rules for fire safety, prevention, and suppression. It applies to all public and private buildings to ensure everyone's safety.",
+            "RA 9514 (Fire Code of the Philippines) mandates strict fire safety measures for all establishments. This includes requiring proper fire exits, working fire extinguishers, smoke alarms, and securing a Fire Safety Inspection Certificate (FSIC) to protect lives and properties from destructive fires."
         ]
     },
     "small_talk": {

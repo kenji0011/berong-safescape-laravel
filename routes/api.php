@@ -48,7 +48,7 @@ Route::middleware(['auth:sanctum', 'throttle:api'])->get('/user', function (Requ
 
 // All protected API routes
 Route::middleware(['auth:sanctum', 'throttle:api'])->group(function () {
-    
+
     // Auth Profile Completion
     Route::post('/auth/complete-profile', [AuthApiController::class, 'completeProfile']);
     Route::get('/auth/user-scores', [AuthApiController::class, 'userScores']);
@@ -136,7 +136,7 @@ Route::middleware(['auth:sanctum', 'throttle:api'])->group(function () {
         // Content management
         Route::post('/upload', [AdminController::class, 'uploadImage']);
         Route::post('/upload-manual', [AdminController::class, 'uploadManual']);
-        
+
         Route::get('/posts', [ContentController::class, 'blogs']);
         Route::post('/posts', [AdminController::class, 'createPost']);
         Route::put('/posts/{id}', [AdminController::class, 'updatePost']);
