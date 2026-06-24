@@ -22,8 +22,8 @@ class AdminController extends Controller
     {
         return \Inertia\Inertia::render('AdminDashboard', [
             'initialCarouselImages' => \App\Models\CarouselImage::where('isActive', true)->orderBy('order', 'asc')->get(),
-            'initialBlogPosts' => \App\Models\BlogPost::with('author:id,name')->orderBy('created_at', 'desc')->get(),
-            'initialVideos' => \App\Models\Video::orderBy('order', 'asc')->orderBy('created_at', 'desc')->get(),
+            'initialBlogPosts' => \App\Models\BlogPost::with('author:id,name')->orderBy('created_at', 'desc')->take(100)->get(),
+            'initialVideos' => \App\Models\Video::orderBy('order', 'asc')->orderBy('created_at', 'desc')->take(100)->get(),
             'initialUsers' => \App\Models\User::latest()->paginate(20),
             'initialQuickQuestions' => \App\Models\QuickQuestion::where('isActive', true)->orderBy('created_at', 'desc')->get(),
             'initialFireCodeSections' => \App\Models\FireCodeSection::orderBy('sectionNum')->get(),
@@ -738,12 +738,26 @@ class AdminController extends Controller
             'Santisima Cruz', 'Santo Angel Central', 'Santo Angel Norte', 'Santo Angel Sur'
         ];
 
+        $stats = User::where('role', '!=', 'admin')
+            ->whereIn('barangay', $barangays)
+            ->selectRaw('
+                barangay,
+                COUNT(*) as user_count,
+                SUM(CASE WHEN "profileCompleted" = true THEN 1 ELSE 0 END) as profiles_completed,
+                AVG("preTestScore") as avg_pre_test,
+                AVG("postTestScore") as avg_post_test,
+                AVG(CASE WHEN "preTestScore" IS NOT NULL AND "postTestScore" IS NOT NULL THEN (("postTestScore" - "preTestScore") / 15.0) * 100 ELSE NULL END) as avg_improvement
+            ')
+            ->groupBy('barangay')
+            ->get()
+            ->keyBy('barangay');
+
         $barangayData = [];
 
         foreach ($barangays as $barangay) {
-            $users = User::where('role', '!=', 'admin')->where('barangay', $barangay)->get(['preTestScore', 'postTestScore', 'profileCompleted']);
+            $stat = $stats->get($barangay);
 
-            if ($users->count() === 0) {
+            if (!$stat) {
                 $barangayData[] = [
                     'barangay' => $barangay,
                     'userCount' => 0,
@@ -752,33 +766,16 @@ class AdminController extends Controller
                     'avgImprovement' => 0,
                     'profilesCompleted' => 0,
                 ];
-                continue;
+            } else {
+                $barangayData[] = [
+                    'barangay' => $barangay,
+                    'userCount' => (int) $stat->user_count,
+                    'avgPreTestScore' => round((float) $stat->avg_pre_test, 2),
+                    'avgPostTestScore' => round((float) $stat->avg_post_test, 2),
+                    'avgImprovement' => round((float) $stat->avg_improvement, 1),
+                    'profilesCompleted' => (int) $stat->profiles_completed,
+                ];
             }
-
-            $withPre = $users->filter(fn($u) => !is_null($u->preTestScore));
-            $withPost = $users->filter(fn($u) => !is_null($u->postTestScore));
-            $withBoth = $users->filter(fn($u) => !is_null($u->preTestScore) && !is_null($u->postTestScore));
-
-            $avgPre = $withPre->count() > 0 ? $withPre->avg('preTestScore') : 0;
-            $avgPost = $withPost->count() > 0 ? $withPost->avg('postTestScore') : 0;
-            
-            $avgImprovement = 0;
-            if ($withBoth->count() > 0) {
-                $sum = 0;
-                foreach ($withBoth as $u) {
-                    $sum += ($u->postTestScore - $u->preTestScore);
-                }
-                $avgImprovement = (($sum / $withBoth->count()) / 15) * 100;
-            }
-
-            $barangayData[] = [
-                'barangay' => $barangay,
-                'userCount' => $users->count(),
-                'avgPreTestScore' => round($avgPre, 2),
-                'avgPostTestScore' => round($avgPost, 2),
-                'avgImprovement' => round($avgImprovement, 1),
-                'profilesCompleted' => $users->filter(fn($u) => $u->profileCompleted)->count(),
-            ];
         }
 
         usort($barangayData, fn($a, $b) => $b['userCount'] <=> $a['userCount']);
@@ -787,40 +784,41 @@ class AdminController extends Controller
 
     private function getDemographicAnalytics()
     {
-        $users = User::where('role', '!=', 'admin')->where('profileCompleted', true)->get(['gender', 'age', 'occupation', 'school']);
+        $gender = User::where('role', '!=', 'admin')->where('profileCompleted', true)
+            ->whereNotNull('gender')->groupBy('gender')
+            ->selectRaw('gender, count(*) as count')->pluck('count', 'gender')->toArray();
 
-        $gender = [];
+        $occupations = User::where('role', '!=', 'admin')->where('profileCompleted', true)
+            ->whereNotNull('occupation')->groupBy('occupation')
+            ->selectRaw('occupation, count(*) as count')->pluck('count', 'occupation')->toArray();
+
+        $schools = User::where('role', '!=', 'admin')->where('profileCompleted', true)
+            ->whereNotNull('school')->groupBy('school')
+            ->selectRaw('school, count(*) as count')->pluck('count', 'school')->toArray();
+
+        $ageStats = User::where('role', '!=', 'admin')->where('profileCompleted', true)
+            ->whereNotNull('age')
+            ->selectRaw('
+                SUM(CASE WHEN age < 10 THEN 1 ELSE 0 END) as "Under 10",
+                SUM(CASE WHEN age >= 10 AND age < 15 THEN 1 ELSE 0 END) as "10 to 14",
+                SUM(CASE WHEN age >= 15 AND age < 18 THEN 1 ELSE 0 END) as "15-17",
+                SUM(CASE WHEN age >= 18 AND age < 25 THEN 1 ELSE 0 END) as "18-24",
+                SUM(CASE WHEN age >= 25 AND age < 35 THEN 1 ELSE 0 END) as "25-34",
+                SUM(CASE WHEN age >= 35 AND age < 45 THEN 1 ELSE 0 END) as "35-44",
+                SUM(CASE WHEN age >= 45 AND age < 55 THEN 1 ELSE 0 END) as "45-54",
+                SUM(CASE WHEN age >= 55 THEN 1 ELSE 0 END) as "55+"
+            ')->first();
+
         $ageGroups = [
-            "Under 10" => 0, "10 to 14" => 0, "15-17" => 0, "18-24" => 0,
-            "25-34" => 0, "35-44" => 0, "45-54" => 0, "55+" => 0,
+            "Under 10" => (int) ($ageStats->{'Under 10'} ?? 0),
+            "10 to 14" => (int) ($ageStats->{'10 to 14'} ?? 0),
+            "15-17" => (int) ($ageStats->{'15-17'} ?? 0),
+            "18-24" => (int) ($ageStats->{'18-24'} ?? 0),
+            "25-34" => (int) ($ageStats->{'25-34'} ?? 0),
+            "35-44" => (int) ($ageStats->{'35-44'} ?? 0),
+            "45-54" => (int) ($ageStats->{'45-54'} ?? 0),
+            "55+" => (int) ($ageStats->{'55+'} ?? 0),
         ];
-        $occupations = [];
-        $schools = [];
-
-        foreach ($users as $user) {
-            if ($user->gender) {
-                $gender[$user->gender] = ($gender[$user->gender] ?? 0) + 1;
-            }
-
-            if ($user->age) {
-                if ($user->age < 10) $ageGroups["Under 10"]++;
-                elseif ($user->age < 15) $ageGroups["10 to 14"]++;
-                elseif ($user->age < 18) $ageGroups["15-17"]++;
-                elseif ($user->age < 25) $ageGroups["18-24"]++;
-                elseif ($user->age < 35) $ageGroups["25-34"]++;
-                elseif ($user->age < 45) $ageGroups["35-44"]++;
-                elseif ($user->age < 55) $ageGroups["45-54"]++;
-                else $ageGroups["55+"]++;
-            }
-
-            if ($user->occupation) {
-                $occupations[$user->occupation] = ($occupations[$user->occupation] ?? 0) + 1;
-            }
-
-            if ($user->school) {
-                $schools[$user->school] = ($schools[$user->school] ?? 0) + 1;
-            }
-        }
 
         return [
             'gender' => empty($gender) ? new \stdClass() : $gender,
@@ -838,33 +836,49 @@ class AdminController extends Controller
             'Smoke Detector Knowledge', 'General Safety Awareness'
         ];
 
+        $questionCounts = AssessmentQuestion::where('isActive', true)
+            ->whereIn('category', $categories)
+            ->groupBy('category')
+            ->selectRaw('category, count(*) as total')
+            ->pluck('total', 'category');
+
+        $stats = DB::table('user_answers')
+            ->join('assessment_questions', 'user_answers.questionId', '=', 'assessment_questions.id')
+            ->where('assessment_questions.isActive', true)
+            ->whereIn('assessment_questions.category', $categories)
+            ->selectRaw('
+                assessment_questions.category, 
+                count(user_answers.id) as total_answers, 
+                sum(case when user_answers."isCorrect" = true then 1 else 0 end) as correct_answers
+            ')
+            ->groupBy('assessment_questions.category')
+            ->get()
+            ->keyBy('category');
+
         $knowledgeData = [];
 
         foreach ($categories as $category) {
-            $questions = AssessmentQuestion::where('category', $category)->where('isActive', true)->get(['id']);
+            $totalQuestions = $questionCounts->get($category, 0);
+            $stat = $stats->get($category);
 
-            if ($questions->count() === 0) {
+            if ($totalQuestions === 0 || !$stat) {
                 $knowledgeData[] = [
                     'category' => $category,
                     'avgScore' => 0,
-                    'totalQuestions' => 0,
+                    'totalQuestions' => $totalQuestions,
                     'correctAnswers' => 0,
                     'incorrectAnswers' => 0,
                 ];
                 continue;
             }
 
-            $questionIds = $questions->pluck('id')->toArray();
-
-            $answers = UserAnswer::whereIn('questionId', $questionIds)->get(['isCorrect']);
-            
-            $correctAnswers = $answers->filter(fn($a) => $a->isCorrect)->count();
-            $totalAnswers = $answers->count();
+            $totalAnswers = (int) $stat->total_answers;
+            $correctAnswers = (int) $stat->correct_answers;
 
             $knowledgeData[] = [
                 'category' => $category,
                 'avgScore' => $totalAnswers > 0 ? round(($correctAnswers / $totalAnswers) * 100) : 0,
-                'totalQuestions' => $questions->count(),
+                'totalQuestions' => $totalQuestions,
                 'correctAnswers' => $correctAnswers,
                 'incorrectAnswers' => $totalAnswers - $correctAnswers,
             ];
