@@ -1,6 +1,6 @@
-import React, { useEffect } from "react"
+import React, { useEffect, useState } from "react"
 import { Link } from '@inertiajs/react'
-import { ArrowLeft, Trophy, Lock, Calendar, Shield, CheckCircle, Zap, ArrowRight, BadgeCheck } from "lucide-react"
+import { ArrowLeft, Trophy, Lock, Calendar, Shield, CheckCircle, Zap, ArrowRight, BadgeCheck, X } from "lucide-react"
 import DashboardLayout from "@/Layouts/DashboardLayout"
 import { cn } from "@/lib/utils"
 import { useAuth } from "@/lib/auth-context"
@@ -22,11 +22,13 @@ const ALL_BADGES = [
   { id: 'safety_scout', name: "Safety Scout", source: "Hot or Not", image: "/safety_hall.png", hint: "Correcty identify all hazards in the Hazard House.", target: "/kids/hot-or-not" },
   { id: 'hazard_hero', name: "Hazard Hero", source: "Hazard Blitz", image: "/hazard_hall.png", hint: "Neutralize hazards and reach 500 points in Hazard Blitz.", target: "/kids/hazard-blitz" },
   { id: 'intel_analyst', name: "Intel Analyst", source: "Videos", image: "/intel_hall.png", hint: "Watch all fire safety training videos.", target: "/kids/videos" },
-  { id: 'task_master', name: "Task Master", source: "Inspector Game", image: "/task_master_badge_placeholder.png", hint: "Find and solve all the fire safety tasks as the Inspector.", target: "/kids/task-master" }
-]
+  { id: 'task_master', name: "Task Master", source: "Inspector Game", image: "/task_master_badge.png", hint: "Complete all 5 Modules first to unlock the Inspector Game.", target: "/kids/task-master", requiresAllModules: true },
+  { id: 'dispatch_hero', name: "Dispatch Hero", source: "The Right Call", image: "/dispatch_hall.png", hint: "Watch all Fire Safety Videos first to unlock The Right Call.", target: "/kids/the-right-call", requiresBadge: 'intel_analyst' },
+] as const
 
 const BadgeHallPage = ({ completedModules = [], earnedBadges = [] }: BadgeHallProps) => {
   const { user } = useAuth()
+  const [selectedLockedBadge, setSelectedLockedBadge] = useState<typeof ALL_BADGES[number] | null>(null)
   
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -35,7 +37,7 @@ const BadgeHallPage = ({ completedModules = [], earnedBadges = [] }: BadgeHallPr
       const decodedName = decodeURIComponent(highlight).toLowerCase();
       const index = ALL_BADGES.findIndex(b => 
         b.name.toLowerCase() === decodedName || 
-        b.alias?.toLowerCase() === decodedName
+        ('alias' in b && b.alias?.toLowerCase() === decodedName)
       );
       if (index !== -1) {
         const el = document.getElementById(`badge-card-${index}`);
@@ -55,10 +57,19 @@ const BadgeHallPage = ({ completedModules = [], earnedBadges = [] }: BadgeHallPr
     }
   }, []);
 
-  const getBadgeState = (badge: typeof ALL_BADGES[0]) => {
+  const allModulesCompleted = completedModules.length >= 5
+
+  const getBadgeState = (badge: typeof ALL_BADGES[number]) => {
     const earned = earnedBadges.find(b => b.badge_id === badge.id)
-    const isEarned = (badge.moduleNum && completedModules.includes(badge.moduleNum)) || !!earned
+    const isEarned = ('moduleNum' in badge && badge.moduleNum && completedModules.includes(badge.moduleNum)) || !!earned
     return { isEarned, date: earned?.earnedAt || (isEarned ? "Recent" : null) }
+  }
+
+  // Check if a badge's game/content is accessible (prerequisites met)
+  const isBadgeAccessible = (badge: typeof ALL_BADGES[number]) => {
+    if ('requiresAllModules' in badge && badge.requiresAllModules) return allModulesCompleted
+    if ('requiresBadge' in badge && badge.requiresBadge) return earnedBadges.some(b => b.badge_id === badge.requiresBadge)
+    return true // freely accessible
   }
 
   const earnedCount = ALL_BADGES.filter(b => getBadgeState(b).isEarned).length
@@ -193,14 +204,26 @@ const BadgeHallPage = ({ completedModules = [], earnedBadges = [] }: BadgeHallPr
                           {state.date === "Recent" ? "Today" : new Date(state.date!).toLocaleDateString()}
                         </div>
                       </div>
-                    ) : (
+                    ) : isBadgeAccessible(badge) ? (
                       <Link 
                         href={badge.target || "/kids/safescape"} 
+                        onClick={(e: React.MouseEvent) => e.stopPropagation()}
                         className="w-full bg-[#f97316] hover:bg-[#ea580c] text-white font-black py-2.5 sm:py-3 rounded-xl flex items-center justify-center gap-2 text-[10px] sm:text-xs uppercase tracking-widest transition-all shadow-[0_4px_0_#c2410c] active:shadow-none active:translate-y-[4px] border-t border-white/20"
                       >
                         Go!
                         <ArrowRight className="h-3 w-3 sm:h-4 sm:w-4" />
                       </Link>
+                    ) : (
+                      <button 
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setSelectedLockedBadge(badge);
+                        }}
+                        className="w-full bg-slate-300 dark:bg-slate-700 text-slate-500 dark:text-slate-400 font-black py-2.5 sm:py-3 rounded-xl flex items-center justify-center gap-2 text-[10px] sm:text-xs uppercase tracking-widest transition-all shadow-[0_4px_0_#94a3b8] dark:shadow-[0_4px_0_#475569] active:shadow-none active:translate-y-[4px] border-t border-white/20"
+                      >
+                        <Lock className="h-3 w-3 sm:h-4 sm:w-4" />
+                        Locked
+                      </button>
                     )}
                   </div>
                 </div>
@@ -229,6 +252,45 @@ const BadgeHallPage = ({ completedModules = [], earnedBadges = [] }: BadgeHallPr
 
         </div>
       </div>
+
+      {/* Locked Badge Hint Modal */}
+      {selectedLockedBadge && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/80 backdrop-blur-sm animate-in fade-in duration-200">
+          <div 
+            className="absolute inset-0" 
+            onClick={() => setSelectedLockedBadge(null)} 
+          />
+          <div className="bg-white dark:bg-slate-900 rounded-[2rem] p-6 sm:p-8 max-w-md w-full shadow-2xl border-4 border-slate-200 dark:border-slate-800 relative flex flex-col items-center text-center animate-in zoom-in-95 duration-200">
+            <button 
+              onClick={() => setSelectedLockedBadge(null)}
+              className="absolute top-4 right-4 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition-colors"
+            >
+              <X className="h-6 w-6" />
+            </button>
+            
+            <div className="h-20 w-20 sm:h-24 sm:w-24 bg-slate-100 dark:bg-slate-800 rounded-3xl flex items-center justify-center mb-6 shadow-inner p-4 relative overflow-hidden">
+              <img 
+                src={selectedLockedBadge.image} 
+                className="h-full w-full object-contain filter grayscale opacity-50 relative z-10" 
+                alt={selectedLockedBadge.name} 
+              />
+              <div className="absolute inset-0 flex items-center justify-center z-20">
+                <Lock className="h-8 w-8 text-slate-500/50" />
+              </div>
+            </div>
+            
+            <h3 className="text-2xl sm:text-3xl font-black uppercase mb-2 text-slate-900 dark:text-white">
+              Unlock {selectedLockedBadge.name}?
+            </h3>
+            
+            <div className="bg-blue-50 dark:bg-blue-900/20 text-blue-800 dark:text-blue-300 px-4 py-3 rounded-xl mb-2 text-sm sm:text-base font-bold border border-blue-200 dark:border-blue-800/50 w-full text-left">
+              <span className="block text-xs uppercase tracking-widest text-blue-500 mb-1">Mission Hint:</span>
+              {selectedLockedBadge.hint}
+            </div>
+            
+          </div>
+        </div>
+      )}
     </div>
   )
 }

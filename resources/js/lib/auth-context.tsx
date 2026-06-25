@@ -69,9 +69,11 @@ function determinePermissions(role: string) {
   const roles = (role ?? "guest").split(",");
   const isAdmin = roles.includes("admin");
   const isProfessional = roles.includes("professional") || isAdmin;
+  const isAdult = roles.includes("adult") || isProfessional;
+  const isKid = roles.includes("kid") || isAdult;
   return {
-    accessKids: roles.includes("kid"),
-    accessAdult: roles.includes("adult") || isProfessional,
+    accessKids: isKid,
+    accessAdult: isAdult,
     accessProfessional: isProfessional,
     isAdmin: isAdmin,
   };

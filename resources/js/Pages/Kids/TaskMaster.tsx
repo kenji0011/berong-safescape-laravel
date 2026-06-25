@@ -24,7 +24,7 @@ export default function TaskMaster() {
         setShowWinNotification(true);
         // Save the badge via API
         try {
-          await axios.post('/api/badges/award', { badge_id: 'task_master' });
+          await axios.post('/api/badges/award', { badge_id: 'task_master', badge_name: 'Task Master', badge_icon: '/task_master_badge.png' });
         } catch (e) {
           console.error("Failed to award badge", e);
         }

@@ -1,9 +1,10 @@
 import React, { useState, useRef } from "react"
 import { Link } from '@inertiajs/react'
-import { ArrowLeft, Play, Tv, Star, GraduationCap, BadgeCheck } from "lucide-react"
+import { ArrowLeft, Play, Tv, Star, GraduationCap, BadgeCheck, X, Trophy } from "lucide-react"
 import DashboardLayout from "@/Layouts/DashboardLayout"
 import axios from "axios"
 import { cn } from "@/lib/utils"
+import confetti from 'canvas-confetti'
 import Particles from "@/Components/ui/particles"
 import { useSettings } from "@/lib/settings-context"
 import { useEffect } from "react"
@@ -140,11 +141,20 @@ const VideosPage = ({ initialVideos, watchedVideoIds }: VideosPageProps) => {
 
   const [watchedVideos, setWatchedVideos] = useState<Set<string>>(new Set())
 
+  // Track if badge was already earned when page loaded (so we don't show the modal again)
+  const alreadyEarnedRef = useRef(false)
+
   // Sync watched videos and filter to only include those in the current list
   useEffect(() => {
     const validIds = new Set(moreVideos.map(v => v.id))
     const filteredWatched = watchedVideoIds.filter(id => validIds.has(id))
-    setWatchedVideos(new Set(filteredWatched))
+    const watchedSet = new Set(filteredWatched)
+    setWatchedVideos(watchedSet)
+    
+    // If all videos were already watched on mount, mark badge as already earned
+    if (moreVideos.length > 0 && watchedSet.size === moreVideos.length) {
+      alreadyEarnedRef.current = true
+    }
   }, [watchedVideoIds])
 
   const [badgeAwarded, setBadgeAwarded] = useState(false)
@@ -175,7 +185,7 @@ const VideosPage = ({ initialVideos, watchedVideoIds }: VideosPageProps) => {
         newWatched.add(currentVideoId)
         
         // Check if all videos have been watched
-        if (!badgeAwarded && moreVideos.length > 0 && newWatched.size === moreVideos.length) {
+        if (!badgeAwarded && !alreadyEarnedRef.current && moreVideos.length > 0 && newWatched.size === moreVideos.length) {
           awardBadge()
         }
         return newWatched
@@ -186,6 +196,29 @@ const VideosPage = ({ initialVideos, watchedVideoIds }: VideosPageProps) => {
   const awardBadge = () => {
     setBadgeAwarded(true)
     new Audio('/sounds/win.mp3').play().catch(() => {})
+    
+    // Trigger confetti celebration
+    const duration = 3000
+    const end = Date.now() + duration
+    const frame = () => {
+      confetti({
+        particleCount: 3,
+        angle: 60,
+        spread: 55,
+        origin: { x: 0, y: 0.7 },
+        colors: ['#f59e0b', '#ef4444', '#3b82f6', '#10b981', '#8b5cf6']
+      })
+      confetti({
+        particleCount: 3,
+        angle: 120,
+        spread: 55,
+        origin: { x: 1, y: 0.7 },
+        colors: ['#f59e0b', '#ef4444', '#3b82f6', '#10b981', '#8b5cf6']
+      })
+      if (Date.now() < end) requestAnimationFrame(frame)
+    }
+    frame()
+    
     axios.post('/api/badges/award', {
       badge_id: 'intel_analyst',
       badge_name: 'Intel Analyst',
@@ -436,6 +469,58 @@ const VideosPage = ({ initialVideos, watchedVideoIds }: VideosPageProps) => {
 
         </main>
       </div>
+
+      {/* Badge Earned Celebration Modal */}
+      {badgeAwarded && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/85 backdrop-blur-md">
+          <div 
+            className="absolute inset-0" 
+            onClick={() => setBadgeAwarded(false)} 
+          />
+          <div className="relative bg-white dark:bg-slate-900 rounded-[2.5rem] p-8 sm:p-10 max-w-sm w-full shadow-2xl border-4 border-yellow-400 flex flex-col items-center text-center animate-in zoom-in-75 duration-500">
+            <button 
+              onClick={() => setBadgeAwarded(false)}
+              className="absolute top-4 right-4 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition-colors"
+            >
+              <X className="h-6 w-6" />
+            </button>
+            
+            {/* Badge container */}
+            <div className="relative mb-6">
+              <div className="relative h-28 w-28 sm:h-32 sm:w-32 bg-gradient-to-br from-yellow-300 to-amber-500 rounded-[2rem] flex items-center justify-center shadow-2xl border-4 border-white dark:border-slate-800 p-4">
+                <img 
+                  src="/intel_hall.png" 
+                  className="h-full w-full object-contain drop-shadow-lg" 
+                  alt="Intel Analyst Badge" 
+                />
+              </div>
+              <div className="absolute -top-2 -right-2 bg-green-500 rounded-full p-1.5 border-3 border-white dark:border-slate-900 shadow-lg">
+                <Trophy className="h-4 w-4 text-white" />
+              </div>
+            </div>
+            
+            <div className="px-4 py-1.5 bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-400 rounded-full text-[10px] font-black uppercase tracking-[0.2em] mb-3 border border-yellow-300 dark:border-yellow-800">
+              Badge Unlocked!
+            </div>
+            
+            <h3 className="text-2xl sm:text-3xl font-black uppercase mb-2 text-slate-900 dark:text-white tracking-tight">
+              Intel Analyst
+            </h3>
+            
+            <p className="text-slate-500 dark:text-slate-400 font-bold text-sm leading-relaxed mb-6 max-w-xs">
+              You watched all the fire safety videos! Your intelligence skills are now top-notch, Agent!
+            </p>
+            
+            <Link 
+              href="/kids/badges?highlight=Intel%20Analyst"
+              className="w-full bg-gradient-to-r from-yellow-400 to-amber-500 hover:from-yellow-500 hover:to-amber-600 text-white font-black py-3.5 rounded-xl flex items-center justify-center gap-2 uppercase tracking-widest transition-all shadow-lg shadow-amber-200 dark:shadow-amber-900/30 active:scale-95 text-sm"
+            >
+              View in Badge Hall
+              <Trophy className="h-4 w-4" />
+            </Link>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
