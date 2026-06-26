@@ -49,6 +49,7 @@ createInertiaApp({
         );
     },
     progress: {
-        color: '#4B5563',
+        color: '#dc2626', // Red color for Safescape
+        showSpinner: true,
     },
 });
