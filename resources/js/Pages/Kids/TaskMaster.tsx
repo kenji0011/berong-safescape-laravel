@@ -94,20 +94,27 @@ export default function TaskMaster() {
         {showWinNotification && (
           <div className="absolute inset-0 z-[10002] bg-black/80 flex flex-col items-center justify-center p-4">
             <div className="bg-white dark:bg-slate-900 rounded-[2rem] p-8 sm:p-12 max-w-md w-full text-center shadow-[0_0_100px_rgba(59,130,246,0.3)] transform scale-100 animate-in zoom-in duration-300">
-              <div className="w-24 h-24 mx-auto bg-gradient-to-br from-yellow-300 to-amber-500 rounded-full flex items-center justify-center shadow-inner border-4 border-white dark:border-slate-800 mb-6 relative overflow-hidden">
-                {/* Placeholder Badge Image - User will replace later */}
-                <span className="text-4xl">🏆</span>
+              <div className="w-32 h-32 mx-auto flex items-center justify-center mb-6 relative group transform hover:scale-110 transition-transform duration-500">
+                <img src="/task_master_badge.png" alt="Task Master Badge" className="w-full h-full object-contain drop-shadow-xl" />
               </div>
               <h2 className="text-3xl font-black text-slate-800 dark:text-white uppercase mb-2">Badge Earned!</h2>
               <p className="text-slate-500 dark:text-slate-400 font-bold mb-8">
                 Congratulations! You completed the Task Master game and earned the Inspector Badge!
               </p>
-              <Link 
-                href="/kids/badges?highlight=task%20master" 
-                className="w-full inline-flex items-center justify-center py-4 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-black uppercase tracking-widest transition-colors shadow-lg"
-              >
-                View in Badge Hall
-              </Link>
+              <div className="flex flex-col gap-3">
+                <Link 
+                  href="/kids/badges?highlight=task%20master" 
+                  className="w-full inline-flex items-center justify-center py-4 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-black uppercase tracking-widest transition-colors shadow-lg"
+                >
+                  View in Badge Hall
+                </Link>
+                <button 
+                  onClick={() => setShowWinNotification(false)}
+                  className="w-full inline-flex items-center justify-center py-4 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-xl font-black uppercase tracking-widest transition-colors"
+                >
+                  Continue Playing
+                </button>
+              </div>
             </div>
           </div>
         )}

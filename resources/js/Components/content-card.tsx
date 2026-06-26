@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState } from "react"
+import React, { useState, useEffect } from "react"
 import { Link } from '@inertiajs/react'
 import { motion } from "framer-motion"
 import { Play, Lock, CheckCircle, ArrowRight, Check } from "lucide-react"
@@ -22,6 +22,7 @@ export interface ContentCardData {
   isNew?: boolean
   isExternal?: boolean
   shouldPulse?: boolean
+  justUnlocked?: boolean
   difficulty?: "easy" | "medium" | "hard"
   duration?: string
   category?: string
@@ -41,6 +42,21 @@ interface ContentCardProps {
 export const ContentCard = React.memo(({ content, onClick }: ContentCardProps) => {
   const [imageError, setImageError] = useState(false)
   const [imageLoading, setImageLoading] = useState(true)
+
+  useEffect(() => {
+    if (content.justUnlocked) {
+      // Small delay to let the dashboard render completely
+      const timer = setTimeout(() => {
+        const el = document.getElementById(`content-card-${content.id}`);
+        if (el) {
+          // Calculate an offset to put it slightly below the top (so it's centered better)
+          const y = el.getBoundingClientRect().top + window.scrollY - 100;
+          window.scrollTo({ top: y, behavior: 'smooth' });
+        }
+      }, 500);
+      return () => clearTimeout(timer);
+    }
+  }, [content.justUnlocked, content.id]);
 
   // Premium Gradients
   const typeGradients: Record<string, string> = {
@@ -284,12 +300,39 @@ export const ContentCard = React.memo(({ content, onClick }: ContentCardProps) =
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,rgba(0,0,0,0.7)_100%)]"></div>
         </div>
       )}
+
+      {/* Unlock Animation Overlay */}
+      {content.justUnlocked && (
+        <motion.div 
+          initial={{ opacity: 1 }}
+          animate={{ opacity: 0 }}
+          transition={{ duration: 1.5, delay: 1.5, ease: "easeOut" }}
+          className="absolute inset-0 z-[100] pointer-events-none rounded-[inherit] flex items-center justify-center overflow-hidden bg-slate-900/90 backdrop-blur-sm"
+        >
+          <motion.div
+            initial={{ scale: 1, rotate: 0 }}
+            animate={{ scale: [1, 1.2, 1.2, 2, 0], rotate: [0, -10, 10, -10, 0] }}
+            transition={{ duration: 1.5, ease: "easeInOut" }}
+            className="bg-white/20 p-6 rounded-full border-2 border-white/50 shadow-[0_0_50px_rgba(250,204,21,0.6)] relative z-10"
+          >
+            <Lock className="h-12 w-12 text-yellow-400 drop-shadow-2xl" />
+          </motion.div>
+          {/* Flash Effect */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.5 }}
+            animate={{ opacity: [0, 1, 0], scale: [0.5, 2, 3] }}
+            transition={{ duration: 1, delay: 1 }}
+            className="absolute inset-0 bg-yellow-400 mix-blend-overlay"
+          />
+        </motion.div>
+      )}
     </>
   )
 
   if (content.isLocked || content.href === "#") {
     return (
       <motion.div
+        id={`content-card-${content.id}`}
         onClick={(e) => { e.preventDefault(); if (onClick) onClick(); }}
         whileHover={{ scale: 1.01 }}
         className={cn(
@@ -309,6 +352,7 @@ export const ContentCard = React.memo(({ content, onClick }: ContentCardProps) =
   if (content.isExternal) {
     return (
       <motion.a
+        id={`content-card-${content.id}`}
         href={content.href}
         onClick={() => { if (onClick) onClick() }}
         whileHover={{ 
@@ -334,6 +378,7 @@ export const ContentCard = React.memo(({ content, onClick }: ContentCardProps) =
 
   return (
     <MotionLink
+      id={`content-card-${content.id}`}
       href={content.href}
       onClick={() => { if (onClick) onClick() }}
       whileHover={{ 

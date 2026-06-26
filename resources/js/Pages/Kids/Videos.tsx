@@ -478,12 +478,6 @@ const VideosPage = ({ initialVideos, watchedVideoIds }: VideosPageProps) => {
             onClick={() => setBadgeAwarded(false)} 
           />
           <div className="relative bg-white dark:bg-slate-900 rounded-[2.5rem] p-8 sm:p-10 max-w-sm w-full shadow-2xl border-4 border-yellow-400 flex flex-col items-center text-center animate-in zoom-in-75 duration-500">
-            <button 
-              onClick={() => setBadgeAwarded(false)}
-              className="absolute top-4 right-4 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition-colors"
-            >
-              <X className="h-6 w-6" />
-            </button>
             
             {/* Badge container */}
             <div className="relative mb-6">
@@ -515,7 +509,7 @@ const VideosPage = ({ initialVideos, watchedVideoIds }: VideosPageProps) => {
               href="/kids/badges?highlight=Intel%20Analyst"
               className="w-full bg-gradient-to-r from-yellow-400 to-amber-500 hover:from-yellow-500 hover:to-amber-600 text-white font-black py-3.5 rounded-xl flex items-center justify-center gap-2 uppercase tracking-widest transition-all shadow-lg shadow-amber-200 dark:shadow-amber-900/30 active:scale-95 text-sm"
             >
-              View in Badge Hall
+              Obtain Badge
               <Trophy className="h-4 w-4" />
             </Link>
           </div>

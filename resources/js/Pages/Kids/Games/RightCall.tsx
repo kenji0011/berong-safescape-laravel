@@ -47,13 +47,19 @@ export default function RightCall() {
       <div className="fixed inset-0 bg-black z-[9999] flex items-center justify-center overflow-hidden touch-none">
         
         <div className="absolute top-4 left-4 z-[10000] flex items-center gap-3">
-          <Link 
-            href={isProfessional ? "/professional" : "/kids"} 
+          <button 
+            onClick={() => {
+              if (window.history.length > 1) {
+                window.history.back();
+              } else {
+                window.location.href = isProfessional ? "/professional" : "/kids/challenges";
+              }
+            }}
             className="bg-black/50 hover:bg-black/80 text-white p-3 rounded-full transition-all border border-white/20 shadow-xl flex items-center gap-2 group"
           >
             <ArrowLeft className="h-5 w-5 group-hover:-translate-x-1 transition-transform" />
             <span className="font-bold hidden sm:inline">Exit Game</span>
-          </Link>
+          </button>
 
           <button 
             onClick={() => {

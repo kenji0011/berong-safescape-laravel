@@ -144,9 +144,47 @@ const KidsDashboardPage = ({ modules, progress }: KidsPageProps) => {
 
   ]
 
-  const allContent = useMemo(() => {
+  const [justUnlockedIds, setJustUnlockedIds] = useState<string[]>([])
+
+  const rawContent = useMemo(() => {
     return buildContent(progress?.completedModules || [], progress?.badges || [], pulseFirstModule)
   }, [progress, pulseFirstModule])
+
+  useEffect(() => {
+    if (!user) return
+    const key = `safescape_unlocked_items_${user.id}`
+    const previousUnlockedStr = localStorage.getItem(key)
+    const previousUnlocked = previousUnlockedStr ? JSON.parse(previousUnlockedStr) : null
+    
+    const currentlyUnlocked = rawContent.filter(c => !c.isLocked).map(c => String(c.id))
+    
+    if (previousUnlocked) {
+       const newlyUnlocked = currentlyUnlocked.filter(id => !previousUnlocked.includes(id))
+       if (newlyUnlocked.length > 0) {
+         // Wait briefly to allow the Rank Modal to mount and set its state
+         setTimeout(() => {
+           if ((window as any).isSafescapeRankModalOpen) {
+             const onClosed = () => {
+               setJustUnlockedIds(newlyUnlocked)
+               window.removeEventListener('safescape_rank_modal_closed', onClosed)
+             }
+             window.addEventListener('safescape_rank_modal_closed', onClosed)
+           } else {
+             setJustUnlockedIds(newlyUnlocked)
+           }
+         }, 100)
+       }
+    }
+    
+    localStorage.setItem(key, JSON.stringify(currentlyUnlocked))
+  }, [rawContent, user])
+
+  const allContent = useMemo(() => {
+    return rawContent.map(c => ({
+      ...c,
+      justUnlocked: justUnlockedIds.includes(String(c.id))
+    }))
+  }, [rawContent, justUnlockedIds])
 
   const handleContentClick = (content: ContentCardData) => {
     if (content.isLocked) {

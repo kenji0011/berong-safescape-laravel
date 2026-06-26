@@ -134,7 +134,8 @@ export function KidsWelcomeBanner({ completedModules = [], earnedBadges = [] }: 
 
       if (newRank.name !== oldRankName && newRank.name !== "Recruit") {
         setPromotedRank(newRank)
-        setShowPromotion(true)
+        setShowPromotion(true);
+        (window as any).isSafescapeRankModalOpen = true;
         new Audio('/sounds/finish.mp3').play().catch(e => console.warn("Audio playback failed:", e));
         
         // Trigger confetti
@@ -448,6 +449,8 @@ export function KidsWelcomeBanner({ completedModules = [], earnedBadges = [] }: 
                   onClick={() => {
                     new Audio('/sounds/click.mp3').play().catch(() => {});
                     setShowPromotion(false);
+                    (window as any).isSafescapeRankModalOpen = false;
+                    window.dispatchEvent(new Event('safescape_rank_modal_closed'));
                   }}
                   className="w-full bg-yellow-400 text-yellow-900 font-black py-4 rounded-2xl shadow-[0_6px_0_#b45309] active:translate-y-[6px] active:shadow-none transition-all uppercase tracking-widest"
                 >
