@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from "react"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
-import { MessageCircle, X, Send, Sparkles, Minimize2, Maximize2, Volume2, VolumeX, Mic, Square } from "lucide-react"
+import { MessageCircle, X, Send, Sparkles, Minimize2, Maximize2, Volume2, VolumeX, Mic, Square, User } from "lucide-react"
 import Image from '@/components/Image';
 import { motion, AnimatePresence, useMotionValue, animate } from "motion/react"
 import { useAuth } from "@/lib/auth-context"
@@ -47,7 +47,7 @@ const processedIntents = Object.entries(chatbotIntents).map(([tag, data]) => {
 })
 
 export function Chatbot() {
-  const { isAuthenticated } = useAuth()
+  const { user, isAuthenticated } = useAuth()
   const [isOpen, setIsOpen] = useState(false)
   const [showCTA, setShowCTA] = useState(true)
   const ctaTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
@@ -859,11 +859,22 @@ export function Chatbot() {
                 {/* Messages — theme aware background */}
                 <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-white dark:bg-slate-900 scroll-smooth [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-gray-200 dark:[&::-webkit-scrollbar-thumb]:bg-slate-800 [&::-webkit-scrollbar-thumb]:rounded-full">
                   {messages.map((message) => (
-                    <div key={message.id} className={`flex ${message.sender === "user" ? "justify-end" : "justify-start"}`}>
+                    <div key={message.id} className={`flex gap-2 max-w-[90%] ${message.sender === "user" ? "ml-auto justify-end" : "justify-start"}`}>
+                      {message.sender === "bot" && (
+                        <div className="shrink-0 mt-auto">
+                          <Image
+                            src="/berong_pr.png"
+                            alt="Berong"
+                            width={28}
+                            height={28}
+                            className="h-7 w-7 object-contain rounded-full bg-white p-0.5 border border-slate-200 shadow-sm"
+                          />
+                        </div>
+                      )}
                       <div
-                        className={`max-w-[85%] rounded-2xl p-3 shadow-sm relative group ${message.sender === "user"
-                            ? "bg-[#1a6b3c] dark:bg-[#1a6b3c] text-white rounded-br-md"
-                            : "bg-[#1e3a4a] dark:bg-slate-800 text-white border border-[#2a5060] dark:border-slate-700 rounded-bl-md"
+                        className={`rounded-2xl p-3 shadow-sm relative group w-fit ${message.sender === "user"
+                            ? "bg-[#1a6b3c] dark:bg-[#1a6b3c] text-white"
+                            : "bg-[#1e3a4a] dark:bg-slate-800 text-white border border-[#2a5060] dark:border-slate-700"
                           }`}
                       >
                         {message.sender === "bot" ? (
@@ -901,6 +912,46 @@ export function Chatbot() {
                           <p className="text-sm font-medium">{message.text}</p>
                         )}
                       </div>
+                      {message.sender === "user" && (() => {
+                        const avatarId = user?.avatar || 'cow';
+                        const avatarOpt = [
+                          { id: 'cow', icon: '/berong_pr.png' },
+                          { id: 'ff1', icon: '/hero_jack.png' },
+                          { id: 'ff2', icon: '/hero_sarah.png' },
+                          { id: 'kid1', icon: '🧒' },
+                          { id: 'kid2', icon: '👧' },
+                          { id: 'adult1', icon: '👨' },
+                          { id: 'adult2', icon: '👩' },
+                        ].find(opt => opt.id === avatarId);
+                        
+                        return (
+                          <div className="shrink-0 mt-auto flex items-center justify-center h-7 w-7 rounded-full bg-slate-200 border border-slate-300 shadow-sm overflow-hidden">
+                            {avatarOpt ? (
+                              avatarOpt.icon.startsWith('/') ? (
+                                <Image
+                                  src={avatarOpt.icon}
+                                  alt="User Avatar"
+                                  width={28}
+                                  height={28}
+                                  className="h-full w-full object-cover"
+                                />
+                              ) : (
+                                <span className="text-sm">{avatarOpt.icon}</span>
+                              )
+                            ) : avatarId && avatarId !== 'cow' ? (
+                                <Image
+                                  src={avatarId.startsWith('http') ? avatarId : `/storage/${avatarId}`}
+                                  alt="User Avatar"
+                                  width={28}
+                                  height={28}
+                                  className="h-full w-full object-cover"
+                                />
+                            ) : (
+                              <User className="h-4 w-4 text-slate-500" />
+                            )}
+                          </div>
+                        );
+                      })()}
                     </div>
                   ))}
                   {/* Typing Indicator */}

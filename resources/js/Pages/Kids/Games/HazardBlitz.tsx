@@ -1,9 +1,12 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Head, Link } from '@inertiajs/react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowLeft, Trophy, Heart, Zap, Shield, Flame, AlertCircle, Play, RotateCcw, BadgeCheck } from 'lucide-react';
+import { ArrowLeft, Trophy, Heart, Zap, Shield, Flame, AlertCircle, Play, RotateCcw, BadgeCheck, Smartphone, Maximize, Minimize } from 'lucide-react';
 import { cn } from "@/lib/utils";
-import DashboardLayout from "@/Layouts/DashboardLayout";
+import { Navigation } from "@/Components/navigation";
+import { Footer } from "@/Components/footer";
+import { FeedbackWidget } from "@/Components/FeedbackWidget";
+import RootLayout from "@/Layouts/RootLayout";
 import axios from "axios";
 
 interface GameObject {
@@ -45,6 +48,8 @@ const HazardBlitz = () => {
   const [items, setItems] = useState<GameObject[]>([]);
   const [smokeOpacity, setSmokeOpacity] = useState(0);
   const [combo, setCombo] = useState(0);
+  const [isPortrait, setIsPortrait] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
   
   const containerRef = useRef<HTMLDivElement>(null);
   const gameLoopRef = useRef<number | null>(null);
@@ -72,6 +77,30 @@ const HazardBlitz = () => {
     }
   }, []);
 
+  // Detect mobile device and orientation
+  useEffect(() => {
+    const checkMobile = () => {
+      const touchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+      const smallScreen = Math.min(window.screen.width, window.screen.height) < 768;
+      setIsMobile(touchDevice && smallScreen);
+    };
+
+    const checkOrientation = () => {
+      setIsPortrait(window.innerHeight > window.innerWidth);
+    };
+
+    checkMobile();
+    checkOrientation();
+
+    window.addEventListener('resize', checkOrientation);
+    window.addEventListener('orientationchange', checkOrientation);
+
+    return () => {
+      window.removeEventListener('resize', checkOrientation);
+      window.removeEventListener('orientationchange', checkOrientation);
+    };
+  }, []);
+
   const playSound = useCallback((type: 'click' | 'wrong' | 'win' | 'failed' | 'combo') => {
     const s = audioRefs.current[type];
     if (s) {
@@ -83,9 +112,27 @@ const HazardBlitz = () => {
 
   // Difficulty parameters
   const baseSpawnInterval = 3000; // Even slower spawn
-  const minSpawnInterval = 1000;
+  const minSpawnInterval = 600; // Faster minimum spawn
   const baseSpeed = 0.5; // Very slow fixed base speed
   const maxSpeed = 1;
+
+  const enterFullscreen = useCallback(() => {
+    if (isMobile && !document.fullscreenElement) {
+      document.documentElement.requestFullscreen().catch(err => {
+        console.warn('Fullscreen request failed:', err.message);
+      });
+    }
+  }, [isMobile]);
+
+  const toggleFullscreen = useCallback(() => {
+    if (!document.fullscreenElement) {
+      document.documentElement.requestFullscreen().catch(err => {
+        console.warn('Fullscreen request failed:', err.message);
+      });
+    } else {
+      document.exitFullscreen();
+    }
+  }, []);
 
   const startGame = () => {
     setGameState('PLAYING');
@@ -96,6 +143,7 @@ const HazardBlitz = () => {
     setSmokeOpacity(0);
     setCombo(0);
     lastSpawnTimeRef.current = performance.now();
+    enterFullscreen();
   };
 
   const gameOver = useCallback(() => {
@@ -126,27 +174,55 @@ const HazardBlitz = () => {
     const source = isHazard ? HAZARDS : SAFETY;
     const template = source[Math.floor(Math.random() * source.length)];
     
-    // Random entry from bottom or sides
-    const side = Math.floor(Math.random() * 3); // 0: Bottom, 1: Left, 2: Right
+    // Determine spawn edge based on difficulty level
+    const edges = ['top'];
+    if (level >= 3) edges.push('left', 'right');
+    if (level >= 5) edges.push('bottom');
+    const edge = edges[Math.floor(Math.random() * edges.length)];
+    
     let x = 0, y = 0, vx = 0, vy = 0;
+    const speedMultiplier = 1 + (level - 1) * 0.05;
 
-    const speedMultiplier = 1 + (level - 1) * 0.1;
-
-    if (side === 0) { // Bottom
-      x = Math.random() * (rect.width - 100) + 50;
-      y = rect.height + 60;
-      vx = (Math.random() - 0.5) * 1.5;
-      vy = -(baseSpeed + 3.5) * speedMultiplier; // Fixed vertical speed
-    } else if (side === 1) { // Left
-      x = -60;
-      y = Math.random() * (rect.height * 0.7) + rect.height * 0.2;
-      vx = (baseSpeed + 1.2) * speedMultiplier; // Fixed horizontal speed
-      vy = -(baseSpeed * 0.5);
-    } else { // Right
-      x = rect.width + 60;
-      y = Math.random() * (rect.height * 0.7) + rect.height * 0.2;
-      vx = -(baseSpeed + 1.2) * speedMultiplier; // Fixed horizontal speed
-      vy = -(baseSpeed * 0.5);
+    if (edge === 'top') {
+      const side = Math.floor(Math.random() * 3);
+      const baseFallSpeed = 1.5 + Math.random() * 1.5;
+      y = -80;
+      if (side === 0) { // Top-Left
+        x = Math.random() * (rect.width * 0.3);
+        vx = (0.5 + Math.random() * 1) * speedMultiplier;
+      } else if (side === 1) { // Top-Center
+        x = rect.width * 0.3 + Math.random() * (rect.width * 0.4);
+        vx = (Math.random() - 0.5) * 1.5 * speedMultiplier;
+      } else { // Top-Right
+        x = rect.width * 0.7 + Math.random() * (rect.width * 0.3);
+        vx = -(0.5 + Math.random() * 1) * speedMultiplier;
+      }
+      vy = baseFallSpeed * speedMultiplier; 
+    } else if (edge === 'bottom') {
+      const side = Math.floor(Math.random() * 3);
+      const baseLaunch = -(5 + Math.random() * 2); 
+      y = rect.height + 80;
+      if (side === 0) { // Bottom-Left
+        x = Math.random() * (rect.width * 0.3);
+        vx = (1 + Math.random() * 1.5) * speedMultiplier;
+      } else if (side === 1) { // Bottom-Center
+        x = rect.width * 0.3 + Math.random() * (rect.width * 0.4);
+        vx = (Math.random() - 0.5) * 1.5 * speedMultiplier;
+      } else { // Bottom-Right
+        x = rect.width * 0.7 + Math.random() * (rect.width * 0.3);
+        vx = -(1 + Math.random() * 1.5) * speedMultiplier;
+      }
+      vy = baseLaunch * speedMultiplier;
+    } else if (edge === 'left') {
+      x = -80;
+      y = Math.random() * (rect.height * 0.6); // Top 60%
+      vx = (2 + Math.random() * 1.5) * speedMultiplier;
+      vy = -(1.5 + Math.random() * 1.5) * speedMultiplier; // Float upwards slightly
+    } else if (edge === 'right') {
+      x = rect.width + 80;
+      y = Math.random() * (rect.height * 0.6); // Top 60%
+      vx = -(2 + Math.random() * 1.5) * speedMultiplier;
+      vy = -(1.5 + Math.random() * 1.5) * speedMultiplier; // Float upwards slightly
     }
 
     const newItem: GameObject = {
@@ -177,7 +253,7 @@ const HazardBlitz = () => {
           ...item,
           x: item.x + item.vx,
           y: item.y + item.vy,
-          vy: item.vy + 0.012, // Ultra-soft Gravity for slow arcs
+          vy: item.vy + 0.03, // Very gentle downward acceleration
           rotation: item.rotation + item.rotationSpeed
         };
 
@@ -190,7 +266,7 @@ const HazardBlitz = () => {
 
         if (!isOffScreen) {
           next.push(nextItem);
-        } else if (item.type === 'hazard' && item.y < rect.height) {
+        } else if (item.type === 'hazard') {
           // Missed hazard!
           setLives(l => {
             const nextL = l - 1;
@@ -268,25 +344,308 @@ const HazardBlitz = () => {
   }, [gameState]);
 
   return (
-    <div className="relative w-full flex-1 flex flex-col py-4 pb-28 sm:pb-4">
-      {/* Standardized Back Button - Upper Left */}
-      <div className="absolute top-[112px] sm:top-[128px] left-4 z-[60] flex gap-2">
-        <Link 
-          href="/kids/challenges" 
-          className="inline-flex items-center gap-2 text-slate-500 dark:text-slate-400 font-bold hover:text-orange-600 dark:hover:text-orange-400 transition-all text-sm bg-white dark:bg-slate-800 px-4 py-2 rounded-full border border-white/60 dark:border-slate-700/60 shadow-sm"
-        >
-          <ArrowLeft className="h-4 w-4" />
-          Back to Activities
-        </Link>
-      </div>
+    <>
+      <Head title="Hazard Blitz - Fire Safety Game" />
 
-      <div className="max-w-7xl mx-auto w-full px-4 pt-12 sm:pt-4 flex-1 flex flex-col">
-        <div className="w-full flex-1 flex flex-col bg-slate-900 rounded-[2.5rem] border-4 border-slate-800 overflow-hidden shadow-2xl relative select-none">
-        <Head title="Hazard Blitz - Fire Safety Game" />
+      {/* ===== MOBILE: Fullscreen fixed overlay ===== */}
+      {isMobile && (
+        <div className="fixed inset-0 bg-slate-950 z-[9999] flex flex-col overflow-hidden touch-none select-none">
+          
+          {/* Portrait: Rotate Device Overlay */}
+          {isPortrait && (
+            <div className="absolute inset-0 z-[10001] bg-slate-900/95 flex flex-col items-center justify-center p-6 text-center">
+              <Smartphone className="w-16 h-16 text-primary mb-6 animate-bounce" style={{ transform: 'rotate(90deg)' }} />
+              <h2 className="text-3xl font-black text-white mb-3 uppercase tracking-tight">Rotate Device</h2>
+              <p className="text-slate-400 font-bold max-w-xs text-lg">
+                Hazard Blitz is best played in landscape mode! Please rotate your phone.
+              </p>
+              <Link 
+                href="/kids/challenges"
+                className="mt-8 inline-flex items-center gap-2 text-white font-bold text-sm bg-white/10 hover:bg-white/20 px-6 py-3 rounded-full transition-all"
+              >
+                <ArrowLeft className="h-4 w-4" />
+                Back to Activities
+              </Link>
+            </div>
+          )}
+
+          {/* Back + Fullscreen buttons */}
+          <div className="absolute top-4 left-4 z-[10000] flex items-center gap-3">
+            <Link 
+              href="/kids/challenges" 
+              className="bg-black/50 hover:bg-black/80 text-white p-3 rounded-full transition-all border border-white/20 shadow-xl flex items-center gap-2 group"
+            >
+              <ArrowLeft className="h-5 w-5 group-hover:-translate-x-1 transition-transform" />
+              <span className="font-bold hidden sm:inline">Exit Game</span>
+            </Link>
+
+            <button 
+              onClick={toggleFullscreen}
+              className="bg-black/50 hover:bg-black/80 text-white p-3 rounded-full transition-all border border-white/20 shadow-xl flex items-center gap-2 group"
+            >
+              <Maximize className="h-5 w-5 group-hover:scale-110 transition-transform" />
+              <span className="font-bold hidden sm:inline">Fullscreen</span>
+            </button>
+          </div>
+
+          {/* Game Container fills entire screen */}
+          <div 
+            ref={containerRef}
+            className="relative w-full h-full cursor-crosshair overflow-hidden"
+          >
+            {/* Smoke Overlay */}
+            <motion.div 
+              animate={{ opacity: smokeOpacity }}
+              className="absolute inset-0 bg-slate-800 pointer-events-none z-40 mix-blend-multiply"
+            />
+
+            {/* Game UI Header */}
+            <div className="absolute top-0 left-0 right-0 z-50 p-4 pl-48 flex items-center justify-between pointer-events-none">
+              <div></div>
+              {/* Centered Score & Lives */}
+              <div className="absolute left-1/2 -translate-x-1/2 flex items-center gap-2 pointer-events-auto">
+                <div className="bg-black/40 backdrop-blur-md px-3 py-1.5 rounded-xl border border-white/10 flex items-center gap-2">
+                  <Trophy className="h-4 w-4 text-yellow-400" />
+                  <div className="flex flex-col">
+                    <span className="text-[8px] font-black text-white/50 uppercase leading-none">Score</span>
+                    <span className="text-base font-black text-yellow-400 leading-none">{score}</span>
+                  </div>
+                </div>
+                <div className="bg-black/40 backdrop-blur-md px-3 py-1.5 rounded-xl border border-white/10 flex items-center gap-2">
+                  <Heart className={cn("h-4 w-4 transition-colors", lives <= 1 ? "text-red-500 animate-pulse" : "text-red-400")} fill="currentColor" />
+                  <div className="flex flex-col">
+                    <span className="text-[8px] font-black text-white/50 uppercase leading-none">Lives</span>
+                    <span className="text-base font-black text-red-400 leading-none">{lives}</span>
+                  </div>
+                </div>
+              </div>
+              {/* Right Stats */}
+              <div className="flex items-center gap-2 pointer-events-auto">
+                <div className="bg-black/40 backdrop-blur-md px-3 py-1.5 rounded-xl border border-white/10 flex flex-col items-center">
+                  <span className="text-[8px] font-black text-white/50 uppercase leading-none">Goal</span>
+                  <span className="text-sm font-black text-emerald-400 leading-none">500</span>
+                </div>
+              </div>
+            </div>
+
+            {/* IDLE / GAMEOVER / VICTORY overlays + game items */}
+            <AnimatePresence>
+              {gameState === 'IDLE' && (
+                <motion.div 
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  className="absolute inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/80 backdrop-blur-sm"
+                >
+                  <div className="max-w-sm w-full max-h-[90vh] overflow-y-auto overflow-x-hidden bg-slate-800 rounded-2xl border-4 border-primary p-4 text-center shadow-2xl relative">
+                    <div className="h-10 w-10 bg-primary/20 rounded-xl flex items-center justify-center mx-auto mb-2">
+                      <Zap className="h-5 w-5 text-primary" fill="currentColor" />
+                    </div>
+                    <h2 className="text-lg font-black uppercase tracking-tighter mb-1 italic">Hazard <span className="text-primary">Blitz</span></h2>
+                    <p className="text-[10px] text-slate-400 font-bold mb-3 leading-tight">
+                      Tap the hazards to neutralize them! Avoid the safety equipment!
+                    </p>
+                    <div className="grid grid-cols-2 gap-2 mb-3">
+                      <div className="bg-slate-900/50 p-2 rounded-xl border-2 border-primary/20">
+                        <span className="text-[9px] font-black text-primary uppercase block mb-1">Neutralize</span>
+                        <div className="flex justify-center gap-1 text-lg">
+                          {HAZARDS.slice(0, 3).map(h => h.icon)}
+                        </div>
+                      </div>
+                      <div className="bg-slate-900/50 p-2 rounded-xl border-2 border-white/10">
+                        <span className="text-[9px] font-black text-white/50 uppercase block mb-1">Avoid</span>
+                        <div className="flex justify-center gap-1 text-lg opacity-50">
+                          {SAFETY.slice(0, 3).map(s => s.icon)}
+                        </div>
+                      </div>
+                    </div>
+                    <button 
+                      onClick={startGame}
+                      className="w-full bg-primary hover:bg-primary/90 text-white font-black py-3 rounded-xl shadow-[0_4px_0_#991b1b] active:translate-y-1 active:shadow-none transition-all uppercase tracking-widest flex items-center justify-center gap-2 text-sm"
+                    >
+                      <Play className="h-5 w-5 fill-current" />
+                      Start Blitz
+                    </button>
+                  </div>
+                </motion.div>
+              )}
+
+              {gameState === 'GAMEOVER' && (
+                <motion.div 
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  className="absolute inset-0 z-50 flex items-center justify-center p-4 bg-red-950/90 backdrop-blur-md"
+                >
+                  <div className="max-w-sm w-full max-h-[90vh] overflow-y-auto overflow-x-hidden bg-slate-900 rounded-2xl border-4 border-red-500 p-4 text-center shadow-2xl">
+                    <div className="h-10 w-10 bg-red-500/20 rounded-xl flex items-center justify-center mx-auto mb-2">
+                      <AlertCircle className="h-6 w-6 text-red-500" />
+                    </div>
+                    <h2 className="text-xl font-black uppercase tracking-tighter mb-1">Game Over</h2>
+                    <p className="text-slate-400 font-bold mb-3 uppercase tracking-widest text-[10px]">Great Training Hero!</p>
+                    <div className="grid grid-cols-2 gap-2 mb-3">
+                      <div className="bg-slate-800 p-3 rounded-xl border-2 border-white/5">
+                        <span className="text-[9px] font-black text-white/30 uppercase block mb-1">Final Score</span>
+                        <span className="text-2xl font-black text-yellow-400">{score}</span>
+                      </div>
+                      <div className="bg-slate-800 p-3 rounded-xl border-2 border-white/5">
+                        <span className="text-[9px] font-black text-white/30 uppercase block mb-1">High Score</span>
+                        <span className="text-2xl font-black text-white">{highScore}</span>
+                      </div>
+                    </div>
+                    <button 
+                      onClick={startGame}
+                      className="w-full bg-white hover:bg-slate-100 text-red-600 font-black py-3 rounded-xl shadow-[0_4px_0_#cbd5e1] active:translate-y-1 active:shadow-none transition-all uppercase tracking-widest flex items-center justify-center gap-2 text-sm"
+                    >
+                      <RotateCcw className="h-5 w-5" />
+                      Try Again
+                    </button>
+                  </div>
+                </motion.div>
+              )}
+
+              {gameState === 'VICTORY' && (
+                <motion.div 
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  className="absolute inset-0 z-50 flex items-center justify-center p-4 bg-blue-950/90 backdrop-blur-md"
+                >
+                  <div className="max-w-sm w-full max-h-[90vh] overflow-y-auto overflow-x-hidden bg-slate-900 rounded-2xl border-4 border-blue-500 p-4 text-center shadow-2xl">
+                    <div className="h-10 w-10 bg-blue-500/20 rounded-xl flex items-center justify-center mx-auto mb-2">
+                      <Trophy className="h-6 w-6 text-blue-400" />
+                    </div>
+                    <h2 className="text-xl font-black uppercase tracking-tighter mb-1">Victory!</h2>
+                    <p className="text-blue-400 font-bold mb-3 uppercase tracking-widest text-[10px]">Mission Accomplished!</p>
+                    <div className="grid grid-cols-2 gap-2 mb-3">
+                      <div className="bg-slate-800 p-3 rounded-xl border-2 border-white/5">
+                        <span className="text-[9px] font-black text-white/30 uppercase block mb-1">Final Score</span>
+                        <span className="text-2xl font-black text-yellow-400">{score}</span>
+                      </div>
+                      <div className="bg-slate-800 p-3 rounded-xl border-2 border-white/5">
+                        <span className="text-[9px] font-black text-white/30 uppercase block mb-1">Status</span>
+                        <span className="text-lg font-black text-white uppercase italic">Elite</span>
+                      </div>
+                    </div>
+                    <motion.div 
+                      initial={{ scale: 0.9, opacity: 0 }}
+                      animate={{ scale: 1, opacity: 1 }}
+                      transition={{ delay: 0.5 }}
+                      className="bg-emerald-500/10 border-2 border-emerald-500/20 p-2 rounded-xl mb-3 flex items-center gap-3 text-left"
+                    >
+                      <div className="h-10 w-10 bg-emerald-500 rounded-lg flex items-center justify-center shadow-lg shrink-0 overflow-hidden">
+                        <img src="/hazard_hall.png" alt="Hazard Hero Badge" className="w-full h-full object-contain p-1" />
+                      </div>
+                      <div>
+                        <div className="flex items-center gap-1 text-emerald-400 font-black text-[9px] uppercase tracking-widest">
+                          <BadgeCheck className="h-3 w-3" />
+                          Badge Obtained
+                        </div>
+                        <div className="text-white font-black text-sm leading-tight">Hazard Hero</div>
+                      </div>
+                    </motion.div>
+                    <div className="flex gap-2">
+                      <button 
+                        onClick={startGame}
+                        className="flex-1 bg-blue-500 hover:bg-blue-400 text-white font-black py-3 rounded-xl shadow-[0_4px_0_#1e40af] active:translate-y-1 active:shadow-none transition-all uppercase tracking-widest flex items-center justify-center gap-1.5 text-[11px]"
+                      >
+                        <RotateCcw className="h-4 w-4" />
+                        Play Again
+                      </button>
+                      <Link 
+                        href="/kids/challenges"
+                        className="flex-1 bg-white/10 hover:bg-white/20 text-white font-bold py-3 rounded-xl transition-all uppercase tracking-widest text-[10px] flex items-center justify-center text-center leading-tight"
+                      >
+                        Activities
+                      </Link>
+                    </div>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+            {/* Combo Multiplier */}
+            <AnimatePresence>
+              {combo > 1 && gameState === 'PLAYING' && (
+                <motion.div 
+                  key={combo}
+                  initial={{ scale: 0.5, opacity: 0 }}
+                  animate={{ scale: 1.2, opacity: 1 }}
+                  exit={{ scale: 2, opacity: 0 }}
+                  className="absolute top-1/4 left-1/2 -translate-x-1/2 z-50 pointer-events-none"
+                >
+                  <div className="bg-yellow-400 text-red-700 font-black px-4 py-1 rounded-full shadow-2xl text-lg uppercase italic tracking-tighter">
+                    {combo}X COMBO!
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+            {/* Level Indicator */}
+            <AnimatePresence>
+              {gameState === 'PLAYING' && (
+                <motion.div 
+                  key={level}
+                  initial={{ y: 50, opacity: 0 }}
+                  animate={{ y: 0, opacity: 1 }}
+                  exit={{ y: -50, opacity: 0 }}
+                  className="absolute bottom-6 left-1/2 -translate-x-1/2 z-50 pointer-events-none"
+                >
+                  <div className="bg-blue-600/90 text-white font-black px-4 py-1 rounded-full shadow-2xl text-[10px] uppercase tracking-widest border-2 border-white/20">
+                    Difficulty Level {level}
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+            {/* Game Objects */}
+            {items.map(item => (
+              <div 
+                key={item.id}
+                style={{
+                  position: 'absolute',
+                  left: item.x,
+                  top: item.y,
+                  transform: `translate(-50%, -50%) rotate(${item.rotation}deg) scale(${item.scale})`,
+                  cursor: 'pointer',
+                  zIndex: 30,
+                  padding: '1.5rem', 
+                }}
+                onClick={() => handleItemClick(item.id, item.type)}
+                className="transition-transform duration-75 active:scale-95 group"
+              >
+                <div className="relative">
+                  <span className="text-5xl filter drop-shadow-lg block pointer-events-none">
+                    {item.icon}
+                  </span>
+                  <div className="absolute inset-0 rounded-full border-4 border-white/0 group-hover:border-white/20 transition-all scale-150" />
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* ===== DESKTOP: Normal dashboard layout ===== */}
+      {!isMobile && (
+        <div className="relative w-full flex-1 flex flex-col pb-4">
+          <div className="max-w-7xl mx-auto w-full px-4 flex-1 flex flex-col">
+            {/* Back Button */}
+            <div className="mb-4 z-[60]">
+              <Link 
+                href="/kids/challenges" 
+                className="inline-flex items-center gap-2 text-slate-500 dark:text-slate-400 font-bold hover:text-orange-600 dark:hover:text-orange-400 transition-all text-sm bg-white/90 backdrop-blur-sm dark:bg-slate-800/90 px-4 py-2 rounded-full border border-white/60 dark:border-slate-700/60 shadow-sm"
+              >
+                <ArrowLeft className="h-4 w-4" />
+                Back to Activities
+              </Link>
+            </div>
+
+            <div className="w-full flex-1 flex flex-col bg-slate-900 rounded-[2.5rem] border-4 border-slate-800 overflow-hidden shadow-2xl relative select-none">
         
         {/* ── Game UI Header ── */}
-        <div className="absolute top-2 sm:top-0 left-0 right-0 z-50 p-6 flex items-center justify-between pointer-events-none">
-          <div className="w-16 sm:w-32 hidden sm:block"></div> {/* Left spacer */}
+        <div className="absolute top-0 left-0 right-0 z-50 p-6 flex items-center justify-between pointer-events-none">
+          <div className="w-32"></div> {/* Left spacer */}
 
           {/* Centered Score & Lives */}
           <div className="absolute left-1/2 -translate-x-1/2 flex items-center gap-2 sm:gap-8 pointer-events-auto">
@@ -340,17 +699,17 @@ const HazardBlitz = () => {
                 exit={{ opacity: 0 }}
                 className="absolute inset-0 z-50 flex items-center justify-center p-6 bg-slate-900/80 backdrop-blur-sm"
               >
-                 <div className="max-w-md w-full max-h-[90%] overflow-y-auto bg-slate-800 rounded-[2rem] sm:rounded-[2.5rem] border-4 border-primary p-5 sm:p-8 text-center shadow-2xl relative overflow-hidden">
-                   <div className="absolute top-0 right-0 w-32 h-32 bg-primary/10 rounded-full -translate-y-1/2 translate-x-1/2 blur-2xl" />
-                                      <div className="h-14 w-14 sm:h-20 sm:w-20 bg-primary/20 rounded-2xl sm:rounded-3xl flex items-center justify-center mx-auto mb-4 sm:mb-6">
-                       <Zap className="h-7 w-7 sm:h-10 sm:w-10 text-primary" fill="currentColor" />
+                 <div className="max-w-md w-full max-h-[85vh] overflow-y-auto overflow-x-hidden bg-slate-800 rounded-[2rem] sm:rounded-[2.5rem] border-4 border-primary p-5 sm:p-8 text-center shadow-2xl relative">
+                   <div className="absolute top-0 right-0 w-32 h-32 bg-primary/10 rounded-full -translate-y-1/2 translate-x-1/2 blur-2xl pointer-events-none" />
+                   <div className="h-12 w-12 sm:h-20 sm:w-20 bg-primary/20 rounded-2xl sm:rounded-3xl flex items-center justify-center mx-auto mb-3 sm:mb-6">
+                       <Zap className="h-6 w-6 sm:h-10 sm:w-10 text-primary" fill="currentColor" />
                     </div>
-                                      <h2 className="text-2xl sm:text-4xl font-black uppercase tracking-tighter mb-2 sm:mb-4 italic">Hazard <span className="text-primary">Blitz</span></h2>
-                    <p className="text-xs sm:text-base text-slate-400 font-bold mb-6 sm:mb-8 leading-tight">
+                   <h2 className="text-xl sm:text-4xl font-black uppercase tracking-tighter mb-2 sm:mb-4 italic">Hazard <span className="text-primary">Blitz</span></h2>
+                    <p className="text-[11px] sm:text-base text-slate-400 font-bold mb-4 sm:mb-8 leading-tight">
                       Neutralize the fire hazards! Tap the hazards to clear them, but avoid the safety equipment!
                     </p>
                    
-                   <div className="grid grid-cols-2 gap-4 mb-8">
+                   <div className="grid grid-cols-2 gap-3 mb-6 sm:mb-8">
                       <div className="bg-slate-900/50 p-4 rounded-2xl border-2 border-primary/20">
                          <span className="text-[10px] font-black text-primary uppercase block mb-2">Neutralize</span>
                          <div className="flex justify-center gap-2 text-2xl">
@@ -383,15 +742,15 @@ const HazardBlitz = () => {
                 exit={{ opacity: 0 }}
                 className="absolute inset-0 z-50 flex items-center justify-center p-6 bg-red-950/90 backdrop-blur-md"
               >
-                <div className="max-w-md w-full bg-slate-900 rounded-[2.5rem] border-4 border-red-500 p-8 text-center shadow-2xl">
-                   <div className="h-20 w-20 bg-red-500/20 rounded-3xl flex items-center justify-center mx-auto mb-6">
-                      <AlertCircle className="h-10 w-10 text-red-500" />
+                <div className="max-w-md w-full max-h-[85vh] overflow-y-auto overflow-x-hidden bg-slate-900 rounded-[2rem] sm:rounded-[2.5rem] border-4 border-red-500 p-5 sm:p-8 text-center shadow-2xl relative">
+                   <div className="h-14 w-14 sm:h-20 sm:w-20 bg-red-500/20 rounded-2xl sm:rounded-3xl flex items-center justify-center mx-auto mb-4 sm:mb-6">
+                      <AlertCircle className="h-8 w-8 sm:h-10 sm:w-10 text-red-500" />
                    </div>
                    
-                   <h2 className="text-4xl font-black uppercase tracking-tighter mb-2">Game Over</h2>
-                   <p className="text-slate-400 font-bold mb-8 uppercase tracking-widest text-sm">Great Training Hero!</p>
+                   <h2 className="text-2xl sm:text-4xl font-black uppercase tracking-tighter mb-2">Game Over</h2>
+                   <p className="text-slate-400 font-bold mb-4 sm:mb-8 uppercase tracking-widest text-xs sm:text-sm">Great Training Hero!</p>
                    
-                   <div className="grid grid-cols-2 gap-4 mb-8">
+                   <div className="grid grid-cols-2 gap-3 sm:gap-4 mb-6 sm:mb-8">
                       <div className="bg-slate-800 p-4 rounded-2xl border-2 border-white/5">
                          <span className="text-[10px] font-black text-white/30 uppercase block mb-1">Final Score</span>
                          <span className="text-3xl font-black text-yellow-400">{score}</span>
@@ -420,22 +779,22 @@ const HazardBlitz = () => {
                 exit={{ opacity: 0 }}
                 className="absolute inset-0 z-50 flex items-center justify-center p-6 bg-blue-950/90 backdrop-blur-md"
               >
-                <div className="max-w-md w-full bg-slate-900 rounded-[2.5rem] border-4 border-blue-500 p-8 text-center shadow-2xl">
-                   <div className="h-20 w-20 bg-blue-500/20 rounded-3xl flex items-center justify-center mx-auto mb-6">
-                      <Trophy className="h-10 w-10 text-blue-400" />
+                <div className="max-w-md w-full max-h-[85vh] overflow-y-auto overflow-x-hidden bg-slate-900 rounded-[2rem] sm:rounded-[2.5rem] border-4 border-blue-500 p-5 sm:p-8 text-center shadow-2xl relative">
+                   <div className="h-14 w-14 sm:h-20 sm:w-20 bg-blue-500/20 rounded-2xl sm:rounded-3xl flex items-center justify-center mx-auto mb-4 sm:mb-6">
+                      <Trophy className="h-8 w-8 sm:h-10 sm:w-10 text-blue-400" />
                    </div>
                    
-                   <h2 className="text-4xl font-black uppercase tracking-tighter mb-2">Victory!</h2>
-                   <p className="text-slate-400 font-bold mb-8 uppercase tracking-widest text-sm text-blue-400">Mission Accomplished!</p>
+                   <h2 className="text-2xl sm:text-4xl font-black uppercase tracking-tighter mb-2">Victory!</h2>
+                   <p className="text-slate-400 font-bold mb-4 sm:mb-8 uppercase tracking-widest text-xs sm:text-sm text-blue-400">Mission Accomplished!</p>
                    
-                   <div className="grid grid-cols-2 gap-4 mb-6">
+                   <div className="grid grid-cols-2 gap-3 sm:gap-4 mb-4 sm:mb-6">
                     <div className="bg-slate-800 p-4 rounded-2xl border-2 border-white/5">
                        <span className="text-[10px] font-black text-white/30 uppercase block mb-1">Final Score</span>
-                       <span className="text-3xl font-black text-yellow-400">{score}</span>
+                       <span className="text-2xl sm:text-3xl font-black text-yellow-400">{score}</span>
                     </div>
                     <div className="bg-slate-800 p-4 rounded-2xl border-2 border-white/5">
                        <span className="text-[10px] font-black text-white/30 uppercase block mb-1">Status</span>
-                       <span className="text-2xl font-black text-white uppercase italic">Elite</span>
+                       <span className="text-xl sm:text-2xl font-black text-white uppercase italic">Elite</span>
                     </div>
                  </div>
 
@@ -444,7 +803,7 @@ const HazardBlitz = () => {
                    initial={{ scale: 0.9, opacity: 0 }}
                    animate={{ scale: 1, opacity: 1 }}
                    transition={{ delay: 0.5 }}
-                   className="bg-emerald-500/10 border-2 border-emerald-500/20 p-4 rounded-2xl mb-8 flex items-center gap-4 text-left"
+                   className="bg-emerald-500/10 border-2 border-emerald-500/20 p-3 sm:p-4 rounded-2xl mb-6 sm:mb-8 flex items-center gap-4 text-left"
                  >
                     <div className="h-12 w-12 bg-emerald-500 rounded-xl flex items-center justify-center shadow-lg shrink-0 overflow-hidden">
                       <img src="/hazard_hall.png" alt="Hazard Hero Badge" className="w-full h-full object-contain p-1" />
@@ -545,11 +904,43 @@ const HazardBlitz = () => {
           <div className="absolute bottom-0 left-0 right-0 h-1 bg-red-600 shadow-[0_0_20px_rgba(220,38,38,0.5)] z-20" />
         </div>
       </div>
-    </div>
-  </div>
+          </div>
+        </div>
+      )}
+    </>
   );
 };
 
-HazardBlitz.layout = (page: React.ReactNode) => <DashboardLayout>{page}</DashboardLayout>;
+const HazardBlitzLayout = ({ children }: { children: React.ReactNode }) => {
+  const [isMobileDevice, setIsMobileDevice] = useState(false);
+
+  useEffect(() => {
+    const touchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+    const smallScreen = Math.min(window.screen.width, window.screen.height) < 768;
+    setIsMobileDevice(touchDevice && smallScreen);
+  }, []);
+
+  return (
+    <RootLayout>
+        <div className="min-h-screen relative flex flex-col bg-slate-950">
+            {!isMobileDevice && <Navigation />}
+            <div className={cn(
+              "flex-1 w-full text-scalable relative z-10 flex flex-col",
+              !isMobileDevice && "pt-[120px]"
+            )}>
+                {children}
+            </div>
+            {!isMobileDevice && (
+              <div className="relative z-50">
+                  <Footer />
+                  <FeedbackWidget />
+              </div>
+            )}
+        </div>
+    </RootLayout>
+  );
+};
+
+HazardBlitz.layout = (page: React.ReactNode) => <HazardBlitzLayout>{page}</HazardBlitzLayout>;
 
 export default HazardBlitz;

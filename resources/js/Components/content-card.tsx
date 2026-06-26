@@ -3,7 +3,7 @@
 import React, { useState } from "react"
 import { Link } from '@inertiajs/react'
 import { motion } from "framer-motion"
-import { Play, Lock, CheckCircle, ArrowRight } from "lucide-react"
+import { Play, Lock, CheckCircle, ArrowRight, Check } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Skeleton } from "./ui/skeleton"
 
@@ -84,8 +84,8 @@ export const ContentCard = React.memo(({ content, onClick }: ContentCardProps) =
         {/* Top-Left Indicator: Module or Difficulty */}
         <div className="absolute top-3 left-3 z-20">
            {content.type === "module" ? (
-             <div className="bg-yellow-500/80 text-white font-black text-[7px] sm:text-[10px] tracking-widest uppercase px-2 py-0.5 sm:px-3 sm:py-1 rounded-full border-2 border-white/30 shadow-lg">
-               ⭐ MODULE
+             <div className="bg-white/20 backdrop-blur-md text-white font-black text-[9px] sm:text-[11px] tracking-[0.2em] uppercase px-3 py-1 sm:px-4 sm:py-1.5 rounded-full border border-white/40 shadow-[0_4px_12px_rgba(0,0,0,0.15)] flex items-center justify-center">
+               MODULE
              </div>
            ) : (content.difficulty && content.id !== "activity-portal") ? (
              <div className={cn(
@@ -107,8 +107,8 @@ export const ContentCard = React.memo(({ content, onClick }: ContentCardProps) =
             </div>
           )}
           {content.isCompleted && (
-            <div className="bg-[#10B981] text-white font-black text-[7px] sm:text-[10px] tracking-wider uppercase px-2 py-1 sm:px-3 sm:py-1 rounded-full shadow-xl flex items-center gap-1 sm:gap-1.5 border-2 border-emerald-400">
-              <CheckCircle className="h-2.5 w-2.5 sm:h-3.5 sm:w-3.5" />
+            <div className="bg-[#10B981] text-white rounded-full shadow-[0_4px_12px_rgba(16,185,129,0.4)] h-6 w-6 sm:h-8 sm:w-8 flex items-center justify-center border-2 border-emerald-300">
+              <Check className="h-3.5 w-3.5 sm:h-4 sm:w-4 stroke-[4]" />
             </div>
           )}
         </div>

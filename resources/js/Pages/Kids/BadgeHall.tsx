@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react"
 import { Link } from '@inertiajs/react'
-import { ArrowLeft, Trophy, Lock, Calendar, Shield, CheckCircle, Zap, ArrowRight, BadgeCheck, X } from "lucide-react"
+import { ArrowLeft, Trophy, Lock, Calendar, Shield, CheckCircle, Zap, ArrowRight, BadgeCheck, X, Check } from "lucide-react"
 import DashboardLayout from "@/Layouts/DashboardLayout"
 import { cn } from "@/lib/utils"
 import { useAuth } from "@/lib/auth-context"
@@ -77,7 +77,7 @@ const BadgeHallPage = ({ completedModules = [], earnedBadges = [] }: BadgeHallPr
   return (
     <div className="-mt-[104px] sm:-mt-[120px] min-h-[calc(100vh+104px)] sm:min-h-[calc(100vh+120px)] bg-slate-50 dark:bg-slate-950 font-sans flex flex-col text-slate-900 dark:text-white transition-colors duration-500">
       {/* ── High-Impact Hero Header: Optimized for Mobile Readability ── */}
-      <div className="relative pt-[104px] sm:pt-[168px] pb-12 sm:pb-20 px-4 sm:px-10 bg-primary overflow-hidden shrink-0">
+      <div className="relative pt-[104px] sm:pt-[168px] pb-12 sm:pb-20 px-4 sm:px-10 bg-gradient-to-br from-primary via-red-600 to-rose-700 overflow-hidden shrink-0">
         <div className="absolute inset-0 opacity-20 bg-[radial-gradient(#fff_1px,transparent_1px)] [background-size:24px_24px]"></div>
         
         <div className="max-w-7xl mx-auto relative z-10">
@@ -114,7 +114,7 @@ const BadgeHallPage = ({ completedModules = [], earnedBadges = [] }: BadgeHallPr
       <div className="flex-1 bg-white/50 dark:bg-slate-900/50 -mt-6 sm:-mt-10 rounded-t-[2rem] sm:rounded-t-[4rem] border-t-4 sm:border-t-8 border-slate-100 dark:border-slate-900 px-3 sm:px-6 py-10 sm:py-16 pb-24 transition-colors">
         <div className="max-w-7xl mx-auto">
           
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-8">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-8">
             {ALL_BADGES.map((badge, i) => {
               const state = getBadgeState(badge)
               return (
@@ -127,57 +127,52 @@ const BadgeHallPage = ({ completedModules = [], earnedBadges = [] }: BadgeHallPr
                     }
                   }}
                   className={cn(
-                    "group relative p-4 sm:p-6 rounded-2xl sm:rounded-[2.5rem] border-2 sm:border-[3px] transition-all duration-500 flex flex-col min-h-[240px] sm:min-h-[300px] h-auto overflow-hidden cursor-pointer",
+                    "group relative p-3 sm:p-6 rounded-2xl sm:rounded-[2.5rem] border-2 sm:border-[3px] transition-all duration-500 flex flex-col min-h-[180px] sm:min-h-[300px] h-auto overflow-hidden cursor-pointer",
                     state.isEarned 
                       ? "bg-white dark:bg-slate-800 border-slate-200 dark:border-white/10 shadow-xl hover:-translate-y-1.5 sm:hover:-translate-y-2" 
                       : "bg-white dark:bg-slate-950/40 border-slate-200 dark:border-slate-800/40"
                   )}
                 >
-                  {/* Badge Graphic Row - Larger Icons */}
-                  <div className={cn("flex items-start justify-between mb-4 sm:mb-6 shrink-0", !state.isEarned && "opacity-50")}>
-                    <div className="relative">
-                      {/* Badge Graphic (Overflow Hidden for Grayscale Overlay) */}
-                      <div className={cn(
-                        "h-12 w-12 sm:h-20 sm:w-20 rounded-xl sm:rounded-3xl flex items-center justify-center shadow-lg relative transform group-hover:scale-110 transition-transform duration-500 overflow-hidden",
-                        state.isEarned 
-                          ? "bg-gradient-to-br from-yellow-300 to-amber-500 border-2 sm:border-[4px] border-white/20" 
-                          : "bg-slate-200 dark:bg-slate-900 border border-slate-300 dark:border-slate-800"
-                      )}>
+                  {/* Badge Graphic Row - Centered Hero Display */}
+                  <div className={cn("flex items-center justify-center mb-4 sm:mb-6 shrink-0 relative mt-2", !state.isEarned && "opacity-50")}>
+                    <div className="relative z-10">
+                      {/* Badge Graphic */}
+                      <div className="h-16 w-16 sm:h-32 sm:w-32 flex items-center justify-center relative transform group-hover:scale-110 transition-transform duration-500">
                         <img 
                           src={badge.image} 
                           className={cn(
-                            "h-full w-full object-contain p-1 sm:p-2",
-                            !state.isEarned && "filter grayscale opacity-30 contrast-75 brightness-75"
+                            "h-full w-full object-contain drop-shadow-lg",
+                            !state.isEarned && "filter grayscale opacity-40 contrast-75 brightness-75 drop-shadow-none"
                           )} 
                           alt={badge.name} 
                         />
                         {!state.isEarned && (
-                          <div className="absolute inset-0 flex items-center justify-center bg-black/10">
-                            <Lock className="h-4 w-4 sm:h-7 sm:w-7 text-slate-500 dark:text-slate-400 drop-shadow-md" />
+                          <div className="absolute inset-0 flex items-center justify-center bg-black/20 rounded-2xl sm:rounded-3xl">
+                            <Lock className="h-6 w-6 sm:h-10 sm:w-10 text-slate-400 drop-shadow-md" />
                           </div>
                         )}
                       </div>
 
-                      {/* Checkmark Floating Outside (Safe from Overflow Hidden clipping) */}
+                      {/* Checkmark Floating Outside */}
                       {state.isEarned && (
-                        <div className="absolute -top-1.5 -right-1.5 z-20 bg-green-500 rounded-full p-1 border-2 border-white dark:border-slate-800 shadow-md">
-                           <CheckCircle className="h-2.5 w-2.5 sm:h-3.5 sm:w-3.5 text-white" />
+                        <div className="absolute -bottom-1 -right-1 sm:-bottom-3 sm:-right-3 z-20 bg-green-500 rounded-full shadow-[0_4px_10px_rgba(34,197,94,0.5)] border-2 sm:border-[3px] border-white dark:border-slate-800 flex items-center justify-center h-6 w-6 sm:h-10 sm:w-10">
+                           <Check className="h-3 w-3 sm:h-6 sm:w-6 text-white stroke-[4]" />
                         </div>
                       )}
                     </div>
                   </div>
 
-                  {/* Text Details Area - Optimized Mobile Typography */}
-                  <div className={cn("flex-1 flex flex-col overflow-hidden text-left mb-4", !state.isEarned && "opacity-60")}>
+                  {/* Text Details Area - Centered & Premium */}
+                  <div className={cn("flex-1 flex flex-col items-center text-center overflow-hidden mb-3 sm:mb-4", !state.isEarned && "opacity-60")}>
                     <h3 className={cn(
-                      "text-sm sm:text-xl font-black uppercase tracking-tight mb-1 truncate",
+                      "text-[12px] sm:text-2xl font-black uppercase tracking-tight mb-1 sm:mb-2 w-full line-clamp-2 sm:truncate leading-tight",
                       state.isEarned ? "text-slate-900 dark:text-white" : "text-slate-400 dark:text-slate-600"
                     )}>
                       {state.isEarned ? badge.name : "Locked"}
                     </h3>
                     
                     <div className={cn(
-                      "inline-block self-start px-2 py-0.5 rounded-full text-[8px] sm:text-[10px] font-black uppercase tracking-widest mb-3",
+                      "inline-block px-2 py-0.5 sm:px-3 sm:py-1 rounded-full text-[7px] sm:text-[11px] font-black uppercase tracking-widest mb-2 sm:mb-3",
                       state.isEarned 
                         ? "bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 border border-blue-500/20" 
                         : "bg-slate-200 dark:bg-slate-900 text-slate-500 dark:text-slate-700"
@@ -186,7 +181,7 @@ const BadgeHallPage = ({ completedModules = [], earnedBadges = [] }: BadgeHallPr
                     </div>
                     
                     <p className={cn(
-                      "text-[10px] sm:text-sm font-bold leading-tight line-clamp-3",
+                      "text-[9px] sm:text-[13px] font-semibold leading-tight sm:leading-relaxed line-clamp-2 sm:line-clamp-3",
                       state.isEarned ? "text-slate-600 dark:text-slate-400" : "text-slate-400 dark:text-slate-600 italic"
                     )}>
                       {state.isEarned 
@@ -195,12 +190,14 @@ const BadgeHallPage = ({ completedModules = [], earnedBadges = [] }: BadgeHallPr
                     </p>
                   </div>
 
-                  {/* Action Footer - Consistent Position & Height */}
-                  <div className="mt-auto pt-3 sm:pt-5 border-t border-slate-100 dark:border-slate-800/50">
+                  {/* Action Footer - Certificate Stamp Style */}
+                  <div className="mt-auto pt-2 sm:pt-5 border-t border-slate-100 dark:border-slate-800/50">
                     {state.isEarned ? (
-                      <div className="w-full flex flex-col items-center justify-center py-2 sm:py-3 bg-slate-50 dark:bg-slate-900/30 rounded-xl border border-slate-100 dark:border-white/5">
-                        <span className="text-[7px] sm:text-[9px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest">Obtained On</span>
-                        <div className="text-orange-600 dark:text-yellow-400 font-black text-[9px] sm:text-xs">
+                      <div className="w-full flex items-center justify-between py-1.5 sm:py-3 px-2 sm:px-4 bg-emerald-50 dark:bg-emerald-900/20 rounded-lg sm:rounded-xl border border-emerald-200 dark:border-emerald-800/30 text-emerald-800 dark:text-emerald-300">
+                        <div className="flex items-center gap-1 sm:gap-2">
+                           <span className="text-[7px] sm:text-[11px] font-black uppercase tracking-widest">Obtained</span>
+                        </div>
+                        <div className="font-black text-[8px] sm:text-xs">
                           {state.date === "Recent" ? "Today" : new Date(state.date!).toLocaleDateString()}
                         </div>
                       </div>

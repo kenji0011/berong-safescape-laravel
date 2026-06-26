@@ -23,3 +23,21 @@
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteRule ^ index.php [L]
 </IfModule>
+
+<IfModule mod_headers.c>
+    # Required headers for Godot 4 SharedArrayBuffer / Threads support
+    <FilesMatch "\.(html|js|wasm|pck)$">
+        Header set Cross-Origin-Embedder-Policy "require-corp"
+        Header set Cross-Origin-Opener-Policy "same-origin"
+    </FilesMatch>
+    
+    # Cache Godot engine files for 1 month to prevent re-downloading huge files
+    <FilesMatch "\.(wasm|pck)$">
+        Header set Cache-Control "max-age=2592000, public"
+    </FilesMatch>
+</IfModule>
+
+<IfModule mod_deflate.c>
+    # Enable GZIP compression for Godot WASM and PCK files to reduce massive payloads
+    AddOutputFilterByType DEFLATE application/wasm application/octet-stream text/html application/javascript
+</IfModule>

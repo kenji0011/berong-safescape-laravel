@@ -48,7 +48,7 @@ export default function TaskMaster() {
         <div className="absolute top-4 left-4 z-[10000] flex items-center gap-3">
           <Link 
             href="/kids" 
-            className="bg-black/50 hover:bg-black/80 text-white p-3 rounded-full backdrop-blur-sm transition-all border border-white/20 shadow-xl flex items-center gap-2 group"
+            className="bg-black/50 hover:bg-black/80 text-white p-3 rounded-full transition-all border border-white/20 shadow-xl flex items-center gap-2 group"
           >
             <ArrowLeft className="h-5 w-5 group-hover:-translate-x-1 transition-transform" />
             <span className="font-bold hidden sm:inline">Exit Game</span>
@@ -64,7 +64,7 @@ export default function TaskMaster() {
                 document.exitFullscreen();
               }
             }}
-            className="bg-black/50 hover:bg-black/80 text-white p-3 rounded-full backdrop-blur-sm transition-all border border-white/20 shadow-xl flex items-center gap-2 group"
+            className="bg-black/50 hover:bg-black/80 text-white p-3 rounded-full transition-all border border-white/20 shadow-xl flex items-center gap-2 group"
           >
             <Maximize className="h-5 w-5 group-hover:scale-110 transition-transform" />
             <span className="font-bold hidden sm:inline">Fullscreen</span>
@@ -81,7 +81,7 @@ export default function TaskMaster() {
 
         {/* Please Rotate Device Warning for Mobile */}
         {isPortrait && (
-          <div className="absolute inset-0 z-[10001] bg-slate-900/95 backdrop-blur-md flex flex-col items-center justify-center text-white p-6 text-center">
+          <div className="absolute inset-0 z-[10001] bg-slate-900/95 flex flex-col items-center justify-center text-white p-6 text-center">
             <RotateCcw className="h-16 w-16 mb-6 text-blue-400 animate-pulse" />
             <h2 className="text-3xl font-black uppercase mb-4 tracking-wider">Rotate Your Device</h2>
             <p className="text-lg font-medium text-slate-300 max-w-sm">
@@ -92,7 +92,7 @@ export default function TaskMaster() {
 
         {/* Win Notification Overlay */}
         {showWinNotification && (
-          <div className="absolute inset-0 z-[10002] bg-black/80 backdrop-blur-sm flex flex-col items-center justify-center p-4">
+          <div className="absolute inset-0 z-[10002] bg-black/80 flex flex-col items-center justify-center p-4">
             <div className="bg-white dark:bg-slate-900 rounded-[2rem] p-8 sm:p-12 max-w-md w-full text-center shadow-[0_0_100px_rgba(59,130,246,0.3)] transform scale-100 animate-in zoom-in duration-300">
               <div className="w-24 h-24 mx-auto bg-gradient-to-br from-yellow-300 to-amber-500 rounded-full flex items-center justify-center shadow-inner border-4 border-white dark:border-slate-800 mb-6 relative overflow-hidden">
                 {/* Placeholder Badge Image - User will replace later */}
