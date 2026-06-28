@@ -4,6 +4,7 @@ import { ArrowLeft, RotateCcw, Trophy, Sparkles } from "lucide-react"
 import DashboardLayout from "@/Layouts/DashboardLayout"
 import axios from "axios"
 import { cn } from "@/lib/utils"
+import { playSound as playSoundUtil } from '@/lib/audio'
 
 const EMOJIS = ["🚒", "🔥", "🧯", "🧑‍🚒", "🚰", "🚨"]
 
@@ -45,20 +46,15 @@ const MemoryGamePage = () => {
     initGame()
   }, [])
 
-  const [soundEffects] = useState({
-    click: new Audio('/sounds/click.mp3'),
-    match: new Audio('/sounds/match.mp3'),
-    wrong: new Audio('/sounds/wrong.mp3'),
-    win: new Audio('/sounds/win.mp3')
-  })
+  const soundMap: Record<string, string> = {
+    click: '/sounds/click.mp3',
+    match: '/sounds/match.mp3',
+    wrong: '/sounds/wrong.mp3',
+    win: '/sounds/win.mp3'
+  }
 
   const playSound = (type: 'click' | 'match' | 'wrong' | 'win') => {
-    const audio = soundEffects[type]
-    if (audio) {
-      audio.currentTime = 0
-      audio.volume = 0.4
-      audio.play().catch(e => console.log("Audio play failed:", e))
-    }
+    playSoundUtil(soundMap[type], 'games')
   }
 
   const handleCardClick = (index: number) => {

@@ -6,6 +6,7 @@ import axios from "axios"
 import { cn } from "@/lib/utils"
 import { ModuleNavigation } from "@/Components/module-navigation"
 import { AdaptiveQuiz } from "@/Components/AdaptiveQuiz"
+import { playSound } from '@/lib/audio'
 
 const ModuleThreePage = ({ moduleNum, initialProgress }: { moduleNum: number; initialProgress?: any }) => {
   const currentModule = moduleNum || 3
@@ -32,8 +33,7 @@ const ModuleThreePage = ({ moduleNum, initialProgress }: { moduleNum: number; in
   useEffect(() => {
     if (showBadgeModal) {
       try {
-        const audio = new Audio('/sounds/finish.mp3')
-        audio.play().catch(e => console.error("Audio play failed:", e))
+        playSound('/sounds/finish.mp3', 'notification')
       } catch (e) {}
     }
   }, [showBadgeModal])

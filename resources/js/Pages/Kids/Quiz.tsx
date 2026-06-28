@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react"
 import { Link, router } from '@inertiajs/react'
-import { ArrowLeft, CheckCircle, XCircle, Lightbulb, Flame, Zap } from "lucide-react"
+import { ArrowLeft, CheckCircle, XCircle, Lightbulb, Flame, Zap, Trophy, ArrowRight } from "lucide-react"
+import { playSound as playAudio } from '@/lib/audio'
 import DashboardLayout from "@/Layouts/DashboardLayout"
 import axios from "axios"
 import { cn } from "@/lib/utils"
@@ -58,25 +59,20 @@ const QuizPage = () => {
   const [showLevelTransition, setShowLevelTransition] = useState(false)
   const [hasStarted, setHasStarted] = useState(false)
   
-  const [soundEffects] = useState({
-    click: new Audio('/sounds/click.mp3'),
-    match: new Audio('/sounds/match.mp3'),
-    wrong: new Audio('/sounds/wrong.mp3'),
-    win: new Audio('/sounds/win.mp3'),
-    failed: new Audio('/sounds/failed.mp3')
-  })
+  const soundMap: Record<string, string> = {
+    click: '/sounds/click.mp3',
+    match: '/sounds/match.mp3',
+    wrong: '/sounds/wrong.mp3',
+    win: '/sounds/win.mp3',
+    failed: '/sounds/failed.mp3'
+  }
 
   useEffect(() => {
     startQuiz(false);
   }, []);
 
   const playSound = (type: 'click' | 'match' | 'wrong' | 'win' | 'failed') => {
-    const audio = soundEffects[type]
-    if (audio) {
-      audio.currentTime = 0
-      audio.volume = 0.4
-      audio.play().catch(e => console.log("Audio play failed:", e))
-    }
+    playAudio(soundMap[type], 'games')
   }
 
   const startQuiz = (playStartSound = true) => {

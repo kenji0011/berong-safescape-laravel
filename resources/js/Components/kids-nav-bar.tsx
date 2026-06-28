@@ -3,6 +3,7 @@
 import { useState } from "react"
 import { Gamepad2, Video, Sparkles, BookOpen, Home } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { playSound } from '@/lib/audio'
 
 export type ContentCategory = "all" | "games" | "videos" | "activities" | "modules"
 
@@ -32,7 +33,7 @@ export function KidsNavBar({ activeCategory, onCategoryChange }: KidsNavBarProps
             <button
               key={category.id}
               onClick={() => {
-                new Audio('/sounds/tap.mp3').play().catch(() => {});
+                playSound('/sounds/tap.mp3', 'general');
                 onCategoryChange(category.id);
               }}
               className={cn(
@@ -60,7 +61,7 @@ export function KidsNavBar({ activeCategory, onCategoryChange }: KidsNavBarProps
               <button
                 key={category.id}
                 onClick={() => {
-                  new Audio('/sounds/tap.mp3').play().catch(() => {});
+                  playSound('/sounds/tap.mp3', 'general');
                   onCategoryChange(category.id);
                 }}
                 className={cn(

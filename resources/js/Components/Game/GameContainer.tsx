@@ -4,6 +4,7 @@ import { Link } from '@inertiajs/react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { OrbitControls, Environment, ContactShadows, Text, useGLTF, Billboard, Html } from '@react-three/drei';
 import * as THREE from 'three';
+import { playSound } from '@/lib/audio';
 
 // ─── Reusable GLB Furniture (non-interactive) ────────────────
 
@@ -172,7 +173,7 @@ function ModelHazardObject({
     e.stopPropagation();
     
     // Play tap sound on click
-    new Audio('/sounds/tap.mp3').play().catch((err) => console.warn('Audio play failed:', err));
+    playSound('/sounds/tap.mp3', 'general');
 
     if (!discovered) {
       setDiscovered(true);
@@ -231,7 +232,7 @@ function PrimitiveHazardObject({
     e.stopPropagation();
     
     // Play tap sound on click
-    new Audio('/sounds/tap.mp3').play().catch((err) => console.warn('Audio play failed:', err));
+    playSound('/sounds/tap.mp3', 'general');
 
     if (!discovered) {
       setDiscovered(true);
@@ -690,7 +691,7 @@ function LightSwitch({
       onPointerLeave={(e) => { e.stopPropagation(); setHovered(false); document.body.style.cursor = 'auto'; }}
       onClick={(e) => {
         e.stopPropagation();
-        new Audio('/sounds/tap.mp3').play().catch(() => {});
+        playSound('/sounds/tap.mp3', 'general');
         setIsLightOn((prev) => !prev);
       }}
     >
@@ -1771,14 +1772,14 @@ export default function GameContainer() {
   React.useEffect(() => {
     if (score === totalHazards && !hasPlayedWinSound.current) {
       hasPlayedWinSound.current = true;
-      new Audio('/sounds/wingame.mp3').play().catch((err) => console.warn('Win sound play failed:', err));
+      playSound('/sounds/wingame.mp3', 'notification');
     }
   }, [score, totalHazards]);
 
   React.useEffect(() => {
     if (timeLeft === 0 && score < totalHazards && !hasPlayedLossSound.current) {
       hasPlayedLossSound.current = true;
-      new Audio('/sounds/failed.mp3').play().catch((err) => console.warn('Loss sound play failed:', err));
+      playSound('/sounds/failed.mp3', 'games');
     }
   }, [timeLeft, score, totalHazards]);
 

@@ -5,6 +5,7 @@ import { ArrowLeft, ArrowRight, CheckCircle2, Flame, Box, AlertTriangle, Trophy 
 import DashboardLayout from '@/Layouts/DashboardLayout'
 import { HotOrNotSkeleton } from '@/Components/dashboard-skeletons'
 import axios from 'axios'
+import { playSound } from '@/lib/audio'
 
 const ITEMS = [
   { id: 1, name: 'MATCHSTICK', icon: '🔥', type: 'hot', tip: 'Matches and lighters are for adults only. They can start dangerous fires!' },
@@ -27,9 +28,9 @@ export default function HotOrNot() {
   const [showIntervention, setShowIntervention] = useState(false)
   const [isAnswering, setIsAnswering] = useState(false)
   
-  const matchSound = new Audio('/sounds/match.mp3')
-  const wrongSound = new Audio('/sounds/wrong.mp3')
-  const winSound = new Audio('/sounds/win.mp3')
+  const playSoundEffect = (type: 'match' | 'wrong' | 'win') => {
+    playSound(`/sounds/${type}.mp3`, 'games');
+  }
 
   const progress = (score / ITEMS.length) * 100
 
@@ -52,7 +53,7 @@ export default function HotOrNot() {
                       (direction === 'right' && item.type === 'toy')
 
     if (isCorrect) {
-      matchSound.play()
+      playSoundEffect('match')
       const newScore = score + 1
       setScore(newScore)
       
@@ -68,14 +69,14 @@ export default function HotOrNot() {
          }).catch(err => console.error("Failed to award badge:", err.response?.data || err.message))
 
          setTimeout(() => {
-            winSound.play()
+            playSoundEffect('win')
             setGameState('win')
          }, 400)
       } else {
          setDeck(prev => prev.slice(1))
       }
     } else {
-      wrongSound.play()
+      playSoundEffect('wrong')
       setShowIntervention(true)
       setIsAnswering(true)
     }

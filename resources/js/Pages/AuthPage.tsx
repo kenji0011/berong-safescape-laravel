@@ -291,14 +291,14 @@ function AuthContent() {
         </div>
       )}
 
-      <div className="w-full max-w-5xl z-10 relative flex flex-col lg:flex-row items-center gap-8 lg:gap-16 my-auto py-4">
+      <div className="w-full max-w-5xl z-10 relative flex flex-col lg:flex-row items-center gap-4 sm:gap-8 lg:gap-16 my-auto py-2 sm:py-4">
         {/* Left Side — Branding */}
         <div className="flex-1 flex flex-col items-center lg:items-start text-center lg:text-left">
-          <div className="flex justify-center lg:justify-start gap-3 sm:gap-4 mb-4 sm:mb-6">
-            <div className="h-16 w-16 sm:h-20 sm:w-20 bg-white dark:bg-slate-900 rounded-full shadow-[0_4px_20px_rgba(0,0,0,0.15)] border border-gray-100 dark:border-slate-800 flex items-center justify-center p-1.5 sm:p-2 flex-shrink-0 transition-colors">
+          <div className="flex justify-center lg:justify-start gap-2 sm:gap-4 mb-2 sm:mb-6">
+            <div className="h-12 w-12 sm:h-20 sm:w-20 bg-white dark:bg-slate-900 rounded-full shadow-[0_4px_20px_rgba(0,0,0,0.15)] border border-gray-100 dark:border-slate-800 flex items-center justify-center p-1.5 sm:p-2 flex-shrink-0 transition-colors">
               <img src="/bfp-logo-red.jpg" alt="BFP Logo" width="72" height="72" className="object-contain w-full h-full" />
             </div>
-            <div className="h-16 w-16 sm:h-20 sm:w-20 bg-white dark:bg-slate-900 rounded-full shadow-[0_4px_20px_rgba(0,0,0,0.15)] border border-gray-100 dark:border-slate-800 flex items-center justify-center p-1.5 sm:p-2 flex-shrink-0 transition-colors">
+            <div className="h-12 w-12 sm:h-20 sm:w-20 bg-white dark:bg-slate-900 rounded-full shadow-[0_4px_20px_rgba(0,0,0,0.15)] border border-gray-100 dark:border-slate-800 flex items-center justify-center p-1.5 sm:p-2 flex-shrink-0 transition-colors">
               <img
                 src="/philippine-flag-seal.jpg"
                 alt="Philippine Seal"
@@ -308,8 +308,8 @@ function AuthContent() {
               />
             </div>
           </div>
-          <h1 className="text-4xl sm:text-5xl xl:text-6xl font-extrabold text-[#d60000] dark:text-red-500 mb-3 sm:mb-4 tracking-tight drop-shadow-sm transition-colors">Berong E-Learning</h1>
-          <div className="inline-flex items-center justify-center px-5 sm:px-6 py-2 bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800 rounded-full shadow-[0_2px_10px_rgba(0,0,0,0.05)] transition-colors">
+          <h1 className="text-3xl sm:text-5xl xl:text-6xl font-extrabold text-[#d60000] dark:text-red-500 mb-1 sm:mb-4 tracking-tight drop-shadow-sm transition-colors">Berong E-Learning</h1>
+          <div className="inline-flex items-center justify-center px-4 sm:px-6 py-1.5 sm:py-2 bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800 rounded-full shadow-[0_2px_10px_rgba(0,0,0,0.05)] transition-colors">
             <p className="text-[10px] sm:text-xs font-bold text-gray-500 dark:text-slate-400 uppercase tracking-widest text-center leading-tight">BFP Sta Cruz Fire Safety Education</p>
           </div>
         </div>
@@ -319,18 +319,18 @@ function AuthContent() {
         <Card className="border-[2px] sm:border-[3px] border-[#fb923c] dark:border-orange-500/50 rounded-[1.75rem] sm:rounded-[2.5rem] shadow-2xl bg-white dark:bg-slate-900 overflow-hidden relative pb-2 sm:pb-4 mx-auto w-full transition-colors duration-500">
 
 
-          <CardHeader className="pt-6 sm:pt-8 pb-1 sm:pb-2 relative z-10 px-5 sm:px-6">
-            <div className="flex flex-col items-center mb-1 sm:mb-2">
-              <div className="mx-auto w-10 h-10 sm:w-12 sm:h-12 bg-red-50 dark:bg-red-500/10 border border-red-200 dark:border-red-500/20 rounded-[14px] sm:rounded-2xl flex items-center justify-center mb-3 sm:mb-4 transition-colors">
-                <Shield className="h-5 w-5 sm:h-6 sm:w-6 text-[#d60000] dark:text-red-500" />
+          <CardHeader className="pt-4 sm:pt-8 pb-0 sm:pb-2 relative z-10 px-4 sm:px-6">
+            <div className="flex flex-col items-center mb-0 sm:mb-2">
+              <div className="mx-auto w-8 h-8 sm:w-12 sm:h-12 bg-red-50 dark:bg-red-500/10 border border-red-200 dark:border-red-500/20 rounded-[10px] sm:rounded-2xl flex items-center justify-center mb-1.5 sm:mb-4 transition-colors">
+                <Shield className="h-4 w-4 sm:h-6 sm:w-6 text-[#d60000] dark:text-red-500" />
               </div>
-              <CardTitle className="text-xl sm:text-2xl font-black text-slate-800 dark:text-white tracking-tight text-center transition-colors">Access your Account</CardTitle>
+              <CardTitle className="text-lg sm:text-2xl font-black text-slate-800 dark:text-white tracking-tight text-center transition-colors">Access your Account</CardTitle>
             </div>
-            <CardDescription className="text-center text-slate-500 dark:text-slate-400 font-medium text-xs sm:text-sm transition-colors">Sign in or create an account to access learning materials</CardDescription>
+            <CardDescription className="text-center text-slate-500 dark:text-slate-400 font-medium text-[11px] sm:text-sm transition-colors mt-1 sm:mt-0">Sign in or create an account to access learning materials</CardDescription>
           </CardHeader>
           <CardContent className="relative z-10 px-5 sm:px-8">
             <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-              <TabsList className="grid w-full grid-cols-2 bg-slate-100 dark:bg-slate-800 p-1 sm:p-1.5 rounded-xl sm:rounded-2xl h-12 sm:h-14 mb-4 sm:mb-6 transition-colors relative">
+              <TabsList className="grid w-full grid-cols-2 bg-slate-100 dark:bg-slate-800 p-1 sm:p-1.5 rounded-xl sm:rounded-2xl h-10 sm:h-14 mb-3 sm:mb-6 transition-colors relative">
                 <TabsTrigger value="login" className="relative z-10 w-full h-full rounded-lg sm:rounded-xl font-extrabold text-slate-400 dark:text-slate-500 text-xs sm:text-sm data-[state=active]:text-white dark:data-[state=active]:text-white data-[state=active]:bg-transparent dark:data-[state=active]:bg-transparent data-[state=active]:shadow-none border-transparent outline-none transition-colors duration-300">
                   {activeTab === 'login' && (
                     <motion.div
@@ -355,8 +355,8 @@ function AuthContent() {
 
 
               {/* Login Tab */}
-              <TabsContent value="login" className="min-h-[360px] sm:min-h-[400px] flex flex-col justify-center mt-0 animate-in fade-in-0 slide-in-from-left-4 duration-300">
-                <form onSubmit={handleLogin} className="space-y-3 sm:space-y-4">
+              <TabsContent value="login" className="min-h-[280px] sm:min-h-[400px] flex flex-col justify-center mt-0 animate-in fade-in-0 slide-in-from-left-4 duration-300">
+                <form onSubmit={handleLogin} className="space-y-2 sm:space-y-4">
                   <div className="space-y-1 sm:space-y-1.5">
                     <Label htmlFor="login-username" className="text-[11px] sm:text-xs font-bold text-slate-700 dark:text-slate-300 ml-1 transition-colors">Username</Label>
                     <Input
@@ -415,7 +415,7 @@ function AuthContent() {
                     {loading ? "Signing in..." : "Log In"}
                   </button>
 
-                  <div className="flex flex-col items-center gap-1 sm:gap-2 pt-4 sm:pt-6 pb-1 sm:pb-2">
+                  <div className="flex flex-col items-center gap-0 sm:gap-2 pt-2 sm:pt-6 pb-0 sm:pb-2">
                     <Button
                       type="button"
                       variant="ghost"
@@ -446,8 +446,8 @@ function AuthContent() {
                 </form>
               </TabsContent>
 
-              <TabsContent value="register" className="min-h-[360px] sm:min-h-[400px] flex flex-col justify-center mt-0 animate-in fade-in-0 slide-in-from-right-4 duration-300">
-                <div className="space-y-3 sm:space-y-4 py-2 sm:py-4">
+              <TabsContent value="register" className="min-h-[280px] sm:min-h-[400px] flex flex-col justify-center mt-0 animate-in fade-in-0 slide-in-from-right-4 duration-300">
+                <div className="space-y-2 sm:space-y-4 py-1 sm:py-4">
                   <div className="text-center">
                     <h3 className="text-base sm:text-lg font-bold text-slate-800 dark:text-white mb-1 sm:mb-2 mt-1 sm:mt-2 tracking-tight transition-colors">Create Your Account</h3>
                     <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 font-medium mb-4 sm:mb-6 transition-colors">

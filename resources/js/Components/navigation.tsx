@@ -5,10 +5,11 @@ import { useState, useEffect, useRef } from "react"
 import { useAuth } from "@/lib/auth-context"
 import { useSettings } from "@/lib/settings-context"
 import { Button } from "@/components/ui/button"
-import { LogOut, User, Menu, X, Home, Users, Briefcase, Baby, Shield, Info, Settings, ChevronDown, ArrowRight, Clock, Sliders, BookOpen, Eye, Focus, Type, Zap, Sun, Moon, ZoomIn } from "lucide-react"
+import { LogOut, User, Menu, X, Home, Users, Briefcase, Baby, Shield, Info, Settings, ChevronDown, ArrowRight, Clock, Sliders, BookOpen, Eye, Focus, Type, Zap, Sun, Moon, ZoomIn, Volume2, Gamepad2, Music, BellRing } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { NotificationPopover } from "@/components/ui/notification-popover"
 import { SettingsPanel } from "@/components/settings-panel"
+import { Slider } from "@/components/ui/slider"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -97,8 +98,28 @@ export function Navigation() {
     colorBlindness,
     setColorBlindness,
     magnifyingMouse,
-    toggleMagnifyingMouse
+    toggleMagnifyingMouse,
+    generalVolume,
+    setGeneralVolume,
+    gamesVolume,
+    setGamesVolume,
+    musicVolume,
+    setMusicVolume,
+    notificationVolume,
+    setNotificationVolume
   } = useSettings()
+
+  // Local state for smooth slider dragging without triggering context re-renders constantly
+  const [localGeneral, setLocalGeneral] = useState(generalVolume)
+  const [localGames, setLocalGames] = useState(gamesVolume)
+  const [localMusic, setLocalMusic] = useState(musicVolume)
+  const [localNotification, setLocalNotification] = useState(notificationVolume)
+
+  // Sync with context if it changes from outside
+  useEffect(() => { setLocalGeneral(generalVolume) }, [generalVolume])
+  useEffect(() => { setLocalGames(gamesVolume) }, [gamesVolume])
+  useEffect(() => { setLocalMusic(musicVolume) }, [musicVolume])
+  useEffect(() => { setLocalNotification(notificationVolume) }, [notificationVolume])
 
   const accessibleItems = [];
   if (user?.permissions?.accessProfessional) accessibleItems.push({ name: 'PROFESSIONAL', href: '/professional', active: url.startsWith('/professional') });
@@ -780,6 +801,45 @@ export function Navigation() {
                 </div>
                 <div className={`relative w-10 h-6 shrink-0 rounded-full transition-colors duration-200 ${focusMode ? 'bg-teal-500' : 'bg-slate-300 dark:bg-slate-600'}`}>
                   <div className={`absolute top-1 left-1 w-4 h-4 bg-white rounded-full shadow transition-transform duration-200 ${focusMode ? 'translate-x-4' : 'translate-x-0'}`} />
+                </div>
+              </div>
+            </div>
+
+            {/* Audio & Volume */}
+            <div className="bg-slate-50 dark:bg-slate-900/50 rounded-2xl p-3 sm:p-4 border border-slate-200 dark:border-slate-800/80 space-y-3 sm:space-y-4 transition-colors">
+              <h3 className="text-xs sm:text-sm font-bold text-indigo-600 dark:text-indigo-400 uppercase tracking-widest">Audio & Volume</h3>
+              
+              <div className="space-y-4 pt-1">
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between text-sm sm:text-base font-bold text-slate-800 dark:text-white">
+                    <span className="flex items-center gap-1.5 sm:gap-2"><Volume2 className="h-4 w-4 sm:h-4.5 sm:w-4.5 text-indigo-500 dark:text-indigo-400 shrink-0" /> General</span>
+                    <span className="text-slate-500 dark:text-slate-400">{localGeneral}%</span>
+                  </div>
+                  <Slider value={[localGeneral]} min={0} max={100} step={1} onValueChange={(vals) => setLocalGeneral(vals[0])} onValueCommit={(vals) => setGeneralVolume(vals[0])} className="w-full" />
+                </div>
+                
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between text-sm sm:text-base font-bold text-slate-800 dark:text-white">
+                    <span className="flex items-center gap-1.5 sm:gap-2"><Gamepad2 className="h-4 w-4 sm:h-4.5 sm:w-4.5 text-indigo-500 dark:text-indigo-400 shrink-0" /> Games</span>
+                    <span className="text-slate-500 dark:text-slate-400">{localGames}%</span>
+                  </div>
+                  <Slider value={[localGames]} min={0} max={100} step={1} onValueChange={(vals) => setLocalGames(vals[0])} onValueCommit={(vals) => setGamesVolume(vals[0])} className="w-full" />
+                </div>
+
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between text-sm sm:text-base font-bold text-slate-800 dark:text-white">
+                    <span className="flex items-center gap-1.5 sm:gap-2"><Music className="h-4 w-4 sm:h-4.5 sm:w-4.5 text-indigo-500 dark:text-indigo-400 shrink-0" /> Music</span>
+                    <span className="text-slate-500 dark:text-slate-400">{localMusic}%</span>
+                  </div>
+                  <Slider value={[localMusic]} min={0} max={100} step={1} onValueChange={(vals) => setLocalMusic(vals[0])} onValueCommit={(vals) => setMusicVolume(vals[0])} className="w-full" />
+                </div>
+
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between text-sm sm:text-base font-bold text-slate-800 dark:text-white">
+                    <span className="flex items-center gap-1.5 sm:gap-2"><BellRing className="h-4 w-4 sm:h-4.5 sm:w-4.5 text-indigo-500 dark:text-indigo-400 shrink-0" /> Notifications</span>
+                    <span className="text-slate-500 dark:text-slate-400">{localNotification}%</span>
+                  </div>
+                  <Slider value={[localNotification]} min={0} max={100} step={1} onValueChange={(vals) => setLocalNotification(vals[0])} onValueCommit={(vals) => setNotificationVolume(vals[0])} className="w-full" />
                 </div>
               </div>
             </div>

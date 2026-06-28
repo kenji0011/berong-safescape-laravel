@@ -7,6 +7,7 @@ import { cn } from "@/lib/utils"
 import { ModuleNavigation } from "@/Components/module-navigation"
 import { AdaptiveQuiz } from "@/Components/AdaptiveQuiz"
 import { useAuth } from "@/lib/auth-context"
+import { playSound } from '@/lib/audio'
 
 const ModuleFivePage = ({ moduleNum, initialProgress }: { moduleNum: number; initialProgress?: any }) => {
   const { user } = useAuth()
@@ -29,8 +30,7 @@ const ModuleFivePage = ({ moduleNum, initialProgress }: { moduleNum: number; ini
   useEffect(() => {
     if (showBadgeModal) {
       try {
-        const audio = new Audio('/sounds/finish.mp3')
-        audio.play().catch(e => console.error("Audio play failed:", e))
+        playSound('/sounds/finish.mp3', 'notification')
       } catch (e) {}
     }
   }, [showBadgeModal])

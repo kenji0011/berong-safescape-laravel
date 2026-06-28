@@ -90,6 +90,7 @@ class BadgeController extends Controller
         return response()->json([
             'success' => true,
             'badge'   => $badge,
+            'is_new'  => !$existingBadge,
         ]);
     }
 

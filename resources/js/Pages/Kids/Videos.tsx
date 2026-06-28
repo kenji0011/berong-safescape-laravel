@@ -8,6 +8,7 @@ import confetti from 'canvas-confetti'
 import Particles from "@/Components/ui/particles"
 import { useSettings } from "@/lib/settings-context"
 import { useEffect } from "react"
+import { playSound } from '@/lib/audio'
 
 interface Video {
   id: string | number;
@@ -195,7 +196,7 @@ const VideosPage = ({ initialVideos, watchedVideoIds }: VideosPageProps) => {
 
   const awardBadge = () => {
     setBadgeAwarded(true)
-    new Audio('/sounds/win.mp3').play().catch(() => {})
+    playSound('/sounds/win.mp3', 'notification')
     
     // Trigger confetti celebration
     const duration = 3000
@@ -230,7 +231,7 @@ const VideosPage = ({ initialVideos, watchedVideoIds }: VideosPageProps) => {
   }
 
   const handleVideoSelect = (video: any) => {
-    new Audio('/sounds/tap.mp3').play().catch(() => {})
+    playSound('/sounds/tap.mp3', 'general')
     setActiveVideo(video)
     playerRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' })
   }

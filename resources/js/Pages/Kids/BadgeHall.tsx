@@ -4,6 +4,7 @@ import { ArrowLeft, Trophy, Lock, Calendar, Shield, CheckCircle, Zap, ArrowRight
 import DashboardLayout from "@/Layouts/DashboardLayout"
 import { cn } from "@/lib/utils"
 import { useAuth } from "@/lib/auth-context"
+import { playSound } from '@/lib/audio'
 
 interface BadgeHallProps {
   completedModules: number[]
@@ -46,7 +47,7 @@ const BadgeHallPage = ({ completedModules = [], earnedBadges = [] }: BadgeHallPr
             el.scrollIntoView({ behavior: 'smooth', block: 'center' });
             el.classList.add('animate-bounce', 'ring-4', 'ring-yellow-400', 'ring-offset-4', 'ring-offset-slate-50', 'dark:ring-offset-slate-900', 'shadow-[0_0_40px_rgba(250,204,21,0.6)]');
             el.style.animationDuration = '2s'; // Slow down the bounce speed
-            new Audio('/sounds/win.mp3').play().catch(() => {});
+            playSound('/sounds/win.mp3', 'notification');
             setTimeout(() => {
               el.classList.remove('animate-bounce', 'ring-4', 'ring-yellow-400', 'ring-offset-4', 'ring-offset-slate-50', 'dark:ring-offset-slate-900', 'shadow-[0_0_40px_rgba(250,204,21,0.6)]');
               el.style.animationDuration = ''; // Reset
@@ -123,7 +124,7 @@ const BadgeHallPage = ({ completedModules = [], earnedBadges = [] }: BadgeHallPr
                   id={`badge-card-${i}`}
                   onClick={() => {
                     if (state.isEarned) {
-                      new Audio('/sounds/tap.mp3').play().catch(() => {});
+                      playSound('/sounds/tap.mp3', 'general');
                     }
                   }}
                   className={cn(

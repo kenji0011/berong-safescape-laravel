@@ -16,6 +16,7 @@ import { useSettings } from "@/lib/settings-context"
 import { KidsWelcomeBannerSkeleton, ContentGridSkeleton } from "@/Components/dashboard-skeletons"
 import { motion, AnimatePresence } from "framer-motion"
 import { BookOpen, Sparkles } from "lucide-react"
+import { playSound } from '@/lib/audio'
 
 interface KidsPageProps {
   modules?: any[]
@@ -50,7 +51,7 @@ const KidsDashboardPage = ({ modules, progress }: KidsPageProps) => {
       if (!tutorialSeen) {
         const timer = setTimeout(() => {
           setShowFirstTimeTutorial(true)
-          new Audio('/sounds/combo.mp3').play().catch(() => {})
+          playSound('/sounds/combo.mp3', 'notification')
         }, 1200) // Small delay to let the dashboard render
         return () => clearTimeout(timer)
       } else if (!firstModuleClicked) {
@@ -62,7 +63,7 @@ const KidsDashboardPage = ({ modules, progress }: KidsPageProps) => {
 
   const dismissTutorial = () => {
     if (!user) return
-    new Audio('/sounds/click.mp3').play().catch(() => {})
+    playSound('/sounds/click.mp3', 'general')
     const tutorialSeenKey = `safescape_kid_tutorial_seen_${user.id}`
     const firstModuleClickedKey = `safescape_first_module_clicked_${user.id}`
     localStorage.setItem(tutorialSeenKey, 'true')
@@ -201,7 +202,7 @@ const KidsDashboardPage = ({ modules, progress }: KidsPageProps) => {
       setPulseFirstModule(false)
     }
 
-    new Audio('/sounds/tap.mp3').play().catch(() => {})
+    playSound('/sounds/tap.mp3', 'general')
 
     if (content.href !== "#") {
       router.visit(content.href)

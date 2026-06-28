@@ -23,6 +23,14 @@ interface SettingsContextType {
   magnifyingMouse: boolean;
   setMagnifyingMouse: (value: boolean) => void;
   toggleMagnifyingMouse: () => void;
+  generalVolume: number;
+  setGeneralVolume: (value: number) => void;
+  gamesVolume: number;
+  setGamesVolume: (value: number) => void;
+  musicVolume: number;
+  setMusicVolume: (value: number) => void;
+  notificationVolume: number;
+  setNotificationVolume: (value: number) => void;
 }
 
 const SettingsContext = createContext<SettingsContextType | undefined>(undefined);
@@ -35,6 +43,11 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
   const [focusMode, setFocusModeState] = useState<boolean>(false);
   const [colorBlindness, setColorBlindnessState] = useState<ColorBlindness>('none');
   const [magnifyingMouse, setMagnifyingMouseState] = useState<boolean>(false);
+
+  const [generalVolume, setGeneralVolumeState] = useState<number>(100);
+  const [gamesVolume, setGamesVolumeState] = useState<number>(100);
+  const [musicVolume, setMusicVolumeState] = useState<number>(100);
+  const [notificationVolume, setNotificationVolumeState] = useState<number>(100);
 
   useEffect(() => {
     // Check local storage or system preference on mount
@@ -79,6 +92,18 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
     if (savedMagnifyingMouse !== null) {
       setMagnifyingMouseState(savedMagnifyingMouse === "true");
     }
+
+    const savedGeneral = localStorage.getItem("safescape-general-volume");
+    if (savedGeneral !== null) setGeneralVolumeState(parseInt(savedGeneral, 10));
+
+    const savedGames = localStorage.getItem("safescape-games-volume");
+    if (savedGames !== null) setGamesVolumeState(parseInt(savedGames, 10));
+
+    const savedMusic = localStorage.getItem("safescape-music-volume");
+    if (savedMusic !== null) setMusicVolumeState(parseInt(savedMusic, 10));
+
+    const savedNotification = localStorage.getItem("safescape-notification-volume");
+    if (savedNotification !== null) setNotificationVolumeState(parseInt(savedNotification, 10));
   }, []);
 
   const setReduceMotion = React.useCallback((value: boolean) => {
@@ -155,6 +180,26 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
       setTimeout(() => localStorage.setItem("safescape-magnifying-mouse", String(newValue)), 0);
       return newValue;
     });
+  }, []);
+
+  const setGeneralVolume = React.useCallback((value: number) => {
+    setGeneralVolumeState(value);
+    setTimeout(() => localStorage.setItem("safescape-general-volume", String(value)), 0);
+  }, []);
+
+  const setGamesVolume = React.useCallback((value: number) => {
+    setGamesVolumeState(value);
+    setTimeout(() => localStorage.setItem("safescape-games-volume", String(value)), 0);
+  }, []);
+
+  const setMusicVolume = React.useCallback((value: number) => {
+    setMusicVolumeState(value);
+    setTimeout(() => localStorage.setItem("safescape-music-volume", String(value)), 0);
+  }, []);
+
+  const setNotificationVolume = React.useCallback((value: number) => {
+    setNotificationVolumeState(value);
+    setTimeout(() => localStorage.setItem("safescape-notification-volume", String(value)), 0);
   }, []);
 
   // Sync the CSS class on <html> for global CSS animation kill-switch
@@ -250,8 +295,16 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
     setColorBlindness,
     magnifyingMouse,
     setMagnifyingMouse,
-    toggleMagnifyingMouse
-  }), [reduceMotion, setReduceMotion, toggleReduceMotion, textSize, setTextSize, isDarkMode, setIsDarkMode, toggleDarkMode, dyslexiaFont, setDyslexiaFont, toggleDyslexiaFont, focusMode, setFocusMode, toggleFocusMode, colorBlindness, setColorBlindness, magnifyingMouse, setMagnifyingMouse, toggleMagnifyingMouse]);
+    toggleMagnifyingMouse,
+    generalVolume,
+    setGeneralVolume,
+    gamesVolume,
+    setGamesVolume,
+    musicVolume,
+    setMusicVolume,
+    notificationVolume,
+    setNotificationVolume
+  }), [reduceMotion, setReduceMotion, toggleReduceMotion, textSize, setTextSize, isDarkMode, setIsDarkMode, toggleDarkMode, dyslexiaFont, setDyslexiaFont, toggleDyslexiaFont, focusMode, setFocusMode, toggleFocusMode, colorBlindness, setColorBlindness, magnifyingMouse, setMagnifyingMouse, toggleMagnifyingMouse, generalVolume, setGeneralVolume, gamesVolume, setGamesVolume, musicVolume, setMusicVolume, notificationVolume, setNotificationVolume]);
 
   return (
     <SettingsContext.Provider value={value}>

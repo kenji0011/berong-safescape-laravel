@@ -12,6 +12,7 @@ import { Link } from '@inertiajs/react';
 import axios from 'axios';
 import ReactMarkdown from "react-markdown"
 import chatbotIntents from "@/lib/chatbot-intents.json"
+import { createAudio } from '@/lib/audio'
 
 interface Message {
   id: string
@@ -180,7 +181,7 @@ export function Chatbot() {
 
       // Create a URL for the blob and play it
       const audioUrl = URL.createObjectURL(response.data)
-      const audio = new Audio(audioUrl)
+      const audio = createAudio(audioUrl, 'general')
 
       currentAudioRef.current = audio
       audio.play()

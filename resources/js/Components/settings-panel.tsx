@@ -1,7 +1,9 @@
 "use client"
 
+import { useState, useEffect } from "react"
 import { useSettings } from "@/lib/settings-context"
-import { Moon, Sun, Zap, Type, BookOpen, Focus, Eye, ZoomIn } from "lucide-react"
+import { Moon, Sun, Zap, Type, BookOpen, Focus, Eye, ZoomIn, Volume2, Gamepad2, Music, BellRing } from "lucide-react"
+import { Slider } from "@/components/ui/slider"
 
 /**
  * Reusable settings panel for the navigation component.
@@ -15,7 +17,19 @@ interface SettingsPanelProps {
 }
 
 export function SettingsPanel({ variant }: SettingsPanelProps) {
-  const { reduceMotion, toggleReduceMotion, textSize, setTextSize, isDarkMode, toggleDarkMode, dyslexiaFont, toggleDyslexiaFont, focusMode, toggleFocusMode, colorBlindness, setColorBlindness, magnifyingMouse, toggleMagnifyingMouse } = useSettings()
+  const { reduceMotion, toggleReduceMotion, textSize, setTextSize, isDarkMode, toggleDarkMode, dyslexiaFont, toggleDyslexiaFont, focusMode, toggleFocusMode, colorBlindness, setColorBlindness, magnifyingMouse, toggleMagnifyingMouse, generalVolume, setGeneralVolume, gamesVolume, setGamesVolume, musicVolume, setMusicVolume, notificationVolume, setNotificationVolume } = useSettings()
+
+  // Local state for smooth slider dragging without triggering context re-renders constantly
+  const [localGeneral, setLocalGeneral] = useState(generalVolume)
+  const [localGames, setLocalGames] = useState(gamesVolume)
+  const [localMusic, setLocalMusic] = useState(musicVolume)
+  const [localNotification, setLocalNotification] = useState(notificationVolume)
+
+  // Sync with context if it changes from outside
+  useEffect(() => { setLocalGeneral(generalVolume) }, [generalVolume])
+  useEffect(() => { setLocalGames(gamesVolume) }, [gamesVolume])
+  useEffect(() => { setLocalMusic(musicVolume) }, [musicVolume])
+  useEffect(() => { setLocalNotification(notificationVolume) }, [notificationVolume])
 
   if (variant === 'mobile') {
     return (
@@ -153,6 +167,48 @@ export function SettingsPanel({ variant }: SettingsPanelProps) {
             </button>
           </div>
         </div>
+
+        {/* Volume Controls (Mobile) */}
+        <div className="px-6 py-3 space-y-4">
+          <div className="flex items-center gap-3">
+            <Volume2 className="h-5 w-5 text-indigo-400 shrink-0" strokeWidth={2.5} />
+            <span className="text-[0.9375rem] font-bold text-white">Audio Settings</span>
+          </div>
+          
+          <div className="space-y-4 pl-8">
+            <div className="space-y-2">
+              <div className="flex items-center justify-between text-xs font-bold text-slate-300">
+                <span className="flex items-center gap-1.5"><Volume2 className="w-3.5 h-3.5 text-slate-400" /> General</span>
+                <span>{localGeneral}%</span>
+              </div>
+              <Slider value={[localGeneral]} min={0} max={100} step={1} onValueChange={(vals) => setLocalGeneral(vals[0])} onValueCommit={(vals) => setGeneralVolume(vals[0])} className="w-full" />
+            </div>
+            
+            <div className="space-y-2">
+              <div className="flex items-center justify-between text-xs font-bold text-slate-300">
+                <span className="flex items-center gap-1.5"><Gamepad2 className="w-3.5 h-3.5 text-slate-400" /> Games</span>
+                <span>{localGames}%</span>
+              </div>
+              <Slider value={[localGames]} min={0} max={100} step={1} onValueChange={(vals) => setLocalGames(vals[0])} onValueCommit={(vals) => setGamesVolume(vals[0])} className="w-full" />
+            </div>
+
+            <div className="space-y-2">
+              <div className="flex items-center justify-between text-xs font-bold text-slate-300">
+                <span className="flex items-center gap-1.5"><Music className="w-3.5 h-3.5 text-slate-400" /> Music</span>
+                <span>{localMusic}%</span>
+              </div>
+              <Slider value={[localMusic]} min={0} max={100} step={1} onValueChange={(vals) => setLocalMusic(vals[0])} onValueCommit={(vals) => setMusicVolume(vals[0])} className="w-full" />
+            </div>
+
+            <div className="space-y-2">
+              <div className="flex items-center justify-between text-xs font-bold text-slate-300">
+                <span className="flex items-center gap-1.5"><BellRing className="w-3.5 h-3.5 text-slate-400" /> Notifications</span>
+                <span>{localNotification}%</span>
+              </div>
+              <Slider value={[localNotification]} min={0} max={100} step={1} onValueChange={(vals) => setLocalNotification(vals[0])} onValueCommit={(vals) => setNotificationVolume(vals[0])} className="w-full" />
+            </div>
+          </div>
+        </div>
       </>
     )
   }
@@ -286,6 +342,49 @@ export function SettingsPanel({ variant }: SettingsPanelProps) {
           <button onClick={(e) => { e.preventDefault(); setTextSize('normal'); }} className={`flex-1 py-1 rounded text-xs font-bold transition-all ${textSize === 'normal' ? 'bg-white dark:bg-slate-600 text-slate-800 dark:text-white shadow-sm' : 'text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200'}`}>A</button>
           <button onClick={(e) => { e.preventDefault(); setTextSize('large'); }} className={`flex-1 py-1 rounded text-sm font-bold transition-all ${textSize === 'large' ? 'bg-white dark:bg-slate-600 text-slate-800 dark:text-white shadow-sm' : 'text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200'}`}>A</button>
           <button onClick={(e) => { e.preventDefault(); setTextSize('xlarge'); }} className={`flex-1 py-1 rounded text-base font-bold transition-all ${textSize === 'xlarge' ? 'bg-white dark:bg-slate-600 text-slate-800 dark:text-white shadow-sm' : 'text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200'}`}>A</button>
+        </div>
+      </div>
+      <div className="h-[1px] bg-slate-100 dark:bg-slate-800 my-1 transition-colors" />
+
+      {/* Volume Controls */}
+      <div className="py-2.5 px-3">
+        <span className="flex items-center gap-2 text-sm font-medium text-slate-700 dark:text-slate-300 mb-4 transition-colors">
+          <Volume2 className="h-4 w-4 text-indigo-500" />
+          Audio Settings
+        </span>
+        
+        <div className="space-y-4 pl-6">
+          <div className="space-y-2">
+            <div className="flex items-center justify-between text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+              <span className="flex items-center gap-1.5"><Volume2 className="w-3 h-3" /> General</span>
+              <span>{localGeneral}%</span>
+            </div>
+            <Slider value={[localGeneral]} min={0} max={100} step={1} onValueChange={(vals) => setLocalGeneral(vals[0])} onValueCommit={(vals) => setGeneralVolume(vals[0])} className="w-full" />
+          </div>
+          
+          <div className="space-y-2">
+            <div className="flex items-center justify-between text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+              <span className="flex items-center gap-1.5"><Gamepad2 className="w-3 h-3" /> Games</span>
+              <span>{localGames}%</span>
+            </div>
+            <Slider value={[localGames]} min={0} max={100} step={1} onValueChange={(vals) => setLocalGames(vals[0])} onValueCommit={(vals) => setGamesVolume(vals[0])} className="w-full" />
+          </div>
+
+          <div className="space-y-2">
+            <div className="flex items-center justify-between text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+              <span className="flex items-center gap-1.5"><Music className="w-3 h-3" /> Music</span>
+              <span>{localMusic}%</span>
+            </div>
+            <Slider value={[localMusic]} min={0} max={100} step={1} onValueChange={(vals) => setLocalMusic(vals[0])} onValueCommit={(vals) => setMusicVolume(vals[0])} className="w-full" />
+          </div>
+
+          <div className="space-y-2">
+            <div className="flex items-center justify-between text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+              <span className="flex items-center gap-1.5"><BellRing className="w-3 h-3" /> Notifications</span>
+              <span>{localNotification}%</span>
+            </div>
+            <Slider value={[localNotification]} min={0} max={100} step={1} onValueChange={(vals) => setLocalNotification(vals[0])} onValueCommit={(vals) => setNotificationVolume(vals[0])} className="w-full" />
+          </div>
         </div>
       </div>
     </>

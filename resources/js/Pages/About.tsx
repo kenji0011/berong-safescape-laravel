@@ -83,8 +83,8 @@ const teamMembers = [
         roles: ["AI Engineer", "Developer", "Data Scientist"],
         image: "/umali_pr.jpg",
         socials: [
-            { icon: Github, url: "#", label: "GitHub" },
-            { icon: Linkedin, url: "#", label: "LinkedIn" },
+            { icon: Github, url: "https://github.com/UmaliPrinceGenel", label: "GitHub" },
+            { icon: Linkedin, url: "https://www.linkedin.com/in/umali-prince-genel-r-66a60637b/", label: "LinkedIn" },
         ],
         color: "from-amber-500 to-yellow-500",
         roleIcons: [Brain, Cpu, Database],

@@ -3,6 +3,7 @@ import { Head, Link } from '@inertiajs/react'
 import { ArrowLeft, Maximize, RotateCcw } from "lucide-react"
 import axios from "axios"
 import { useAuth } from "@/lib/auth-context"
+import { playSound } from '@/lib/audio'
 
 export default function RightCall() {
   const { user } = useAuth();
@@ -21,7 +22,7 @@ export default function RightCall() {
     // Listen for messages from the Godot iframe
     const handleMessage = async (event: MessageEvent) => {
       if (event.data === "RIGHT_CALL_WON" || event.data?.type === "RIGHT_CALL_WON") {
-        new Audio('/sounds/win.mp3').play().catch(() => {});
+        playSound('/sounds/win.mp3', 'games');
         setShowWinNotification(true);
         // Save the badge via API
         try {
@@ -112,12 +113,12 @@ export default function RightCall() {
                   ? "Congratulations! You completed The Right Call and successfully handled the emergency calls!"
                   : "Congratulations! You completed The Right Call and earned the Dispatch Hero Badge!"}
               </p>
-              <Link 
+              <a 
                 href={isProfessional ? "/professional" : "/kids/badges?highlight=dispatch%20hero"} 
                 className="w-full inline-flex items-center justify-center py-4 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-black uppercase tracking-widest transition-colors shadow-lg"
               >
                 {isProfessional ? "Return to Dashboard" : "View in Badge Hall"}
-              </Link>
+              </a>
             </div>
           </div>
         )}

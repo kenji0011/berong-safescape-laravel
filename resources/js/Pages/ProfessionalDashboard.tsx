@@ -30,6 +30,7 @@ import SpotlightCard from "@/Components/ui/spotlight-card"
 import "@/Components/ui/spotlight-card.css"
 import { cn } from "@/lib/utils"
 import { ProfessionalWelcomeBanner } from "@/Components/professional-welcome-banner"
+import { playSound } from '@/lib/audio'
 
 const VideoSkeleton = () => (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6 w-full">
@@ -175,7 +176,7 @@ const ProfessionalDashboard = ({ initialVideos, watchedVideoIds = [] }: Professi
         return { name: "Novice Officer", icon: Medal, color: "text-slate-600", bg: "bg-slate-50", border: "border-slate-200" };
     };
 
-    const currentRank = getProfessionalRank(watchedIds.size);
+    const currentRank = getProfessionalRank(watchedCount);
     const RankIcon = currentRank.icon;
 
     // Promotion logic
@@ -184,7 +185,7 @@ const ProfessionalDashboard = ({ initialVideos, watchedVideoIds = [] }: Professi
         
         const storageKey = `safescape_prof_video_count_${user.id}`;
         const savedCountStr = localStorage.getItem(storageKey);
-        const videoCount = watchedIds.size;
+        const videoCount = watchedCount;
         
         // Initialize if not set
         if (savedCountStr === null) {
@@ -203,7 +204,7 @@ const ProfessionalDashboard = ({ initialVideos, watchedVideoIds = [] }: Professi
                 setShowPromotion(true);
                 // Play sound if you have one, or just trigger confetti
                 try {
-                    new Audio('/sounds/finish.mp3').play().catch(() => {});
+                    playSound('/sounds/finish.mp3', 'notification');
                 } catch (e) {}
 
                 // Trigger confetti
@@ -232,7 +233,7 @@ const ProfessionalDashboard = ({ initialVideos, watchedVideoIds = [] }: Professi
             }
             localStorage.setItem(storageKey, videoCount.toString());
         }
-    }, [watchedIds.size, user?.id]);
+    }, [watchedCount, user?.id]);
 
     // Handle video selection
     const handleVideoSelect = (video: VideoContent) => {

@@ -7,6 +7,7 @@ import { cn } from "@/lib/utils"
 import { useState, useEffect } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import confetti from 'canvas-confetti'
+import { playSound } from '@/lib/audio'
 import {
   Dialog,
   DialogContent,
@@ -136,7 +137,7 @@ export function KidsWelcomeBanner({ completedModules = [], earnedBadges = [] }: 
         setPromotedRank(newRank)
         setShowPromotion(true);
         (window as any).isSafescapeRankModalOpen = true;
-        new Audio('/sounds/finish.mp3').play().catch(e => console.warn("Audio playback failed:", e));
+        playSound('/sounds/finish.mp3', 'notification');
         
         // Trigger confetti
         const duration = 3000;
@@ -227,7 +228,7 @@ export function KidsWelcomeBanner({ completedModules = [], earnedBadges = [] }: 
                 <Dialog open={showRankGuide} onOpenChange={setShowRankGuide}>
                   <DialogTrigger asChild>
                     <button 
-                      onClick={() => new Audio('/sounds/tap.mp3').play().catch(() => {})}
+                      onClick={() => playSound('/sounds/tap.mp3', 'general')}
                       className="ml-1 p-1 hover:bg-white/20 rounded-full transition-colors group"
                     >
                       <CircleHelp className="h-4 w-4 sm:h-5 sm:w-5 text-white/60 group-hover:text-white" />
@@ -280,7 +281,7 @@ export function KidsWelcomeBanner({ completedModules = [], earnedBadges = [] }: 
                      <div className="p-6 pt-0">
                         <button 
                           onClick={() => {
-                            new Audio('/sounds/click.mp3').play().catch(() => {});
+                            playSound('/sounds/click.mp3', 'general');
                             setShowRankGuide(false);
                           }}
                           className="w-full bg-primary hover:bg-primary/90 text-white font-black py-4 rounded-2xl border-b-[6px] border-red-800 active:border-b-0 active:translate-y-[6px] transition-all uppercase tracking-widest text-sm"
@@ -329,7 +330,7 @@ export function KidsWelcomeBanner({ completedModules = [], earnedBadges = [] }: 
              {/* Card 2: Badges Summary Link */}
              <Link 
                href="/kids/badges"
-               onClick={() => new Audio('/sounds/click.mp3').play().catch(() => {})}
+               onClick={() => playSound('/sounds/click.mp3', 'general')}
                className="bg-white/10 dark:bg-slate-950/40 backdrop-blur-xl rounded-[2rem] p-6 border border-white/20 dark:border-white/5 flex flex-col shadow-2xl hover:bg-white/15 dark:hover:bg-white/10 transition-all group"
              >
                 <div className="flex items-center justify-between mb-4">
@@ -447,7 +448,7 @@ export function KidsWelcomeBanner({ completedModules = [], earnedBadges = [] }: 
                 </p>
                 <button 
                   onClick={() => {
-                    new Audio('/sounds/click.mp3').play().catch(() => {});
+                    playSound('/sounds/click.mp3', 'general');
                     setShowPromotion(false);
                     (window as any).isSafescapeRankModalOpen = false;
                     window.dispatchEvent(new Event('safescape_rank_modal_closed'));

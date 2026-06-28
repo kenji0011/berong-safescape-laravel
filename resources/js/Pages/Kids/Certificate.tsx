@@ -3,7 +3,7 @@ import { Head, Link, usePage } from '@inertiajs/react'
 import DashboardLayout from "@/Layouts/DashboardLayout"
 import { ArrowLeft, Download, Award, Loader2 } from "lucide-react"
 import { cn } from "@/lib/utils"
-
+import { playSound } from '@/lib/audio'
 import { useAuth } from "@/lib/auth-context"
 
 const CertificatePage = () => {
@@ -14,7 +14,7 @@ const CertificatePage = () => {
 
   // Play victory celebration sound on load
   React.useEffect(() => {
-    new Audio('/sounds/wingame.mp3').play().catch(() => {})
+    playSound('/sounds/wingame.mp3', 'notification')
   }, [])
 
   // Format date as "Given this Xth day of Month, Year"
@@ -30,7 +30,7 @@ const CertificatePage = () => {
 
   const handleDownload = async () => {
     if (!certificateRef.current) return
-    new Audio('/sounds/click.mp3').play().catch(() => {})
+    playSound('/sounds/click.mp3', 'general')
     try {
       setDownloading(true)
       const [{ toPng }, { default: JsPDF }] = await Promise.all([

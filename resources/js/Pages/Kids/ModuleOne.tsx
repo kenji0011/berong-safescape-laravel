@@ -8,6 +8,7 @@ import DashboardLayout from "@/Layouts/DashboardLayout"
 import axios from "axios"
 import { cn } from "@/lib/utils"
 import { ModuleNavigation } from "@/Components/module-navigation"
+import { playSound } from '@/lib/audio'
 import { RotateCcw as RotateCcwIcon } from "lucide-react"
 import { AdaptiveQuiz } from "@/Components/AdaptiveQuiz"
 
@@ -62,8 +63,7 @@ const ModuleOnePage = ({ initialProgress }: { initialProgress?: any }) => {
   useEffect(() => {
     if (showBadgeModal) {
       try {
-        const audio = new Audio('/sounds/finish.mp3')
-        audio.play().catch(e => console.error("Audio play failed:", e))
+        playSound('/sounds/finish.mp3', 'notification')
       } catch (e) {}
     }
   }, [showBadgeModal])
@@ -195,7 +195,7 @@ const ModuleOnePage = ({ initialProgress }: { initialProgress?: any }) => {
       water: "/sounds/water.mp3",
     }
     if (soundMap[item.id]) {
-      new Audio(soundMap[item.id]).play().catch(e => console.warn("Failed to play element sound:", e))
+      playSound(soundMap[item.id], 'general')
     }
 
     // Water can ALWAYS be used — even after the fire is lit

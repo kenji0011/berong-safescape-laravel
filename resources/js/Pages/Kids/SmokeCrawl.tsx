@@ -4,6 +4,7 @@ import { ArrowLeft, Wind, ShieldAlert, CheckCircle, Info, RotateCcw, Flame, Chev
 import DashboardLayout from "@/Layouts/DashboardLayout"
 import axios from "axios"
 import { cn } from "@/lib/utils"
+import { createAudio } from '@/lib/audio'
 
 const TILE_SIZE = 40
 const MAZE = [
@@ -43,18 +44,15 @@ const SmokeCrawl = () => {
 
   useEffect(() => {
     // Initialize audio
-    musicRef.current = new Audio('/sounds/game_music.mp3')
+    musicRef.current = createAudio('/sounds/game_music.mp3', 'music')
     musicRef.current.loop = true
-    musicRef.current.volume = 0.3
+    musicRef.current.volume = Math.min(musicRef.current.volume, 0.3)
 
-    finishSoundRef.current = new Audio('/sounds/finish.mp3')
-    finishSoundRef.current.volume = 1.0
+    finishSoundRef.current = createAudio('/sounds/finish.mp3', 'games')
     
-    failSoundRef.current = new Audio('/sounds/failed.mp3')
-    failSoundRef.current.volume = 1.0
+    failSoundRef.current = createAudio('/sounds/failed.mp3', 'games')
     
-    doorSoundRef.current = new Audio('/sounds/open_door.mp3')
-    doorSoundRef.current.volume = 0.8
+    doorSoundRef.current = createAudio('/sounds/open_door.mp3', 'games')
 
     return () => {
       musicRef.current?.pause()

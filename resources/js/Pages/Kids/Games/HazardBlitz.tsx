@@ -3,6 +3,8 @@ import { Head, Link } from '@inertiajs/react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowLeft, Trophy, Heart, Zap, Shield, Flame, AlertCircle, Play, RotateCcw, BadgeCheck, Smartphone, Maximize, Minimize } from 'lucide-react';
 import { cn } from "@/lib/utils";
+import { useAuth } from '@/lib/auth-context';
+import { playSound as playAudio } from '@/lib/audio';
 import { Navigation } from "@/Components/navigation";
 import { Footer } from "@/Components/footer";
 import { FeedbackWidget } from "@/Components/FeedbackWidget";
@@ -57,25 +59,13 @@ const HazardBlitz = () => {
   const itemCounterRef = useRef<number>(0);
   
   // Audio setup
-  const audioRefs = useRef<{ [key: string]: HTMLAudioElement | null }>({
-    click: null,
-    wrong: null,
-    win: null,
-    failed: null,
-    combo: null
-  });
-
-  useEffect(() => {
-    if (typeof Audio !== 'undefined') {
-      audioRefs.current = {
-        click: new Audio('/sounds/click.mp3'),
-        wrong: new Audio('/sounds/wrong.mp3'),
-        win: new Audio('/sounds/win.mp3'),
-        failed: new Audio('/sounds/failed.mp3'),
-        combo: new Audio('/sounds/combo.mp3')
-      };
-    }
-  }, []);
+  const soundMap: Record<string, string> = {
+    click: '/sounds/click.mp3',
+    wrong: '/sounds/wrong.mp3',
+    win: '/sounds/win.mp3',
+    failed: '/sounds/failed.mp3',
+    combo: '/sounds/combo.mp3'
+  };
 
   // Detect mobile device and orientation
   useEffect(() => {
@@ -102,12 +92,7 @@ const HazardBlitz = () => {
   }, []);
 
   const playSound = useCallback((type: 'click' | 'wrong' | 'win' | 'failed' | 'combo') => {
-    const s = audioRefs.current[type];
-    if (s) {
-      s.currentTime = 0;
-      s.volume = 0.4;
-      s.play().catch(err => console.warn(`Audio play failed for ${type}:`, err));
-    }
+    playAudio(soundMap[type], 'games');
   }, []);
 
   // Difficulty parameters

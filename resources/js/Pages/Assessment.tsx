@@ -12,6 +12,7 @@ import { motion, AnimatePresence } from 'motion/react'
 import { getScoreRating } from "@/lib/constants"
 import { useAuth } from "@/lib/auth-context"
 import { cn } from "@/lib/utils"
+import { playSound } from '@/lib/audio'
 
 interface AssessmentQuestion {
     id: number
@@ -200,7 +201,7 @@ export default function Assessment({ type }: AssessmentProps) {
 
             if (response.status === 200) {
                 // Play win sound
-                new Audio('/sounds/win.mp3').play().catch(e => console.warn("Audio playback failed:", e));
+                playSound('/sounds/win.mp3', 'notification');
 
                 // Refresh the global user state
                 await refreshUser()
