@@ -126,6 +126,39 @@ const teamMembers = [
         color: "from-orange-500 to-red-500",
         roleIcons: [Palette, Gamepad2],
     },
+    {
+        name: "Allain A. Kumar",
+        roles: ["Simulation"],
+        image: "/kumar_pr.jpg",
+        socials: [
+            { icon: Github, url: "#", label: "GitHub" },
+            { icon: Linkedin, url: "#", label: "LinkedIn" },
+        ],
+        color: "from-cyan-500 to-blue-500",
+        roleIcons: [Cpu],
+    },
+    {
+        name: "Aron Gabriel L. Ogayon",
+        roles: ["AI", "Backend Developer", "Simulation"],
+        image: "/ogayon_pr.jpg",
+        socials: [
+            { icon: Github, url: "#", label: "GitHub" },
+            { icon: Linkedin, url: "#", label: "LinkedIn" },
+        ],
+        color: "from-fuchsia-500 to-purple-500",
+        roleIcons: [Cpu, Code, Cpu],
+    },
+    {
+        name: "Janhver Lucas J. Sarmiento",
+        roles: ["UI Designer", "Simulation"],
+        image: "/sarmiento_pr.jpg",
+        socials: [
+            { icon: Github, url: "#", label: "GitHub" },
+            { icon: Linkedin, url: "#", label: "LinkedIn" },
+        ],
+        color: "from-lime-500 to-green-500",
+        roleIcons: [GraduationCap, Cpu],
+    },
 ];
 
 // Feature Data
