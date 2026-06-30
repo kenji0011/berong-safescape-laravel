@@ -331,7 +331,7 @@ export function AdaptiveQuiz({
                 </p>
                 {predictedDifficulty && (
                   <p className="mb-8 text-indigo-500 dark:text-indigo-400 font-black text-sm">
-                    ✨ AI Personalized Quiz Ready! ✨
+                    Quiz Ready!  
                   </p>
                 )}
                 <button 
