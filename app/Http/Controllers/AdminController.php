@@ -520,21 +520,24 @@ class AdminController extends Controller
     {
         $type = $request->query('type', 'summary');
 
-        switch ($type) {
-            case 'summary':
-                $data = $this->getSummaryAnalytics();
-                break;
-            case 'barangay':
-                $data = $this->getBarangayAnalytics();
-                break;
-            case 'demographics':
-                $data = $this->getDemographicAnalytics();
-                break;
-            case 'knowledge':
-                $data = $this->getKnowledgeAnalytics();
-                break;
-            default:
-                return response()->json(['error' => 'Invalid type'], 400);
+        // Cache admin analytics for 5 minutes to make the dashboard lightning fast
+        $data = \Illuminate\Support\Facades\Cache::remember("admin_analytics_{$type}", now()->addMinutes(5), function () use ($type) {
+            switch ($type) {
+                case 'summary':
+                    return $this->getSummaryAnalytics();
+                case 'barangay':
+                    return $this->getBarangayAnalytics();
+                case 'demographics':
+                    return $this->getDemographicAnalytics();
+                case 'knowledge':
+                    return $this->getKnowledgeAnalytics();
+                default:
+                    return null;
+            }
+        });
+
+        if (!$data) {
+            return response()->json(['error' => 'Invalid type'], 400);
         }
 
         return response()->json([

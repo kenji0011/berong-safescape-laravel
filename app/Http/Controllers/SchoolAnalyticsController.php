@@ -27,30 +27,35 @@ class SchoolAnalyticsController extends Controller
      */
     public function analytics()
     {
-        $schools = School::where('isActive', true)
-            ->withCount(['users'])
-            ->get();
+        // Cache the heavy analytics calculations for 5 minutes
+        $data = \Illuminate\Support\Facades\Cache::remember('school_analytics_live', now()->addMinutes(5), function () {
+            $schools = School::where('isActive', true)
+                ->withCount(['users'])
+                ->get();
 
-        // Recalculate live analytics for each school
-        foreach ($schools as $school) {
-            $school->recalculateAnalytics();
-        }
+            // Recalculate live analytics for each school
+            foreach ($schools as $school) {
+                $school->recalculateAnalytics();
+            }
 
-        // Reload after recalculation with fresh data
-        $schools = School::where('isActive', true)
-            ->orderByDesc('averagePostTestScore')
-            ->get();
+            // Reload after recalculation with fresh data
+            $schools = School::where('isActive', true)
+                ->orderByDesc('averagePostTestScore')
+                ->get();
 
-        return response()->json([
-            'schools' => $schools,
-            'summary' => [
-                'totalSchools' => $schools->count(),
-                'totalStudents' => $schools->sum('totalStudents'),
-                'overallAvgPreTest' => round($schools->avg('averagePreTestScore'), 1),
-                'overallAvgPostTest' => round($schools->avg('averagePostTestScore'), 1),
-                'overallCompletionRate' => round($schools->avg('averageCompletionRate'), 1),
-            ]
-        ]);
+            return [
+                'schools' => $schools,
+                'summary' => [
+                    'totalSchools' => $schools->count(),
+                    'totalStudents' => $schools->sum('totalStudents'),
+                    'overallAvgPreTest' => round($schools->avg('averagePreTestScore'), 1),
+                    'overallAvgPostTest' => round($schools->avg('averagePostTestScore'), 1),
+                    'overallCompletionRate' => round($schools->avg('averageCompletionRate'), 1),
+                ]
+            ];
+        });
+
+        return response()->json($data);
     }
 
     /**

@@ -201,38 +201,40 @@ class ChatbotController extends Controller
             return "No specific context. Rely on general fire safety knowledge.";
         }
 
-        $scores = [];
-        $handle = fopen($csvPath, "r");
-        $headers = fgetcsv($handle); // Skip header row
-
-        // Expected header format: id,category,subcategory,region,language,user_question,bot_answer,source,tags,created_at
-        // user_question is index 5, bot_answer is index 6
-        
-        while (($data = fgetcsv($handle)) !== FALSE) {
-            if (count($data) < 7) continue;
-
-            $question = strtolower($data[5]);
-            $answer = $data[6];
-            $category = strtolower($data[1]);
-            $subcategory = strtolower($data[2]);
-
-            // Calculate match score
-            $score = 0;
-            foreach ($queryWords as $word) {
-                if (str_contains($question, $word)) $score += 3;
-                if (str_contains($answer, strtolower($word))) $score += 1;
-                if (str_contains($category, $word) || str_contains($subcategory, $word)) $score += 2;
-            }
-
-            if ($score > 0) {
-                // Store row data and score
-                $scores[] = [
-                    'score' => $score,
+        // Cache the parsed CSV data so we don't read the file from disk on every chat message
+        $dataset = \Illuminate\Support\Facades\Cache::rememberForever('bfp_csv_dataset', function () use ($csvPath) {
+            $rows = [];
+            $handle = fopen($csvPath, "r");
+            $headers = fgetcsv($handle);
+            while (($data = fgetcsv($handle)) !== FALSE) {
+                if (count($data) < 7) continue;
+                $rows[] = [
+                    'question' => strtolower($data[5]),
+                    'answer' => $data[6],
+                    'category' => strtolower($data[1]),
+                    'subcategory' => strtolower($data[2]),
                     'text' => "Q: " . $data[5] . "\nA: " . $data[6]
                 ];
             }
+            fclose($handle);
+            return $rows;
+        });
+
+        $scores = [];
+        foreach ($dataset as $row) {
+            $score = 0;
+            foreach ($queryWords as $word) {
+                if (str_contains($row['question'], $word)) $score += 3;
+                if (str_contains(strtolower($row['answer']), $word)) $score += 1;
+                if (str_contains($row['category'], $word) || str_contains($row['subcategory'], $word)) $score += 2;
+            }
+            if ($score > 0) {
+                $scores[] = [
+                    'score' => $score,
+                    'text' => $row['text']
+                ];
+            }
         }
-        fclose($handle);
 
         // Sort by highest score first
         usort($scores, fn($a, $b) => $b['score'] <=> $a['score']);

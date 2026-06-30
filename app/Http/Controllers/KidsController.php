@@ -17,7 +17,9 @@ class KidsController extends Controller
     public function modules(Request $request)
     {
         $user = $request->user();
-        $modules = KidsModule::where('isActive', true)->orderBy('dayNumber')->get();
+        $modules = \Illuminate\Support\Facades\Cache::rememberForever('active_kids_modules', function () {
+            return KidsModule::where('isActive', true)->orderBy('dayNumber')->get();
+        });
 
         // Get all progress records keyed by moduleNum
         $progressRecords = SafeScapeProgress::where('userId', $user->id)
