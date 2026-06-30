@@ -586,7 +586,7 @@ export function Chatbot() {
       'your', 'i', 'me', 'you', 'it', 'know', 'are', 'we', 'they', 'them', 'that', 'this', 'then', 'than',
       'there', 'their', 'was', 'were', 'been', 'has', 'have', 'had', 'got', 'get', 'some', 'any', 'all',
       'out', 'put', 'up', 'down', 'from', 'by', 'as', 'at', 'so', 'be', 'yout', 'tell', 'make', 'use',
-      'hi', 'hello', 'hey', 'chatbot', 'bot', 'assistant', 'want', 'wanted', 'ask', 'question', 'quick', 'help', 'please'
+      'chatbot', 'bot', 'assistant', 'want', 'wanted', 'ask', 'question', 'quick'
     ]);
 
     // Only consider meaningful words >= 2 chars
@@ -639,7 +639,7 @@ export function Chatbot() {
     }
 
     // Step 3: Fallback for no match
-    return "Thank you for your question! Because I am currently running in offline mode, I can only understand basic English questions right now. Try asking a specific fire safety question in English, like 'how to prevent fires' or 'emergency procedure'."
+    return "I couldn't find a direct answer to that in my manual. Please try asking a specific fire safety question."
   }
 
   return (
