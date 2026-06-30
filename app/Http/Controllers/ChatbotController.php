@@ -24,9 +24,17 @@ class ChatbotController extends Controller
         $apiKey = env('GEMINI_API_KEY');
 
         if (empty($apiKey)) {
+            $fallbackContext = $this->searchDataset($userMessage, 1);
+            
+            if (!empty($fallbackContext) && !str_contains($fallbackContext, "No specific context") && !str_contains($fallbackContext, "No exact match")) {
+                return response()->json([
+                    'response' => "*(Offline Mode)* I found this in my manual:\n\n" . trim($fallbackContext)
+                ]);
+            }
+            
             return response()->json([
-                'response' => "I'm sorry, my AI features are currently disabled because the API key is missing. Please contact the administrator.",
-                'error' => true
+                'response' => "*(Offline Mode)* I couldn't find a direct answer to that in my manual. Please try asking a specific fire safety question.",
+                'error' => true // True lets frontend handle smalltalk (hello, etc.)!
             ]);
         }
 
@@ -110,9 +118,14 @@ class ChatbotController extends Controller
                     $errorMessage = "I'm sorry, my AI processing servers are currently overloaded. Please wait a few moments and try your question again.";
                 }
 
+                $fallbackContext = $this->searchDataset($userMessage, 1);
+                if (!empty($fallbackContext) && !str_contains($fallbackContext, "No specific context") && !str_contains($fallbackContext, "No exact match")) {
+                    $errorMessage = "*(Offline Mode)* I found this in my manual:\n\n" . trim($fallbackContext);
+                }
+
                 return response()->json([
                     'response' => $errorMessage,
-                    'error' => true
+                    'error' => true // True lets frontend handle smalltalk
                 ]);
 
             } catch (\Exception $e) {
@@ -126,9 +139,17 @@ class ChatbotController extends Controller
         }
 
         Log::error('ChatbotController failed after retries: ' . ($lastException ? $lastException->getMessage() : 'unknown'));
+        
+        $fallbackContext = $this->searchDataset($userMessage, 1);
+        if (!empty($fallbackContext) && !str_contains($fallbackContext, "No specific context") && !str_contains($fallbackContext, "No exact match")) {
+            return response()->json([
+                'response' => "*(Offline Mode)* I found this in my manual:\n\n" . trim($fallbackContext)
+            ]);
+        }
+        
         return response()->json([
-            'response' => "I apologize, I encountered a temporary connection issue. Please try again in a moment.",
-            'error' => true
+            'response' => "I apologize, I encountered a temporary connection issue and couldn't find a direct manual match. Please try again in a moment.",
+            'error' => true // True lets frontend handle smalltalk
         ]);
     }
 
@@ -184,7 +205,7 @@ class ChatbotController extends Controller
      */
     private function searchDataset(string $query, int $limit = 5): string
     {
-        $csvPath = base_path('bfp_fire_safety_dataset_1200.csv');
+        $csvPath = base_path('ml_scripts/bfp_augmented_500.csv');
         if (!file_exists($csvPath)) {
             Log::warning("BFP Dataset not found at " . $csvPath);
             return "No specific BFP context available.";
@@ -202,7 +223,7 @@ class ChatbotController extends Controller
         }
 
         // Cache the parsed CSV data so we don't read the file from disk on every chat message
-        $dataset = \Illuminate\Support\Facades\Cache::rememberForever('bfp_csv_dataset', function () use ($csvPath) {
+        $dataset = \Illuminate\Support\Facades\Cache::rememberForever('bfp_augmented_500_csv', function () use ($csvPath) {
             $rows = [];
             $handle = fopen($csvPath, "r");
             $headers = fgetcsv($handle);
