@@ -130,6 +130,7 @@ const BlogArticleClient = ({ blog, allBlogs }: BlogArticleProps) => {
     // Initial active index based on the clicked blog
     const initialIndex = articles.findIndex((b) => String(b.id) === String(blog.id));
     const [activeIndex, setActiveIndex] = useState(initialIndex !== -1 ? initialIndex : 0);
+    const [activeCardHeight, setActiveCardHeight] = useState<number | null>(null);
 
     const [lightboxImage, setLightboxImage] = useState<{ url: string; title: string } | null>(null);
     const [isLightboxToggling, setIsLightboxToggling] = useState(false);
@@ -147,6 +148,40 @@ const BlogArticleClient = ({ blog, allBlogs }: BlogArticleProps) => {
     const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
     const isProgrammaticScroll = useRef(false);
     const scrollTimeoutRef = useRef<any>(null);
+
+    const updateActiveHeight = () => {
+        const activeEl = cardRefs.current[activeIndex];
+        if (!activeEl) return;
+        const articleEl = activeEl.querySelector('article') || activeEl;
+        const height = articleEl.getBoundingClientRect().height || articleEl.offsetHeight;
+        if (height > 0) {
+            setActiveCardHeight(Math.round(height));
+        }
+    };
+
+    useEffect(() => {
+        updateActiveHeight();
+        const timer = setTimeout(updateActiveHeight, 60);
+        return () => clearTimeout(timer);
+    }, [activeIndex, expandedArticles]);
+
+    useEffect(() => {
+        const activeEl = cardRefs.current[activeIndex];
+        if (!activeEl) return;
+
+        const articleEl = activeEl.querySelector('article') || activeEl;
+        if (typeof ResizeObserver !== 'undefined') {
+            const observer = new ResizeObserver(() => {
+                updateActiveHeight();
+            });
+            observer.observe(articleEl);
+            return () => observer.disconnect();
+        }
+
+        const handleResize = () => updateActiveHeight();
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, [activeIndex]);
 
     const scrollToArticle = (index: number, smooth: boolean = true) => {
         if (index < 0 || index >= articles.length) return;
@@ -397,13 +432,14 @@ const BlogArticleClient = ({ blog, allBlogs }: BlogArticleProps) => {
                 <div 
                     ref={containerRef}
                     onScroll={handleScroll}
-                    className="w-full overflow-x-auto snap-x snap-mandatory scroll-smooth py-1 sm:py-2 flex items-start gap-4 sm:gap-6 lg:gap-8"
+                    className="w-full overflow-x-auto snap-x snap-mandatory scroll-smooth py-1 sm:py-2 flex items-start gap-4 sm:gap-6 lg:gap-8 transition-[height] duration-300 ease-in-out"
                     style={{
                         scrollbarWidth: 'none',
                         msOverflowStyle: 'none',
                         WebkitOverflowScrolling: 'touch',
                         paddingLeft: 'max(1rem, calc((100vw - min(740px, 90vw)) / 2))',
-                        paddingRight: 'max(1rem, calc((100vw - min(740px, 90vw)) / 2))'
+                        paddingRight: 'max(1rem, calc((100vw - min(740px, 90vw)) / 2))',
+                        height: activeCardHeight ? `${activeCardHeight + 16}px` : undefined,
                     }}
                 >
                     {articles.map((item, idx) => {
@@ -419,6 +455,10 @@ const BlogArticleClient = ({ blog, allBlogs }: BlogArticleProps) => {
                             <div
                                 key={item.id}
                                 ref={(el) => { cardRefs.current[idx] = el; }}
+                                style={{
+                                    maxHeight: (!isActive && activeCardHeight) ? `${activeCardHeight}px` : undefined,
+                                    overflow: !isActive ? 'hidden' : 'visible'
+                                }}
                                 className={cn(
                                     "shrink-0 snap-center transition-all duration-500 ease-out relative",
                                     "w-[90vw] sm:w-[660px] lg:w-[740px]",
@@ -503,6 +543,7 @@ const BlogArticleClient = ({ blog, allBlogs }: BlogArticleProps) => {
                                                 <img 
                                                     src={item.imageUrl} 
                                                     alt={item.title} 
+                                                    onLoad={updateActiveHeight}
                                                     className="w-full max-h-[260px] sm:max-h-[300px] md:max-h-[320px] object-contain transition-transform duration-300 group-hover:scale-[1.005]"
                                                     style={{ 
                                                         viewTransitionName: (String(item.id) === String(blog.id) && !lightboxImage) 
@@ -555,8 +596,8 @@ const BlogArticleClient = ({ blog, allBlogs }: BlogArticleProps) => {
                     </div>
                 )}
 
-                {/* Emergency Protocol - Positioned cleanly below the active article with generous scroll clearance */}
-                <div className="max-w-xl sm:max-w-2xl mx-auto px-4 sm:px-6 mt-4 sm:mt-6 mb-8 sm:mb-12 transition-all duration-300 ease-in-out relative z-10">
+                {/* Emergency Protocol - Positioned cleanly below the active article with dynamic height */}
+                <div className="max-w-xl sm:max-w-2xl mx-auto px-4 sm:px-6 mt-2 sm:mt-3 mb-6 sm:mb-8 transition-all duration-300 ease-in-out relative z-10">
                     <div className="overflow-hidden rounded-xl sm:rounded-2xl bg-white dark:bg-slate-900 border border-red-500/30 dark:border-red-500/30 p-3.5 sm:p-4 shadow-md dark:shadow-black/50 transition-colors">
                         <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 items-start sm:items-center">
                             <div className="relative shrink-0">
