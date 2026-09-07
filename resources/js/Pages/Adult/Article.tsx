@@ -271,7 +271,7 @@ const BlogArticleClient = ({ blog, allBlogs }: BlogArticleProps) => {
     const currentBlog = articles[activeIndex] || blog;
 
     return (
-        <div className="min-h-screen selection:bg-red-500 selection:text-white pb-12 relative overflow-x-hidden">
+        <div className="min-h-screen selection:bg-red-500 selection:text-white pb-24 sm:pb-32 relative overflow-x-hidden">
             <Head title={`${currentBlog.title} - SafeScape`} />
             
             {/* Expanded Image Modal Lightbox */}
@@ -354,7 +354,7 @@ const BlogArticleClient = ({ blog, allBlogs }: BlogArticleProps) => {
                 </>
             )}
 
-            <main className="w-full relative z-10 pt-2 sm:pt-4 pb-10">
+            <main className="w-full relative z-10 pt-2 sm:pt-4 pb-24 sm:pb-32">
                 {/* Top Navigation Bar with Back button & Article Counter */}
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-2 sm:mb-3 flex items-center justify-between gap-3 relative z-20">
                     <Link 
@@ -555,9 +555,9 @@ const BlogArticleClient = ({ blog, allBlogs }: BlogArticleProps) => {
                     </div>
                 )}
 
-                {/* Emergency Protocol - Solid opaque styling for readability (glassmorphism removed) */}
-                <div className="max-w-3xl mx-auto px-4 mt-2 sm:mt-3 transition-all duration-300 ease-in-out">
-                    <div className="overflow-hidden rounded-xl sm:rounded-2xl bg-white dark:bg-slate-900 border border-red-500/30 dark:border-red-500/30 p-3 sm:p-4 shadow-md dark:shadow-black/50 transition-colors">
+                {/* Emergency Protocol - Positioned cleanly below the active article with generous scroll clearance */}
+                <div className="max-w-xl sm:max-w-2xl mx-auto px-4 sm:px-6 mt-4 sm:mt-6 mb-8 sm:mb-12 transition-all duration-300 ease-in-out relative z-10">
+                    <div className="overflow-hidden rounded-xl sm:rounded-2xl bg-white dark:bg-slate-900 border border-red-500/30 dark:border-red-500/30 p-3.5 sm:p-4 shadow-md dark:shadow-black/50 transition-colors">
                         <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 items-start sm:items-center">
                             <div className="relative shrink-0">
                                 <div className="h-9 w-9 sm:h-10 sm:w-10 rounded-xl bg-red-500/10 border border-red-500/20 flex items-center justify-center shrink-0 shadow-sm transition-colors">
