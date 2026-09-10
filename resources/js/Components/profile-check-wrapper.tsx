@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react"
 import { useAuth } from "@/lib/auth-context"
-import { ProfileCompletionModal } from "@/Components/profile-completion-modal"
+import { ProfileCompletionModal } from "@/Components/Modals"
 import { trackDailyLogin } from "@/lib/engagement-tracker"
 
 interface ProfileCheckWrapperProps {

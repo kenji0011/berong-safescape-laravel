@@ -392,7 +392,7 @@ export function Footer() {
                 className="hidden sm:block shrink-0 w-auto pointer-events-none select-none mb-[79px] -mr-[1vw] xl:-mr-[13px]"
               >
                 <img 
-                  src="/RD Logo.webp" 
+                  src="/rd-logo.webp" 
                   alt="Berong Mascot" 
                   className="w-auto h-[10vw] sm:h-[8vw] xl:h-[220px] object-contain drop-shadow-2xl"
                   draggable={false}

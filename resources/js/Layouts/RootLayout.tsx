@@ -3,16 +3,14 @@ import { AuthProvider } from "@/lib/auth-context";
 
 // Lazy-load the Chatbot to keep the initial page bundle lightweight
 const Chatbot = React.lazy(() => import("@/Components/chatbot").then(m => ({ default: m.Chatbot })));
-import { PageLoader } from "@/Components/page-loader";
-import { LogoutLoader } from "@/Components/logout-loader";
-import { LoginLoader } from "@/Components/login-loader";
+import { PageLoader, LogoutLoader, LoginLoader } from "@/Components/Loaders";
 import { ProfileCheckWrapper } from "@/Components/profile-check-wrapper";
 import { FocusModeManager } from "@/Components/focus-mode-manager";
 import { usePage } from '@inertiajs/react';
 import { Toaster } from "@/Components/ui/sonner";
 import { AlertTriangle } from "lucide-react";
 
-import { PageExpiredModal } from "@/Components/page-expired-modal";
+import { PageExpiredModal } from "@/Components/Modals";
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   const { url, component, props } = usePage();

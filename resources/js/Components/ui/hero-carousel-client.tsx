@@ -6,7 +6,7 @@ import Autoplay from "embla-carousel-autoplay"
 import { Maximize2, Shield } from "lucide-react"
 import { Button } from "@/Components/ui/button"
 import { Link } from '@inertiajs/react';
-import { ImageViewerModal } from "@/Components/image-viewer-modal"
+import { ImageViewerModal } from "@/Components/Modals"
 import Image from '@/Components/Image';
 
 type CarouselImage = {

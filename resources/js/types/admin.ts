@@ -1,53 +1,7 @@
-import type { CarouselImage, BlogPost } from "@/lib/mock-data"
-export type { CarouselImage, BlogPost }
+import type { CarouselImage, BlogPost, Video, QuickQuestion, FireCodeSection, VideoContent } from "./content"
+import type { User, UserRole, UserPermissions } from "./user"
 
-export interface User {
-  id: string | number
-  name: string
-  email: string
-  username: string
-  role: string
-  age?: number
-  isActive: boolean
-  createdAt: string
-  permissions: {
-    accessKids: boolean
-    accessAdult: boolean
-    accessProfessional: boolean
-    isAdmin: boolean
-  }
-}
-
-export interface Video {
-  id: string | number
-  title: string
-  description: string
-  youtubeId: string
-  category: "professional" | "adult" | "kids"
-  duration: string
-  isActive: boolean
-  order?: number
-}
-
-export interface QuickQuestion {
-  id: number
-  category: string
-  questionText: string
-  responseText: string
-  isActive: boolean
-}
-
-export interface FireCodeSection {
-  id: number
-  title: string
-  category: string
-  sectionNum?: string
-  content?: string
-  description?: string
-  filename?: string
-  parentSectionId?: string
-  updatedAt: string | null
-}
+export type { CarouselImage, BlogPost, Video, QuickQuestion, FireCodeSection, VideoContent, User, UserRole, UserPermissions }
 
 export interface AdminInitialData {
   initialCarouselImages?: any[]

@@ -17,7 +17,7 @@ import { createRoot } from 'react-dom/client';
 import RootLayout from '@/Layouts/RootLayout';
 import { SettingsProvider, useSettings } from '@/lib/settings-context';
 import { MotionConfig } from 'motion/react';
-import { MagnifyingMouse } from '@/Components/magnifying-mouse';
+import { MagnifyingMouse } from '@/Components/Effects';
 
 function AppWrapper({ App, props }) {
     const { reduceMotion } = useSettings();

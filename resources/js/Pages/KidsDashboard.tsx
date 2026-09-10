@@ -4,7 +4,7 @@ import { useEffect, useState, useMemo } from "react"
 import { router, Deferred } from '@inertiajs/react'
 import { useAuth } from "@/lib/auth-context"
 import { Navigation } from "@/Components/navigation"
-import { KidsWelcomeBanner } from "@/Components/kids-welcome-banner"
+import { KidsWelcomeBanner } from "@/Components/Banners"
 import { ContentGrid } from "@/Components/content-grid"
 import { ContentCard, ContentCardData } from "@/Components/content-card"
 import { Footer } from "@/Components/footer"

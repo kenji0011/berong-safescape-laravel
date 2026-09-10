@@ -1,7 +1,7 @@
 // @ts-nocheck
 import { useLayoutEffect, useRef, useCallback, ReactNode } from 'react';
 import Lenis from 'lenis';
-import './ScrollStack.css';
+import './scroll-stack.css';
 
 interface ScrollStackItemProps {
   children: ReactNode;

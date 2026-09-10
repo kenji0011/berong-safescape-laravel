@@ -1,32 +1,5 @@
-export interface CarouselImage {
-  id: string
-  url: string
-  altText: string
-  title: string
-}
-
-export interface BlogPost {
-  id: string
-  title: string
-  excerpt: string
-  content: string
-  imageUrl: string
-  category: "adult" | "professional"
-  createdAt: string
-  author: string | { id: number | string; name: string }
-}
-
-export interface VideoContent {
-  id: string
-  title: string
-  description: string
-  youtubeId: string
-  category: "professional" | "adult" | "kids"
-  duration: string
-  created_at?: string
-  createdAt?: string
-  channelTitle?: string
-}
+import type { CarouselImage, BlogPost, VideoContent } from "@/types/content"
+export type { CarouselImage, BlogPost, VideoContent }
 
 export const carouselImages: CarouselImage[] = [
   {

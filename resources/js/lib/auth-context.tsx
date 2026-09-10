@@ -4,38 +4,8 @@ import type React from "react"
 import { createContext, useContext, useState, useEffect } from "react"
 import { router, usePage } from '@inertiajs/react';
 
-export type UserRole = "guest" | "kid" | "adult" | "professional" | "admin"
-
-export interface User {
-  id: number
-  username: string
-  email?: string
-  name: string
-  age: number
-  role: UserRole
-  permissions: {
-    accessKids: boolean
-    accessAdult: boolean
-    accessProfessional: boolean
-    isAdmin: boolean
-  }
-  isActive: boolean
-  createdAt: string
-  // Enhanced profile fields
-  profileCompleted?: boolean
-  barangay?: string
-  school?: string
-  occupation?: string
-  gender?: string
-  preTestScore?: number
-  postTestScore?: number
-  engagementPoints?: number
-  avatar?: string
-  firstName?: string
-  lastName?: string
-  school_id?: number
-  competency_scores?: any
-}
+import type { User, UserRole, UserPermissions } from "@/types/user"
+export type { User, UserRole, UserPermissions }
 
 interface AuthContextType {
   user: User | null

@@ -8,6 +8,8 @@
 /storage/*.key
 *.pem
 *.key
+*password*.txt
+*credentials*.txt
 
 # ==========================================
 # 2. Package Dependencies

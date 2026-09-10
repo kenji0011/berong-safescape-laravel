@@ -5,7 +5,7 @@ import { ChevronLeft, ChevronRight, Maximize2 } from "lucide-react"
 import { Button } from "@/Components/ui/button"
 import Image from '@/Components/Image';
 import type { CarouselImage } from "@/lib/mock-data"
-import { ImageViewerModal } from "@/Components/image-viewer-modal"
+import { ImageViewerModal } from "@/Components/Modals"
 
 interface ImageCarouselProps {
   images: CarouselImage[]

@@ -21,7 +21,8 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/Components/ui/dialog"
-import { professionalVideos, type VideoContent } from "@/lib/mock-data"
+import { professionalVideos } from "@/lib/mock-data"
+import type { VideoContent } from "@/types"
 import { ManualsDialog } from "@/Components/ui/manuals-dialog"
 import axios from "axios"
 import { Progress } from "@/Components/ui/progress"
@@ -29,8 +30,8 @@ import { Footer } from "@/Components/footer"
 import DashboardLayout from "@/Layouts/DashboardLayout"
 import SpotlightCard from "@/Components/ui/spotlight-card"
 import "@/Components/ui/spotlight-card.css"
-import { cn } from "@/lib/utils"
-import { ProfessionalWelcomeBanner } from "@/Components/professional-welcome-banner"
+import { cn, getYouTubeId, formatTimeAgo } from "@/lib/utils"
+import { ProfessionalWelcomeBanner } from "@/Components/Banners"
 import { playSound } from '@/lib/audio'
 
 const VideoSkeleton = () => (
@@ -55,60 +56,6 @@ interface ProfessionalPageClientProps {
     initialVideos?: VideoContent[]
     watchedVideoIds?: string[]
 }
-
-const getYouTubeId = (id: string) => {
-    if (!id) return '';
-    if (id.includes('youtube.com') || id.includes('youtu.be')) {
-      const regex = /(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=|shorts\/|live\/))([^&?\n]+)/;
-      const match = id.match(regex);
-      if (match && match[1]) {
-        id = match[1];
-      } else {
-        try {
-          const url = new URL(id);
-          if (url.hostname.includes('youtube.com')) {
-            id = url.searchParams.get('v') || id.split('/').pop() || id;
-          } else if (url.hostname.includes('youtu.be')) {
-            id = url.pathname.slice(1);
-          }
-        } catch {
-          // ignore
-        }
-      }
-    }
-    return id.trim();
-};
-
-const formatTimeAgo = (dateStr?: string | null) => {
-    if (!dateStr) return "Recently added";
-    try {
-        const date = new Date(dateStr);
-        if (isNaN(date.getTime())) return "Recently added";
-        
-        const now = new Date();
-        const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000);
-        
-        if (diffInSeconds < 60) return "Just now";
-        const diffInMinutes = Math.floor(diffInSeconds / 60);
-        if (diffInMinutes < 60) return `${diffInMinutes}m ago`;
-        const diffInHours = Math.floor(diffInMinutes / 60);
-        if (diffInHours < 24) return `${diffInHours}h ago`;
-        const diffInDays = Math.floor(diffInHours / 24);
-        if (diffInDays === 1) return "1 day ago";
-        if (diffInDays < 7) return `${diffInDays} days ago`;
-        const diffInWeeks = Math.floor(diffInDays / 7);
-        if (diffInWeeks === 1) return "1 week ago";
-        if (diffInWeeks < 4) return `${diffInWeeks} weeks ago`;
-        const diffInMonths = Math.floor(diffInDays / 30);
-        if (diffInMonths === 1) return "1 month ago";
-        if (diffInMonths < 12) return `${diffInMonths} months ago`;
-        const diffInYears = Math.floor(diffInDays / 365);
-        if (diffInYears === 1) return "1 year ago";
-        return `${diffInYears} years ago`;
-    } catch {
-        return "Recently added";
-    }
-};
 
 const PROFESSIONAL_RANKS = [
     { name: "Master Fire Chief", count: 10, icon: Trophy, color: "text-red-600 dark:text-red-400", bg: "bg-red-50 dark:bg-red-950/40", border: "border-red-200 dark:border-red-800/60", desc: "The highest honor! You have mastered all training materials and lead with supreme expertise." },
@@ -387,7 +334,7 @@ const ProfessionalDashboard = ({ initialVideos, watchedVideoIds = [] }: Professi
                         <div className="relative overflow-hidden bg-white dark:bg-slate-800 rounded-[1.5rem] sm:rounded-[2rem] p-3 sm:p-4 flex items-center gap-3 sm:gap-6 shadow-[0_6px_0_#cbd5e1] dark:shadow-[0_6px_0_#1e293b] sm:shadow-[0_8px_0_#cbd5e1] sm:dark:shadow-[0_8px_0_#1e293b] border-[3px] border-white dark:border-slate-700 h-full hover:translate-y-[2px] active:translate-y-[6px] sm:hover:translate-y-[2px] sm:active:translate-y-[8px] hover:shadow-[0_4px_0_#cbd5e1] dark:hover:shadow-[0_4px_0_#1e293b] sm:hover:shadow-[0_6px_0_#cbd5e1] sm:dark:hover:shadow-[0_6px_0_#1e293b] active:shadow-none transition-all duration-200">
                             {/* Subtle Background Image */}
                             <div className="absolute inset-0 z-0 opacity-[0.05] dark:opacity-[0.1] group-hover:opacity-[0.08] dark:group-hover:opacity-[0.15] transition-opacity duration-500">
-                                <img src="/BFP Manuals Modal.webp" className="w-full h-full object-cover dark:brightness-50" alt="" />
+                                <img src="/bfp-manuals-modal.webp" className="w-full h-full object-cover dark:brightness-50" alt="" />
                             </div>
                             
                             {/* Icon Box */}

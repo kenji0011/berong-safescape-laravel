@@ -8,7 +8,6 @@
  * Module: Web Application Routing Definitions
  */
 
-use App\Http\Controllers\ProfileController;
 use App\Models\BlogPost;
 use App\Models\KidsModule;
 use Illuminate\Foundation\Application;
@@ -181,15 +180,15 @@ Route::get('/maintenance', function () {
     })->name('kids.quiz');
 
     Route::get('/kids/memory-game', function () {
-        return Inertia::render('Kids/MemoryGame');
+        return Inertia::render('Kids/Games/MemoryGame');
     })->name('kids.memory');
 
     Route::get('/kids/smoke-crawl', function () {
-        return Inertia::render('Kids/SmokeCrawl');
+        return Inertia::render('Kids/Games/SmokeCrawl');
     })->name('kids.smoke_crawl');
 
     Route::get('/kids/hot-or-not', function () {
-        return Inertia::render('Kids/HotOrNot');
+        return Inertia::render('Kids/Games/HotOrNot');
     })->name('kids.hot_or_not');
 
 
@@ -224,7 +223,7 @@ Route::get('/maintenance', function () {
     })->name('kids.badges');
 
     Route::get('/kids/task-master', function () {
-        return Inertia::render('Kids/TaskMaster');
+        return Inertia::render('Kids/Games/TaskMaster');
     })->name('kids.task-master');
 
     Route::get('/kids/certificate', function () {

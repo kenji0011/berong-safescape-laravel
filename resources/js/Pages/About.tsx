@@ -2,7 +2,6 @@
 
 import { Navigation } from "@/Components/navigation";
 import { Footer } from "@/Components/footer";
-import SplashCursor from "@/Components/SplashCursor";
 import Image from '@/Components/Image';
 import { Link } from '@inertiajs/react';
 import { useRef, useState, useEffect } from "react";
@@ -33,8 +32,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/Components/ui/button";
-import { FireExtinguishedText } from "../Components/fire-extinguished-text";
-import { BinaryScrambleText } from "@/Components/binary-scramble-text";
+import { FireExtinguishedText, BinaryScrambleText, SplashCursor } from "@/Components/Effects";
 import { Carousel, CarouselContent, CarouselItem, type CarouselApi } from "@/Components/ui/carousel";
 import Autoplay from "embla-carousel-autoplay";
 
@@ -838,7 +836,7 @@ export default function AboutPage() {
                                 <div className="flex items-center gap-3 sm:gap-4 mb-4 sm:mb-6">
                                     <div className="relative w-14 h-14 sm:w-20 sm:h-20 flex-shrink-0">
                                         <Image
-                                            src="/lspu logo.webp"
+                                            src="/lspu-logo.webp"
                                             alt="LSPU Logo"
                                             fill
                                             className="object-contain"
@@ -870,7 +868,7 @@ export default function AboutPage() {
                                 <div className="flex items-center gap-3 sm:gap-4 mb-4 sm:mb-6">
                                     <div className="relative w-12 h-12 sm:w-20 sm:h-20 flex-shrink-0">
                                         <Image
-                                            src="/bfp logo.webp"
+                                            src="/bfp-logo.webp"
                                             alt="BFP Logo"
                                             fill
                                             className="object-contain"

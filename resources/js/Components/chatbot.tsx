@@ -802,7 +802,7 @@ export function Chatbot() {
                   </AnimatePresence>
 
                   <Image
-                    src="/RD Logo.webp"
+                    src="/rd-logo.webp"
                     alt="Berong - BFP Assistant"
                     width={180}
                     height={180}

@@ -26,8 +26,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/Components/ui/button";
-import { FireExtinguishedText } from "./fire-extinguished-text";
-import { BinaryScrambleText } from "./binary-scramble-text";
+import { FireExtinguishedText, BinaryScrambleText } from "@/Components/Effects";
 import { Carousel, CarouselContent, CarouselItem, type CarouselApi } from "@/Components/ui/carousel";
 import Autoplay from "embla-carousel-autoplay";
 
@@ -1214,7 +1213,7 @@ export function LandingAboutSection({ carouselNode }: { carouselNode?: React.Rea
                                 <div className="flex items-center gap-3 mb-2">
                                     <div className="relative w-14 h-14 sm:w-16 sm:h-16 flex-shrink-0">
                                         <img
-                                            src="/lspu logo.webp"
+                                            src="/lspu-logo.webp"
                                             alt="LSPU Logo"
                                             loading="lazy"
                                             className="absolute inset-0 w-full h-full object-contain"
@@ -1246,7 +1245,7 @@ export function LandingAboutSection({ carouselNode }: { carouselNode?: React.Rea
                                 <div className="flex items-center gap-3 mb-2">
                                     <div className="relative w-14 h-14 sm:w-16 sm:h-16 flex-shrink-0">
                                         <img
-                                            src="/bfp logo.webp"
+                                            src="/bfp-logo.webp"
                                             alt="BFP Logo"
                                             loading="lazy"
                                             className="absolute inset-0 w-full h-full object-contain"

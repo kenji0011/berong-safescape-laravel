@@ -28,13 +28,13 @@ import { Input } from "@/Components/ui/input"
 import { Button } from "@/Components/ui/button"
 
 // Lazy load admin tabs
-const AdminCarouselTab = lazy(() => import("./Admin/AdminCarouselTab").then(m => ({ default: m.AdminCarouselTab })))
-const AdminBlogsTab = lazy(() => import("./Admin/AdminBlogsTab").then(m => ({ default: m.AdminBlogsTab })))
-const AdminVideosTab = lazy(() => import("./Admin/AdminVideosTab").then(m => ({ default: m.AdminVideosTab })))
-const AdminUsersTab = lazy(() => import("./Admin/AdminUsersTab").then(m => ({ default: m.AdminUsersTab })))
-const AdminQuestionsTab = lazy(() => import("./Admin/AdminQuestionsTab").then(m => ({ default: m.AdminQuestionsTab })))
-const AdminFireCodesTab = lazy(() => import("./Admin/AdminFireCodesTab").then(m => ({ default: m.AdminFireCodesTab })))
-const AdminSettingsTab = lazy(() => import("./Admin/AdminSettingsTab").then(m => ({ default: m.AdminSettingsTab })))
+const AdminCarouselTab = lazy(() => import("@/Components/Admin/AdminCarouselTab").then(m => ({ default: m.AdminCarouselTab })))
+const AdminBlogsTab = lazy(() => import("@/Components/Admin/AdminBlogsTab").then(m => ({ default: m.AdminBlogsTab })))
+const AdminVideosTab = lazy(() => import("@/Components/Admin/AdminVideosTab").then(m => ({ default: m.AdminVideosTab })))
+const AdminUsersTab = lazy(() => import("@/Components/Admin/AdminUsersTab").then(m => ({ default: m.AdminUsersTab })))
+const AdminQuestionsTab = lazy(() => import("@/Components/Admin/AdminQuestionsTab").then(m => ({ default: m.AdminQuestionsTab })))
+const AdminFireCodesTab = lazy(() => import("@/Components/Admin/AdminFireCodesTab").then(m => ({ default: m.AdminFireCodesTab })))
+const AdminSettingsTab = lazy(() => import("@/Components/Admin/AdminSettingsTab").then(m => ({ default: m.AdminSettingsTab })))
 
 import { AdminDashboardSkeleton, AdminTableSkeleton } from "@/Components/dashboard-skeletons"
 

@@ -284,7 +284,7 @@ export function Navigation() {
                 {/* Logos */}
                 <div className="flex items-center gap-1 sm:gap-2 flex-shrink-0">
                   <img
-                    src="/bfp logo.webp"
+                    src="/bfp-logo.webp"
                     alt="Bureau of Fire Protection Logo"
                     width={48}
                     height={48}
