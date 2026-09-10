@@ -3,7 +3,6 @@
 import React, { useRef, useEffect, useState } from 'react';
 import { motion, useInView, useReducedMotion } from 'motion/react';
 import { Link } from '@inertiajs/react';
-import { PermissionGuard } from '@/Components/permission-guard';
 import { Briefcase, Users, Baby, Flame } from 'lucide-react';
 import { useAuth } from '@/lib/auth-context';
 import { FeaturedCardsSkeleton } from '@/Components/dashboard-skeletons';
@@ -184,11 +183,9 @@ function AnimatedFeaturedCard({
           {cardContent}
         </div>
       ) : (
-        <PermissionGuard requiredPermission={card.requiredPermission} targetPath={card.link}>
-          <Link href={card.link} prefetch={false} className="outline-none flex w-full h-full group/card">
-            {cardContent}
-          </Link>
-        </PermissionGuard>
+        <Link href={card.link} prefetch={false} className="outline-none flex w-full h-full group/card">
+          {cardContent}
+        </Link>
       )}
     </motion.div>
   );
@@ -252,11 +249,9 @@ function MobileAnimatedCard({
           {cardContent}
         </div>
       ) : (
-        <PermissionGuard requiredPermission={card.requiredPermission} targetPath={card.link}>
-          <Link href={card.link} prefetch={false} className="outline-none block w-full group">
-            {cardContent}
-          </Link>
-        </PermissionGuard>
+        <Link href={card.link} prefetch={false} className="outline-none block w-full group">
+          {cardContent}
+        </Link>
       )}
     </motion.div>
   );
