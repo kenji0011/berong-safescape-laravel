@@ -75,19 +75,19 @@ const CertificatePage = () => {
         <div className="absolute bottom-10 -left-20 w-80 h-80 rounded-full bg-gradient-to-tr from-orange-400/20 to-transparent blur-3xl pointer-events-none" />
       </div>
 
-      <div className="relative z-10 w-full flex-1 flex flex-col py-4">
-        {/* Header */}
-        <div className="absolute top-4 left-4 z-20">
+      <div className="relative z-10 w-full flex-1 flex flex-col py-2 sm:py-4">
+        {/* Top Back Navigation aligned directly below the left edge of the floating navbar */}
+        <div className="w-full max-w-6xl mx-auto px-4 sm:px-6 z-20 mb-2 sm:mb-4">
           <Link 
             href="/kids/safescape" 
-            className="inline-flex items-center gap-2 text-amber-700 dark:text-amber-400 font-bold hover:text-orange-600 dark:hover:text-orange-400 transition-all text-sm bg-white dark:bg-slate-800 px-4 py-2 rounded-full border border-white/60 dark:border-slate-700/60 shadow-sm"
+            className="inline-flex items-center gap-2 text-amber-800 dark:text-amber-300 font-bold hover:text-orange-600 dark:hover:text-orange-400 transition-all text-sm bg-white/95 dark:bg-slate-800/95 backdrop-blur-md px-4 py-2 rounded-full border border-amber-200/80 dark:border-slate-700/80 shadow-sm hover:shadow-md hover:-translate-x-0.5 active:translate-x-0 group"
           >
-            <ArrowLeft className="h-4 w-4" />
+            <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-1" />
             Back to Modules
           </Link>
         </div>
 
-        <div className="max-w-4xl mx-auto w-full px-4 sm:px-6 flex-1 flex flex-col items-center justify-start sm:justify-center pt-24 sm:pt-4 pb-6">
+        <div className="max-w-4xl mx-auto w-full px-4 sm:px-6 flex-1 flex flex-col items-center justify-start sm:justify-center pb-6">
           
           <div className="text-center mb-6 sm:mb-6 animate-in slide-in-from-bottom-4 duration-700">
             <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black text-amber-600 dark:text-amber-400 tracking-tight drop-shadow-sm flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 mb-2 sm:mb-3">
