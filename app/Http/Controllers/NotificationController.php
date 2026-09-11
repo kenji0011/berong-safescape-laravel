@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use App\Models\Notification;
 
 class NotificationController extends Controller
@@ -13,17 +14,25 @@ class NotificationController extends Controller
      */
     public function index()
     {
-        $userId = Auth::id();
+        try {
+            $userId = Auth::id();
 
-        if (!$userId) {
-            return response()->json(['error' => 'Unauthorized'], 401);
+            if (!$userId) {
+                return response()->json(['error' => 'Unauthorized'], 401);
+            }
+
+            $limit = min((int)request()->query('limit', 50), 100);
+
+            $notifications = Notification::where('userId', $userId)
+                ->orderBy('createdAt', 'desc')
+                ->limit($limit)
+                ->get();
+
+            return response()->json($notifications);
+        } catch (\Throwable $e) {
+            Log::error('Error fetching notifications: ' . $e->getMessage(), ['userId' => Auth::id()]);
+            return response()->json(['error' => 'Failed to load notifications.'], 500);
         }
-
-        $notifications = Notification::where('userId', $userId)
-            ->orderBy('createdAt', 'desc')
-            ->get();
-
-        return response()->json($notifications);
     }
 
     /**
@@ -31,19 +40,24 @@ class NotificationController extends Controller
      */
     public function markAsRead($id)
     {
-        $userId = Auth::id();
+        try {
+            $userId = Auth::id();
 
-        $notification = Notification::where('id', $id)
-            ->where('userId', $userId)
-            ->first();
+            $notification = Notification::where('id', $id)
+                ->where('userId', $userId)
+                ->first();
 
-        if (!$notification) {
-            return response()->json(['error' => 'Notification not found'], 404);
+            if (!$notification) {
+                return response()->json(['error' => 'Notification not found'], 404);
+            }
+
+            $notification->update(['isRead' => true]);
+
+            return response()->json(['success' => true]);
+        } catch (\Throwable $e) {
+            Log::error("Error marking notification {$id} as read: " . $e->getMessage());
+            return response()->json(['error' => 'Failed to mark notification as read.'], 500);
         }
-
-        $notification->update(['isRead' => true]);
-
-        return response()->json(['success' => true]);
     }
 
     /**
@@ -51,17 +65,22 @@ class NotificationController extends Controller
      */
     public function markAllAsRead()
     {
-        $userId = Auth::id();
+        try {
+            $userId = Auth::id();
 
-        if (!$userId) {
-            return response()->json(['error' => 'Unauthorized'], 401);
+            if (!$userId) {
+                return response()->json(['error' => 'Unauthorized'], 401);
+            }
+
+            Notification::where('userId', $userId)
+                ->where('isRead', false)
+                ->update(['isRead' => true]);
+
+            return response()->json(['success' => true]);
+        } catch (\Throwable $e) {
+            Log::error('Error marking all notifications as read: ' . $e->getMessage(), ['userId' => Auth::id()]);
+            return response()->json(['error' => 'Failed to mark notifications as read.'], 500);
         }
-
-        Notification::where('userId', $userId)
-            ->where('isRead', false)
-            ->update(['isRead' => true]);
-
-        return response()->json(['success' => true]);
     }
 
     /**
@@ -69,18 +88,23 @@ class NotificationController extends Controller
      */
     public function destroy($id)
     {
-        $userId = Auth::id();
+        try {
+            $userId = Auth::id();
 
-        $notification = Notification::where('id', $id)
-            ->where('userId', $userId)
-            ->first();
+            $notification = Notification::where('id', $id)
+                ->where('userId', $userId)
+                ->first();
 
-        if (!$notification) {
-            return response()->json(['error' => 'Notification not found'], 404);
+            if (!$notification) {
+                return response()->json(['error' => 'Notification not found'], 404);
+            }
+
+            $notification->delete();
+
+            return response()->json(['success' => true]);
+        } catch (\Throwable $e) {
+            Log::error("Error deleting notification {$id}: " . $e->getMessage());
+            return response()->json(['error' => 'Failed to delete notification.'], 500);
         }
-
-        $notification->delete();
-
-        return response()->json(['success' => true]);
     }
 }

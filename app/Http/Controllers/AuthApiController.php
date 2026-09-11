@@ -7,6 +7,8 @@ use App\Models\AssessmentQuestion;
 use App\Models\UserAnswer;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rules\Password;
@@ -113,72 +115,94 @@ class AuthApiController extends Controller
             );
         }
 
-        $user = User::create([
-            'username' => $request->input('username'),
-            'email' => $request->input('email'),
-            'password' => Hash::make($request->input('password')),
-            'name' => $name,
-            'firstName' => $request->input('firstName'),
-            'lastName' => $request->input('lastName'),
-            'age' => $age,
-            'role' => $role,
-            'gender' => $request->input('gender'),
-            'barangay' => $request->input('barangay'),
-            'school' => $schoolName,
-            'school_id' => $schoolModel ? $schoolModel->id : null,
-            'occupation' => $request->input('occupation') ?? $request->input('occupationOther'),
-            'profileCompleted' => true,
-        ]);
-
-        // Process pre-test answers
-        $preTestAnswers = $request->input('preTestAnswers', []);
-        $score = 0;
-        $maxScore = count($preTestAnswers);
-
-        foreach ($preTestAnswers as $questionId => $selectedAnswer) {
-            $question = AssessmentQuestion::find($questionId);
-            $isCorrect = false;
-
-            if ($question) {
-                $isCorrect = $question->correctAnswer == $selectedAnswer;
-                if ($isCorrect) $score++;
-
-                UserAnswer::create([
-                    'userId' => $user->id,
-                    'questionId' => $questionId,
-                    'selectedAnswer' => $selectedAnswer,
-                    'isCorrect' => $isCorrect,
-                    'testType' => 'preTest',
+        try {
+            $response = DB::transaction(function () use ($request, $age, $role, $name, $schoolName, $schoolModel) {
+                $user = User::create([
+                    'username' => $request->input('username'),
+                    'email' => $request->input('email'),
+                    'password' => Hash::make($request->input('password')),
+                    'name' => $name,
+                    'firstName' => $request->input('firstName'),
+                    'lastName' => $request->input('lastName'),
+                    'age' => $age,
+                    'role' => $role,
+                    'gender' => $request->input('gender'),
+                    'barangay' => $request->input('barangay'),
+                    'school' => $schoolName,
+                    'school_id' => $schoolModel ? $schoolModel->id : null,
+                    'occupation' => $request->input('occupation') ?? $request->input('occupationOther'),
+                    'profileCompleted' => true,
                 ]);
+
+                // Process pre-test answers
+                $preTestAnswers = $request->input('preTestAnswers', []);
+                $score = 0;
+                $maxScore = count($preTestAnswers);
+
+                if (!empty($preTestAnswers)) {
+                    $questionIds = array_keys($preTestAnswers);
+                    $questions = AssessmentQuestion::whereIn('id', $questionIds)->get()->keyBy('id');
+
+                    foreach ($preTestAnswers as $questionId => $selectedAnswer) {
+                        $question = $questions->get($questionId);
+                        $isCorrect = false;
+
+                        if ($question) {
+                            $isCorrect = (string)$question->correctAnswer === (string)$selectedAnswer;
+                            if ($isCorrect) $score++;
+
+                            UserAnswer::create([
+                                'userId' => $user->id,
+                                'questionId' => $questionId,
+                                'selectedAnswer' => $selectedAnswer,
+                                'isCorrect' => $isCorrect,
+                                'testType' => 'preTest',
+                            ]);
+                        }
+                    }
+                }
+
+                // Update user's pre-test score
+                $user->update(['preTestScore' => $score]);
+
+                if ($schoolModel) {
+                    try {
+                        $schoolModel->recalculateAnalytics();
+                    } catch (\Throwable $schoolEx) {
+                        Log::warning('School analytics recalculation warning: ' . $schoolEx->getMessage());
+                    }
+                }
+
+                return ['user' => $user, 'score' => $score, 'maxScore' => $maxScore];
+            });
+
+            // Fire registered event to trigger email verification
+            try {
+                event(new \Illuminate\Auth\Events\Registered($response['user']));
+            } catch (\Throwable $eventEx) {
+                Log::warning('Registration event warning: ' . $eventEx->getMessage());
             }
+
+            // Log in the user
+            Auth::login($response['user']);
+
+            return response()->json([
+                'success' => true,
+                'user' => [
+                    'id' => $response['user']->id,
+                    'username' => $response['user']->username,
+                    'name' => $response['user']->name,
+                    'role' => $response['user']->role,
+                    'age' => $response['user']->age,
+                    'profileCompleted' => true,
+                ],
+                'preTestScore' => $response['score'],
+                'maxScore' => $response['maxScore'],
+            ]);
+        } catch (\Throwable $e) {
+            Log::error('Error during registration: ' . $e->getMessage(), ['trace' => $e->getTraceAsString()]);
+            return response()->json(['success' => false, 'error' => 'Registration failed. Please try again.'], 500);
         }
-
-        // Update user's pre-test score
-        $user->update(['preTestScore' => $score]);
-
-        if ($schoolModel) {
-            $schoolModel->recalculateAnalytics();
-        }
-
-        // Fire registered event to trigger email verification
-        event(new \Illuminate\Auth\Events\Registered($user));
-
-        // Log in the user
-        Auth::login($user);
-
-        return response()->json([
-            'success' => true,
-            'user' => [
-                'id' => $user->id,
-                'username' => $user->username,
-                'name' => $user->name,
-                'role' => $user->role,
-                'age' => $user->age,
-                'profileCompleted' => true,
-            ],
-            'preTestScore' => $score,
-            'maxScore' => $maxScore,
-        ]);
     }
 
     /**
@@ -201,69 +225,85 @@ class AuthApiController extends Controller
             return response()->json(['success' => false, 'error' => 'Validation failed'], 422);
         }
 
-        $schoolName = $request->input('school') ?? $request->input('schoolOther');
-        $schoolModel = null;
-        if ($schoolName) {
-            $schoolModel = \App\Models\School::firstOrCreate(
-                ['name' => $schoolName],
-                ['isActive' => true, 'type' => 'Other']
-            );
-        }
-
-        $user->update([
-            'gender' => $request->input('gender'),
-            'barangay' => $request->input('barangay'),
-            'school' => $schoolName,
-            'school_id' => $schoolModel ? $schoolModel->id : null,
-            'occupation' => $request->input('occupation') ?? $request->input('occupationOther'),
-            'profileCompleted' => true
-        ]);
-
-        $score = 0;
-        $preTestAnswers = $request->input('preTestAnswers', []);
-        $maxScore = count($preTestAnswers);
-
-        foreach ($preTestAnswers as $questionId => $selectedAnswer) {
-            $question = AssessmentQuestion::find($questionId);
-            $isCorrect = false;
-
-            if ($question) {
-                $isCorrect = $question->correctAnswer == $selectedAnswer;
-                if ($isCorrect) $score++;
-
-                UserAnswer::updateOrCreate(
-                    [
-                        'userId' => $user->id,
-                        'questionId' => $questionId,
-                        'testType' => 'preTest'
-                    ],
-                    [
-                        'selectedAnswer' => $selectedAnswer,
-                        'isCorrect' => $isCorrect
-                    ]
+        try {
+            $schoolName = $request->input('school') ?? $request->input('schoolOther');
+            $schoolModel = null;
+            if ($schoolName) {
+                $schoolModel = \App\Models\School::firstOrCreate(
+                    ['name' => $schoolName],
+                    ['isActive' => true, 'type' => 'Other']
                 );
             }
+
+            $score = 0;
+            $preTestAnswers = $request->input('preTestAnswers', []);
+            $maxScore = count($preTestAnswers);
+
+            DB::transaction(function () use ($user, $request, $schoolName, $schoolModel, $preTestAnswers, &$score) {
+                $user->update([
+                    'gender' => $request->input('gender'),
+                    'barangay' => $request->input('barangay'),
+                    'school' => $schoolName,
+                    'school_id' => $schoolModel ? $schoolModel->id : null,
+                    'occupation' => $request->input('occupation') ?? $request->input('occupationOther'),
+                    'profileCompleted' => true
+                ]);
+
+                if (!empty($preTestAnswers)) {
+                    $questionIds = array_keys($preTestAnswers);
+                    $questions = AssessmentQuestion::whereIn('id', $questionIds)->get()->keyBy('id');
+
+                    foreach ($preTestAnswers as $questionId => $selectedAnswer) {
+                        $question = $questions->get($questionId);
+                        $isCorrect = false;
+
+                        if ($question) {
+                            $isCorrect = (string)$question->correctAnswer === (string)$selectedAnswer;
+                            if ($isCorrect) $score++;
+
+                            UserAnswer::updateOrCreate(
+                                [
+                                    'userId' => $user->id,
+                                    'questionId' => $questionId,
+                                    'testType' => 'preTest'
+                                ],
+                                [
+                                    'selectedAnswer' => $selectedAnswer,
+                                    'isCorrect' => $isCorrect
+                                ]
+                            );
+                        }
+                    }
+                }
+
+                $user->update(['preTestScore' => $score]);
+
+                if ($schoolModel) {
+                    try {
+                        $schoolModel->recalculateAnalytics();
+                    } catch (\Throwable $schoolEx) {
+                        Log::warning('School analytics recalculation warning: ' . $schoolEx->getMessage());
+                    }
+                }
+            });
+
+            return response()->json([
+                'success' => true,
+                'user' => [
+                    'id' => $user->id,
+                    'username' => $user->username,
+                    'name' => $user->name,
+                    'role' => $user->role,
+                    'age' => $user->age,
+                    'profileCompleted' => true,
+                ],
+                'preTestScore' => $score,
+                'maxScore' => $maxScore,
+            ]);
+        } catch (\Throwable $e) {
+            Log::error('Error completing profile: ' . $e->getMessage());
+            return response()->json(['success' => false, 'error' => 'Failed to complete profile.'], 500);
         }
-
-        $user->update(['preTestScore' => $score]);
-
-        if ($schoolModel) {
-            $schoolModel->recalculateAnalytics();
-        }
-
-        return response()->json([
-            'success' => true,
-            'user' => [
-                'id' => $user->id,
-                'username' => $user->username,
-                'name' => $user->name,
-                'role' => $user->role,
-                'age' => $user->age,
-                'profileCompleted' => true,
-            ],
-            'preTestScore' => $score,
-            'maxScore' => $maxScore,
-        ]);
     }
 
     /**
@@ -405,14 +445,19 @@ class AuthApiController extends Controller
             return response()->json(['success' => false, 'error' => $validator->errors()->first()], 422);
         }
 
-        if (!Hash::check($request->currentPassword, $user->password)) {
-            return response()->json(['success' => false, 'error' => 'Incorrect current password.'], 403);
+        try {
+            if (!Hash::check($request->currentPassword, $user->password)) {
+                return response()->json(['success' => false, 'error' => 'Incorrect current password.'], 403);
+            }
+
+            $user->password = Hash::make($request->newPassword);
+            $user->save();
+
+            return response()->json(['success' => true]);
+        } catch (\Throwable $e) {
+            Log::error('Error changing password: ' . $e->getMessage());
+            return response()->json(['success' => false, 'error' => 'Failed to change password.'], 500);
         }
-
-        $user->password = Hash::make($request->newPassword);
-        $user->save();
-
-        return response()->json(['success' => true]);
     }
 
     /**

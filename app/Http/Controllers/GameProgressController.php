@@ -7,6 +7,7 @@ use App\Models\GameProgress;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Log;
 
 class GameProgressController extends Controller
 {
@@ -17,29 +18,34 @@ class GameProgressController extends Controller
      */
     public function load(Request $request): JsonResponse
     {
-        $userId = $request->query('user_id');
+        try {
+            $userId = $request->query('user_id');
 
-        if (!$userId) {
-            return response()->json(['error' => 'user_id is required'], 400);
+            if (!$userId) {
+                return response()->json(['error' => 'user_id is required'], 400);
+            }
+
+            // Find the user to get their name
+            $user = User::find($userId);
+            if (!$user) {
+                return response()->json(['error' => 'User not found'], 404);
+            }
+
+            // Find or create their progress record
+            $progress = GameProgress::firstOrCreate(
+                ['user_id' => $userId],
+                ['map1_unlocked' => false]
+            );
+
+            return response()->json([
+                'user_id'        => (int) $userId,
+                'player_name'    => $user->name, // The player's real name from your users table
+                'map1_unlocked'  => $progress->map1_unlocked,
+            ]);
+        } catch (\Throwable $e) {
+            Log::error('Error loading game progress: ' . $e->getMessage());
+            return response()->json(['error' => 'Failed to load game progress.'], 500);
         }
-
-        // Find the user to get their name
-        $user = User::find($userId);
-        if (!$user) {
-            return response()->json(['error' => 'User not found'], 404);
-        }
-
-        // Find or create their progress record
-        $progress = GameProgress::firstOrCreate(
-            ['user_id' => $userId],
-            ['map1_unlocked' => false]
-        );
-
-        return response()->json([
-            'user_id'        => (int) $userId,
-            'player_name'    => $user->name, // The player's real name from your users table
-            'map1_unlocked'  => $progress->map1_unlocked,
-        ]);
     }
 
     /**
@@ -55,11 +61,16 @@ class GameProgressController extends Controller
             'map1_unlocked' => 'required|boolean',
         ]);
 
-        GameProgress::updateOrCreate(
-            ['user_id' => $validated['user_id']],
-            ['map1_unlocked' => $validated['map1_unlocked']]
-        );
+        try {
+            GameProgress::updateOrCreate(
+                ['user_id' => $validated['user_id']],
+                ['map1_unlocked' => $validated['map1_unlocked']]
+            );
 
-        return response()->json(['status' => 'saved']);
+            return response()->json(['status' => 'saved']);
+        } catch (\Throwable $e) {
+            Log::error('Error saving game progress: ' . $e->getMessage());
+            return response()->json(['error' => 'Failed to save game progress.'], 500);
+        }
     }
 }

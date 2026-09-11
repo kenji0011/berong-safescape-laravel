@@ -84,7 +84,9 @@ Route::get('/maintenance', function () {
     Route::middleware('role:kid,adult')->group(function () {
         Route::get('/kids', function () {
             return Inertia::render('KidsDashboard', [
-                'modules' => KidsModule::where('isActive', true)->orderBy('dayNumber')->get(),
+                'modules' => \Illuminate\Support\Facades\Cache::remember('active_kids_modules', now()->addHours(6), function () {
+                    return KidsModule::where('isActive', true)->orderBy('dayNumber')->get();
+                }),
                 'progress' => [
                     'completedModules' => \App\Models\SafeScapeProgress::where('userId', Auth::id())
                         ->where('completed', true)
@@ -246,6 +248,7 @@ Route::get('/maintenance', function () {
                     ->select('id', 'title', 'description', 'youtubeId', 'duration', 'category', 'order', 'created_at')
                     ->orderBy('order', 'asc')
                     ->orderBy('created_at', 'desc')
+                    ->take(12)
                     ->get()),
             ]);
         })->name('adult');
@@ -254,8 +257,10 @@ Route::get('/maintenance', function () {
         $blog = BlogPost::with('author:id,name')->findOrFail($id);
         $allBlogs = BlogPost::with('author:id,name')
             ->where('isPublished', true)
+            ->select('id', 'title', 'excerpt', 'imageUrl', 'category', 'authorId', 'created_at', 'order')
             ->orderBy('order', 'asc')
             ->orderBy('created_at', 'desc')
+            ->take(10)
             ->get();
         if (!$allBlogs->contains('id', $blog->id)) {
             $allBlogs->prepend($blog);

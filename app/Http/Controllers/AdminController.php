@@ -12,10 +12,18 @@ use App\Models\UserAnswer;
 use App\Models\EngagementLog;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+use App\Services\AdminAnalyticsService;
 
 class AdminController extends Controller
 {
+    public function __construct(
+        protected AdminAnalyticsService $analyticsService
+    ) {}
+
     /**
      * Inertia Pages with Preloaded Data
      */
@@ -25,7 +33,7 @@ class AdminController extends Controller
             'initialCarouselImages' => \App\Models\CarouselImage::where('isActive', true)->orderBy('order', 'asc')->get(),
             'initialBlogPosts' => \App\Models\BlogPost::with('author:id,name')->orderBy('order', 'asc')->orderBy('created_at', 'desc')->take(100)->get(),
             'initialVideos' => \App\Models\Video::orderBy('order', 'asc')->orderBy('created_at', 'desc')->take(100)->get(),
-            'initialUsers' => \App\Models\User::latest()->get(),
+            'initialUsers' => \App\Models\User::latest()->take(50)->get(),
             'initialQuickQuestions' => \App\Models\QuickQuestion::where('isActive', true)->orderBy('created_at', 'desc')->get(),
             'initialFireCodeSections' => \App\Models\FireCodeSection::orderBy('sectionNum')->get(),
         ]);
@@ -34,10 +42,10 @@ class AdminController extends Controller
     public function analyticsPage()
     {
         return \Inertia\Inertia::render('Admin/Analytics', [
-            'initialSummaryData' => $this->getSummaryAnalytics(),
-            'initialBarangayData' => $this->getBarangayAnalytics(),
-            'initialDemographicData' => $this->getDemographicAnalytics(),
-            'initialKnowledgeData' => $this->getKnowledgeAnalytics(),
+            'initialSummaryData' => $this->analyticsService->getCachedAnalytics('summary'),
+            'initialBarangayData' => $this->analyticsService->getCachedAnalytics('barangay'),
+            'initialDemographicData' => $this->analyticsService->getCachedAnalytics('demographics'),
+            'initialKnowledgeData' => $this->analyticsService->getCachedAnalytics('knowledge'),
         ]);
     }
 
@@ -66,32 +74,47 @@ class AdminController extends Controller
      */
     public function users(Request $request)
     {
-        $query = User::query();
+        try {
+            $query = User::query();
 
-        if ($role = $request->query('role')) {
-            $query->where('role', $role);
-        }
-        if ($search = $request->query('search')) {
-            $query->where(function ($q) use ($search) {
-                $q->where('name', 'ilike', "%{$search}%")
-                    ->orWhere('username', 'ilike', "%{$search}%");
-            });
-        }
+            if ($role = $request->query('role')) {
+                $query->where('role', $role);
+            }
+            if ($search = $request->query('search')) {
+                $query->where(function ($q) use ($search) {
+                    $q->where('name', 'ilike', "%{$search}%")
+                        ->orWhere('username', 'ilike', "%{$search}%");
+                });
+            }
 
-        return response()->json([
-            'success' => true,
-            'users' => $query->latest()->get(),
-        ]);
+            $perPage = min((int)$request->query('per_page', $request->query('limit', 50)), 100);
+            $users = $query->latest()->paginate($perPage);
+
+            return response()->json([
+                'success' => true,
+                'users' => $users,
+            ]);
+        } catch (\Throwable $e) {
+            Log::error('Error loading users: ' . $e->getMessage());
+            return response()->json(['success' => false, 'error' => 'Failed to load users.'], 500);
+        }
     }
 
     public function updateUserRole(Request $request, $id)
     {
         $request->validate(['role' => 'required|in:kid,adult,professional,admin']);
 
-        $user = User::findOrFail($id);
-        $user->update(['role' => $request->role]);
+        try {
+            $user = User::findOrFail($id);
+            $user->update(['role' => $request->role]);
 
-        return response()->json(['success' => true, 'user' => $user]);
+            return response()->json(['success' => true, 'user' => $user]);
+        } catch (ModelNotFoundException $e) {
+            return response()->json(['success' => false, 'error' => 'User not found'], 404);
+        } catch (\Throwable $e) {
+            Log::error("Error updating user role for user {$id}: " . $e->getMessage());
+            return response()->json(['success' => false, 'error' => 'Failed to update user role'], 500);
+        }
     }
 
     public function updateUserPermissions(Request $request, $id)
@@ -107,62 +130,69 @@ class AdminController extends Controller
             return response()->json(['success' => false, 'error' => 'Incorrect admin password'], 400);
         }
 
-        $user = User::findOrFail($id);
-        $action = $request->input('action', 'add');
-        
-        $permissionToRoleMap = [
-            'accessKids' => 'kid',
-            'accessAdult' => 'adult',
-            'accessProfessional' => 'professional',
-            'isAdmin' => 'admin',
-        ];
+        try {
+            $user = User::findOrFail($id);
+            $action = $request->input('action', 'add');
+            
+            $permissionToRoleMap = [
+                'accessKids' => 'kid',
+                'accessAdult' => 'adult',
+                'accessProfessional' => 'professional',
+                'isAdmin' => 'admin',
+            ];
 
-        if (!isset($permissionToRoleMap[$request->permission])) {
-            return response()->json(['success' => false, 'error' => 'Invalid permission'], 400);
-        }
-
-        $targetRole = $permissionToRoleMap[$request->permission];
-        $currentRoles = array_filter(array_map('trim', explode(',', $user->role ?? 'guest')));
-
-        if ($action === 'remove') {
-            $currentRoles = array_diff($currentRoles, [$targetRole]);
-            if (empty($currentRoles)) {
-                $currentRoles = ['guest'];
+            if (!isset($permissionToRoleMap[$request->permission])) {
+                return response()->json(['success' => false, 'error' => 'Invalid permission'], 400);
             }
-        } else {
-            $currentRoles = array_diff($currentRoles, ['guest']);
-            if (!in_array($targetRole, $currentRoles)) {
-                $currentRoles[] = $targetRole;
+
+            $targetRole = $permissionToRoleMap[$request->permission];
+            $currentRoles = array_filter(array_map('trim', explode(',', $user->role ?? 'guest')));
+
+            if ($action === 'remove') {
+                $currentRoles = array_diff($currentRoles, [$targetRole]);
+                if (empty($currentRoles)) {
+                    $currentRoles = ['guest'];
+                }
+            } else {
+                $currentRoles = array_diff($currentRoles, ['guest']);
+                if (!in_array($targetRole, $currentRoles)) {
+                    $currentRoles[] = $targetRole;
+                }
             }
-        }
 
-        $currentRoles = array_unique($currentRoles);
-        $newRoleString = implode(',', $currentRoles);
-        $user->update(['role' => $newRoleString]);
+            $currentRoles = array_unique($currentRoles);
+            $newRoleString = implode(',', $currentRoles);
+            $user->update(['role' => $newRoleString]);
 
-        // Send a welcome notification for new BFP Professional personnel
-        if ($action === 'add' && $targetRole === 'professional') {
-            // Only skip if there's already an unread welcome notification pending
-            $unreadWelcomeExists = \App\Models\Notification::where('userId', $user->id)
-                ->where('category', 'professional')
-                ->where('title', 'Welcome BFP Personnel!')
-                ->where('isRead', false)
-                ->exists();
+            // Send a welcome notification for new BFP Professional personnel
+            if ($action === 'add' && $targetRole === 'professional') {
+                // Only skip if there's already an unread welcome notification pending
+                $unreadWelcomeExists = \App\Models\Notification::where('userId', $user->id)
+                    ->where('category', 'professional')
+                    ->where('title', 'Welcome BFP Personnel!')
+                    ->where('isRead', false)
+                    ->exists();
 
-            if (!$unreadWelcomeExists) {
-                \App\Models\Notification::create([
-                    'userId'    => $user->id,
-                    'title'     => 'Welcome BFP Personnel!',
-                    'message'   => 'Congratulations! You have been granted BFP Professional access. You can now access professional Training Videos, study the Training Manuals, and explore the dispatch game, "The Right Call".',
-                    'type'      => 'success',
-                    'category'  => 'professional',
-                    'isRead'    => false,
-                    'createdAt' => now(),
-                ]);
+                if (!$unreadWelcomeExists) {
+                    \App\Models\Notification::create([
+                        'userId'    => $user->id,
+                        'title'     => 'Welcome BFP Personnel!',
+                        'message'   => 'Congratulations! You have been granted BFP Professional access. You can now access professional Training Videos, study the Training Manuals, and explore the dispatch game, "The Right Call".',
+                        'type'      => 'success',
+                        'category'  => 'professional',
+                        'isRead'    => false,
+                        'createdAt' => now(),
+                    ]);
+                }
             }
-        }
 
-        return response()->json(['success' => true, 'user' => $user]);
+            return response()->json(['success' => true, 'user' => $user]);
+        } catch (ModelNotFoundException $e) {
+            return response()->json(['success' => false, 'error' => 'User not found'], 404);
+        } catch (\Throwable $e) {
+            Log::error("Error updating permissions for user {$id}: " . $e->getMessage());
+            return response()->json(['success' => false, 'error' => 'Failed to update user permissions'], 500);
+        }
     }
 
     /**
@@ -179,35 +209,44 @@ class AdminController extends Controller
             'image_url' => 'nullable|string|max:2048',
         ]);
 
-        $imageUrl = strip_tags($request->input('imageUrl') ?? $request->input('image_url'));
-        $post = BlogPost::create([
-            'title' => strip_tags($request->input('title')),
-            'excerpt' => strip_tags($request->input('excerpt')),
-            'content' => $request->input('content'), // Keep HTML for rich text editor, rely on frontend sanitization
-            'category' => strip_tags($request->input('category')),
-            'imageUrl' => $imageUrl,
-            'authorId' => $request->user()->id,
-        ]);
+        try {
+            $imageUrl = strip_tags($request->input('imageUrl') ?? $request->input('image_url'));
+            $post = BlogPost::create([
+                'title' => strip_tags($request->input('title')),
+                'excerpt' => strip_tags($request->input('excerpt')),
+                'content' => $request->input('content'), // Keep HTML for rich text editor, rely on frontend sanitization
+                'category' => strip_tags($request->input('category')),
+                'imageUrl' => $imageUrl,
+                'authorId' => $request->user()->id,
+            ]);
 
-        $targetRoles = ['admin'];
-        if ($post->category === 'professional') {
-            $targetRoles[] = 'professional';
-        } elseif ($post->category === 'adult') {
-            $targetRoles[] = 'adult';
-        } else {
-            $targetRoles[] = 'kid';
-            $targetRoles[] = 'adult'; // Adults can also access Kids area
+            $targetRoles = ['admin'];
+            if ($post->category === 'professional') {
+                $targetRoles[] = 'professional';
+            } elseif ($post->category === 'adult') {
+                $targetRoles[] = 'adult';
+            } else {
+                $targetRoles[] = 'kid';
+                $targetRoles[] = 'adult'; // Adults can also access Kids area
+            }
+
+            try {
+                \App\Models\Notification::broadcast(
+                    'New Article Published',
+                    'A new article "' . $post->title . '" has been published. Check it out!',
+                    'blog',
+                    $post->category,
+                    $targetRoles
+                );
+            } catch (\Throwable $notifEx) {
+                Log::warning('Failed to broadcast article notification: ' . $notifEx->getMessage());
+            }
+
+            return response()->json(['success' => true, 'post' => $post], 201);
+        } catch (\Throwable $e) {
+            Log::error('Error creating blog post: ' . $e->getMessage());
+            return response()->json(['success' => false, 'error' => 'Failed to create article.'], 500);
         }
-
-        \App\Models\Notification::broadcast(
-            'New Article Published',
-            'A new article "' . $post->title . '" has been published. Check it out!',
-            'blog',
-            $post->category,
-            $targetRoles
-        );
-
-        return response()->json(['success' => true, 'post' => $post], 201);
     }
 
     public function updatePost(Request $request, $id)
@@ -223,27 +262,41 @@ class AdminController extends Controller
             'image_url' => 'nullable|string|max:2048',
         ]);
 
-        $post = BlogPost::findOrFail($id);
-        $updates = $request->only('title', 'excerpt', 'content', 'category');
-        if (isset($updates['title'])) $updates['title'] = strip_tags($updates['title']);
-        if (isset($updates['excerpt'])) $updates['excerpt'] = strip_tags($updates['excerpt']);
-        if (isset($updates['category'])) $updates['category'] = strip_tags($updates['category']);
+        try {
+            $post = BlogPost::findOrFail($id);
+            $updates = $request->only('title', 'excerpt', 'content', 'category');
+            if (isset($updates['title'])) $updates['title'] = strip_tags($updates['title']);
+            if (isset($updates['excerpt'])) $updates['excerpt'] = strip_tags($updates['excerpt']);
+            if (isset($updates['category'])) $updates['category'] = strip_tags($updates['category']);
 
-        if ($request->has('isPublished') || $request->has('is_published')) {
-            $updates['isPublished'] = $request->boolean($request->has('isPublished') ? 'isPublished' : 'is_published');
+            if ($request->has('isPublished') || $request->has('is_published')) {
+                $updates['isPublished'] = $request->boolean($request->has('isPublished') ? 'isPublished' : 'is_published');
+            }
+            if ($request->has('imageUrl') || $request->has('image_url')) {
+                $updates['imageUrl'] = $request->input('imageUrl') ?? $request->input('image_url');
+            }
+            
+            $post->update($updates);
+            return response()->json(['success' => true, 'post' => $post]);
+        } catch (ModelNotFoundException $e) {
+            return response()->json(['success' => false, 'error' => 'Article not found.'], 404);
+        } catch (\Throwable $e) {
+            Log::error("Error updating post {$id}: " . $e->getMessage());
+            return response()->json(['success' => false, 'error' => 'Failed to update article.'], 500);
         }
-        if ($request->has('imageUrl') || $request->has('image_url')) {
-            $updates['imageUrl'] = $request->input('imageUrl') ?? $request->input('image_url');
-        }
-        
-        $post->update($updates);
-        return response()->json(['success' => true, 'post' => $post]);
     }
 
     public function deletePost($id)
     {
-        BlogPost::findOrFail($id)->delete();
-        return response()->json(['success' => true, 'message' => 'Post deleted']);
+        try {
+            BlogPost::findOrFail($id)->delete();
+            return response()->json(['success' => true, 'message' => 'Post deleted']);
+        } catch (ModelNotFoundException $e) {
+            return response()->json(['success' => false, 'error' => 'Article not found.'], 404);
+        } catch (\Throwable $e) {
+            Log::error("Error deleting post {$id}: " . $e->getMessage());
+            return response()->json(['success' => false, 'error' => 'Failed to delete article.'], 500);
+        }
     }
 
     public function createVideo(Request $request)
@@ -257,36 +310,45 @@ class AdminController extends Controller
             'youtube_id' => 'nullable|string|max:200',
         ]);
 
-        $youtubeId = $request->input('youtubeId') ?? $request->input('youtube_id');
-        $youtubeId = $this->extractYoutubeId($youtubeId);
+        try {
+            $youtubeId = $request->input('youtubeId') ?? $request->input('youtube_id');
+            $youtubeId = $this->extractYoutubeId($youtubeId);
 
-        $video = Video::create([
-            'title' => strip_tags($request->input('title')),
-            'description' => strip_tags($request->input('description')),
-            'category' => strip_tags($request->input('category')),
-            'duration' => strip_tags($request->input('duration')),
-            'youtubeId' => $youtubeId,
-        ]);
+            $video = Video::create([
+                'title' => strip_tags($request->input('title')),
+                'description' => strip_tags($request->input('description')),
+                'category' => strip_tags($request->input('category')),
+                'duration' => strip_tags($request->input('duration')),
+                'youtubeId' => $youtubeId,
+            ]);
 
-        $targetRoles = ['admin'];
-        if ($video->category === 'professional') {
-            $targetRoles[] = 'professional';
-        } elseif ($video->category === 'adult') {
-            $targetRoles[] = 'adult';
-        } else {
-            $targetRoles[] = 'kid';
-            $targetRoles[] = 'adult'; // Adults can also access Kids area
+            $targetRoles = ['admin'];
+            if ($video->category === 'professional') {
+                $targetRoles[] = 'professional';
+            } elseif ($video->category === 'adult') {
+                $targetRoles[] = 'adult';
+            } else {
+                $targetRoles[] = 'kid';
+                $targetRoles[] = 'adult'; // Adults can also access Kids area
+            }
+
+            try {
+                \App\Models\Notification::broadcast(
+                    'New Video Added',
+                    'A new video "' . $video->title . '" has been added.',
+                    'video',
+                    $video->category,
+                    $targetRoles
+                );
+            } catch (\Throwable $notifEx) {
+                Log::warning('Failed to broadcast video notification: ' . $notifEx->getMessage());
+            }
+
+            return response()->json(['success' => true, 'video' => $video], 201);
+        } catch (\Throwable $e) {
+            Log::error('Error creating video: ' . $e->getMessage());
+            return response()->json(['success' => false, 'error' => 'Failed to create video.'], 500);
         }
-
-        \App\Models\Notification::broadcast(
-            'New Video Added',
-            'A new video "' . $video->title . '" has been added.',
-            'video',
-            $video->category,
-            $targetRoles
-        );
-
-        return response()->json(['success' => true, 'video' => $video], 201);
     }
 
     public function updateVideo(Request $request, $id)
@@ -302,24 +364,31 @@ class AdminController extends Controller
             'youtube_id' => 'nullable|string|max:200',
         ]);
 
-        $video = Video::findOrFail($id);
-        $updates = $request->only('title', 'description', 'category', 'duration');
-        if (isset($updates['title'])) $updates['title'] = strip_tags($updates['title']);
-        if (isset($updates['description'])) $updates['description'] = strip_tags($updates['description']);
-        if (isset($updates['category'])) $updates['category'] = strip_tags($updates['category']);
-        if (isset($updates['duration'])) $updates['duration'] = strip_tags($updates['duration']);
-        
-        if ($request->has('isActive') || $request->has('is_active')) {
-            $updates['isActive'] = $request->boolean($request->has('isActive') ? 'isActive' : 'is_active');
+        try {
+            $video = Video::findOrFail($id);
+            $updates = $request->only('title', 'description', 'category', 'duration');
+            if (isset($updates['title'])) $updates['title'] = strip_tags($updates['title']);
+            if (isset($updates['description'])) $updates['description'] = strip_tags($updates['description']);
+            if (isset($updates['category'])) $updates['category'] = strip_tags($updates['category']);
+            if (isset($updates['duration'])) $updates['duration'] = strip_tags($updates['duration']);
+            
+            if ($request->has('isActive') || $request->has('is_active')) {
+                $updates['isActive'] = $request->boolean($request->has('isActive') ? 'isActive' : 'is_active');
+            }
+            
+            if ($request->has('youtubeId') || $request->has('youtube_id')) {
+                $youtubeId = $request->input('youtubeId') ?? $request->input('youtube_id');
+                $updates['youtubeId'] = $this->extractYoutubeId($youtubeId);
+            }
+            
+            $video->update($updates);
+            return response()->json(['success' => true, 'video' => $video]);
+        } catch (ModelNotFoundException $e) {
+            return response()->json(['success' => false, 'error' => 'Video not found.'], 404);
+        } catch (\Throwable $e) {
+            Log::error("Error updating video {$id}: " . $e->getMessage());
+            return response()->json(['success' => false, 'error' => 'Failed to update video.'], 500);
         }
-        
-        if ($request->has('youtubeId') || $request->has('youtube_id')) {
-            $youtubeId = $request->input('youtubeId') ?? $request->input('youtube_id');
-            $updates['youtubeId'] = $this->extractYoutubeId($youtubeId);
-        }
-        
-        $video->update($updates);
-        return response()->json(['success' => true, 'video' => $video]);
     }
 
     private function extractYoutubeId($value)
@@ -356,8 +425,15 @@ class AdminController extends Controller
 
     public function deleteVideo($id)
     {
-        Video::findOrFail($id)->delete();
-        return response()->json(['success' => true, 'message' => 'Video deleted']);
+        try {
+            Video::findOrFail($id)->delete();
+            return response()->json(['success' => true, 'message' => 'Video deleted']);
+        } catch (ModelNotFoundException $e) {
+            return response()->json(['success' => false, 'error' => 'Video not found.'], 404);
+        } catch (\Throwable $e) {
+            Log::error("Error deleting video {$id}: " . $e->getMessage());
+            return response()->json(['success' => false, 'error' => 'Failed to delete video.'], 500);
+        }
     }
 
     public function createQuestion(Request $request)
@@ -374,11 +450,16 @@ class AdminController extends Controller
             'order' => 'nullable|integer',
         ]);
 
-        $question = AssessmentQuestion::create($request->only(
-            'question', 'options', 'correctAnswer', 'explanation',
-            'category', 'difficulty', 'forRoles', 'type', 'order'
-        ));
-        return response()->json(['success' => true, 'question' => $question], 201);
+        try {
+            $question = AssessmentQuestion::create($request->only(
+                'question', 'options', 'correctAnswer', 'explanation',
+                'category', 'difficulty', 'forRoles', 'type', 'order'
+            ));
+            return response()->json(['success' => true, 'question' => $question], 201);
+        } catch (\Throwable $e) {
+            Log::error('Error creating assessment question: ' . $e->getMessage());
+            return response()->json(['success' => false, 'error' => 'Failed to create question.'], 500);
+        }
     }
 
     public function updateQuestion(Request $request, $id)
@@ -396,18 +477,32 @@ class AdminController extends Controller
             'order' => 'nullable|integer',
         ]);
 
-        $question = AssessmentQuestion::findOrFail($id);
-        $question->update($request->only(
-            'question', 'options', 'correctAnswer', 'explanation',
-            'category', 'difficulty', 'isActive', 'forRoles', 'type', 'order'
-        ));
-        return response()->json(['success' => true, 'question' => $question]);
+        try {
+            $question = AssessmentQuestion::findOrFail($id);
+            $question->update($request->only(
+                'question', 'options', 'correctAnswer', 'explanation',
+                'category', 'difficulty', 'isActive', 'forRoles', 'type', 'order'
+            ));
+            return response()->json(['success' => true, 'question' => $question]);
+        } catch (ModelNotFoundException $e) {
+            return response()->json(['success' => false, 'error' => 'Question not found.'], 404);
+        } catch (\Throwable $e) {
+            Log::error("Error updating question {$id}: " . $e->getMessage());
+            return response()->json(['success' => false, 'error' => 'Failed to update question.'], 500);
+        }
     }
 
     public function deleteQuestion($id)
     {
-        AssessmentQuestion::findOrFail($id)->delete();
-        return response()->json(['success' => true, 'message' => 'Question deleted']);
+        try {
+            AssessmentQuestion::findOrFail($id)->delete();
+            return response()->json(['success' => true, 'message' => 'Question deleted']);
+        } catch (ModelNotFoundException $e) {
+            return response()->json(['success' => false, 'error' => 'Question not found.'], 404);
+        } catch (\Throwable $e) {
+            Log::error("Error deleting question {$id}: " . $e->getMessage());
+            return response()->json(['success' => false, 'error' => 'Failed to delete question.'], 500);
+        }
     }
 
     public function createQuickQuestion(Request $request)
@@ -419,28 +514,47 @@ class AdminController extends Controller
             'isActive' => 'sometimes|boolean'
         ]);
         
-        $question = \App\Models\QuickQuestion::create($payload);
-        return response()->json(['success' => true, 'question' => $question], 201);
+        try {
+            $question = \App\Models\QuickQuestion::create($payload);
+            return response()->json(['success' => true, 'question' => $question], 201);
+        } catch (\Throwable $e) {
+            Log::error('Error creating quick question: ' . $e->getMessage());
+            return response()->json(['success' => false, 'error' => 'Failed to create quick question.'], 500);
+        }
     }
 
     public function updateQuickQuestion(Request $request, $id)
     {
-        $question = \App\Models\QuickQuestion::findOrFail($id);
         $payload = $request->validate([
             'category' => 'sometimes|required|string',
             'questionText' => 'sometimes|required|string',
             'responseText' => 'sometimes|required|string',
             'isActive' => 'sometimes|boolean'
         ]);
-        
-        $question->update($payload);
-        return response()->json(['success' => true, 'question' => $question]);
+
+        try {
+            $question = \App\Models\QuickQuestion::findOrFail($id);
+            $question->update($payload);
+            return response()->json(['success' => true, 'question' => $question]);
+        } catch (ModelNotFoundException $e) {
+            return response()->json(['success' => false, 'error' => 'Quick question not found.'], 404);
+        } catch (\Throwable $e) {
+            Log::error("Error updating quick question {$id}: " . $e->getMessage());
+            return response()->json(['success' => false, 'error' => 'Failed to update quick question.'], 500);
+        }
     }
 
     public function deleteQuickQuestion($id)
     {
-        \App\Models\QuickQuestion::findOrFail($id)->delete();
-        return response()->json(['success' => true, 'message' => 'Question deleted']);
+        try {
+            \App\Models\QuickQuestion::findOrFail($id)->delete();
+            return response()->json(['success' => true, 'message' => 'Question deleted']);
+        } catch (ModelNotFoundException $e) {
+            return response()->json(['success' => false, 'error' => 'Quick question not found.'], 404);
+        } catch (\Throwable $e) {
+            Log::error("Error deleting quick question {$id}: " . $e->getMessage());
+            return response()->json(['success' => false, 'error' => 'Failed to delete quick question.'], 500);
+        }
     }
 
     /**
@@ -468,63 +582,77 @@ class AdminController extends Controller
             'isActive' => 'boolean',
         ])->validate();
 
-        $image = CarouselImage::create($payload);
-
-        return response()->json(['success' => true, 'image' => $image], 201);
+        try {
+            $image = CarouselImage::create($payload);
+            return response()->json(['success' => true, 'image' => $image], 201);
+        } catch (\Throwable $e) {
+            Log::error('Error creating carousel image: ' . $e->getMessage());
+            return response()->json(['success' => false, 'error' => 'Failed to create carousel image.'], 500);
+        }
     }
 
     public function updateCarouselImage(Request $request, $id)
     {
-        $image = CarouselImage::findOrFail($id);
-
         $request->validate([
             'title' => 'sometimes|required|string|max:255',
             'altText' => 'nullable|string|max:255',
             'alt_text' => 'nullable|string|max:255',
             'alt' => 'nullable|string|max:255',
             'imageUrl' => 'nullable|string|max:2048',
-            'imageUrl' => 'nullable|string|max:2048',
             'url' => 'nullable|string|max:2048',
             'order' => 'nullable|integer|min:0',
         ]);
 
-        $updates = [];
+        try {
+            $image = CarouselImage::findOrFail($id);
 
-        if ($request->has('title')) {
-            $updates['title'] = $request->input('title');
+            $updates = [];
+
+            if ($request->has('title')) {
+                $updates['title'] = $request->input('title');
+            }
+
+            if ($request->hasAny(['altText', 'alt_text', 'alt'])) {
+                $updates['altText'] = $request->input('altText')
+                    ?? $request->input('alt_text')
+                    ?? $request->input('alt');
+            }
+
+            if ($request->hasAny(['imageUrl', 'url'])) {
+                $updates['imageUrl'] = $request->input('imageUrl')
+                    ?? $request->input('url');
+            }
+
+            if ($request->has('order')) {
+                $updates['order'] = $request->integer('order');
+            }
+
+            if ($request->has('isActive')) {
+                $updates['isActive'] = $request->boolean('isActive');
+            }
+
+            $image->update($updates);
+
+            return response()->json(['success' => true, 'image' => $image]);
+        } catch (ModelNotFoundException $e) {
+            return response()->json(['success' => false, 'error' => 'Carousel image not found.'], 404);
+        } catch (\Throwable $e) {
+            Log::error("Error updating carousel image {$id}: " . $e->getMessage());
+            return response()->json(['success' => false, 'error' => 'Failed to update carousel image.'], 500);
         }
-
-        if ($request->hasAny(['altText', 'alt_text', 'alt'])) {
-            $updates['altText'] = $request->input('altText')
-                ?? $request->input('alt_text')
-                ?? $request->input('alt');
-        }
-
-        if ($request->hasAny(['imageUrl', 'imageUrl', 'url'])) {
-            $updates['imageUrl'] = $request->input('imageUrl')
-                ?? $request->input('imageUrl')
-                ?? $request->input('url');
-        }
-
-        if ($request->has('order')) {
-            $updates['order'] = $request->integer('order');
-        }
-
-        if ($request->hasAny(['isActive', 'isActive'])) {
-            $updates['isActive'] = $request->boolean(
-                $request->has('isActive') ? 'isActive' : 'isActive'
-            );
-        }
-
-        $image->update($updates);
-
-        return response()->json(['success' => true, 'image' => $image]);
     }
 
     public function deleteCarouselImage($id)
     {
-        CarouselImage::findOrFail($id)->delete();
-        return response()->json(['success' => true, 'message' => 'Image deleted']);
+        try {
+            CarouselImage::findOrFail($id)->delete();
+            return response()->json(['success' => true, 'message' => 'Image deleted']);
+        } catch (ModelNotFoundException $e) {
+            return response()->json(['success' => false, 'error' => 'Carousel image not found.'], 404);
+        } catch (\Throwable $e) {
+            Log::error("Error deleting carousel image {$id}: " . $e->getMessage());
+            return response()->json(['success' => false, 'error' => 'Failed to delete carousel image.'], 500);
+        }
     }
 
     /**
@@ -536,20 +664,25 @@ class AdminController extends Controller
             'file' => 'required|file|image|mimes:jpeg,png,jpg,webp,gif|mimetypes:image/jpeg,image/png,image/webp,image/gif|max:15360', // 15MB max
         ]);
 
-        if ($request->hasFile('file')) {
-            $file = $request->file('file');
-            
-            // Store file in non-executable public storage with random hash name
-            $path = $file->store('uploads', 'public');
-            $url = asset('storage/' . $path);
+        try {
+            if ($request->hasFile('file')) {
+                $file = $request->file('file');
+                
+                // Store file in non-executable public storage with random hash name
+                $path = $file->store('uploads', 'public');
+                $url = asset('storage/' . $path);
 
-            return response()->json([
-                'success' => true,
-                'url' => $url
-            ]);
+                return response()->json([
+                    'success' => true,
+                    'url' => $url
+                ]);
+            }
+
+            return response()->json(['success' => false, 'error' => 'No file uploaded'], 400);
+        } catch (\Throwable $e) {
+            Log::error('Error uploading image: ' . $e->getMessage());
+            return response()->json(['success' => false, 'error' => 'Image upload failed.'], 500);
         }
-
-        return response()->json(['success' => false, 'error' => 'No file uploaded'], 400);
     }
 
     /**
@@ -559,21 +692,8 @@ class AdminController extends Controller
     {
         $type = $request->query('type', 'summary');
 
-        // Cache admin analytics for 5 minutes to make the dashboard lightning fast
-        $data = \Illuminate\Support\Facades\Cache::remember("admin_analytics_{$type}", now()->addMinutes(5), function () use ($type) {
-            switch ($type) {
-                case 'summary':
-                    return $this->getSummaryAnalytics();
-                case 'barangay':
-                    return $this->getBarangayAnalytics();
-                case 'demographics':
-                    return $this->getDemographicAnalytics();
-                case 'knowledge':
-                    return $this->getKnowledgeAnalytics();
-                default:
-                    return null;
-            }
-        });
+        // Retrieve cached analytics through domain service
+        $data = $this->analyticsService->getCachedAnalytics($type);
 
         if (!$data) {
             return response()->json(['error' => 'Invalid type'], 400);
@@ -589,35 +709,56 @@ class AdminController extends Controller
     {
         $request->validate(['imageIds' => 'required|array']);
         
-        foreach ($request->imageIds as $index => $id) {
-            CarouselImage::where('id', $id)->update(['order' => $index]);
+        try {
+            DB::transaction(function () use ($request) {
+                foreach ($request->imageIds as $index => $id) {
+                    CarouselImage::where('id', $id)->update(['order' => $index]);
+                }
+            });
+            
+            return response()->json(CarouselImage::orderBy('order')->get());
+        } catch (\Throwable $e) {
+            Log::error('Error reordering carousel: ' . $e->getMessage());
+            return response()->json(['error' => 'Failed to reorder carousel.'], 500);
         }
-        
-        return response()->json(CarouselImage::orderBy('order')->get());
     }
 
     public function reorderBlogs(Request $request)
     {
         $request->validate(['blogIds' => 'required|array']);
         
-        foreach ($request->blogIds as $index => $id) {
-            BlogPost::where('id', $id)->update(['order' => $index]);
+        try {
+            DB::transaction(function () use ($request) {
+                foreach ($request->blogIds as $index => $id) {
+                    BlogPost::where('id', $id)->update(['order' => $index]);
+                }
+            });
+            
+            $allBlogs = BlogPost::with('author:id,name')->orderBy('order', 'asc')->orderBy('created_at', 'desc')->get();
+            return response()->json($allBlogs);
+        } catch (\Throwable $e) {
+            Log::error('Error reordering blogs: ' . $e->getMessage());
+            return response()->json(['error' => 'Failed to reorder blogs.'], 500);
         }
-        
-        $allBlogs = BlogPost::with('author:id,name')->orderBy('order', 'asc')->orderBy('created_at', 'desc')->get();
-        return response()->json($allBlogs);
     }
 
     public function reorderVideos(Request $request)
     {
         $request->validate(['videoIds' => 'required|array']);
         
-        foreach ($request->videoIds as $index => $id) {
-            Video::where('id', $id)->update(['order' => $index]);
+        try {
+            DB::transaction(function () use ($request) {
+                foreach ($request->videoIds as $index => $id) {
+                    Video::where('id', $id)->update(['order' => $index]);
+                }
+            });
+            
+            $allVideos = Video::orderBy('order', 'asc')->orderBy('created_at', 'desc')->get();
+            return response()->json($allVideos);
+        } catch (\Throwable $e) {
+            Log::error('Error reordering videos: ' . $e->getMessage());
+            return response()->json(['error' => 'Failed to reorder videos.'], 500);
         }
-        
-        $allVideos = Video::orderBy('order', 'asc')->orderBy('created_at', 'desc')->get();
-        return response()->json($allVideos);
     }
 
     /**
@@ -636,45 +777,50 @@ class AdminController extends Controller
             'file' => 'required|file|mimes:pdf|mimetypes:application/pdf|max:51200', // 50MB max
         ]);
 
-        if ($request->hasFile('file')) {
-            $file = $request->file('file');
+        try {
+            if ($request->hasFile('file')) {
+                $file = $request->file('file');
 
-            // 1. Verify PDF Magic Bytes (%PDF-)
-            $filePath = $file->getRealPath();
-            $header = file_get_contents($filePath, false, null, 0, 4);
-            if ($header !== '%PDF') {
+                // 1. Verify PDF Magic Bytes (%PDF-)
+                $filePath = $file->getRealPath();
+                $header = file_get_contents($filePath, false, null, 0, 4);
+                if ($header !== '%PDF') {
+                    return response()->json([
+                        'success' => false,
+                        'error' => 'The uploaded file is not a valid PDF document.'
+                    ], 422);
+                }
+
+                // 2. Sanitize filename to prevent directory traversal or script execution
+                $originalName = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
+                $cleanSlug = Str::slug($originalName);
+                if (empty($cleanSlug)) {
+                    $cleanSlug = 'manual_document';
+                }
+                $cleanSlug = substr($cleanSlug, 0, 50);
+                $filename = time() . '_' . $cleanSlug . '_' . Str::random(8) . '.pdf';
+                
+                // 3. Ensure the destination directory exists
+                $destinationPath = public_path('modules/bfp_manuals');
+                if (!file_exists($destinationPath)) {
+                    mkdir($destinationPath, 0755, true);
+                }
+                
+                // 4. Move file securely
+                $file->move($destinationPath, $filename);
+
                 return response()->json([
-                    'success' => false,
-                    'error' => 'The uploaded file is not a valid PDF document.'
-                ], 422);
+                    'success' => true,
+                    'filename' => $filename,
+                    'url' => asset('modules/bfp_manuals/' . $filename)
+                ]);
             }
 
-            // 2. Sanitize filename to prevent directory traversal or script execution
-            $originalName = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
-            $cleanSlug = Str::slug($originalName);
-            if (empty($cleanSlug)) {
-                $cleanSlug = 'manual_document';
-            }
-            $cleanSlug = substr($cleanSlug, 0, 50);
-            $filename = time() . '_' . $cleanSlug . '_' . Str::random(8) . '.pdf';
-            
-            // 3. Ensure the destination directory exists
-            $destinationPath = public_path('modules/bfp_manuals');
-            if (!file_exists($destinationPath)) {
-                mkdir($destinationPath, 0755, true);
-            }
-            
-            // 4. Move file securely
-            $file->move($destinationPath, $filename);
-
-            return response()->json([
-                'success' => true,
-                'filename' => $filename,
-                'url' => asset('modules/bfp_manuals/' . $filename)
-            ]);
+            return response()->json(['success' => false, 'error' => 'No file uploaded'], 400);
+        } catch (\Throwable $e) {
+            Log::error('Error uploading manual: ' . $e->getMessage());
+            return response()->json(['success' => false, 'error' => 'Failed to upload manual.'], 500);
         }
-
-        return response()->json(['success' => false, 'error' => 'No file uploaded'], 400);
     }
 
     public function createFireCode(Request $request)
@@ -689,24 +835,27 @@ class AdminController extends Controller
             'parentSectionId' => 'nullable|integer',
         ]);
 
-        $section = \App\Models\FireCodeSection::create([
-            'title' => strip_tags($request->title),
-            'category' => strip_tags($request->category),
-            'sectionNum' => $request->sectionNum ? strip_tags($request->sectionNum) : null,
-            'content' => $request->input('content') ? strip_tags($request->input('content')) : null,
-            'description' => $request->description ? strip_tags($request->description) : null,
-            'filename' => $request->filename ? strip_tags($request->filename) : null,
-            'parentSectionId' => $request->parentSectionId,
-            'order' => $request->order ?? 0,
-        ]);
+        try {
+            $section = \App\Models\FireCodeSection::create([
+                'title' => strip_tags($request->title),
+                'category' => strip_tags($request->category),
+                'sectionNum' => $request->sectionNum ? strip_tags($request->sectionNum) : null,
+                'content' => $request->input('content') ? strip_tags($request->input('content')) : null,
+                'description' => $request->description ? strip_tags($request->description) : null,
+                'filename' => $request->filename ? strip_tags($request->filename) : null,
+                'parentSectionId' => $request->parentSectionId,
+                'order' => $request->order ?? 0,
+            ]);
 
-        return response()->json(['success' => true, 'section' => $section], 201);
+            return response()->json(['success' => true, 'section' => $section], 201);
+        } catch (\Throwable $e) {
+            Log::error('Error creating fire code section: ' . $e->getMessage());
+            return response()->json(['success' => false, 'error' => 'Failed to create fire code section.'], 500);
+        }
     }
 
     public function updateFireCode(Request $request, $id)
     {
-        $section = \App\Models\FireCodeSection::findOrFail($id);
-        
         $request->validate([
             'title' => 'sometimes|required|string|max:255',
             'category' => 'sometimes|required|string|max:100',
@@ -717,251 +866,61 @@ class AdminController extends Controller
             'parentSectionId' => 'nullable|integer',
         ]);
 
-        $updates = [];
-        if ($request->has('title')) {
-            $updates['title'] = strip_tags($request->title);
-        }
-        if ($request->has('category')) {
-            $updates['category'] = strip_tags($request->category);
-        }
-        if ($request->has('sectionNum')) {
-            $updates['sectionNum'] = $request->sectionNum ? strip_tags($request->sectionNum) : null;
-        }
-        if ($request->has('content')) {
-            $updates['content'] = $request->input('content') ? strip_tags($request->input('content')) : null;
-        }
-        if ($request->has('description')) {
-            $updates['description'] = $request->description ? strip_tags($request->description) : null;
-        }
-        if ($request->has('filename')) {
-            $updates['filename'] = $request->filename ? strip_tags($request->filename) : null;
-        }
-        if ($request->has('parentSectionId')) {
-            $updates['parentSectionId'] = $request->parentSectionId;
-        }
+        try {
+            $section = \App\Models\FireCodeSection::findOrFail($id);
+            $updates = [];
+            if ($request->has('title')) {
+                $updates['title'] = strip_tags($request->title);
+            }
+            if ($request->has('category')) {
+                $updates['category'] = strip_tags($request->category);
+            }
+            if ($request->has('sectionNum')) {
+                $updates['sectionNum'] = $request->sectionNum ? strip_tags($request->sectionNum) : null;
+            }
+            if ($request->has('content')) {
+                $updates['content'] = $request->input('content') ? strip_tags($request->input('content')) : null;
+            }
+            if ($request->has('description')) {
+                $updates['description'] = $request->description ? strip_tags($request->description) : null;
+            }
+            if ($request->has('filename')) {
+                $updates['filename'] = $request->filename ? strip_tags($request->filename) : null;
+            }
+            if ($request->has('parentSectionId')) {
+                $updates['parentSectionId'] = $request->parentSectionId;
+            }
 
-        $section->update($updates);
+            $section->update($updates);
 
-        return response()->json(['success' => true, 'section' => $section]);
+            return response()->json(['success' => true, 'section' => $section]);
+        } catch (ModelNotFoundException $e) {
+            return response()->json(['success' => false, 'error' => 'Section not found.'], 404);
+        } catch (\Throwable $e) {
+            Log::error("Error updating fire code section {$id}: " . $e->getMessage());
+            return response()->json(['success' => false, 'error' => 'Failed to update fire code section.'], 500);
+        }
     }
 
     public function deleteFireCode($id)
     {
-        \App\Models\FireCodeSection::findOrFail($id)->delete();
-        return response()->json(['success' => true, 'message' => 'Section deleted']);
-    }
-
-    private function getSummaryAnalytics()
-    {
-        $todayStart = now()->startOfDay();
-        $weekAgo = now()->subDays(7);
-
-        // Fetch all basic user aggregates in one single fast query
-        $stats = User::where('role', '!=', 'admin')
-            ->selectRaw('
-                COUNT(*) as total_users,
-                SUM(CASE WHEN "profileCompleted" = true THEN 1 ELSE 0 END) as profiles_completed,
-                SUM(CASE WHEN "preTestScore" IS NOT NULL THEN 1 ELSE 0 END) as pre_tests_taken,
-                SUM(CASE WHEN "postTestScore" IS NOT NULL THEN 1 ELSE 0 END) as post_tests_taken,
-                AVG("preTestScore") as avg_pre_test,
-                AVG("postTestScore") as avg_post_test,
-                SUM("engagementPoints") as total_engagement,
-                AVG("engagementPoints") as avg_engagement
-            ')
-            ->first();
-
-        $activeToday = EngagementLog::where('loggedAt', '>=', $todayStart)->distinct('userId')->count('userId');
-        $activeThisWeek = EngagementLog::where('loggedAt', '>=', $weekAgo)->distinct('userId')->count('userId');
-
-        // Calculate average improvement directly in the database
-        $avgImprovementStats = User::where('role', '!=', 'admin')
-            ->whereNotNull('preTestScore')
-            ->whereNotNull('postTestScore')
-            ->selectRaw('AVG("postTestScore" - "preTestScore") as avg_improvement')
-            ->first();
-            
-        $avgImprovement = (float) ($avgImprovementStats->avg_improvement ?? 0);
-
-        return [
-            'totalUsers' => (int) ($stats->total_users ?? 0),
-            'profilesCompleted' => (int) ($stats->profiles_completed ?? 0),
-            'preTestsTaken' => (int) ($stats->pre_tests_taken ?? 0),
-            'postTestsTaken' => (int) ($stats->post_tests_taken ?? 0),
-            'averagePreTestScore' => round((float) ($stats->avg_pre_test ?? 0), 2),
-            'averagePostTestScore' => round((float) ($stats->avg_post_test ?? 0), 2),
-            'averageImprovement' => round($avgImprovement, 2),
-            'totalEngagementPoints' => (int) ($stats->total_engagement ?? 0),
-            'avgEngagementPerUser' => round((float) ($stats->avg_engagement ?? 0), 2),
-            'activeUsersToday' => $activeToday,
-            'activeUsersThisWeek' => $activeThisWeek,
-        ];
-    }
-
-    private function getBarangayAnalytics()
-    {
-        $barangays = [
-            'Alipit', 'Bagumbayan', 'Bubukal', 'Calian', 'Duhat', 'Gatid', 'Jasaan', 'Labuin', 'Malinao',
-            'Oogong', 'Pagsawitan', 'Palasan', 'Patimbao', 'Poblacion I', 'Poblacion II', 'Poblacion III',
-            'Poblacion IV', 'Poblacion V', 'San Jose', 'San Juan', 'San Pablo Norte', 'San Pablo Sur',
-            'Santisima Cruz', 'Santo Angel Central', 'Santo Angel Norte', 'Santo Angel Sur'
-        ];
-
-        $stats = User::where('role', '!=', 'admin')
-            ->whereIn('barangay', $barangays)
-            ->selectRaw('
-                barangay,
-                COUNT(*) as user_count,
-                SUM(CASE WHEN "profileCompleted" = true THEN 1 ELSE 0 END) as profiles_completed,
-                AVG("preTestScore") as avg_pre_test,
-                AVG("postTestScore") as avg_post_test,
-                AVG(CASE WHEN "preTestScore" IS NOT NULL AND "postTestScore" IS NOT NULL THEN (("postTestScore" - "preTestScore") / 15.0) * 100 ELSE NULL END) as avg_improvement
-            ')
-            ->groupBy('barangay')
-            ->get()
-            ->keyBy('barangay');
-
-        $barangayData = [];
-
-        foreach ($barangays as $barangay) {
-            $stat = $stats->get($barangay);
-
-            if (!$stat) {
-                $barangayData[] = [
-                    'barangay' => $barangay,
-                    'userCount' => 0,
-                    'avgPreTestScore' => 0,
-                    'avgPostTestScore' => 0,
-                    'avgImprovement' => 0,
-                    'profilesCompleted' => 0,
-                ];
-            } else {
-                $barangayData[] = [
-                    'barangay' => $barangay,
-                    'userCount' => (int) $stat->user_count,
-                    'avgPreTestScore' => round((float) $stat->avg_pre_test, 2),
-                    'avgPostTestScore' => round((float) $stat->avg_post_test, 2),
-                    'avgImprovement' => round((float) $stat->avg_improvement, 1),
-                    'profilesCompleted' => (int) $stat->profiles_completed,
-                ];
-            }
+        try {
+            \App\Models\FireCodeSection::findOrFail($id)->delete();
+            return response()->json(['success' => true, 'message' => 'Section deleted']);
+        } catch (ModelNotFoundException $e) {
+            return response()->json(['success' => false, 'error' => 'Section not found.'], 404);
+        } catch (\Throwable $e) {
+            Log::error("Error deleting fire code section {$id}: " . $e->getMessage());
+            return response()->json(['success' => false, 'error' => 'Failed to delete fire code section.'], 500);
         }
-
-        usort($barangayData, fn($a, $b) => $b['userCount'] <=> $a['userCount']);
-        return $barangayData;
-    }
-
-    private function getDemographicAnalytics()
-    {
-        $gender = User::where('role', '!=', 'admin')->where('profileCompleted', true)
-            ->whereNotNull('gender')->groupBy('gender')
-            ->selectRaw('gender, count(*) as count')->pluck('count', 'gender')->toArray();
-
-        $occupations = User::where('role', '!=', 'admin')->where('profileCompleted', true)
-            ->whereNotNull('occupation')->groupBy('occupation')
-            ->selectRaw('occupation, count(*) as count')->pluck('count', 'occupation')->toArray();
-
-        $schools = User::where('role', '!=', 'admin')->where('profileCompleted', true)
-            ->whereNotNull('school')->groupBy('school')
-            ->selectRaw('school, count(*) as count')->pluck('count', 'school')->toArray();
-
-        $ageStats = User::where('role', '!=', 'admin')->where('profileCompleted', true)
-            ->whereNotNull('age')
-            ->selectRaw('
-                SUM(CASE WHEN age < 10 THEN 1 ELSE 0 END) as "Under 10",
-                SUM(CASE WHEN age >= 10 AND age < 15 THEN 1 ELSE 0 END) as "10 to 14",
-                SUM(CASE WHEN age >= 15 AND age < 18 THEN 1 ELSE 0 END) as "15-17",
-                SUM(CASE WHEN age >= 18 AND age < 25 THEN 1 ELSE 0 END) as "18-24",
-                SUM(CASE WHEN age >= 25 AND age < 35 THEN 1 ELSE 0 END) as "25-34",
-                SUM(CASE WHEN age >= 35 AND age < 45 THEN 1 ELSE 0 END) as "35-44",
-                SUM(CASE WHEN age >= 45 AND age < 55 THEN 1 ELSE 0 END) as "45-54",
-                SUM(CASE WHEN age >= 55 THEN 1 ELSE 0 END) as "55+"
-            ')->first();
-
-        $ageGroups = [
-            "Under 10" => (int) ($ageStats->{'Under 10'} ?? 0),
-            "10 to 14" => (int) ($ageStats->{'10 to 14'} ?? 0),
-            "15-17" => (int) ($ageStats->{'15-17'} ?? 0),
-            "18-24" => (int) ($ageStats->{'18-24'} ?? 0),
-            "25-34" => (int) ($ageStats->{'25-34'} ?? 0),
-            "35-44" => (int) ($ageStats->{'35-44'} ?? 0),
-            "45-54" => (int) ($ageStats->{'45-54'} ?? 0),
-            "55+" => (int) ($ageStats->{'55+'} ?? 0),
-        ];
-
-        return [
-            'gender' => empty($gender) ? new \stdClass() : $gender,
-            'ageGroups' => empty($ageGroups) ? new \stdClass() : $ageGroups,
-            'occupations' => empty($occupations) ? new \stdClass() : $occupations,
-            'schools' => empty($schools) ? new \stdClass() : $schools
-        ];
-    }
-
-    private function getKnowledgeAnalytics()
-    {
-        $categories = [
-            'Fire Prevention', 'Emergency Response', 'Electrical Safety', 
-            'Kitchen Safety', 'Evacuation Planning', 'Fire Extinguisher Use',
-            'Smoke Detector Knowledge', 'General Safety Awareness'
-        ];
-
-        $questionCounts = AssessmentQuestion::where('isActive', true)
-            ->whereIn('category', $categories)
-            ->groupBy('category')
-            ->selectRaw('category, count(*) as total')
-            ->pluck('total', 'category');
-
-        $stats = DB::table('user_answers')
-            ->join('assessment_questions', 'user_answers.questionId', '=', 'assessment_questions.id')
-            ->where('assessment_questions.isActive', true)
-            ->whereIn('assessment_questions.category', $categories)
-            ->selectRaw('
-                assessment_questions.category, 
-                count(user_answers.id) as total_answers, 
-                sum(case when user_answers."isCorrect" = true then 1 else 0 end) as correct_answers
-            ')
-            ->groupBy('assessment_questions.category')
-            ->get()
-            ->keyBy('category');
-
-        $knowledgeData = [];
-
-        foreach ($categories as $category) {
-            $totalQuestions = $questionCounts->get($category, 0);
-            $stat = $stats->get($category);
-
-            if ($totalQuestions === 0 || !$stat) {
-                $knowledgeData[] = [
-                    'category' => $category,
-                    'avgScore' => 0,
-                    'totalQuestions' => $totalQuestions,
-                    'correctAnswers' => 0,
-                    'incorrectAnswers' => 0,
-                ];
-                continue;
-            }
-
-            $totalAnswers = (int) $stat->total_answers;
-            $correctAnswers = (int) $stat->correct_answers;
-
-            $knowledgeData[] = [
-                'category' => $category,
-                'avgScore' => $totalAnswers > 0 ? round(($correctAnswers / $totalAnswers) * 100) : 0,
-                'totalQuestions' => $totalQuestions,
-                'correctAnswers' => $correctAnswers,
-                'incorrectAnswers' => $totalAnswers - $correctAnswers,
-            ];
-        }
-
-        usort($knowledgeData, fn($a, $b) => $a['avgScore'] <=> $b['avgScore']);
-        return $knowledgeData;
     }
 
     public function exportCsv()
     {
-        $summary     = $this->getSummaryAnalytics();
-        $barangay    = $this->getBarangayAnalytics();
-        $demographics = $this->getDemographicAnalytics();
-        $knowledge   = $this->getKnowledgeAnalytics();
+        $summary      = $this->analyticsService->getSummaryAnalytics();
+        $barangay     = $this->analyticsService->getBarangayAnalytics();
+        $demographics = $this->analyticsService->getDemographicAnalytics();
+        $knowledge    = $this->analyticsService->getKnowledgeAnalytics();
         
         $schoolRes = app(\App\Http\Controllers\SchoolAnalyticsController::class)->analytics();
         $schoolData = json_decode($schoolRes->getContent(), true);
@@ -977,227 +936,31 @@ class AdminController extends Controller
             'Cache-Control'       => 'no-cache, no-store, must-revalidate',
         ];
 
-        $callback = function () use ($summary, $barangay, $demographics, $knowledge, $schoolData, $feedbackData) {
-            $out = fopen('php://output', 'w');
-
-            // ── HEADER & TITLE ─────────────────────────────────────────
-            fputcsv($out, ['SAFESCAPE PLATFORM ANALYTICS REPORT']);
-            fputcsv($out, ['Exported Date:', now()->format('Y-m-d')]);
-            fputcsv($out, ['Exported Time:', now()->format('H:i:s')]);
-            fputcsv($out, ['Location:', 'Santa Cruz, Laguna, Philippines']);
-            fputcsv($out, []);
-
-            // ── SUMMARY ──────────────────────────────────────────────
-            fputcsv($out, ['=== SUMMARY STATISTICS ===']);
-            fputcsv($out, ['Metric', 'Value']);
-            fputcsv($out, ['Total Users',              $summary['totalUsers']]);
-            fputcsv($out, ['Profiles Completed',       $summary['profilesCompleted']]);
-            fputcsv($out, ['Pre-Tests Taken',          $summary['preTestsTaken']]);
-            fputcsv($out, ['Post-Tests Taken',         $summary['postTestsTaken']]);
-            fputcsv($out, ['Avg Pre-Test Score',       $summary['averagePreTestScore']]);
-            fputcsv($out, ['Avg Post-Test Score',      $summary['averagePostTestScore']]);
-            fputcsv($out, ['Avg Improvement (points)', $summary['averageImprovement']]);
-            fputcsv($out, ['Total Engagement Points',  $summary['totalEngagementPoints']]);
-            fputcsv($out, ['Avg Engagement / User',    $summary['avgEngagementPerUser']]);
-            fputcsv($out, ['Active Users Today',       $summary['activeUsersToday']]);
-            fputcsv($out, ['Active Users This Week',   $summary['activeUsersThisWeek']]);
-            fputcsv($out, []);
-
-            // ── BY BARANGAY ───────────────────────────────────────────
-            fputcsv($out, ['=== USERS BY BARANGAY ===']);
-            fputcsv($out, ['Barangay', 'Users', 'Profiles Completed', 'Avg Pre-Test', 'Avg Post-Test', 'Percentage']);
-            foreach ($barangay as $b) {
-                if (($b['userCount'] ?? 0) === 0) continue;
-                fputcsv($out, [
-                    $b['barangay'],
-                    $b['userCount'],
-                    $b['profilesCompleted'],
-                    $b['avgPreTestScore'],
-                    $b['avgPostTestScore'],
-                    ($b['avgImprovement'] >= 0 ? '+' : '') . $b['avgImprovement'] . '%',
-                ]);
-            }
-            fputcsv($out, []);
-
-            // ── DEMOGRAPHICS ──────────────────────────────────────────
-            fputcsv($out, ['=== DEMOGRAPHICS ===']);
-
-            fputcsv($out, ['Gender', 'Count']);
-            foreach ((array)$demographics['gender'] as $label => $count) {
-                fputcsv($out, [$label, $count]);
-            }
-            fputcsv($out, []);
-
-            fputcsv($out, ['Age Group', 'Count']);
-            foreach ((array)$demographics['ageGroups'] as $label => $count) {
-                fputcsv($out, [$label, $count]);
-            }
-            fputcsv($out, []);
-
-            fputcsv($out, ['Occupation', 'Count']);
-            foreach ((array)$demographics['occupations'] as $label => $count) {
-                fputcsv($out, [$label, $count]);
-            }
-            fputcsv($out, []);
-
-            fputcsv($out, ['School', 'Count']);
-            foreach ((array)$demographics['schools'] as $label => $count) {
-                fputcsv($out, [$label, $count]);
-            }
-            fputcsv($out, []);
-
-            // ── KNOWLEDGE GAPS ────────────────────────────────────────
-            fputcsv($out, ['=== KNOWLEDGE GAP ANALYSIS ===']);
-            fputcsv($out, ['Category', 'Avg Score (%)', 'Total Questions', 'Correct Answers', 'Incorrect Answers']);
-            foreach ($knowledge as $k) {
-                fputcsv($out, [
-                    $k['category'],
-                    $k['avgScore'],
-                    $k['totalQuestions'],
-                    $k['correctAnswers'],
-                    $k['incorrectAnswers'],
-                ]);
-            }
-            fputcsv($out, []);
-
-            // ── SCHOOL ANALYTICS ──────────────────────────────────────
-            fputcsv($out, ['=== SCHOOL LEADERBOARD ===']);
-            fputcsv($out, ['Rank', 'School Name', 'Type', 'Students', 'Avg Pre-Test', 'Avg Post-Test', 'Increase', 'Completion Rate (%)']);
-            
-            if (isset($schoolData['schools']) && is_array($schoolData['schools'])) {
-                $rank = 1;
-                foreach ($schoolData['schools'] as $school) {
-                    $increase = $school['averagePreTestScore'] > 0 
-                        ? round((($school['averagePostTestScore'] - $school['averagePreTestScore']) / $school['averagePreTestScore']) * 100) 
-                        : 0;
-                        
-                    $increaseStr = $increase > 0 ? "+{$increase}%" : "{$increase}%";
-                        
-                    fputcsv($out, [
-                        $rank++,
-                        $school['name'] ?? 'Unknown',
-                        $school['type'] ?? 'Unknown',
-                        $school['totalStudents'] ?? 0,
-                        $school['averagePreTestScore'] ?? 0,
-                        $school['averagePostTestScore'] ?? 0,
-                        $increaseStr,
-                        ($school['averageCompletionRate'] ?? 0) . '%'
-                    ]);
-                }
-            }
-            fputcsv($out, []);
-
-            // ── FEEDBACK ANALYTICS ────────────────────────────────────
-            fputcsv($out, ['=== FEEDBACK BY FEATURE ===']);
-            fputcsv($out, ['Feature Name', 'Type', 'Average Rating', 'Total Reviews']);
-            
-            if (isset($feedbackData['byFeatureName']) && is_array($feedbackData['byFeatureName'])) {
-                foreach ($feedbackData['byFeatureName'] as $feature) {
-                    fputcsv($out, [
-                        $feature['featureName'] ?? 'Unknown',
-                        $feature['featureType'] ?? 'Unknown',
-                        ($feature['avgRating'] ?? 0) . '/5',
-                        $feature['totalCount'] ?? 0
-                    ]);
-                }
-            }
-            fputcsv($out, []);
-
-            // Calculate highlights for narrative
-            $lowestCategory = 'N/A';
-            $lowestScore = 100;
-            $highestCategory = 'N/A';
-            $highestScore = 0;
-            if (!empty($knowledge)) {
-                foreach ($knowledge as $k) {
-                    $score = $k['avgScore'];
-                    if ($score < $lowestScore) {
-                        $lowestScore = $score;
-                        $lowestCategory = $k['category'];
-                    }
-                    if ($score > $highestScore) {
-                        $highestScore = $score;
-                        $highestCategory = $k['category'];
-                    }
-                }
-            }
-
-            $topSchool = 'N/A';
-            $topSchoolScore = 0;
-            if (isset($schoolData['schools']) && is_array($schoolData['schools']) && !empty($schoolData['schools'])) {
-                $topS = $schoolData['schools'][0];
-                $topSchool = $topS['name'] ?? 'Unknown';
-                $topSchoolScore = $topS['averagePostTestScore'] ?? 0;
-            }
-
-            $topFeature = 'N/A';
-            $topFeatureRating = 0;
-            if (isset($feedbackData['byFeatureName']) && is_array($feedbackData['byFeatureName']) && !empty($feedbackData['byFeatureName'])) {
-                $features = $feedbackData['byFeatureName'];
-                usort($features, fn($a, $b) => ($b['avgRating'] ?? 0) <=> ($a['avgRating'] ?? 0));
-                $topF = $features[0];
-                $topFeature = $topF['featureName'] ?? 'Unknown';
-                $topFeatureRating = $topF['avgRating'] ?? 0;
-            }
-
-            // ── EXECUTIVE SUMMARY & NARRATIVE REPORT ──────────────────
-            fputcsv($out, ['=== EXECUTIVE SUMMARY & NARRATIVE REPORT ===']);
-            
-            fputcsv($out, ['Report Summary:']);
-            $lines = explode("\n", wordwrap("This report details the learning and engagement progress on the Berong Safescape E-Learning platform in Santa Cruz, Laguna.", 80));
-            foreach ($lines as $l) {
-                fputcsv($out, [$l]);
-            }
-            fputcsv($out, []);
-
-            fputcsv($out, ['1. PLATFORM REACH:']);
-            $lines = explode("\n", wordwrap("A total of {$summary['totalUsers']} users are registered on the platform. Out of these, {$summary['profilesCompleted']} users have fully completed their profiles, showing strong adoption across targeted demographics.", 80));
-            foreach ($lines as $l) {
-                fputcsv($out, [$l]);
-            }
-            fputcsv($out, []);
-
-            fputcsv($out, ['2. ASSESSMENT GRADUATION:']);
-            $lines = explode("\n", wordwrap("{$summary['preTestsTaken']} users completed the pre-test, while {$summary['postTestsTaken']} users completed the post-test. The average score increased from {$summary['averagePreTestScore']}/15 to {$summary['averagePostTestScore']}/15, representing an average points improvement of +{$summary['averageImprovement']} per user.", 80));
-            foreach ($lines as $l) {
-                fputcsv($out, [$l]);
-            }
-            fputcsv($out, []);
-
-            if ($lowestCategory !== 'N/A') {
-                fputcsv($out, ['3. KNOWLEDGE GAP EVALUATION:']);
-                $lines = explode("\n", wordwrap("The category requiring the most focus is '{$lowestCategory}' (average score of {$lowestScore}%), indicating an area for curriculum expansion. Conversely, users showed the highest mastery in '{$highestCategory}' (average score of {$highestScore}%).", 80));
-                foreach ($lines as $l) {
-                    fputcsv($out, [$l]);
-                }
-                fputcsv($out, []);
-            }
-
-            if ($topSchool !== 'N/A') {
-                fputcsv($out, ['4. SCHOOL ADOPTION:']);
-                $lines = explode("\n", wordwrap("'{$topSchool}' is the leading educational institution on the platform, achieving a top average post-test score of {$topSchoolScore}/15.", 80));
-                foreach ($lines as $l) {
-                    fputcsv($out, [$l]);
-                }
-                fputcsv($out, []);
-            }
-
-            if ($topFeature !== 'N/A') {
-                fputcsv($out, ['5. USER FEEDBACK:']);
-                $lines = explode("\n", wordwrap("The platform has received positive reviews. The highest-rated interactive feature is '{$topFeature}' with an average rating of {$topFeatureRating}/5.", 80));
-                foreach ($lines as $l) {
-                    fputcsv($out, [$l]);
-                }
-                fputcsv($out, []);
-            }
-
-            fputcsv($out, ['Conclusion:']);
-            fputcsv($out, ['Report concluded successfully. Exported by Safescape Administrator.']);
-
-            fclose($out);
-        };
+        $callback = $this->analyticsService->createCsvStreamCallback(
+            $summary, $barangay, $demographics, $knowledge, $schoolData, $feedbackData
+        );
 
         return response()->stream($callback, 200, $headers);
+    }
+
+    private function getSummaryAnalytics()
+    {
+        return $this->analyticsService->getSummaryAnalytics();
+    }
+
+    private function getBarangayAnalytics()
+    {
+        return $this->analyticsService->getBarangayAnalytics();
+    }
+
+    private function getDemographicAnalytics()
+    {
+        return $this->analyticsService->getDemographicAnalytics();
+    }
+
+    private function getKnowledgeAnalytics()
+    {
+        return $this->analyticsService->getKnowledgeAnalytics();
     }
 
     public function getMaintenanceSettings()
@@ -1234,34 +997,39 @@ class AdminController extends Controller
 
         $request->validate($rules);
 
-        if ($request->is_active) {
-            if (!\Illuminate\Support\Facades\Hash::check($request->password, $request->user()->password)) {
-                return response()->json([
-                    'success' => false,
-                    'errors' => [
-                        'password' => ['Incorrect password confirmation.']
-                    ]
-                ], 422);
+        try {
+            if ($request->is_active) {
+                if (!\Illuminate\Support\Facades\Hash::check($request->password, $request->user()->password)) {
+                    return response()->json([
+                        'success' => false,
+                        'errors' => [
+                            'password' => ['Incorrect password confirmation.']
+                        ]
+                    ], 422);
+                }
             }
+
+            $settings = [
+                'is_active' => $request->is_active,
+                'message' => $request->message,
+                'warning_active' => $request->warning_active,
+                'warning_message' => $request->warning_message,
+                'scheduled_at' => $request->scheduled_at,
+                'duration_minutes' => $request->duration_minutes ?? 15,
+                'maintenance_duration_minutes' => $request->maintenance_duration_minutes ?? 30,
+                'maintenance_until' => $request->maintenance_until,
+            ];
+
+            \App\Models\SystemSetting::setVal('maintenance_mode', $settings, 'System maintenance mode settings');
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Maintenance configurations updated successfully.',
+                'settings' => $settings
+            ]);
+        } catch (\Throwable $e) {
+            Log::error('Error updating maintenance settings: ' . $e->getMessage());
+            return response()->json(['success' => false, 'error' => 'Failed to update maintenance settings.'], 500);
         }
-
-        $settings = [
-            'is_active' => $request->is_active,
-            'message' => $request->message,
-            'warning_active' => $request->warning_active,
-            'warning_message' => $request->warning_message,
-            'scheduled_at' => $request->scheduled_at,
-            'duration_minutes' => $request->duration_minutes ?? 15,
-            'maintenance_duration_minutes' => $request->maintenance_duration_minutes ?? 30,
-            'maintenance_until' => $request->maintenance_until,
-        ];
-
-        \App\Models\SystemSetting::setVal('maintenance_mode', $settings, 'System maintenance mode settings');
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Maintenance configurations updated successfully.',
-            'settings' => $settings
-        ]);
     }
 }

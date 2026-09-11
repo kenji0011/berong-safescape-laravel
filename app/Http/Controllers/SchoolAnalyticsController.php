@@ -5,6 +5,10 @@ namespace App\Http\Controllers;
 use App\Models\School;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class SchoolAnalyticsController extends Controller
 {
@@ -14,11 +18,16 @@ class SchoolAnalyticsController extends Controller
      */
     public function index()
     {
-        $schools = School::where('isActive', true)
-            ->orderBy('name')
-            ->get(['id', 'name', 'type', 'district', 'address']);
+        try {
+            $schools = School::where('isActive', true)
+                ->orderBy('name')
+                ->get(['id', 'name', 'type', 'district', 'address']);
 
-        return response()->json(['schools' => $schools]);
+            return response()->json(['schools' => $schools]);
+        } catch (\Throwable $e) {
+            Log::error('Error loading schools: ' . $e->getMessage());
+            return response()->json(['error' => 'Failed to load schools list.'], 500);
+        }
     }
 
     /**
@@ -27,32 +36,37 @@ class SchoolAnalyticsController extends Controller
      */
     public function analytics()
     {
-        // Cache the heavy analytics calculations for 5 minutes
-        $data = \Illuminate\Support\Facades\Cache::remember('school_analytics_live', now()->addMinutes(5), function () {
-            // Recalculate live analytics for all schools in 2 fast grouped queries
-            School::recalculateAllAnalytics();
+        try {
+            // Cache the heavy analytics calculations for 5 minutes
+            $data = Cache::remember('school_analytics_live', now()->addMinutes(5), function () {
+                // Recalculate live analytics for all schools in 2 fast grouped queries
+                School::recalculateAllAnalytics();
 
-            // Reload after recalculation with fresh data, showing only active schools
-            $schools = School::where('isActive', true)
-                ->where('totalStudents', '>', 0)
-                ->orderByDesc('averagePostTestScore')
-                ->orderByDesc('averageCompletionRate')
-                ->orderByDesc('totalStudents')
-                ->get();
+                // Reload after recalculation with fresh data, showing only active schools
+                $schools = School::where('isActive', true)
+                    ->where('totalStudents', '>', 0)
+                    ->orderByDesc('averagePostTestScore')
+                    ->orderByDesc('averageCompletionRate')
+                    ->orderByDesc('totalStudents')
+                    ->get();
 
-            return [
-                'schools' => $schools,
-                'summary' => [
-                    'totalSchools' => $schools->count(),
-                    'totalStudents' => $schools->sum('totalStudents'),
-                    'overallAvgPreTest' => round($schools->avg('averagePreTestScore'), 1),
-                    'overallAvgPostTest' => round($schools->avg('averagePostTestScore'), 1),
-                    'overallCompletionRate' => round($schools->avg('averageCompletionRate'), 1),
-                ]
-            ];
-        });
+                return [
+                    'schools' => $schools,
+                    'summary' => [
+                        'totalSchools' => $schools->count(),
+                        'totalStudents' => $schools->sum('totalStudents'),
+                        'overallAvgPreTest' => round($schools->avg('averagePreTestScore'), 1),
+                        'overallAvgPostTest' => round($schools->avg('averagePostTestScore'), 1),
+                        'overallCompletionRate' => round($schools->avg('averageCompletionRate'), 1),
+                    ]
+                ];
+            });
 
-        return response()->json($data);
+            return response()->json($data);
+        } catch (\Throwable $e) {
+            Log::error('Error loading school analytics: ' . $e->getMessage());
+            return response()->json(['error' => 'Failed to load school analytics.'], 500);
+        }
     }
 
     /**
@@ -61,18 +75,25 @@ class SchoolAnalyticsController extends Controller
      */
     public function show(int $id)
     {
-        $school = School::findOrFail($id);
-        $school->recalculateAnalytics();
+        try {
+            $school = School::findOrFail($id);
+            $school->recalculateAnalytics();
 
-        $users = User::where('school_id', $id)
-            ->select('id', 'name', 'firstName', 'lastName', 'role', 'preTestScore', 'postTestScore', 'engagementPoints', 'created_at')
-            ->orderByDesc('postTestScore')
-            ->get();
+            $users = User::where('school_id', $id)
+                ->select('id', 'name', 'firstName', 'lastName', 'role', 'preTestScore', 'postTestScore', 'engagementPoints', 'created_at')
+                ->orderByDesc('postTestScore')
+                ->get();
 
-        return response()->json([
-            'school' => $school,
-            'users' => $users,
-        ]);
+            return response()->json([
+                'school' => $school,
+                'users' => $users,
+            ]);
+        } catch (ModelNotFoundException $e) {
+            return response()->json(['error' => 'School not found.'], 404);
+        } catch (\Throwable $e) {
+            Log::error("Error loading school analytics for school {$id}: " . $e->getMessage());
+            return response()->json(['error' => 'Failed to load school details.'], 500);
+        }
     }
 
     /**
@@ -92,12 +113,19 @@ class SchoolAnalyticsController extends Controller
             'contactPhone' => 'nullable|string|max:20',
         ]);
 
-        $school = School::create($request->only([
-            'name', 'address', 'region', 'district', 'type',
-            'contactPerson', 'contactEmail', 'contactPhone',
-        ]));
+        try {
+            $school = School::create($request->only([
+                'name', 'address', 'region', 'district', 'type',
+                'contactPerson', 'contactEmail', 'contactPhone',
+            ]));
 
-        return response()->json(['school' => $school], 201);
+            Cache::forget('school_analytics_live');
+
+            return response()->json(['school' => $school], 201);
+        } catch (\Throwable $e) {
+            Log::error('Error creating school: ' . $e->getMessage());
+            return response()->json(['error' => 'Failed to create school.'], 500);
+        }
     }
 
     /**
@@ -106,19 +134,28 @@ class SchoolAnalyticsController extends Controller
      */
     public function update(Request $request, int $id)
     {
-        $school = School::findOrFail($id);
+        try {
+            $school = School::findOrFail($id);
 
-        $request->validate([
-            'name' => 'required|string|max:255|unique:schools,name,' . $id,
-            'type' => 'required|string|in:elementary,highschool,college',
-        ]);
+            $request->validate([
+                'name' => 'required|string|max:255|unique:schools,name,' . $id,
+                'type' => 'required|string|in:elementary,highschool,college',
+            ]);
 
-        $school->update($request->only([
-            'name', 'address', 'region', 'district', 'type',
-            'contactPerson', 'contactEmail', 'contactPhone', 'isActive',
-        ]));
+            $school->update($request->only([
+                'name', 'address', 'region', 'district', 'type',
+                'contactPerson', 'contactEmail', 'contactPhone', 'isActive',
+            ]));
 
-        return response()->json(['school' => $school]);
+            Cache::forget('school_analytics_live');
+
+            return response()->json(['school' => $school]);
+        } catch (ModelNotFoundException $e) {
+            return response()->json(['error' => 'School not found.'], 404);
+        } catch (\Throwable $e) {
+            Log::error("Error updating school {$id}: " . $e->getMessage());
+            return response()->json(['error' => 'Failed to update school.'], 500);
+        }
     }
 
     /**
@@ -127,11 +164,23 @@ class SchoolAnalyticsController extends Controller
      */
     public function destroy(int $id)
     {
-        $school = School::findOrFail($id);
-        // Nullify school_id for associated users before deleting
-        User::where('school_id', $id)->update(['school_id' => null]);
-        $school->delete();
+        try {
+            $school = School::findOrFail($id);
 
-        return response()->json(['success' => true]);
+            DB::transaction(function () use ($school, $id) {
+                // Nullify school_id for associated users before deleting
+                User::where('school_id', $id)->update(['school_id' => null]);
+                $school->delete();
+            });
+
+            Cache::forget('school_analytics_live');
+
+            return response()->json(['success' => true]);
+        } catch (ModelNotFoundException $e) {
+            return response()->json(['error' => 'School not found.'], 404);
+        } catch (\Throwable $e) {
+            Log::error("Error deleting school {$id}: " . $e->getMessage());
+            return response()->json(['error' => 'Failed to delete school.'], 500);
+        }
     }
 }

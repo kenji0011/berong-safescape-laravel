@@ -2,6 +2,8 @@
 
 namespace App\Services;
 
+use Illuminate\Support\Facades\Log;
+
 class AdaptiveLearningService
 {
     private array $preMean = [10.51, 5.5092, 8.1604];
@@ -21,28 +23,42 @@ class AdaptiveLearningService
      */
     public function getModuleDifficulty($age, $grade, $preAssessmentScore)
     {
-        // 1. Scale the inputs
-        $features = [
-            (float)$age,
-            (float)$grade,
-            (float)$preAssessmentScore
-        ];
+        try {
+            // 1. Scale the inputs
+            $features = [
+                (float)$age,
+                (float)$grade,
+                (float)$preAssessmentScore
+            ];
 
-        $scaledFeatures = [];
-        for ($i = 0; $i < count($features); $i++) {
-            $scaledFeatures[] = ($features[$i] - $this->preMean[$i]) / $this->preScale[$i];
+            $scaledFeatures = [];
+            for ($i = 0; $i < count($features); $i++) {
+                $scaledFeatures[] = ($features[$i] - $this->preMean[$i]) / $this->preScale[$i];
+            }
+
+            // 2. Predict using the generated PHP function
+            $modelPath = base_path('ml_scripts/pre_assessment_model.php');
+            if (file_exists($modelPath)) {
+                require_once $modelPath;
+            }
+
+            if (!function_exists('scorePreAssessment')) {
+                throw new \RuntimeException("ML scoring function 'scorePreAssessment' is unavailable.");
+            }
+
+            /** @var callable $scoreFunc */
+            $scoreFunc = 'scorePreAssessment';
+            $predictionVector = $scoreFunc($scaledFeatures);
+
+            // 3. Find the argmax of the prediction vector
+            $classIndex = $this->argmax($predictionVector);
+
+            // 4. Decode the class
+            return $this->preClasses[$classIndex] ?? 'Medium';
+        } catch (\Throwable $e) {
+            Log::warning('AdaptiveLearningService@getModuleDifficulty failed, falling back to Medium: ' . $e->getMessage());
+            return 'Medium';
         }
-
-        // 2. Predict using the generated PHP function
-        /** @noinspection PhpUndefinedFunctionInspection - loaded via composer autoload */
-        require_once base_path('ml_scripts/pre_assessment_model.php');
-        $predictionVector = \scorePreAssessment($scaledFeatures);
-
-        // 3. Find the argmax of the prediction vector
-        $classIndex = $this->argmax($predictionVector);
-
-        // 4. Decode the class
-        return $this->preClasses[$classIndex];
     }
 
     /**
@@ -50,32 +66,46 @@ class AdaptiveLearningService
      */
     public function getFinalExamDifficulty($age, $grade, $preAssessmentScore, $m1Score, $m2Score, $m3Score, $m4Score)
     {
-        // 1. Scale the inputs (order must match training: age, gradeLevel, preAssessmentScore, m1, m2, m3, m4)
-        $features = [
-            (float)$age,
-            (float)$grade,
-            (float)$preAssessmentScore,
-            (float)$m1Score,
-            (float)$m2Score,
-            (float)$m3Score,
-            (float)$m4Score
-        ];
+        try {
+            // 1. Scale the inputs (order must match training: age, gradeLevel, preAssessmentScore, m1, m2, m3, m4)
+            $features = [
+                (float)$age,
+                (float)$grade,
+                (float)$preAssessmentScore,
+                (float)$m1Score,
+                (float)$m2Score,
+                (float)$m3Score,
+                (float)$m4Score
+            ];
 
-        $scaledFeatures = [];
-        for ($i = 0; $i < count($features); $i++) {
-            $scaledFeatures[] = ($features[$i] - $this->finalMean[$i]) / $this->finalScale[$i];
+            $scaledFeatures = [];
+            for ($i = 0; $i < count($features); $i++) {
+                $scaledFeatures[] = ($features[$i] - $this->finalMean[$i]) / $this->finalScale[$i];
+            }
+
+            // 2. Predict using the generated PHP function
+            $modelPath = base_path('ml_scripts/final_exam_model.php');
+            if (file_exists($modelPath)) {
+                require_once $modelPath;
+            }
+
+            if (!function_exists('scoreFinalExam')) {
+                throw new \RuntimeException("ML scoring function 'scoreFinalExam' is unavailable.");
+            }
+
+            /** @var callable $scoreFunc */
+            $scoreFunc = 'scoreFinalExam';
+            $predictionVector = $scoreFunc($scaledFeatures);
+
+            // 3. Find the argmax of the prediction vector
+            $classIndex = $this->argmax($predictionVector);
+
+            // 4. Decode the class
+            return $this->finalClasses[$classIndex] ?? 'Medium';
+        } catch (\Throwable $e) {
+            Log::warning('AdaptiveLearningService@getFinalExamDifficulty failed, falling back to Medium: ' . $e->getMessage());
+            return 'Medium';
         }
-
-        // 2. Predict using the generated PHP function
-        /** @noinspection PhpUndefinedFunctionInspection - loaded via composer autoload */
-        require_once base_path('ml_scripts/final_exam_model.php');
-        $predictionVector = \scoreFinalExam($scaledFeatures);
-
-        // 3. Find the argmax of the prediction vector
-        $classIndex = $this->argmax($predictionVector);
-
-        // 4. Decode the class
-        return $this->finalClasses[$classIndex];
     }
 
     /**

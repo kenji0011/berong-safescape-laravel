@@ -251,22 +251,35 @@ class ChatbotController extends Controller
             return "No specific context. Rely on general fire safety knowledge.";
         }
 
-        // Cache the parsed CSV data so we don't read the file from disk on every chat message
-        $dataset = \Illuminate\Support\Facades\Cache::rememberForever('bfp_augmented_500_csv', function () use ($csvPath) {
+        // Cache the parsed CSV data with filemtime-based key so updates to the file invalidate cache
+        $mtime = file_exists($csvPath) ? filemtime($csvPath) : 0;
+        $cacheKey = "bfp_augmented_500_csv_{$mtime}";
+
+        $dataset = \Illuminate\Support\Facades\Cache::remember($cacheKey, now()->addDay(), function () use ($csvPath) {
             $rows = [];
-            $handle = fopen($csvPath, "r");
-            $headers = fgetcsv($handle);
-            while (($data = fgetcsv($handle)) !== FALSE) {
-                if (count($data) < 7) continue;
-                $rows[] = [
-                    'question' => strtolower($data[5]),
-                    'answer' => $data[6],
-                    'category' => strtolower($data[1]),
-                    'subcategory' => strtolower($data[2]),
-                    'text' => "Q: " . $data[5] . "\nA: " . $data[6]
-                ];
+            try {
+                if (!file_exists($csvPath) || !is_readable($csvPath)) {
+                    return $rows;
+                }
+                $handle = fopen($csvPath, "r");
+                if ($handle === false) {
+                    return $rows;
+                }
+                $headers = fgetcsv($handle);
+                while (($data = fgetcsv($handle)) !== FALSE) {
+                    if (count($data) < 7) continue;
+                    $rows[] = [
+                        'question' => strtolower($data[5]),
+                        'answer' => $data[6],
+                        'category' => strtolower($data[1]),
+                        'subcategory' => strtolower($data[2]),
+                        'text' => "Q: " . $data[5] . "\nA: " . $data[6]
+                    ];
+                }
+                fclose($handle);
+            } catch (\Throwable $e) {
+                \Illuminate\Support\Facades\Log::error('Error reading BFP CSV: ' . $e->getMessage());
             }
-            fclose($handle);
             return $rows;
         });
 

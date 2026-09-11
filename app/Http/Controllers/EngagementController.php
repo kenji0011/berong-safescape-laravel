@@ -12,16 +12,21 @@ class EngagementController extends Controller
      */
     public function stats()
     {
-        $totalStudents = \App\Models\User::where('role', 'student')->count();
-        
-        // Since we don't have a real websocket/online tracking system yet, 
-        // we simulate a believable "Online Now" count based on total users.
-        $onlineCount = max(12, round($totalStudents * 0.12) + rand(3, 9));
+        try {
+            $totalStudents = \App\Models\User::where('role', 'student')->count();
+            
+            // Since we don't have a real websocket/online tracking system yet, 
+            // we simulate a believable "Online Now" count based on total users.
+            $onlineCount = max(12, round($totalStudents * 0.12) + rand(3, 9));
 
-        return response()->json([
-            'onlineCount' => $onlineCount,
-            'totalStudents' => $totalStudents
-        ]);
+            return response()->json([
+                'onlineCount' => $onlineCount,
+                'totalStudents' => $totalStudents
+            ]);
+        } catch (\Throwable $e) {
+            Log::error('EngagementController@stats failed: ' . $e->getMessage(), ['exception' => $e]);
+            return response()->json(['onlineCount' => 0, 'totalStudents' => 0], 500);
+        }
     }
 
     /**
@@ -50,22 +55,59 @@ class EngagementController extends Controller
                 }
             }
 
-            \App\Models\EngagementLog::create([
-                'userId' => $user->id,
-                'eventType' => $activityType, // Map activityType from frontend to eventType in DB
-                'eventData' => $request->metadata ?? [],
-                'points' => $points,
-                'loggedAt' => now(),
-            ]);
+            \Illuminate\Support\Facades\DB::transaction(function () use ($user, $activityType, $points, $request) {
+                \App\Models\EngagementLog::create([
+                    'userId' => $user->id,
+                    'eventType' => $activityType, // Map activityType from frontend to eventType in DB
+                    'eventData' => $request->metadata ?? [],
+                    'points' => $points,
+                    'loggedAt' => now(),
+                ]);
 
-            // Increment the user's total engagement points
-            $user->increment('engagementPoints', $points);
+                // Increment the user's total engagement points
+                $user->increment('engagementPoints', $points);
+            });
 
             return response()->json(['success' => true]);
-        } catch (\Exception $e) {
-            Log::error('Engagement log error: ' . $e->getMessage());
+        } catch (\Throwable $e) {
+            Log::error('Engagement log error: ' . $e->getMessage(), ['exception' => $e]);
             return response()->json(['success' => false, 'message' => 'Internal Server Error: ' . $e->getMessage()], 500);
         }
+    }
+
+    /**
+     * Get engagement leaderboard.
+     */
+    public function leaderboard()
+    {
+        try {
+            $leaders = \App\Models\User::where('role', 'student')
+                ->select('id', 'name', 'avatar', 'engagementPoints')
+                ->orderBy('engagementPoints', 'desc')
+                ->limit(10)
+                ->get();
+
+            return response()->json($leaders);
+        } catch (\Throwable $e) {
+            Log::error('EngagementController@leaderboard error: ' . $e->getMessage(), ['exception' => $e]);
+            return response()->json([], 500);
+        }
+    }
+
+    /**
+     * Alias to user notifications for backwards compatibility.
+     */
+    public function notifications()
+    {
+        return app(NotificationController::class)->index();
+    }
+
+    /**
+     * Alias to mark all notifications as read.
+     */
+    public function readNotifications()
+    {
+        return app(NotificationController::class)->markAllAsRead();
     }
 
     /**

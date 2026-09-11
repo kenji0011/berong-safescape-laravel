@@ -7,6 +7,7 @@ use App\Models\Video;
 use App\Models\QuickQuestion;
 use App\Models\CarouselImage;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class ContentController extends Controller
 {
@@ -15,15 +16,22 @@ class ContentController extends Controller
      */
     public function blogs(Request $request)
     {
-        $query = BlogPost::with('author:id,name')
-            ->orderBy('order', 'asc')
-            ->orderBy('created_at', 'desc');
+        try {
+            $query = BlogPost::with('author:id,name')
+                ->orderBy('order', 'asc')
+                ->orderBy('created_at', 'desc');
 
-        if ($request->has('category')) {
-            $query->where('category', $request->query('category'));
+            if ($request->has('category')) {
+                $query->where('category', $request->query('category'));
+            }
+
+            $limit = min((int)$request->query('limit', 50), 100);
+
+            return response()->json($query->limit($limit)->get());
+        } catch (\Throwable $e) {
+            Log::error('ContentController@blogs failed: ' . $e->getMessage(), ['exception' => $e]);
+            return response()->json(['error' => 'Failed to retrieve blogs.'], 500);
         }
-
-        return response()->json($query->get());
     }
 
     /**
@@ -31,13 +39,18 @@ class ContentController extends Controller
      */
     public function showBlog(string $id)
     {
-        $blog = BlogPost::with('author:id,name')->find($id);
+        try {
+            $blog = BlogPost::with('author:id,name')->find($id);
 
-        if (!$blog) {
-            return response()->json(['error' => 'Blog not found'], 404);
+            if (!$blog) {
+                return response()->json(['error' => 'Blog not found'], 404);
+            }
+
+            return response()->json($blog);
+        } catch (\Throwable $e) {
+            Log::error('ContentController@showBlog failed: ' . $e->getMessage(), ['id' => $id, 'exception' => $e]);
+            return response()->json(['error' => 'Failed to retrieve blog.'], 500);
         }
-
-        return response()->json($blog);
     }
 
     /**
@@ -45,13 +58,20 @@ class ContentController extends Controller
      */
     public function videos(Request $request)
     {
-        $query = Video::orderBy('order', 'asc')->orderBy('created_at', 'desc');
+        try {
+            $query = Video::orderBy('order', 'asc')->orderBy('created_at', 'desc');
 
-        if ($request->has('category')) {
-            $query->where('category', $request->query('category'));
+            if ($request->has('category')) {
+                $query->where('category', $request->query('category'));
+            }
+
+            $limit = min((int)$request->query('limit', 50), 100);
+
+            return response()->json($query->limit($limit)->get());
+        } catch (\Throwable $e) {
+            Log::error('ContentController@videos failed: ' . $e->getMessage(), ['exception' => $e]);
+            return response()->json(['error' => 'Failed to retrieve videos.'], 500);
         }
-
-        return response()->json($query->get());
     }
 
     /**
@@ -59,11 +79,16 @@ class ContentController extends Controller
      */
     public function questions()
     {
-        $questions = QuickQuestion::where('isActive', true)
-            ->orderBy('created_at', 'desc')
-            ->get();
+        try {
+            $questions = QuickQuestion::where('isActive', true)
+                ->orderBy('created_at', 'desc')
+                ->get();
 
-        return response()->json($questions);
+            return response()->json($questions);
+        } catch (\Throwable $e) {
+            Log::error('ContentController@questions failed: ' . $e->getMessage(), ['exception' => $e]);
+            return response()->json(['error' => 'Failed to retrieve quick questions.'], 500);
+        }
     }
 
     /**
@@ -71,11 +96,16 @@ class ContentController extends Controller
      */
     public function carousel()
     {
-        $images = CarouselImage::where('isActive', true)
-            ->orderBy('order', 'asc')
-            ->get();
+        try {
+            $images = CarouselImage::where('isActive', true)
+                ->orderBy('order', 'asc')
+                ->get();
 
-        return response()->json($images);
+            return response()->json($images);
+        } catch (\Throwable $e) {
+            Log::error('ContentController@carousel failed: ' . $e->getMessage(), ['exception' => $e]);
+            return response()->json(['error' => 'Failed to retrieve carousel images.'], 500);
+        }
     }
 
     /**
@@ -83,8 +113,13 @@ class ContentController extends Controller
      */
     public function manuals()
     {
-        $manuals = \App\Models\FireCodeSection::orderBy('category')->orderBy('sectionNum')->orderBy('id')->get();
-        return response()->json($manuals);
+        try {
+            $manuals = \App\Models\FireCodeSection::orderBy('category')->orderBy('sectionNum')->orderBy('id')->get();
+            return response()->json($manuals);
+        } catch (\Throwable $e) {
+            Log::error('ContentController@manuals failed: ' . $e->getMessage(), ['exception' => $e]);
+            return response()->json(['error' => 'Failed to retrieve fire code manuals.'], 500);
+        }
     }
 
     /**
