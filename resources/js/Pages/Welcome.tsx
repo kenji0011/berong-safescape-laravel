@@ -136,7 +136,7 @@ export default function Welcome({ carouselImages }: { carouselImages?: any[] }) 
               className="fixed left-6 bottom-6 z-50 ss-install-shortcut-btn bg-yellow-400 hover:bg-yellow-500 text-yellow-900 border-2 border-yellow-500 shadow-[0_4px_0_0_#ca8a04] dark:shadow-[0_4px_0_0_#854d0e] active:translate-y-1 active:shadow-none hover:-translate-y-1 transition-all rounded-full px-6 py-3 font-black text-sm flex items-center gap-3 w-max cursor-pointer"
             >
               <Smartphone className="h-5 w-5 shrink-0" />
-              <span className="whitespace-nowrap">Install App</span>
+              <span className="whitespace-nowrap">Create Shortcut</span>
             </motion.button>
           )}
         </AnimatePresence>
