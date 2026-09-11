@@ -151,7 +151,7 @@ const CourseHubPage = ({ initialModules }: CourseHubProps) => {
       if (currentCompleted > savedCount) {
         // Prevent AudioContext warning if user hasn't interacted yet (like on a hard refresh)
         if (typeof navigator !== 'undefined' && 'userActivation' in navigator && !navigator.userActivation.hasBeenActive) {
-          console.log("Skipping completion chime (no user interaction yet).");
+          // Skipping completion chime (no user interaction yet)
         } else {
           // Play synthesized happy chime
           try {

@@ -59,12 +59,114 @@ class RouteNavigationTest extends TestCase
         $this->actingAs($admin)
             ->get('/admin')
             ->assertStatus(200)
-            ->assertInertia(fn (Assert $page) => $page->component('AdminDashboard'));
+            ->assertInertia(fn (Assert $page) => $page
+                ->component('AdminDashboard')
+                ->has('initialCarouselImages')
+                ->has('initialBlogPosts')
+                ->has('initialVideos')
+                ->has('initialUsers')
+                ->has('initialQuickQuestions')
+                ->has('initialFireCodeSections')
+            );
 
         $this->actingAs($admin)
             ->get('/admin/analytics')
             ->assertStatus(200)
             ->assertInertia(fn (Assert $page) => $page->component('Admin/Analytics'));
+    }
+
+    public function test_kids_safescape_modules_render_correct_components(): void
+    {
+        $user = User::factory()->create([
+            'role' => 'kid',
+            'isActive' => true,
+        ]);
+
+        // Module 1 is always unlocked
+        $this->actingAs($user)
+            ->get('/kids/safescape/1')
+            ->assertStatus(200)
+            ->assertInertia(fn (Assert $page) => $page->component('Kids/ModuleOne'));
+
+        // Unlock Module 2 by completing Module 1
+        \App\Models\SafeScapeProgress::create([
+            'userId' => $user->id,
+            'moduleNum' => 1,
+            'sectionData' => json_encode([]),
+            'completed' => true,
+            'completedAt' => now(),
+        ]);
+
+        $this->actingAs($user)
+            ->get('/kids/safescape/2')
+            ->assertStatus(200)
+            ->assertInertia(fn (Assert $page) => $page->component('Kids/ModuleTwo'));
+
+        // Unlock Module 3
+        \App\Models\SafeScapeProgress::create([
+            'userId' => $user->id,
+            'moduleNum' => 2,
+            'sectionData' => json_encode([]),
+            'completed' => true,
+            'completedAt' => now(),
+        ]);
+
+        $this->actingAs($user)
+            ->get('/kids/safescape/3')
+            ->assertStatus(200)
+            ->assertInertia(fn (Assert $page) => $page->component('Kids/ModuleThree'));
+
+        // Unlock Module 4
+        \App\Models\SafeScapeProgress::create([
+            'userId' => $user->id,
+            'moduleNum' => 3,
+            'sectionData' => json_encode([]),
+            'completed' => true,
+            'completedAt' => now(),
+        ]);
+
+        $this->actingAs($user)
+            ->get('/kids/safescape/4')
+            ->assertStatus(200)
+            ->assertInertia(fn (Assert $page) => $page->component('Kids/ModuleFour'));
+
+        // Unlock Module 5
+        \App\Models\SafeScapeProgress::create([
+            'userId' => $user->id,
+            'moduleNum' => 4,
+            'sectionData' => json_encode([]),
+            'completed' => true,
+            'completedAt' => now(),
+        ]);
+
+        $this->actingAs($user)
+            ->get('/kids/safescape/5')
+            ->assertStatus(200)
+            ->assertInertia(fn (Assert $page) => $page->component('Kids/ModuleFive'));
+    }
+
+    public function test_kids_safescape_api_sync_and_quiz_endpoints(): void
+    {
+        $user = User::factory()->create([
+            'role' => 'kid',
+            'isActive' => true,
+        ]);
+
+        // Test section sync API
+        $response = $this->actingAs($user)->postJson('/api/kids/safescape', [
+            'moduleNum' => 2,
+            'sectionData' => ['videoWatched' => true, 'soundDetectivePassed' => true],
+            'completed' => false,
+        ]);
+        $response->assertStatus(200)->assertJson(['success' => true]);
+
+        // Test quiz submit API
+        $quizResponse = $this->actingAs($user)->postJson('/api/kids/quiz', [
+            'quizType' => 'module_2_quiz',
+            'score' => 5,
+            'maxScore' => 5,
+        ]);
+        $quizResponse->assertStatus(200)->assertJson(['success' => true, 'passed' => true]);
     }
 
     public function test_public_and_role_dashboards_render_cleanly(): void

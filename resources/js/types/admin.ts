@@ -4,12 +4,12 @@ import type { User, UserRole, UserPermissions } from "./user"
 export type { CarouselImage, BlogPost, Video, QuickQuestion, FireCodeSection, VideoContent, User, UserRole, UserPermissions }
 
 export interface AdminInitialData {
-  initialCarouselImages?: any[]
-  initialBlogPosts?: any[]
-  initialVideos?: any[]
-  initialUsers?: any | any[]
-  initialQuickQuestions?: any[]
-  initialFireCodeSections?: any[]
+  initialCarouselImages?: CarouselImage[] | any[]
+  initialBlogPosts?: BlogPost[] | any[]
+  initialVideos?: Video[] | any[]
+  initialUsers?: User[] | { data: User[] } | any
+  initialQuickQuestions?: QuickQuestion[]
+  initialFireCodeSections?: FireCodeSection[] | any[]
 }
 
 export interface AdminTabProps {

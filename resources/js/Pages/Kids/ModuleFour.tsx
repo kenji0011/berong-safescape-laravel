@@ -114,17 +114,13 @@ const ModuleFourPage = ({ moduleNum, initialProgress }: { moduleNum: number; ini
           // Prevent redundant sync if already marked completed locally
           if (data.completed && completedRef.current) return;
 
-          console.log("Syncing section complete:", data);
-          const response = await axios.post("/api/kids/safescape", {
+          await axios.post("/api/kids/safescape", {
             moduleNum: data.moduleNum,
             sectionData: data.sectionData,
             completed: data.completed
           });
           
-          console.log("Progress synced successfully for module", data.moduleNum, response.data);
-          
           if (data.completed && !completedRef.current) {
-            console.log(`Module ${currentModule} marked as completed!`);
             setModuleCompleted(true)
             recentlyCompletedRef.current = true;
           }
@@ -140,14 +136,12 @@ const ModuleFourPage = ({ moduleNum, initialProgress }: { moduleNum: number; ini
         
         try {
           quizSubmittedRef.current = true;
-          console.log("Submitting quiz result:", data);
           const res = await axios.post("/api/kids/quiz", {
             quizType: `module_${data.moduleNum}_quiz`,
             score: data.score,
             maxScore: data.maxScore
           });
 
-          console.log("Quiz result submitted. Result:", res.data);
           if (res.data.passed) {
              if (!completedRef.current) {
                setModuleCompleted(true);

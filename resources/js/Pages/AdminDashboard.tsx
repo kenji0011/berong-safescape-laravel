@@ -11,7 +11,7 @@ import DashboardLayout from "@/Layouts/DashboardLayout";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/Components/ui/tabs"
 import { Shield, BarChart3, ImageIcon, FileText, Video, Users, HelpCircle, BookOpen, Loader2, AlertCircle, Settings } from "lucide-react"
 import { motion } from "motion/react"
-import type { CarouselImage, BlogPost } from "@/types/admin"
+import type { CarouselImage, BlogPost, AdminInitialData } from "@/types/admin"
 import { ConfirmationDialog } from "@/Components/ui/confirmation-dialog"
 import {
   AlertDialog,
@@ -43,6 +43,8 @@ const TabLoading = () => <AdminTableSkeleton rows={5} cols={4} />
 import { useAdminData } from "@/hooks/use-admin-data"
 import { normalizeCarouselImage, normalizeBlogPost, normalizeVideo } from "@/lib/admin-utils"
 
+export interface AdminDashboardProps extends AdminInitialData {}
+
 function AdminDashboard({
   initialCarouselImages,
   initialBlogPosts,
@@ -50,7 +52,7 @@ function AdminDashboard({
   initialUsers,
   initialQuickQuestions,
   initialFireCodeSections,
-}: any) {
+}: AdminDashboardProps) {
   
   const { user, isAuthenticated, isLoading: authLoading } = useAuth()
   const { success, error, setSuccess, setError } = useAdminFeedback()
