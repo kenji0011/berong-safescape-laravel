@@ -233,6 +233,20 @@ export function RegistrationWizard({ onBackToLogin }: RegistrationWizardProps) {
         if (prev.gradeLevel && !allowedLevels.includes(prev.gradeLevel as any)) {
           next.gradeLevel = "";
         }
+
+        if (value !== "Other (Please specify)") {
+          next.schoolOther = "";
+        }
+      }
+
+      if (field === "occupation") {
+        if (value !== "Other (Please specify)") {
+          next.occupationOther = "";
+        }
+        if (value !== "Student") {
+          next.school = "";
+          next.schoolOther = "";
+        }
       }
       
       return next;
@@ -241,6 +255,32 @@ export function RegistrationWizard({ onBackToLogin }: RegistrationWizardProps) {
     // Clear validation error when user types
     if (validationErrors[field]) {
       setValidationErrors(prev => ({ ...prev, [field]: "" }))
+    }
+
+    if (field === "school" && value !== "Other (Please specify)") {
+      setValidationErrors(prev => {
+        const updated = { ...prev }
+        delete updated.schoolOther
+        return updated
+      })
+    }
+
+    if (field === "occupation") {
+      if (value !== "Other (Please specify)") {
+        setValidationErrors(prev => {
+          const updated = { ...prev }
+          delete updated.occupationOther
+          return updated
+        })
+      }
+      if (value !== "Student") {
+        setValidationErrors(prev => {
+          const updated = { ...prev }
+          delete updated.school
+          delete updated.schoolOther
+          return updated
+        })
+      }
     }
   }
 
@@ -268,6 +308,13 @@ export function RegistrationWizard({ onBackToLogin }: RegistrationWizardProps) {
           if (!data.occupation) errors.occupation = "Please select your occupation"
           if (data.occupation === "Other (Please specify)" && !data.occupationOther.trim()) {
             errors.occupationOther = "Please specify your occupation"
+          }
+          if (data.occupation === "Student") {
+            if (!data.school) {
+              errors.school = "Please select your school"
+            } else if (data.school === "Other (Please specify)" && !data.schoolOther.trim()) {
+              errors.schoolOther = "Please specify your school"
+            }
           }
         }
         break
@@ -791,17 +838,38 @@ export function RegistrationWizard({ onBackToLogin }: RegistrationWizardProps) {
                 )}
 
                 {data.occupation === "Student" && (
-                  <div>
-                    <Label className="text-sm font-bold text-slate-700 dark:text-slate-300">School (Optional)</Label>
-                    <Select modal={false} value={data.school} onValueChange={(value) => updateField("school", value)}>
-                      <SelectTrigger className="w-full rounded-xl border-2 h-11 text-xs sm:text-sm md:text-base font-bold text-slate-700 dark:text-slate-200 focus:ring-orange-400 focus:border-orange-400 transition-all hover:border-slate-300 dark:bg-slate-950 dark:border-slate-800 border-gray-200 transition-colors">
-                        <SelectValue placeholder="Select your school" />
-                      </SelectTrigger>
-                      <SelectContent className="rounded-xl border-2 border-slate-200 dark:border-slate-800 dark:bg-slate-900 shadow-xl p-1">
-                        {schoolsList}
-                      </SelectContent>
-                    </Select>
-                  </div>
+                  <>
+                    <div>
+                      <Label className="text-sm font-bold text-slate-700 dark:text-slate-300">School *</Label>
+                      <Select modal={false} value={data.school} onValueChange={(value) => updateField("school", value)}>
+                        <SelectTrigger className={`w-full rounded-xl border-2 h-11 text-xs sm:text-sm md:text-base font-bold text-slate-700 dark:text-slate-200 focus:ring-orange-400 focus:border-orange-400 transition-all hover:border-slate-300 dark:bg-slate-950 dark:border-slate-800 ${validationErrors.school ? "border-red-500 bg-red-50 dark:bg-red-500/10" : "border-gray-200"}`}>
+                          <SelectValue placeholder="Select your school" />
+                        </SelectTrigger>
+                        <SelectContent className="rounded-xl border-2 border-slate-200 dark:border-slate-800 dark:bg-slate-900 shadow-xl p-1">
+                          {schoolsList}
+                        </SelectContent>
+                      </Select>
+                      {validationErrors.school && (
+                        <p className="text-sm text-red-500 mt-1">{validationErrors.school}</p>
+                      )}
+                    </div>
+
+                    {data.school === "Other (Please specify)" && (
+                      <div>
+                        <Label htmlFor="schoolOtherAdult" className="text-sm font-bold text-slate-700 dark:text-slate-300">Specify School *</Label>
+                        <Input
+                          id="schoolOtherAdult"
+                          placeholder="Enter your school name"
+                          value={data.schoolOther}
+                          onChange={(e) => updateField("schoolOther", e.target.value)}
+                          className={`rounded-xl border-2 h-11 text-xs sm:text-sm md:text-base dark:bg-slate-950 dark:text-white dark:border-slate-800 ${validationErrors.schoolOther ? "border-red-500 bg-red-50 dark:bg-red-500/10" : "border-gray-200"}`}
+                        />
+                        {validationErrors.schoolOther && (
+                          <p className="text-sm text-red-500 mt-1">{validationErrors.schoolOther}</p>
+                        )}
+                      </div>
+                    )}
+                  </>
                 )}
               </>
             )}

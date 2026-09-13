@@ -131,6 +131,19 @@ export function ProfileCompletionModal({ isOpen, onComplete }: ProfileCompletion
         if (prev.gradeLevel && !allowedLevels.includes(prev.gradeLevel as any)) {
           next.gradeLevel = "";
         }
+        if (value !== "Other (Please specify)") {
+          next.schoolOther = "";
+        }
+      }
+
+      if (field === "occupation") {
+        if (value !== "Other (Please specify)") {
+          next.occupationOther = "";
+        }
+        if (value !== "Student") {
+          next.school = "";
+          next.schoolOther = "";
+        }
       }
       
       return next;
@@ -138,6 +151,32 @@ export function ProfileCompletionModal({ isOpen, onComplete }: ProfileCompletion
 
     if (validationErrors[field]) {
       setValidationErrors(prev => ({ ...prev, [field]: "" }))
+    }
+
+    if (field === "school" && value !== "Other (Please specify)") {
+      setValidationErrors(prev => {
+        const updated = { ...prev };
+        delete updated.schoolOther;
+        return updated;
+      });
+    }
+
+    if (field === "occupation") {
+      if (value !== "Other (Please specify)") {
+        setValidationErrors(prev => {
+          const updated = { ...prev };
+          delete updated.occupationOther;
+          return updated;
+        });
+      }
+      if (value !== "Student") {
+        setValidationErrors(prev => {
+          const updated = { ...prev };
+          delete updated.school;
+          delete updated.schoolOther;
+          return updated;
+        });
+      }
     }
   }
 
@@ -157,6 +196,13 @@ export function ProfileCompletionModal({ isOpen, onComplete }: ProfileCompletion
       if (!data.occupation) errors.occupation = "Please select your occupation"
       if (data.occupation === "Other (Please specify)" && !data.occupationOther.trim()) {
         errors.occupationOther = "Please specify your occupation"
+      }
+      if (data.occupation === "Student") {
+        if (!data.school) {
+          errors.school = "Please select your school"
+        } else if (data.school === "Other (Please specify)" && !data.schoolOther.trim()) {
+          errors.schoolOther = "Please specify your school"
+        }
       }
     }
 
@@ -442,6 +488,42 @@ export function ProfileCompletionModal({ isOpen, onComplete }: ProfileCompletion
                       <p className="text-sm text-red-500 mt-1">{validationErrors.occupationOther}</p>
                     )}
                   </div>
+                )}
+
+                {data.occupation === "Student" && (
+                  <>
+                    <div>
+                      <Label>School *</Label>
+                      <Select modal={false} value={data.school} onValueChange={(value) => updateField("school", value)}>
+                        <SelectTrigger className={`w-full ${validationErrors.school ? "border-red-500" : ""} text-xs sm:text-sm md:text-base`}>
+                          <SelectValue placeholder="Select your school" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {ALL_SCHOOLS.map((school) => (
+                            <SelectItem key={school} value={school}>{school}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      {validationErrors.school && (
+                        <p className="text-sm text-red-500 mt-1">{validationErrors.school}</p>
+                      )}
+                    </div>
+
+                    {data.school === "Other (Please specify)" && (
+                      <div>
+                        <Label>Specify School *</Label>
+                        <Input
+                          placeholder="Enter your school name"
+                          value={data.schoolOther}
+                          onChange={(e) => updateField("schoolOther", e.target.value)}
+                          className={`${validationErrors.schoolOther ? "border-red-500" : ""} text-xs sm:text-sm md:text-base`}
+                        />
+                        {validationErrors.schoolOther && (
+                          <p className="text-sm text-red-500 mt-1">{validationErrors.schoolOther}</p>
+                        )}
+                      </div>
+                    )}
+                  </>
                 )}
               </>
             )}

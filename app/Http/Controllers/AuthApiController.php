@@ -106,7 +106,20 @@ class AuthApiController extends Controller
             $name = $request->input('firstName') . ' ' . $request->input('middleName') . ' ' . $request->input('lastName');
         }
 
-        $schoolName = $request->input('school') ?? $request->input('schoolOther');
+        $schoolInput = $request->input('school');
+        $schoolOtherInput = $request->input('schoolOther');
+        $schoolName = ($schoolInput === 'Other (Please specify)' || empty($schoolInput)) ? $schoolOtherInput : $schoolInput;
+        if ($schoolName === 'Other (Please specify)' || empty($schoolName)) {
+            $schoolName = null;
+        }
+
+        $occupationInput = $request->input('occupation');
+        $occupationOtherInput = $request->input('occupationOther');
+        $occupationName = ($occupationInput === 'Other (Please specify)' || empty($occupationInput)) ? $occupationOtherInput : $occupationInput;
+        if ($occupationName === 'Other (Please specify)' || empty($occupationName)) {
+            $occupationName = null;
+        }
+
         $schoolModel = null;
         if ($schoolName) {
             $schoolModel = \App\Models\School::firstOrCreate(
@@ -116,7 +129,7 @@ class AuthApiController extends Controller
         }
 
         try {
-            $response = DB::transaction(function () use ($request, $age, $role, $name, $schoolName, $schoolModel) {
+            $response = DB::transaction(function () use ($request, $age, $role, $name, $schoolName, $schoolModel, $occupationName) {
                 $user = User::create([
                     'username' => $request->input('username'),
                     'email' => $request->input('email'),
@@ -130,7 +143,7 @@ class AuthApiController extends Controller
                     'barangay' => $request->input('barangay'),
                     'school' => $schoolName,
                     'school_id' => $schoolModel ? $schoolModel->id : null,
-                    'occupation' => $request->input('occupation') ?? $request->input('occupationOther'),
+                    'occupation' => $occupationName,
                     'profileCompleted' => true,
                 ]);
 
@@ -226,7 +239,20 @@ class AuthApiController extends Controller
         }
 
         try {
-            $schoolName = $request->input('school') ?? $request->input('schoolOther');
+            $schoolInput = $request->input('school');
+            $schoolOtherInput = $request->input('schoolOther');
+            $schoolName = ($schoolInput === 'Other (Please specify)' || empty($schoolInput)) ? $schoolOtherInput : $schoolInput;
+            if ($schoolName === 'Other (Please specify)' || empty($schoolName)) {
+                $schoolName = null;
+            }
+
+            $occupationInput = $request->input('occupation');
+            $occupationOtherInput = $request->input('occupationOther');
+            $occupationName = ($occupationInput === 'Other (Please specify)' || empty($occupationInput)) ? $occupationOtherInput : $occupationInput;
+            if ($occupationName === 'Other (Please specify)' || empty($occupationName)) {
+                $occupationName = null;
+            }
+
             $schoolModel = null;
             if ($schoolName) {
                 $schoolModel = \App\Models\School::firstOrCreate(
@@ -239,13 +265,13 @@ class AuthApiController extends Controller
             $preTestAnswers = $request->input('preTestAnswers', []);
             $maxScore = count($preTestAnswers);
 
-            DB::transaction(function () use ($user, $request, $schoolName, $schoolModel, $preTestAnswers, &$score) {
+            DB::transaction(function () use ($user, $request, $schoolName, $schoolModel, $occupationName, $preTestAnswers, &$score) {
                 $user->update([
                     'gender' => $request->input('gender'),
                     'barangay' => $request->input('barangay'),
                     'school' => $schoolName,
                     'school_id' => $schoolModel ? $schoolModel->id : null,
-                    'occupation' => $request->input('occupation') ?? $request->input('occupationOther'),
+                    'occupation' => $occupationName,
                     'profileCompleted' => true
                 ]);
 
