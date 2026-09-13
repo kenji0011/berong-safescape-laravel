@@ -57,12 +57,12 @@ export function LoginLoader() {
                             <motion.div
                                 animate={{ y: [0, -15, 0] }}
                                 transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-                                className="relative w-28 h-28 sm:w-36 sm:h-36 rounded-[2rem] overflow-hidden border-[6px] border-white shadow-[0_0_40px_rgba(250,204,21,0.5)] bg-white p-2"
+                                className="relative w-28 h-28 sm:w-36 sm:h-36 rounded-full overflow-hidden border-[6px] border-white shadow-[0_0_40px_rgba(250,204,21,0.5)] bg-white p-2 flex items-center justify-center"
                             >
                                 <Image
                                     src="/berong_pr.webp"
                                     alt="Berong Mascot"
-                                    className="w-full h-full object-contain drop-shadow-md"
+                                    className="w-full h-full object-contain drop-shadow-md rounded-full"
                                     priority={true}
                                 />
                             </motion.div>
