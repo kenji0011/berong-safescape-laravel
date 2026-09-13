@@ -1,6 +1,6 @@
 import React, { useMemo, useEffect, useState } from "react"
 import { Link, Deferred, router } from '@inertiajs/react'
-import { ArrowLeft, ArrowRight, BookOpen, Trophy, Shield, CheckCircle, Lock, Flame, ChevronRight, ClipboardCheck } from "lucide-react"
+import { ArrowLeft, ArrowRight, BookOpen, Trophy, Shield, CheckCircle, CheckCircle2, Lock, Flame, ChevronRight, ClipboardCheck, Sparkles } from "lucide-react"
 import { useAuth } from "@/lib/auth-context"
 import { toast } from "sonner"
 import { playSound } from '@/lib/audio'
@@ -28,10 +28,9 @@ interface CourseHubProps {
 }
 
 // Static metadata per module (game names, icons, badges) since these are hardcoded per module
-const MODULE_META: Record<number, { title: string; gameIcon: string; gameLabel: string; bgImage: string; description: string; badge: { name: string; image: string } }> = {
+const MODULE_META: Record<number, { title: string; gameLabel: string; bgImage: string; description: string; badge: { name: string; image: string } }> = {
   1: { 
     title: "Fire is a Tool, Not a Toy",
-    gameIcon: "🎮", 
     gameLabel: "Element Mixer Lab", 
     bgImage: "/images/kids/module1.webp", 
     description: "Learn what fire needs to burn with the Fire Triangle. Understand why matches and lighters are tools for grown-ups only.",
@@ -39,7 +38,6 @@ const MODULE_META: Record<number, { title: string; gameIcon: string; gameLabel: 
   },
   2: { 
     title: "The School Drill",
-    gameIcon: "🎵", 
     gameLabel: "Rhythm Marshal Game", 
     bgImage: "/images/kids/module2.webp", 
     description: "Master the fire drill! Learn to recognize alarms, find the Red Box, and lead your classmates to safety.",
@@ -47,7 +45,6 @@ const MODULE_META: Record<number, { title: string; gameIcon: string; gameLabel: 
   },
   3: { 
     title: "The Escape Plan",
-    gameIcon: "🌫️", 
     gameLabel: "Smoke Labyrinth Game", 
     bgImage: "/images/kids/module3.webp", 
     description: "Create your family escape plan with two ways out. Learn to check doors and find your meeting spot.",
@@ -55,7 +52,6 @@ const MODULE_META: Record<number, { title: string; gameIcon: string; gameLabel: 
   },
   4: { 
     title: "Get Low and Go!",
-    gameIcon: "☁️", 
     gameLabel: "Smoke Physics", 
     bgImage: "/images/kids/module4.webp", 
     description: "Discover why smoke is dangerous and learn the life-saving crawling technique to escape safely.",
@@ -63,7 +59,6 @@ const MODULE_META: Record<number, { title: string; gameIcon: string; gameLabel: 
   },
   5: { 
     title: "The Ultimate Defense",
-    gameIcon: "🌟", 
     gameLabel: "Hero Certificate", 
     bgImage: "/images/kids/module5.webp", 
     description: "Master Stop, Drop & Roll! Take the final exam and earn your official Fire Safety Hero Certificate!",
@@ -415,14 +410,25 @@ const CourseHubPage = ({ initialModules }: CourseHubProps) => {
             animation: swing-drop 1.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
           }
         `}} />
-        <div className="absolute inset-0 overflow-hidden pointer-events-none opacity-20 dark:opacity-10 z-0">
-          <div className="absolute top-[5%] left-[5%] text-6xl floating-icon" style={{ animationDelay: '0s' }}>🚒</div>
-          <div className="absolute top-[15%] right-[8%] text-5xl floating-icon" style={{ animationDelay: '1s', transform: 'scale(-1, 1)' }}>🧯</div>
-          <div className="absolute top-[40%] left-[2%] text-7xl floating-icon" style={{ animationDelay: '2s' }}>👨‍🚒</div>
-          <div className="absolute top-[50%] right-[4%] text-6xl floating-icon" style={{ animationDelay: '3s' }}>🚨</div>
-          <div className="absolute bottom-[20%] left-[8%] text-6xl floating-icon" style={{ animationDelay: '1.5s' }}>🔥</div>
-          <div className="absolute bottom-[10%] right-[10%] text-7xl floating-icon" style={{ animationDelay: '2.5s' }}>💧</div>
-          <div className="absolute top-[80%] left-[45%] text-5xl floating-icon" style={{ animationDelay: '4s' }}>🛡️</div>
+        <div className="absolute inset-0 overflow-hidden pointer-events-none opacity-[0.07] dark:opacity-[0.04] z-0">
+          <div className="absolute top-[8%] left-[6%] floating-icon" style={{ animationDelay: '0s' }}>
+            <Flame className="w-16 h-16 text-orange-500" />
+          </div>
+          <div className="absolute top-[18%] right-[8%] floating-icon" style={{ animationDelay: '1.2s' }}>
+            <Shield className="w-14 h-14 text-blue-500" />
+          </div>
+          <div className="absolute top-[42%] left-[4%] floating-icon" style={{ animationDelay: '2.5s' }}>
+            <Trophy className="w-18 h-18 text-amber-500" />
+          </div>
+          <div className="absolute top-[55%] right-[5%] floating-icon" style={{ animationDelay: '3.2s' }}>
+            <Sparkles className="w-16 h-16 text-amber-400" />
+          </div>
+          <div className="absolute bottom-[22%] left-[9%] floating-icon" style={{ animationDelay: '1.8s' }}>
+            <Flame className="w-16 h-16 text-red-500" />
+          </div>
+          <div className="absolute bottom-[12%] right-[10%] floating-icon" style={{ animationDelay: '2.8s' }}>
+            <Shield className="w-16 h-16 text-emerald-500" />
+          </div>
         </div>
 
         <div className="max-w-6xl mx-auto relative z-10">
@@ -740,65 +746,124 @@ const CourseHubPage = ({ initialModules }: CourseHubProps) => {
             </div>
           </Deferred>
 
-          {/* ── Motivational Footer (Refined Celebration Banner) ── */}
-          <div className={cn(
-            "mt-16 sm:mt-20 rounded-[2rem] p-6 sm:p-10 text-center relative overflow-hidden transition-all duration-300",
-            completedCount === 5
-              ? "bg-white dark:bg-slate-900 border-[3px] sm:border-[4px] border-amber-300 dark:border-amber-500/40 shadow-[0_8px_0_#fcd34d] dark:shadow-[0_8px_0_#78350f]"
-              : completedCount > 0
-              ? "bg-white dark:bg-slate-900 border-[3px] sm:border-[4px] border-orange-300 dark:border-orange-500/40 shadow-[0_8px_0_#fed7aa] dark:shadow-[0_8px_0_#7c2d12]"
-              : "bg-white dark:bg-slate-900 border-[3px] sm:border-[4px] border-slate-200 dark:border-slate-800 shadow-[0_8px_0_#cbd5e1] dark:shadow-[0_8px_0_#0f172a]"
-          )}>
-            <div className="relative z-10 flex flex-col items-center">
-              {/* Milestone Icon */}
+          {/* ── Motivational Footer (Modern Celebration Card) ── */}
+          <div className="mt-12 sm:mt-16 max-w-2xl mx-auto">
+            <div className={cn(
+              "relative rounded-2xl sm:rounded-3xl p-6 sm:p-8 text-center overflow-hidden transition-all duration-300",
+              completedCount === 5
+                ? "bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border border-amber-300/70 dark:border-amber-500/30 shadow-xl shadow-amber-500/5"
+                : completedCount > 0
+                ? "bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border border-orange-300/70 dark:border-orange-500/30 shadow-xl shadow-orange-500/5"
+                : "bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border border-slate-200 dark:border-slate-800 shadow-sm"
+            )}>
+              {/* Subtle ambient light */}
               <div className={cn(
-                "h-16 w-16 sm:h-20 sm:w-20 rounded-2xl sm:rounded-[1.5rem] flex items-center justify-center mb-4 border-[3px] shadow-sm transition-transform duration-300 hover:scale-105",
+                "absolute -top-12 left-1/2 -translate-x-1/2 w-64 h-28 blur-3xl pointer-events-none rounded-full transition-opacity",
                 completedCount === 5
-                  ? "bg-amber-50 dark:bg-amber-950/40 border-amber-300 dark:border-amber-500/50 text-amber-500"
+                  ? "bg-amber-400/20 dark:bg-amber-400/10"
                   : completedCount > 0
-                  ? "bg-orange-50 dark:bg-orange-950/40 border-orange-300 dark:border-orange-500/50 text-orange-500"
-                  : "bg-red-50 dark:bg-red-950/40 border-red-200 dark:border-red-500/40 text-red-500"
-              )}>
-                {completedCount === 5 ? (
-                  <Trophy className="h-8 w-8 sm:h-10 sm:w-10 text-amber-500 drop-shadow-sm" strokeWidth={2.5} />
-                ) : completedCount > 0 ? (
-                  <Flame className="h-8 w-8 sm:h-10 sm:w-10 text-orange-500 drop-shadow-sm" strokeWidth={2.5} />
-                ) : (
-                  <Shield className="h-8 w-8 sm:h-10 sm:w-10 text-red-500 drop-shadow-sm" strokeWidth={2.5} />
+                  ? "bg-orange-400/20 dark:bg-orange-400/10"
+                  : "bg-slate-300/20 dark:bg-slate-700/20"
+              )} />
+
+              <div className="relative z-10 flex flex-col items-center">
+                {/* Milestone Icon */}
+                <div className="relative mb-3.5 flex items-center justify-center">
+                  <div className={cn(
+                    "h-14 w-14 sm:h-16 sm:w-16 rounded-2xl flex items-center justify-center transition-transform duration-300 hover:scale-105 border shadow-xs",
+                    completedCount === 5
+                      ? "bg-amber-500/10 text-amber-500 border-amber-500/20 dark:bg-amber-500/15 dark:border-amber-500/30"
+                      : completedCount > 0
+                      ? "bg-orange-500/10 text-orange-500 border-orange-500/20 dark:bg-orange-500/15 dark:border-orange-500/30"
+                      : "bg-slate-100 text-slate-500 border-slate-200 dark:bg-slate-800 dark:text-slate-400 dark:border-slate-700"
+                  )}>
+                    {completedCount === 5 ? (
+                      <Trophy className="h-7 w-7 sm:h-8 sm:w-8 text-amber-500" strokeWidth={2} />
+                    ) : completedCount > 0 ? (
+                      <Flame className="h-7 w-7 sm:h-8 sm:w-8 text-orange-500" strokeWidth={2} />
+                    ) : (
+                      <Shield className="h-7 w-7 sm:h-8 sm:w-8 text-slate-500 dark:text-slate-400" strokeWidth={2} />
+                    )}
+                  </div>
+                </div>
+
+                {/* Progress Chip (No Emojis) */}
+                <div className={cn(
+                  "inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] sm:text-xs font-bold uppercase tracking-wider mb-2.5 border transition-colors",
+                  completedCount === 5
+                    ? "bg-amber-500/10 text-amber-700 dark:text-amber-300 border-amber-500/20"
+                    : completedCount > 0
+                    ? "bg-orange-500/10 text-orange-700 dark:text-orange-300 border-orange-500/20"
+                    : "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700"
+                )}>
+                  {completedCount === 5 ? (
+                    <>
+                      <CheckCircle2 className="h-3.5 w-3.5 text-amber-600 dark:text-amber-400" />
+                      <span>5 of 5 Missions Mastered</span>
+                    </>
+                  ) : completedCount > 0 ? (
+                    <>
+                      <Sparkles className="h-3.5 w-3.5 text-orange-600 dark:text-orange-400" />
+                      <span>{completedCount} of 5 Missions Completed</span>
+                    </>
+                  ) : (
+                    <>
+                      <Shield className="h-3.5 w-3.5 text-slate-500 dark:text-slate-400" />
+                      <span>0 of 5 Missions Started</span>
+                    </>
+                  )}
+                </div>
+
+                {/* Dynamic Title & Description */}
+                <h3 className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white mb-2 tracking-tight">
+                  {completedCount === 5
+                    ? "Fire Safety Hero Status Achieved!"
+                    : completedCount > 0
+                    ? "Keep Up the Great Work!"
+                    : "Start Your Fire Safety Adventure!"}
+                </h3>
+                <p className="text-slate-500 dark:text-slate-400 font-medium text-xs sm:text-sm max-w-md mx-auto leading-relaxed">
+                  {completedCount === 5
+                    ? "You've successfully finished all 5 safety missions! Keep practicing your skills and staying fire safe."
+                    : completedCount > 0
+                    ? "Every lesson you complete brings you one step closer to earning your official Fire Safety Hero Certificate!"
+                    : "Complete all 5 interactive missions and fun mini-games to earn your official Fire Safety Hero Certificate!"}
+                </p>
+
+                {/* Step Progress Track */}
+                <div className="flex items-center justify-center gap-1.5 mt-5">
+                  {[1, 2, 3, 4, 5].map((step) => {
+                    const isDone = step <= completedCount;
+                    return (
+                      <div
+                        key={step}
+                        className={cn(
+                          "h-1.5 rounded-full transition-all duration-500",
+                          isDone
+                            ? completedCount === 5
+                              ? "w-8 bg-amber-500"
+                              : "w-8 bg-orange-500"
+                            : "w-3 bg-slate-200 dark:bg-slate-700"
+                        )}
+                      />
+                    );
+                  })}
+                </div>
+
+                {/* Action CTA when completed */}
+                {completedCount === 5 && (
+                  <div className="mt-5">
+                    <Link
+                      href="/kids/certificate"
+                      className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold bg-amber-500 hover:bg-amber-400 text-amber-950 transition-all shadow-sm hover:shadow-md active:scale-98"
+                    >
+                      <Trophy className="h-4 w-4" />
+                      <span>View Certificate</span>
+                      <ChevronRight className="h-3.5 w-3.5 opacity-80" />
+                    </Link>
+                  </div>
                 )}
               </div>
-
-              {/* Progress Chip */}
-              <span className={cn(
-                "inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full text-[11px] sm:text-xs font-black uppercase tracking-wider mb-2 border",
-                completedCount === 5
-                  ? "bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-800/60"
-                  : completedCount > 0
-                  ? "bg-orange-50 dark:bg-orange-950/40 text-orange-700 dark:text-orange-300 border-orange-200 dark:border-orange-800/60"
-                  : "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700"
-              )}>
-                {completedCount === 5
-                  ? "⭐ 5 of 5 Missions Mastered"
-                  : completedCount > 0
-                  ? `🚀 ${completedCount} of 5 Missions Completed`
-                  : "🌟 0 of 5 Missions Started"}
-              </span>
-
-              {/* Dynamic Title & Description */}
-              <h3 className="text-xl sm:text-2xl md:text-3xl font-black text-slate-800 dark:text-white mb-1.5 tracking-tight">
-                {completedCount === 5
-                  ? "Fire Safety Hero Status Achieved!"
-                  : completedCount > 0
-                  ? "Keep Up the Great Work!"
-                  : "Start Your Fire Safety Adventure!"}
-              </h3>
-              <p className="text-slate-500 dark:text-slate-400 font-bold text-sm sm:text-base max-w-xl">
-                {completedCount === 5
-                  ? "You've successfully finished all 5 safety missions! Keep practicing your skills and staying fire safe."
-                  : completedCount > 0
-                  ? "Every lesson you complete brings you one step closer to earning your official Fire Safety Hero Certificate!"
-                  : "Complete all 5 interactive missions and fun mini-games to earn your official Fire Safety Hero Certificate!"}
-              </p>
             </div>
           </div>
 
