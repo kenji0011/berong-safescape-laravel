@@ -28,12 +28,14 @@ interface BlogArticleProps {
 
 interface ArticleContentSectionProps {
     content: string
+    excerpt?: string
     isExpanded: boolean
     onToggleExpand: () => void
 }
 
 const ArticleContentSection: React.FC<ArticleContentSectionProps> = ({
     content,
+    excerpt,
     isExpanded,
     onToggleExpand,
 }) => {
@@ -52,7 +54,7 @@ const ArticleContentSection: React.FC<ArticleContentSectionProps> = ({
 
     useEffect(() => {
         checkOverflow()
-    }, [content])
+    }, [content, excerpt])
 
     useEffect(() => {
         const handleResize = () => {
@@ -62,7 +64,7 @@ const ArticleContentSection: React.FC<ArticleContentSectionProps> = ({
         }
         window.addEventListener('resize', handleResize)
         return () => window.removeEventListener('resize', handleResize)
-    }, [isExpanded, content])
+    }, [isExpanded, content, excerpt])
 
     useEffect(() => {
         const el = textRef.current
@@ -74,12 +76,30 @@ const ArticleContentSection: React.FC<ArticleContentSectionProps> = ({
         })
         observer.observe(el)
         return () => observer.disconnect()
-    }, [isExpanded, content])
+    }, [isExpanded, content, excerpt])
 
     const showButton = isOverflowing || isExpanded
 
+    const isHtml = /<[a-z][\s\S]*>/i.test(content)
+    const formattedContent = isHtml
+        ? content
+        : content.split(/\n\n+/).map(p => `<p>${p.replace(/\n/g, '<br/>')}</p>`).join('')
+    const sanitizedHtml = DOMPurify.sanitize(formattedContent)
+
+    const hasDistinctExcerpt = !!(
+        excerpt && 
+        content && 
+        excerpt.trim() !== content.trim() && 
+        !content.toLowerCase().includes(excerpt.toLowerCase().trim())
+    )
+
     return (
         <div className="p-3.5 sm:p-5 pt-2.5 sm:pt-3 relative">
+            {hasDistinctExcerpt && (
+                <p className="text-xs sm:text-[13px] font-bold text-orange-600 dark:text-orange-400 mb-2 italic">
+                    {excerpt}
+                </p>
+            )}
             <div 
                 ref={textRef}
                 className={cn(
@@ -93,7 +113,7 @@ const ArticleContentSection: React.FC<ArticleContentSectionProps> = ({
                     "prose-img:rounded-xl prose-img:shadow-md border-slate-100 dark:border-slate-700",
                     !isExpanded && "line-clamp-5"
                 )}
-                dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(content) }}
+                dangerouslySetInnerHTML={{ __html: sanitizedHtml }}
             />
             {showButton && (
                 <div className="flex justify-end mt-1.5">
@@ -474,7 +494,7 @@ const BlogArticleClient = ({ blog, allBlogs }: BlogArticleProps) => {
                             >
                                 <article 
                                     style={{ 
-                                        viewTransitionName: (String(item.id) === String(blog.id) && !lightboxImage && !isLightboxToggling) 
+                                        viewTransitionName: (isActive && !lightboxImage && !isLightboxToggling) 
                                             ? 'article-card-morph' 
                                             : 'none' 
                                     }}
@@ -500,7 +520,7 @@ const BlogArticleClient = ({ blog, allBlogs }: BlogArticleProps) => {
                                         
                                         <h1 
                                             style={{ 
-                                                viewTransitionName: (String(item.id) === String(blog.id) && !lightboxImage && !isLightboxToggling) 
+                                                viewTransitionName: (isActive && !lightboxImage && !isLightboxToggling) 
                                                     ? 'article-hero-title' 
                                                     : 'none' 
                                             }}
@@ -546,7 +566,7 @@ const BlogArticleClient = ({ blog, allBlogs }: BlogArticleProps) => {
                                                     onLoad={updateActiveHeight}
                                                     className="w-full max-h-[260px] sm:max-h-[300px] md:max-h-[320px] object-contain transition-transform duration-300 group-hover:scale-[1.005]"
                                                     style={{ 
-                                                        viewTransitionName: (String(item.id) === String(blog.id) && !lightboxImage) 
+                                                        viewTransitionName: (isActive && !lightboxImage) 
                                                             ? 'article-hero-image' 
                                                             : 'none' 
                                                     }}
@@ -568,6 +588,7 @@ const BlogArticleClient = ({ blog, allBlogs }: BlogArticleProps) => {
                                     {/* Article Content */}
                                     <ArticleContentSection
                                         content={item.content || item.excerpt || ''}
+                                        excerpt={item.excerpt}
                                         isExpanded={isExpanded}
                                         onToggleExpand={() => toggleArticleExpand(item.id)}
                                     />

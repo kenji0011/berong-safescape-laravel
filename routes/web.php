@@ -238,7 +238,7 @@ Route::get('/maintenance', function () {
             return Inertia::render('AdultDashboard', [
                 'initialBlogs' => BlogPost::with('author:id,name')
                     ->where('isPublished', true)
-                    ->select('id', 'title', 'excerpt', 'imageUrl', 'category', 'authorId', 'created_at', 'order')
+                    ->select('id', 'title', 'excerpt', 'content', 'imageUrl', 'category', 'authorId', 'created_at', 'order')
                     ->orderBy('order', 'asc')
                     ->orderBy('created_at', 'desc')
                     ->take(12)
@@ -257,10 +257,10 @@ Route::get('/maintenance', function () {
         $blog = BlogPost::with('author:id,name')->findOrFail($id);
         $allBlogs = BlogPost::with('author:id,name')
             ->where('isPublished', true)
-            ->select('id', 'title', 'excerpt', 'imageUrl', 'category', 'authorId', 'created_at', 'order')
+            ->select('id', 'title', 'excerpt', 'content', 'imageUrl', 'category', 'authorId', 'created_at', 'order')
             ->orderBy('order', 'asc')
             ->orderBy('created_at', 'desc')
-            ->take(10)
+            ->take(20)
             ->get();
         if (!$allBlogs->contains('id', $blog->id)) {
             $allBlogs->prepend($blog);
