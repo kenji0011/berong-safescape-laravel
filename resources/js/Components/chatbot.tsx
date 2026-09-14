@@ -442,6 +442,49 @@ export function Chatbot() {
     lastDragX.current = currentX
   }
 
+  // Handle window resize / orientation change to re-snap accurately
+  useEffect(() => {
+    const handleResize = () => {
+      if (isDragging) return
+      if (isOnLeft && chatheadRef.current) {
+        const screenWidth = window.innerWidth
+        const chatheadWidth = chatheadRef.current.offsetWidth || 160
+        const leftOffset = screenWidth < 640
+          ? (useMiniButton ? 24 : 0)
+          : (useMiniButton ? 32 : 0)
+        const targetX = -(screenWidth - chatheadWidth) + leftOffset
+        dragX.set(targetX)
+      } else if (!isOnLeft) {
+        dragX.set(0)
+      }
+    }
+
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [isOnLeft, useMiniButton, isDragging])
+
+  // Safeguard: Ensure dragX stays at 0 (or targetX) when not dragging,
+  // preventing any desync when footer or meet-devs classes are toggled
+  useEffect(() => {
+    const checkPosition = () => {
+      if (isDragging) return
+      if (!isOnLeft && dragX.get() !== 0) {
+        animate(dragX, 0, { type: "spring", stiffness: 600, damping: 25 })
+      }
+    }
+
+    const observer = new MutationObserver(() => {
+      checkPosition()
+    })
+
+    if (typeof document !== 'undefined') {
+      observer.observe(document.body, { attributes: true, attributeFilter: ['class'] })
+      observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] })
+    }
+
+    return () => observer.disconnect()
+  }, [isOnLeft, isDragging])
+
   const startCTATimeout = () => {
     if (ctaTimeoutRef.current) clearTimeout(ctaTimeoutRef.current)
     ctaTimeoutRef.current = setTimeout(() => {
