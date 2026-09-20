@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { Head, usePage } from '@inertiajs/react';
 import RootLayout from '@/Layouts/RootLayout';
 import { Navigation } from '@/Components/navigation';
@@ -17,13 +17,80 @@ export default function Welcome({ carouselImages }: { carouselImages?: any[] }) 
   const [isMobile, setIsMobile] = useState(false);
   const [showShortcutGuide, setShowShortcutGuide] = useState(false);
   const [currentStep, setCurrentStep] = useState(0);
+  const [showShortcutBtn, setShowShortcutBtn] = useState(true);
+  const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
 
+  const heroSectionRef = useRef<HTMLElement>(null);
+
+  // Listen for native beforeinstallprompt event if supported
+  useEffect(() => {
+    const handleBeforeInstallPrompt = (e: Event) => {
+      e.preventDefault();
+      setDeferredPrompt(e);
+    };
+    window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+    return () => window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+  }, []);
+
+  // Screen size check for mobile view
   useEffect(() => {
     const check = () => setIsMobile(window.innerWidth < 768);
     check();
     window.addEventListener('resize', check);
     return () => window.removeEventListener('resize', check);
   }, []);
+
+  // Scroll tracking: only show Create Shortcut on the top page (fade out past Get Started section)
+  useEffect(() => {
+    let ticking = false;
+
+    const handleScroll = () => {
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          if (heroSectionRef.current) {
+            const rect = heroSectionRef.current.getBoundingClientRect();
+            // rect.bottom is the bottom edge of the HeroSection containing "Get Started".
+            // When rect.bottom > 50, user has not scrolled past Get Started.
+            // When rect.bottom <= 50, user scrolled down past Get Started into the next sections.
+            const isAtTopSection = rect.bottom > 50;
+            setShowShortcutBtn(isAtTopSection);
+          } else {
+            setShowShortcutBtn(window.scrollY < 600);
+          }
+          ticking = false;
+        });
+        ticking = true;
+      }
+    };
+
+    handleScroll();
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    window.addEventListener('resize', handleScroll, { passive: true });
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('resize', handleScroll);
+    };
+  }, []);
+
+  const handleCreateShortcut = () => {
+    if (deferredPrompt) {
+      deferredPrompt.prompt();
+      deferredPrompt.userChoice.then((choiceResult: { outcome: string }) => {
+        if (choiceResult.outcome !== 'accepted') {
+          setCurrentStep(0);
+          setShowShortcutGuide(true);
+        }
+        setDeferredPrompt(null);
+      }).catch(() => {
+        setCurrentStep(0);
+        setShowShortcutGuide(true);
+      });
+    } else {
+      setCurrentStep(0);
+      setShowShortcutGuide(true);
+    }
+  };
   
   const mappedUser = serverUser ? {
     id: serverUser.id,
@@ -99,7 +166,7 @@ export default function Welcome({ carouselImages }: { carouselImages?: any[] }) 
           </section>
 
           {/* Cinematic Hero Section */}
-          <section className="mb-8 sm:mb-32 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+          <section ref={heroSectionRef} className="mb-8 sm:mb-32 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
             <HeroSection />
           </section>
 
@@ -121,18 +188,15 @@ export default function Welcome({ carouselImages }: { carouselImages?: any[] }) 
 
         <Footer />
 
-        {/* Global Floating Install Shortcut Button (Mobile View Only) */}
+        {/* Global Floating Install Shortcut Button (Mobile View & Top Page Only) */}
         <AnimatePresence>
-          {isMobile && !showShortcutGuide && (
+          {isMobile && !showShortcutGuide && showShortcutBtn && (
             <motion.button
               initial={{ opacity: 0, scale: 0.9, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.9, y: 20 }}
-              transition={{ duration: 0.2 }}
-              onClick={() => {
-                setCurrentStep(0);
-                setShowShortcutGuide(true);
-              }}
+              transition={{ duration: 0.25, ease: 'easeInOut' }}
+              onClick={handleCreateShortcut}
               className="fixed left-6 bottom-6 z-50 ss-install-shortcut-btn bg-yellow-400 hover:bg-yellow-500 text-yellow-900 border-2 border-yellow-500 shadow-[0_4px_0_0_#ca8a04] dark:shadow-[0_4px_0_0_#854d0e] active:translate-y-1 active:shadow-none hover:-translate-y-1 transition-all rounded-full px-6 py-3 font-black text-sm flex items-center gap-3 w-max cursor-pointer"
             >
               <Smartphone className="h-5 w-5 shrink-0" />
