@@ -92,13 +92,15 @@ export function useAdminData(initialData: AdminInitialData) {
 
   const loadUsers = useCallback(async () => {
     try {
-      const response = await apiFetch('/api/admin/users', { cache: 'no-store' })
+      const response = await apiFetch('/api/admin/users?all=true', { cache: 'no-store' })
       if (response.ok) {
         const payload = await response.json()
-        const usersData = Array.isArray(payload)
+        const rawUsers = Array.isArray(payload)
           ? payload
-          : payload?.users?.data ?? payload?.users ?? []
-        setUsers(usersData.map(normalizeUser))
+          : Array.isArray(payload?.users)
+            ? payload.users
+            : payload?.users?.data ?? []
+        setUsers(rawUsers.map(normalizeUser))
       }
     } catch (error) {
       console.error('Error loading users:', error)

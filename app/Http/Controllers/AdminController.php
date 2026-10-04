@@ -33,7 +33,7 @@ class AdminController extends Controller
             'initialCarouselImages' => \App\Models\CarouselImage::where('isActive', true)->orderBy('order', 'asc')->get(),
             'initialBlogPosts' => \App\Models\BlogPost::with('author:id,name')->orderBy('order', 'asc')->orderBy('created_at', 'desc')->take(100)->get(),
             'initialVideos' => \App\Models\Video::orderBy('order', 'asc')->orderBy('created_at', 'desc')->take(100)->get(),
-            'initialUsers' => \App\Models\User::latest()->take(50)->get(),
+            'initialUsers' => \App\Models\User::latest()->get(),
             'initialQuickQuestions' => \App\Models\QuickQuestion::where('isActive', true)->orderBy('created_at', 'desc')->get(),
             'initialFireCodeSections' => \App\Models\FireCodeSection::orderBy('sectionNum')->get(),
         ]);
@@ -87,8 +87,12 @@ class AdminController extends Controller
                 });
             }
 
-            $perPage = min((int)$request->query('per_page', $request->query('limit', 50)), 100);
-            $users = $query->latest()->paginate($perPage);
+            if ($request->boolean('all') || (!$request->has('per_page') && !$request->has('page'))) {
+                $users = $query->latest()->get();
+            } else {
+                $perPage = min((int)$request->query('per_page', $request->query('limit', 50)), 100);
+                $users = $query->latest()->paginate($perPage);
+            }
 
             return response()->json([
                 'success' => true,
