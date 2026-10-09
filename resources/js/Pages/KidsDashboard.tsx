@@ -19,7 +19,6 @@ import { motion, AnimatePresence } from "framer-motion"
 import { BookOpen, Sparkles } from "lucide-react"
 import { playSound } from '@/lib/audio'
 import { preloadKidsPages } from '@/lib/preload-kids-pages'
-import { triggerMascotCelebrate } from '@/hooks/use-mascot'
 
 interface KidsPageProps {
   modules?: any[]
@@ -213,7 +212,6 @@ const KidsDashboardPage = ({ modules, progress }: KidsPageProps) => {
     if (previousUnlocked) {
        const newlyUnlocked = currentlyUnlocked.filter(id => !previousUnlocked.includes(id))
        if (newlyUnlocked.length > 0) {
-         triggerMascotCelebrate("Hooray! You unlocked new fire safety missions! 🎉", 5000)
          // Wait briefly to allow the Rank Modal to mount and set its state
          setTimeout(() => {
            if ((window as any).isSafescapeRankModalOpen) {

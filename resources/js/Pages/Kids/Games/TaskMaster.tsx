@@ -4,7 +4,6 @@ import { ArrowLeft, Maximize, RotateCcw } from "lucide-react"
 import axios from "axios"
 import { useAuth } from "@/lib/auth-context"
 import { playSound } from '@/lib/audio'
-import { triggerMascotCelebrate } from '@/hooks/use-mascot'
 
 export default function TaskMaster() {
   const { user } = useAuth();
@@ -30,7 +29,6 @@ export default function TaskMaster() {
           if (res.data.is_new) {
             playSound('/sounds/win.mp3', 'games');
             setShowWinNotification(true);
-            triggerMascotCelebrate("Mission Complete! Task Master Badge Unlocked! 🚒", 5000);
           }
         } catch (e) {
           console.error("Failed to award badge", e);
