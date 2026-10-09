@@ -13,6 +13,8 @@ import axios from 'axios';
 import ReactMarkdown from "react-markdown"
 import chatbotIntents from "@/lib/chatbot-intents.json"
 import { createAudio, getVolume } from '@/lib/audio'
+import { InteractiveMascot } from '@/Components/Mascot/interactive-mascot'
+import { useMascot } from '@/hooks/use-mascot'
 
 interface Message {
   id: string
@@ -68,6 +70,19 @@ export function Chatbot() {
   const currentAudioRef = useRef<HTMLAudioElement | null>(null)
   const [speakingMessageId, setSpeakingMessageId] = useState<string | null>(null)
   const [isTTSLoading, setIsTTSLoading] = useState(false)
+  const { thinking: setMascotThinking, react: setMascotReact } = useMascot()
+
+  // Synchronize bot thinking with mascot thinking state
+  useEffect(() => {
+    setMascotThinking(isTyping, isTyping ? "Thinking..." : undefined)
+  }, [isTyping, setMascotThinking])
+
+  // Greet/wave when chat opens
+  useEffect(() => {
+    if (isOpen) {
+      setMascotReact('wave', 2500)
+    }
+  }, [isOpen, setMascotReact])
 
   // Stop speaking when navigation happens or component unmounts
   useEffect(() => {
@@ -791,71 +806,23 @@ export function Chatbot() {
                 transitionDuration: "500ms"
               }}
             >
-              {useMiniButton ? (
-                /* Mini Button Rendering */
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.5 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.5 }}
-                  transition={{ type: "spring", stiffness: 500, damping: 30 }}
-                  className="relative"
-                >
-                  <div className="relative h-14 w-14 sm:h-16 sm:w-16 rounded-full bg-white border-[3px] border-orange-500 shadow-lg cursor-pointer flex items-center justify-center overflow-hidden group">
-                    <Image
-                      src="/berong_pr.webp"
-                      alt="Berong - BFP Assistant"
-                      width={56}
-                      height={56}
-                      className="h-11 w-11 sm:h-13 sm:w-13 object-contain select-none drop-shadow-md group-hover:scale-110 transition-transform duration-200"
-                      draggable={false}
-                    />
-                    <div className="absolute inset-0 rounded-full border-2 border-orange-500/30 animate-ping opacity-30 pointer-events-none" />
-                  </div>
-                </motion.div>
-              ) : (
-                /* Full Mascot Rendering */
-                <>
-                  {/* Drag handle hint */}
-                  <div className="absolute top-2 left-2 bg-black/20 rounded-full px-2 py-0.5 text-[10px] text-white/80 opacity-0 hover:opacity-100 transition-opacity">
-                    ✥ Drag me
-                  </div>
-
-                  {/* Speech Bubble CTA */}
-                  <AnimatePresence>
-                    {showCTA && (
-                      <motion.div
-                        initial={{ opacity: 0, scale: 0.5, y: 20 }}
-                        animate={{ opacity: 1, scale: 1, y: [0, -8, 0] }}
-                        exit={{ opacity: 0, scale: 0.5, y: 20, transition: { delay: 0, duration: 0.2 } }}
-                        transition={{
-                          delay: 1.5,
-                          y: { duration: 2.5, repeat: Infinity, ease: "easeInOut" },
-                          default: { type: "spring", stiffness: 200 }
-                        }}
-                        className={`absolute bottom-full mb-4 z-50 pointer-events-auto ${isOnLeft ? 'left-4' : 'right-0'}`}
-                      >
-                        <div className="relative bg-white border-[4px] border-[#ff6b00] rounded-[2rem] px-5 sm:px-6 py-2 sm:py-3 shadow-[0_10px_25px_-5px_rgba(0,0,0,0.3)]">
-                          <div className="text-[#e60000] font-black text-xs sm:text-sm md:text-base leading-[1.2] text-center tracking-wide whitespace-nowrap">
-                            LET&apos;S LEARN ABOUT<br />FIRE SAFETY!
-                          </div>
-                          <div className={`absolute -bottom-[11px] w-4 h-4 sm:w-5 sm:h-5 bg-white border-b-[4px] border-r-[4px] border-[#ff6b00] transform rotate-45 rounded-br-[3px] ${isOnLeft ? 'left-6 sm:left-10' : 'right-6 sm:right-10'}`}></div>
-                        </div>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-
-                  <Image
-                    src="/rd-logo.webp"
-                    alt="Berong - BFP Assistant"
-                    width={180}
-                    height={180}
-                    className="chatbot-berong-image drop-shadow-2xl select-none w-24 sm:w-28 md:w-36 lg:w-40 h-auto transition-all duration-300"
-                    style={{ transform: isOnLeft ? 'scaleX(-1)' : 'none' }}
-                    draggable={false}
-                    priority
-                  />
-                </>
+              {/* Drag handle hint for desktop */}
+              {!useMiniButton && (
+                <div className="hidden sm:block absolute top-2 left-2 bg-black/25 backdrop-blur-xs rounded-full px-2 py-0.5 text-[10px] text-white/90 opacity-0 hover:opacity-100 transition-opacity z-30">
+                  ✥ Drag me
+                </div>
               )}
+
+              <InteractiveMascot
+                isOnLeft={isOnLeft}
+                isMobile={useMiniButton ? true : undefined}
+                isChatOpen={isOpen}
+                isDragging={isDragging}
+                onPoke={() => {
+                  setIsOpen(true)
+                  playPop()
+                }}
+              />
             </motion.div>
           ) : (
             <motion.div

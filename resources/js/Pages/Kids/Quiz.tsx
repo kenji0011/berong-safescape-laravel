@@ -6,6 +6,7 @@ import DashboardLayout from "@/Layouts/DashboardLayout"
 import axios from "axios"
 import { cn } from "@/lib/utils"
 import confetti from 'canvas-confetti'
+import { triggerMascotCelebrate, triggerMascotSay } from '@/hooks/use-mascot'
 
 type Question = {
   text: string;
@@ -126,8 +127,10 @@ const QuizPage = () => {
       if (selectedOptionText === activeQuestions[currentQuestionIndex].correctAnswer) {
         setScore(prev => prev + 1)
         playSound('match')
+        triggerMascotCelebrate("Correct! You're on fire! 🔥", 2500)
       } else {
         playSound('wrong')
+        triggerMascotSay("Keep going, Hero! You'll get the next one! 💪", 3000)
       }
       setIsAnswerRevealed(true)
       return
@@ -150,6 +153,7 @@ const QuizPage = () => {
       if (score === activeQuestions.length) {
         playSound('win')
         triggerFireworks()
+        triggerMascotCelebrate("INCREDIBLE! Perfect Score, Fire Safety Champion! 🏆", 6000)
         axios.post('/api/badges/award', {
           badge_id: 'quiz_hero',
           badge_name: 'Quiz Hero',

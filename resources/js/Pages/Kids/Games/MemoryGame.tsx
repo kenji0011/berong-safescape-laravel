@@ -5,6 +5,7 @@ import DashboardLayout from "@/Layouts/DashboardLayout"
 import axios from "axios"
 import { cn } from "@/lib/utils"
 import { playSound as playSoundUtil } from '@/lib/audio'
+import { triggerMascotCelebrate, triggerMascotSay } from '@/hooks/use-mascot'
 
 const EMOJIS = ["🚒", "🔥", "🧯", "🧑‍🚒", "🚰", "🚨"]
 
@@ -83,6 +84,7 @@ const MemoryGamePage = () => {
             const next = prev + 1
             if (next === 6) {
               playSound('win')
+              triggerMascotCelebrate("Memory Master! All fire safety pairs matched! 🧠🎉", 5000)
               
               // Award Memory Master Badge
               axios.post('/api/badges/award', {
@@ -91,7 +93,10 @@ const MemoryGamePage = () => {
                 badge_icon: '/badges/memory_hall.webp?v=2'
               }).catch(err => console.error("Failed to award badge:", err.response?.data || err.message))
             }
-            else playSound('match')
+            else {
+              playSound('match')
+              triggerMascotSay("Great match! 🔍", 1500)
+            }
             return next
           })
           setFlippedIndices([])
