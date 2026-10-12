@@ -110,6 +110,28 @@ body {
 		</div>
 
 		<script>
+			const urlParams = new URLSearchParams(window.location.search);
+			const godotVersion = urlParams.get('v') || 'v6';
+			window.GODOT_BUILD_VERSION = godotVersion;
+
+			// Intercept fetch for .wasm and .pck to guarantee fresh downloads without stale browser/CDN caching
+			const originalFetch = window.fetch;
+			window.fetch = function (resource, init) {
+				let url = typeof resource === 'string' ? resource : (resource && resource.url ? resource.url : '');
+				if (url && (url.endsWith('.wasm') || url.endsWith('.pck') || url.includes('.wasm?') || url.includes('.pck?'))) {
+					if (!url.includes('v=')) {
+						const separator = url.includes('?') ? '&' : '?';
+						const newUrl = url + separator + 'v=' + godotVersion;
+						if (typeof resource === 'string') {
+							resource = newUrl;
+						} else if (resource instanceof Request) {
+							resource = new Request(newUrl, resource);
+						}
+					}
+				}
+				return originalFetch.call(this, resource, init);
+			};
+
 			if ('serviceWorker' in navigator) {
 				navigator.serviceWorker.getRegistrations().then(function (registrations) {
 					for (let registration of registrations) {
@@ -117,8 +139,15 @@ body {
 					}
 				});
 			}
+			if ('caches' in window) {
+				caches.keys().then(function (keys) {
+					for (let key of keys) {
+						caches.delete(key);
+					}
+				});
+			}
 		</script>
-		<script src="index.js?v=5"></script>
+		<script src="index.js?v=6"></script>
 		<script>
 const GODOT_CONFIG = {"args":[],"canvasResizePolicy":2,"emscriptenPoolSize":8,"ensureCrossOriginIsolationHeaders":false,"executable":"index","experimentalVK":false,"fileSizes":{"index.pck":49140640,"index.wasm":39513091},"focusCanvas":true,"gdextensionLibs":[],"godotPoolSize":4};
 const GODOT_THREADS_ENABLED = false;

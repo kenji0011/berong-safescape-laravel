@@ -142,7 +142,9 @@ const Preloader = /** @constructor */ function () { // eslint-disable-line no-un
 			loaded: 0,
 			done: false,
 		};
-		return fetch(file).then(function (response) {
+		const version = (typeof window !== 'undefined' && window.GODOT_BUILD_VERSION) ? window.GODOT_BUILD_VERSION : 'v6';
+		const fetchUrl = file.includes('?') ? file : `${file}?v=${version}`;
+		return fetch(fetchUrl).then(function (response) {
 			if (!response.ok) {
 				return Promise.reject(new Error(`Failed loading file '${file}'`));
 			}

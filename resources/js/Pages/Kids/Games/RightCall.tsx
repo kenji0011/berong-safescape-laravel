@@ -117,7 +117,7 @@ export default function RightCall() {
     };
   }, [user?.id]);
 
-  const iframeSrc = `/games/right-call/index.html?v=5&user_id=${user?.id || 'guest'}&player_name=${encodeURIComponent(user?.name || '')}`;
+  const iframeSrc = `/games/right-call/index.html?v=6&user_id=${user?.id || 'guest'}&player_name=${encodeURIComponent(user?.name || '')}`;
 
   return (
     <>
