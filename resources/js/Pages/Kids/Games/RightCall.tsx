@@ -1,16 +1,43 @@
-import React, { useEffect, useState } from "react"
-import { Head, Link, router } from '@inertiajs/react'
-import { ArrowLeft, Maximize, RotateCcw } from "lucide-react"
+import React, { useEffect, useState, useRef } from "react"
+import { Head, router } from '@inertiajs/react'
+import { ArrowLeft, Maximize, RotateCcw, Cloud, ShieldCheck } from "lucide-react"
 import axios from "axios"
 import { useAuth } from "@/lib/auth-context"
 import { playSound } from '@/lib/audio'
 
+interface CloudProgress {
+  high_score: number;
+  total_calls_handled: number;
+  successful_calls: number;
+  accuracy_rate: number;
+  current_rank: string;
+  badge_unlocked: boolean;
+}
+
 export default function RightCall() {
   const { user } = useAuth();
   const isProfessional = user?.role === 'professional';
+  const iframeRef = useRef<HTMLIFrameElement>(null);
   const [isPortrait, setIsPortrait] = useState(false);
   const [dismissWarning, setDismissWarning] = useState(false);
   const [showWinNotification, setShowWinNotification] = useState(false);
+  const [cloudProgress, setCloudProgress] = useState<CloudProgress | null>(null);
+  const [isSyncing, setIsSyncing] = useState(false);
+
+  // Load cloud progress on mount
+  useEffect(() => {
+    if (!user?.id) return;
+
+    axios.get(`/api/games/right-call/load?user_id=${user.id}`)
+      .then(res => {
+        if (res.data) {
+          setCloudProgress(res.data);
+        }
+      })
+      .catch(err => {
+        console.warn("Could not pre-fetch cloud progress:", err?.message);
+      });
+  }, [user?.id]);
 
   useEffect(() => {
     const checkOrientation = () => {
@@ -20,16 +47,64 @@ export default function RightCall() {
     window.addEventListener('resize', checkOrientation);
     checkOrientation();
 
-    // Listen for messages from the Godot iframe
+    // Listen for events from the Godot iframe
     const handleMessage = async (event: MessageEvent) => {
+      // 1. Direct Cloud Save event from Godot
+      if (event.data?.type === "RIGHT_CALL_SAVE") {
+        if (!user?.id) return;
+        setIsSyncing(true);
+        try {
+          const payload = {
+            ...event.data.payload,
+            user_id: user.id,
+          };
+          const res = await axios.post('/api/games/right-call/save', payload);
+          if (res.data?.progress) {
+            setCloudProgress(prev => ({
+              ...(prev || {}),
+              ...res.data.progress,
+            }));
+          }
+          if (res.data?.is_new_badge) {
+            playSound('/sounds/win.mp3', 'games');
+            setShowWinNotification(true);
+          }
+        } catch (e) {
+          console.error("Failed to save Right Call progress to cloud:", e);
+        } finally {
+          setIsSyncing(false);
+        }
+      }
+
+      // 2. Request load from Godot via postMessage
+      if (event.data === "RIGHT_CALL_REQUEST_LOAD" || event.data?.type === "RIGHT_CALL_REQUEST_LOAD") {
+        if (!user?.id) return;
+        try {
+          const res = await axios.get(`/api/games/right-call/load?user_id=${user.id}`);
+          if (iframeRef.current?.contentWindow) {
+            iframeRef.current.contentWindow.postMessage({
+              type: "RIGHT_CALL_PROGRESS_LOADED",
+              data: res.data
+            }, "*");
+          }
+        } catch (e) {
+          console.error("Failed to respond to Right Call load request:", e);
+        }
+      }
+
+      // 3. Victory / Completion event from Godot
       if (event.data === "RIGHT_CALL_WON" || event.data?.type === "RIGHT_CALL_WON") {
         playSound('/sounds/win.mp3', 'games');
         setShowWinNotification(true);
-        // Save the badge via API
-        try {
-          await axios.post('/api/badges/award', { badge_id: 'dispatch_hero', badge_name: 'Dispatch Hero', badge_icon: '/badges/dispatch_hall.webp?v=2' });
-        } catch (e) {
-          console.error("Failed to award badge", e);
+        if (user?.id) {
+          try {
+            await axios.post('/api/games/right-call/save', {
+              user_id: user.id,
+              is_won: true,
+            });
+          } catch (e) {
+            console.error("Failed to record win in cloud:", e);
+          }
         }
       }
     };
@@ -40,7 +115,9 @@ export default function RightCall() {
       window.removeEventListener('resize', checkOrientation);
       window.removeEventListener('message', handleMessage);
     };
-  }, []);
+  }, [user?.id]);
+
+  const iframeSrc = `/games/right-call/index.html?user_id=${user?.id || 'guest'}&player_name=${encodeURIComponent(user?.name || '')}`;
 
   return (
     <>
@@ -49,7 +126,7 @@ export default function RightCall() {
       <div 
         className="fixed inset-0 bg-black z-[9999] flex items-center justify-center overflow-hidden touch-none"
       >
-        
+        {/* Top Controls Bar */}
         <div className="absolute top-4 left-4 z-[10000] flex items-center gap-3">
           <button 
             onClick={() => {
@@ -75,16 +152,32 @@ export default function RightCall() {
                 document.exitFullscreen();
               }
             }}
-            className="bg-black/50 hover:bg-black/80 text-white p-3 rounded-full transition-all border border-white/20 shadow-xl flex items-center gap-2 group"
+            className="bg-black/50 hover:bg-black/80 text-white p-3 rounded-full transition-all border border-white/20 shadow-xl flex items-center gap-2 group cursor-pointer"
           >
             <Maximize className="h-5 w-5 group-hover:scale-110 transition-transform" />
             <span className="font-bold hidden sm:inline">Fullscreen</span>
           </button>
         </div>
 
+        {/* Top Right Cloud Progress Chip */}
+        {user && (
+          <div className="absolute top-4 right-4 z-[10000] flex items-center gap-2 bg-black/60 backdrop-blur-md px-3.5 py-2 rounded-full border border-white/15 text-white shadow-xl text-xs sm:text-sm font-semibold select-none pointer-events-none">
+            <Cloud className={`h-4 w-4 ${isSyncing ? "text-yellow-400 animate-pulse" : "text-emerald-400"}`} />
+            <span className="hidden sm:inline text-slate-300">
+              {cloudProgress ? cloudProgress.current_rank : "Cloud Synced"}
+            </span>
+            {cloudProgress && cloudProgress.high_score > 0 && (
+              <span className="bg-emerald-500/20 text-emerald-300 px-2 py-0.5 rounded-full font-bold text-xs border border-emerald-500/30">
+                Best: {cloudProgress.high_score.toLocaleString()}
+              </span>
+            )}
+          </div>
+        )}
+
         {/* The Game Iframe */}
         <iframe 
-          src="/games/right-call/index.html" 
+          ref={iframeRef}
+          src={iframeSrc} 
           className="w-full h-full border-none pointer-events-auto"
           allowFullScreen
           scrolling="no"

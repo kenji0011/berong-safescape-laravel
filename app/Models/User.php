@@ -76,4 +76,5 @@ class User extends Authenticatable
     public function school() { return $this->belongsTo(School::class, 'school_id'); }
     public function feedbacks() { return $this->hasMany(UserFeedback::class, 'userId'); }
     public function badges() { return $this->hasMany(UserBadge::class, 'userId'); }
+    public function rightCallProgress() { return $this->hasOne(RightCallProgress::class, 'user_id'); }
 }

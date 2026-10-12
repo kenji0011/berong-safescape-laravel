@@ -13,6 +13,7 @@ use App\Http\Controllers\SchoolAnalyticsController;
 use App\Http\Controllers\FeedbackController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\GameProgressController;
+use App\Http\Controllers\RightCallProgressController;
 
 /*
 |--------------------------------------------------------------------------
@@ -47,6 +48,13 @@ Route::get('/schools', [SchoolAnalyticsController::class, 'index']);
 Route::prefix('games/taskmaster')->group(function () {
     Route::get('/load', [GameProgressController::class, 'load']);
     Route::post('/save', [GameProgressController::class, 'save']);
+});
+
+// Game progress integration for The Right Call
+Route::prefix('games/right-call')->group(function () {
+    Route::get('/load', [RightCallProgressController::class, 'load']);
+    Route::post('/save', [RightCallProgressController::class, 'save']);
+    Route::get('/leaderboard', [RightCallProgressController::class, 'leaderboard']);
 });
 
 // Public maintenance status endpoint for real-time polling
