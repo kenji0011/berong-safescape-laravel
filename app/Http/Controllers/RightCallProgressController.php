@@ -63,7 +63,8 @@ class RightCallProgressController extends Controller
                 'completed_scenarios' => $progress->completed_scenarios ?? [],
                 'badge_unlocked'      => $hasBadge,
                 'last_played_at'      => $progress->last_played_at,
-            ]);
+            ])
+            ->header('Cache-Control', 'no-transform, no-cache, private');
         } catch (\Throwable $e) {
             Log::error('Error loading Right Call progress: ' . $e->getMessage(), ['exception' => $e]);
             return response()->json(['error' => 'Failed to load progress'], 500);
@@ -170,7 +171,8 @@ class RightCallProgressController extends Controller
                 'status'       => 'saved',
                 'progress'     => $result['progress'],
                 'is_new_badge' => $result['is_new_badge'],
-            ]);
+            ])
+            ->header('Cache-Control', 'no-transform, no-cache, private');
         } catch (\Throwable $e) {
             Log::error('Error saving Right Call progress: ' . $e->getMessage(), ['exception' => $e]);
             return response()->json(['error' => 'Failed to save progress'], 500);
@@ -190,7 +192,8 @@ class RightCallProgressController extends Controller
                 ->take(10)
                 ->get();
 
-            return response()->json($topPlayers);
+            return response()->json($topPlayers)
+                ->header('Cache-Control', 'no-transform, no-cache, private');
         } catch (\Throwable $e) {
             Log::error('Error loading leaderboard: ' . $e->getMessage(), ['exception' => $e]);
             return response()->json(['error' => 'Failed to load leaderboard'], 500);
