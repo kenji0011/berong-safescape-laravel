@@ -50,8 +50,13 @@ Route::prefix('games/taskmaster')->group(function () {
     Route::post('/save', [GameProgressController::class, 'save']);
 });
 
-// Game progress integration for The Right Call
+// Game progress integration for The Right Call (supports hyphen and underscore)
 Route::prefix('games/right-call')->group(function () {
+    Route::get('/load', [RightCallProgressController::class, 'load']);
+    Route::post('/save', [RightCallProgressController::class, 'save']);
+    Route::get('/leaderboard', [RightCallProgressController::class, 'leaderboard']);
+});
+Route::prefix('games/right_call')->group(function () {
     Route::get('/load', [RightCallProgressController::class, 'load']);
     Route::post('/save', [RightCallProgressController::class, 'save']);
     Route::get('/leaderboard', [RightCallProgressController::class, 'leaderboard']);
