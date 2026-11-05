@@ -80,6 +80,8 @@ Homestead.yaml
 *.zip
 *.tar.gz
 database_backup.sql
+*.csv
+ml_scripts/*.csv
 bfp_fire_safety_dataset_*.csv
 bfp_fire_safety_dataset_1200.csv
 
@@ -88,6 +90,8 @@ bfp_fire_safety_dataset_1200.csv
 # ==========================================
 ml_scripts/bfp_chromadb/
 ml_scripts/bfp_llama3_final/
+ml_scripts/*.ipynb
+*.ipynb
 *.safetensors
 *.pickle
 *.bin
@@ -95,6 +99,7 @@ ml_scripts/bfp_llama3_final/
 # ==========================================
 # 8. Local Utility & Temporary Scratch Files
 # ==========================================
+backup_dev.ps1
 build-error.txt
 composer.phar
 fix.php
