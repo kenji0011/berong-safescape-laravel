@@ -144,7 +144,7 @@ GEMINI_API_KEY=your_gemini_api_key_here
 GOOGLE_TTS_API_KEY=your_google_tts_key_here
 ELEVENLABS_API_KEY=your_elevenlabs_api_key_here
 ```
-> **Note:** If `GEMINI_API_KEY` is omitted, the Berong Chatbot automatically runs in **Offline Mode**, answering questions from the local BFP dataset (`ml_scripts/bfp_augmented_500.csv`).
+> **Note:** If `GEMINI_API_KEY` is omitted, the Berong Chatbot automatically runs in **Offline Mode** using built-in fire safety responses.
 
 ---
 
