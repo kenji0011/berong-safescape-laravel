@@ -53,12 +53,12 @@ export const FeedbackWidget = () => {
             <AnimatePresence>
                 {!isOpen && (
                     <motion.button
-                        initial={{ opacity: 0, scale: 0.9, y: 20 }}
+                        initial={{ opacity: 0, scale: 0.85, y: 12 }}
                         animate={{ opacity: 1, scale: 1, y: 0 }}
-                        exit={{ opacity: 0, scale: 0.9, y: 20 }}
-                        transition={{ duration: 0.2 }}
+                        exit={{ opacity: 0, scale: 0.85, y: 12, transition: { duration: 0.18, ease: [0.32, 0, 0.67, 0] } }}
+                        transition={{ duration: 0.32, ease: [0.34, 1.28, 0.64, 1] }}
                         onClick={() => setIsOpen(true)}
-                        className="absolute bottom-0 left-0 bg-yellow-400 hover:bg-yellow-500 text-yellow-900 border-2 border-yellow-500 shadow-[0_4px_0_0_#ca8a04] dark:shadow-[0_4px_0_0_#854d0e] active:translate-y-1 active:shadow-none hover:-translate-y-1 transition-all rounded-full px-6 py-3 font-black text-sm flex items-center gap-3 w-max"
+                        className="absolute bottom-0 left-0 bg-yellow-400 hover:bg-yellow-500 text-yellow-900 border-2 border-yellow-500 shadow-[0_4px_0_0_#ca8a04] dark:shadow-[0_4px_0_0_#854d0e] active:translate-y-1 active:scale-95 active:shadow-none hover:-translate-y-0.5 transition-all rounded-full px-6 py-3 font-black text-sm flex items-center gap-3 w-max outline-none"
                     >
                         <MessageSquare className="h-5 w-5 shrink-0" />
                         <span className="hidden sm:inline whitespace-nowrap">Send Feedback</span>
@@ -69,24 +69,28 @@ export const FeedbackWidget = () => {
             {/* Modal Box */}
             <AnimatePresence>
                 {isOpen && (
-                    <motion.div 
-                        initial={{ opacity: 0, y: 20, scale: 0.95 }}
-                        animate={{ opacity: 1, y: 0, scale: 1 }}
-                        exit={{ opacity: 0, y: 20, scale: 0.95 }}
-                        transition={{ duration: 0.2 }}
-                        className="bg-white dark:bg-slate-900 rounded-[2rem] border-4 border-slate-200 dark:border-slate-800 shadow-2xl w-80 sm:w-96 overflow-hidden flex flex-col transition-colors duration-500 origin-bottom-left"
-                    >
-                    <div className="bg-slate-50 dark:bg-slate-950 border-b-2 border-slate-200 dark:border-slate-800 p-4 flex items-center justify-between">
-                        <div className="flex items-center gap-2 text-slate-700 dark:text-white font-black">
-                            <MessageSquare className="h-5 w-5 text-blue-500" />
-                            How are we doing?
-                        </div>
-                        <button onClick={() => setIsOpen(false)} className="text-slate-400 hover:text-slate-600 dark:text-slate-500 dark:hover:text-slate-300 bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 rounded-full p-1 transition-colors">
-                            <X className="h-4 w-4" />
-                        </button>
-                    </div>
+                    <>
+                        {/* Outside click dismiss overlay */}
+                        <div className="fixed inset-0 z-[-1]" onClick={() => setIsOpen(false)} />
 
-                    <div className="p-6">
+                        <motion.div 
+                            initial={{ opacity: 0, y: 12, scale: 0.85 }}
+                            animate={{ opacity: 1, y: 0, scale: 1 }}
+                            exit={{ opacity: 0, y: 8, scale: 0.9, transition: { duration: 0.18, ease: [0.32, 0, 0.67, 0] } }}
+                            transition={{ duration: 0.32, ease: [0.34, 1.28, 0.64, 1] }}
+                            className="bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl rounded-[1.75rem] border-2 border-slate-200/80 dark:border-slate-800 shadow-[0_20px_60px_rgba(0,0,0,0.2)] dark:shadow-[0_20px_60px_rgba(0,0,0,0.5)] w-80 sm:w-96 overflow-hidden flex flex-col transition-colors duration-500 origin-bottom-left will-change-transform"
+                        >
+                            <div className="bg-slate-50/80 dark:bg-slate-950/80 border-b border-slate-100 dark:border-slate-800 p-4 flex items-center justify-between backdrop-blur-sm">
+                                <div className="flex items-center gap-2 text-slate-700 dark:text-white font-black">
+                                    <MessageSquare className="h-5 w-5 text-blue-500" />
+                                    How are we doing?
+                                </div>
+                                <button onClick={() => setIsOpen(false)} className="text-slate-400 hover:text-slate-600 dark:text-slate-500 dark:hover:text-slate-300 bg-slate-200/80 dark:bg-slate-800/80 hover:bg-slate-300 dark:hover:bg-slate-700 rounded-full p-1 transition-all active:scale-90 outline-none">
+                                    <X className="h-4 w-4" />
+                                </button>
+                            </div>
+
+                            <div className="p-6">
                         {isSuccess ? (
                             <div className="flex flex-col items-center justify-center text-center py-6 animate-in zoom-in fade-in">
                                 <div className="h-16 w-16 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center mb-4 border-4 border-green-200 dark:border-green-800">
@@ -147,6 +151,7 @@ export const FeedbackWidget = () => {
                         )}
                     </div>
                 </motion.div>
+                </>
                 )}
             </AnimatePresence>
         </div>

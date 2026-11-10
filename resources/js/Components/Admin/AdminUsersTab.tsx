@@ -147,7 +147,7 @@ export const AdminUsersTab: React.FC<UsersTabProps> = ({
 
               <PopoverContent
                 align="end"
-                className="w-72 p-3 rounded-2xl border-2 border-slate-200 dark:border-slate-700 bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl shadow-2xl space-y-2.5 z-50 animate-in fade-in-0 zoom-in-95 duration-200"
+                className="w-72 p-3 rounded-2xl border-2 border-slate-200/80 dark:border-slate-700 bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl shadow-2xl space-y-2.5 z-50 animate-ios-popover"
               >
                 {/* Popover Header */}
                 <div className="flex items-center justify-between pb-2 border-b border-slate-100 dark:border-slate-800">

@@ -127,7 +127,7 @@ export const AdminFireCodesTab: React.FC<FireCodesTabProps> = ({
                 <SelectTrigger id="fc-category" className="w-full h-11 border-2 border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-900 font-bold text-slate-700 dark:text-white focus:ring-red-500 shadow-sm transition-all hover:border-slate-300">
                   <SelectValue placeholder="Select Category" />
                 </SelectTrigger>
-                <SelectContent className="rounded-xl border-2 border-slate-200 dark:border-slate-700 dark:bg-slate-800 shadow-xl p-1">
+                <SelectContent className="rounded-xl border-2 border-slate-200/80 dark:border-slate-700 bg-white/95 dark:bg-slate-800/95 backdrop-blur-xl shadow-[0_12px_40px_rgba(0,0,0,0.15)] dark:shadow-[0_12px_40px_rgba(0,0,0,0.4)] p-1 animate-ios-popover-center">
                   <SelectItem value="Fire Code" className="rounded-lg font-bold text-slate-700 dark:text-slate-300 cursor-pointer">Fire Code</SelectItem>
                   <SelectItem value="Policy" className="rounded-lg font-bold text-slate-700 dark:text-slate-300 cursor-pointer">Policy</SelectItem>
                   <SelectItem value="Education" className="rounded-lg font-bold text-slate-700 dark:text-slate-300 cursor-pointer">Education</SelectItem>

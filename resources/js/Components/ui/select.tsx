@@ -58,14 +58,16 @@ function SelectContent({
   position = 'popper',
   ...props
 }: React.ComponentProps<typeof SelectPrimitive.Content>) {
+  const isCustomAnimated = className?.includes('animate-ios-popover')
   return (
     <SelectPrimitive.Portal>
       <SelectPrimitive.Content
         data-slot="select-content"
         className={cn(
-          'bg-popover text-popover-foreground relative z-50 max-h-[300px] min-w-[8rem] max-w-[calc(100vw-2rem)] origin-(--radix-select-content-transform-origin) overflow-x-hidden overflow-y-auto rounded-xl border shadow-xl',
-          'data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=top]:slide-in-from-bottom-2 duration-200 ease-out',
-          position === 'popper' &&
+          'bg-popover text-popover-foreground relative z-50 max-h-[300px] min-w-[8rem] max-w-[calc(100vw-2rem)] overflow-x-hidden overflow-y-auto rounded-xl border shadow-xl',
+          !isCustomAnimated &&
+            'origin-(--radix-select-content-transform-origin) data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=top]:slide-in-from-bottom-2 duration-200 ease-out',
+          position === 'popper' && !isCustomAnimated &&
             'data-[side=bottom]:translate-y-1 data-[side=left]:-translate-x-1 data-[side=right]:translate-x-1 data-[side=top]:-translate-y-1',
           className,
         )}
