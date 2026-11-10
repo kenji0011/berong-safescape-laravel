@@ -284,7 +284,7 @@ export function NotificationPopover({
     <>
       <Popover open={isOpen} onOpenChange={setIsOpen}>
       <PopoverTrigger asChild>
-        <button className="relative flex items-center justify-center h-10 w-10 sm:h-12 sm:w-12 rounded-full bg-[#0ea5e9] border-[3px] border-white text-white shadow-[0_4px_0_#0284c7] hover:-translate-y-0.5 hover:shadow-[0_6px_0_#0284c7] active:translate-y-1 active:shadow-none data-[state=open]:translate-y-1 data-[state=open]:shadow-none transition-all duration-200 active:duration-75 outline-none cursor-pointer">
+        <button className="relative flex items-center justify-center h-10 w-10 sm:h-12 sm:w-12 rounded-full bg-[#0ea5e9] border-[3px] border-white text-white shadow-[0_4px_0_#0284c7] hover:-translate-y-0.5 hover:shadow-[0_6px_0_#0284c7] active:translate-y-1 active:scale-90 active:shadow-none data-[state=open]:translate-y-1 data-[state=open]:shadow-none transition-all duration-200 active:duration-75 outline-none cursor-pointer">
           <Bell className="h-5 w-5 sm:h-6 sm:w-6" strokeWidth={2.5} />
           {unreadCount > 0 && (
             <Badge className="absolute -top-1 -right-1 h-4 w-4 sm:h-5 sm:w-5 border-2 border-white rounded-full p-0 flex items-center justify-center text-[9px] sm:text-[10px] bg-red-500 hover:bg-red-500">
@@ -348,12 +348,12 @@ export function NotificationPopover({
         )}
       </AnimatePresence>
 
-      <PopoverContent className="z-[90] w-[calc(100vw-2rem)] sm:w-96 p-0 rounded-[1.25rem] border-2 border-slate-200/60 dark:border-slate-800 shadow-2xl bg-white dark:bg-slate-900 transition-colors relative" align="end" sideOffset={12} collisionPadding={16}>
+      <PopoverContent className="z-[90] w-[calc(100vw-2rem)] sm:w-96 p-0 rounded-[1.5rem] border-2 border-slate-200/80 dark:border-slate-800 shadow-[0_16px_50px_rgba(0,0,0,0.16)] dark:shadow-[0_16px_50px_rgba(0,0,0,0.5)] bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl transition-colors relative animate-ios-popover-bell !overflow-visible" align="end" sideOffset={12} collisionPadding={16}>
         {/* Caret pointing up to the bell icon */}
-        <div className="absolute -top-[10px] right-[70px] sm:right-4 w-4 h-4 bg-white dark:bg-slate-900 border-t-2 border-l-2 border-slate-200/60 dark:border-slate-800 rotate-45 rounded-tl-[2px] z-[-1] transition-colors"></div>
+        <div className="absolute -top-[10px] right-[70px] sm:right-4 w-4 h-4 bg-white/95 dark:bg-slate-900/95 border-t-2 border-l-2 border-slate-200/80 dark:border-slate-800 rotate-45 rounded-tl-[2px] z-[1] transition-colors pointer-events-none"></div>
         
         {/* Inner wrapper to contain scroll area and header within rounded corners */}
-        <div className="rounded-[calc(1.25rem-2px)] overflow-hidden w-full h-full relative z-10 bg-white dark:bg-slate-900">
+        <div className="rounded-[calc(1.5rem-2px)] overflow-hidden w-full h-full relative z-10 bg-transparent">
           <div className="flex items-center justify-between p-4 lg:px-5 border-b border-slate-100 dark:border-slate-800 bg-slate-50/80 dark:bg-slate-950/80 backdrop-blur-sm transition-colors">
           <h3 className="font-extrabold text-slate-800 dark:text-white text-lg tracking-tight transition-colors">Notifications</h3>
           {unreadCount > 0 && (

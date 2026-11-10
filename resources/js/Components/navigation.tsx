@@ -427,7 +427,7 @@ export function Navigation() {
                       style={{
                         viewTransitionName: isNavigatingToProfile ? 'profile-avatar-morph' : 'none'
                       }}
-                      className="flex items-center justify-center p-0 h-10 w-10 sm:h-12 sm:w-12 rounded-full bg-[#facc15] border-[3px] border-white text-white shadow-[0_4px_0_#ca8a04] hover:-translate-y-0.5 hover:shadow-[0_6px_0_#ca8a04] active:translate-y-1 active:shadow-none transition-all duration-200 active:duration-75 outline-none cursor-pointer"
+                      className="flex items-center justify-center p-0 h-10 w-10 sm:h-12 sm:w-12 rounded-full bg-[#facc15] border-[3px] border-white text-white shadow-[0_4px_0_#ca8a04] hover:-translate-y-0.5 hover:shadow-[0_6px_0_#ca8a04] active:translate-y-1 active:scale-90 active:shadow-none transition-all duration-200 active:duration-75 outline-none cursor-pointer"
                     >
                       <User className="h-5 w-5 sm:h-6 sm:w-6" strokeWidth={2.5} />
                     </Link>
@@ -438,17 +438,17 @@ export function Navigation() {
 
                   <DropdownMenu modal={false}>
                     <DropdownMenuTrigger
-                      className="flex items-center justify-center p-0 h-10 w-10 sm:h-12 sm:w-12 rounded-full bg-[#e11d48] border-[3px] border-white text-white shadow-[0_4px_0_#9f1239] data-[state=closed]:md:hover:-translate-y-0.5 data-[state=closed]:md:hover:shadow-[0_6px_0_#9f1239] active:translate-y-1 active:shadow-none data-[state=open]:translate-y-1 data-[state=open]:shadow-none dark:data-[state=open]:shadow-none transition-all duration-200 active:duration-75 outline-none cursor-pointer"
+                      className="flex items-center justify-center p-0 h-10 w-10 sm:h-12 sm:w-12 rounded-full bg-[#e11d48] border-[3px] border-white text-white shadow-[0_4px_0_#9f1239] data-[state=closed]:md:hover:-translate-y-0.5 data-[state=closed]:md:hover:shadow-[0_6px_0_#9f1239] active:translate-y-1 active:scale-90 active:shadow-none data-[state=open]:translate-y-1 data-[state=open]:shadow-none dark:data-[state=open]:shadow-none transition-all duration-200 active:duration-75 outline-none cursor-pointer group"
                     >
-                      <Settings className="h-5 w-5 sm:h-6 sm:w-6" strokeWidth={2.5} />
+                      <Settings className="h-5 w-5 sm:h-6 sm:w-6 transition-transform duration-300 group-hover:rotate-45" strokeWidth={2.5} />
                     </DropdownMenuTrigger>
                     
-                    <DropdownMenuContent className="w-56 bg-white dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-800 shadow-xl rounded-[14px] p-0 z-[100] transition-colors relative !overflow-visible" align="end" sideOffset={12} style={{ overflow: 'visible' }}>
+                    <DropdownMenuContent className="w-56 bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl border-2 border-slate-200/80 dark:border-slate-800 shadow-[0_12px_40px_rgba(0,0,0,0.15)] dark:shadow-[0_12px_40px_rgba(0,0,0,0.4)] rounded-[18px] p-0 z-[100] transition-colors relative !overflow-visible animate-ios-popover" align="end" sideOffset={12} style={{ overflow: 'visible' }}>
                       {/* Caret pointing up */}
-                      <div className="absolute -top-[10px] right-4 w-4 h-4 bg-white dark:bg-slate-900 border-t-2 border-l-2 border-slate-200 dark:border-slate-800 rotate-45 rounded-tl-[2px] z-[1] pointer-events-none" />
+                      <div className="absolute -top-[10px] right-4 w-4 h-4 bg-white/95 dark:bg-slate-900/95 border-t-2 border-l-2 border-slate-200/80 dark:border-slate-800 rotate-45 rounded-tl-[2px] z-[1] pointer-events-none" />
                       
                       {/* Inner wrapper to match notification popover behavior */}
-                      <div className="rounded-[calc(14px-2px)] overflow-hidden w-full h-full relative z-10 bg-white dark:bg-slate-900 p-1.5">
+                      <div className="rounded-[calc(18px-2px)] overflow-hidden w-full h-full relative z-10 bg-transparent p-1.5">
                         <div className="px-2 py-1.5 mb-1 border-b border-slate-100 dark:border-slate-800 transition-colors">
                           <p className="text-sm font-semibold text-slate-800 dark:text-white transition-colors">Menu Options</p>
                         </div>
@@ -500,17 +500,17 @@ export function Navigation() {
                   </Link>
                   <DropdownMenu modal={false}>
                     <DropdownMenuTrigger
-                      className="flex items-center justify-center p-0 h-10 w-10 sm:h-12 sm:w-12 rounded-full bg-[#e11d48] border-[3px] border-white text-white shadow-[0_4px_0_#9f1239] data-[state=closed]:md:hover:-translate-y-0.5 data-[state=closed]:md:hover:shadow-[0_6px_0_#9f1239] active:translate-y-1 active:shadow-none data-[state=open]:translate-y-1 data-[state=open]:shadow-none dark:data-[state=open]:shadow-none transition-all duration-200 active:duration-75 outline-none cursor-pointer"
+                      className="flex items-center justify-center p-0 h-10 w-10 sm:h-12 sm:w-12 rounded-full bg-[#e11d48] border-[3px] border-white text-white shadow-[0_4px_0_#9f1239] data-[state=closed]:md:hover:-translate-y-0.5 data-[state=closed]:md:hover:shadow-[0_6px_0_#9f1239] active:translate-y-1 active:scale-90 active:shadow-none data-[state=open]:translate-y-1 data-[state=open]:shadow-none dark:data-[state=open]:shadow-none transition-all duration-200 active:duration-75 outline-none cursor-pointer group"
                     >
-                      <Settings className="h-5 w-5 sm:h-6 sm:w-6" strokeWidth={2.5} />
+                      <Settings className="h-5 w-5 sm:h-6 sm:w-6 transition-transform duration-300 group-hover:rotate-45" strokeWidth={2.5} />
                     </DropdownMenuTrigger>
                     
-                    <DropdownMenuContent className="w-56 bg-white dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-800 shadow-xl rounded-[14px] p-0 z-[100] transition-colors relative !overflow-visible" align="end" sideOffset={12} style={{ overflow: 'visible' }}>
+                    <DropdownMenuContent className="w-56 bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl border-2 border-slate-200/80 dark:border-slate-800 shadow-[0_12px_40px_rgba(0,0,0,0.15)] dark:shadow-[0_12px_40px_rgba(0,0,0,0.4)] rounded-[18px] p-0 z-[100] transition-colors relative !overflow-visible animate-ios-popover" align="end" sideOffset={12} style={{ overflow: 'visible' }}>
                       {/* Caret pointing up */}
-                      <div className="absolute -top-[10px] right-4 w-4 h-4 bg-white dark:bg-slate-900 border-t-2 border-l-2 border-slate-200 dark:border-slate-800 rotate-45 rounded-tl-[2px] z-[1] pointer-events-none" />
+                      <div className="absolute -top-[10px] right-4 w-4 h-4 bg-white/95 dark:bg-slate-900/95 border-t-2 border-l-2 border-slate-200/80 dark:border-slate-800 rotate-45 rounded-tl-[2px] z-[1] pointer-events-none" />
                       
                       {/* Inner wrapper to match notification popover behavior */}
-                      <div className="rounded-[calc(14px-2px)] overflow-hidden w-full h-full relative z-10 bg-white dark:bg-slate-900 p-1.5">
+                      <div className="rounded-[calc(18px-2px)] overflow-hidden w-full h-full relative z-10 bg-transparent p-1.5">
                         <div className="px-2 py-1.5 mb-1 border-b border-slate-100 dark:border-slate-800">
                           <p className="text-sm font-semibold text-slate-800 dark:text-white transition-colors">Menu Options</p>
                         </div>
@@ -527,7 +527,7 @@ export function Navigation() {
                           <ArrowRight className="h-3.5 w-3.5 text-slate-400 group-hover:translate-x-0.5 transition-transform" />
                         </DropdownMenuItem>
 
-                        <div className="h-[1px] bg-slate-100 dark:bg-slate-800 my-1 transition-colors" />
+                        <div className="h-[1px] bg-slate-100 dark:border-slate-800 my-1 transition-colors" />
 
                         {/* About Link */}
                         <Link href="/about" className="block w-full outline-none">
