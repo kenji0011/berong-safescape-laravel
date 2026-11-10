@@ -335,7 +335,7 @@ export function Navigation() {
                 <DropdownMenu modal={false}>
                   <DropdownMenuTrigger 
                     className={cn(
-                      "font-extrabold text-sm tracking-wide uppercase flex items-center gap-1.5 outline-none cursor-pointer group transition-all duration-200",
+                      "font-extrabold text-sm tracking-wide uppercase flex items-center gap-1.5 outline-none cursor-pointer group transition-all duration-200 active:scale-95",
                       (!isDashboard && url !== '/login' && url !== '/register' && url !== '/about' && url !== '/profile')
                         ? "px-4 xl:px-5 py-1.5 rounded-full border-[3px] border-white dark:border-slate-200 bg-yellow-400 text-black shadow-[0_4px_0_#b45309] data-[state=closed]:md:hover:-translate-y-0.5 data-[state=closed]:md:hover:shadow-[0_6px_0_#b45309] active:translate-y-1 active:shadow-none data-[state=open]:translate-y-1 data-[state=open]:shadow-none" 
                         : "text-white md:hover:text-yellow-200 data-[state=open]:text-yellow-400 drop-shadow-sm py-1.5 px-2 xl:px-3 whitespace-nowrap"
@@ -355,7 +355,7 @@ export function Navigation() {
                       strokeWidth={3} 
                     />
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent className="w-56 bg-white dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-800 shadow-xl rounded-[14px] p-1.5 z-[100] transition-colors" sideOffset={12}>
+                  <DropdownMenuContent className="w-56 bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl border-2 border-slate-200/80 dark:border-slate-800 shadow-[0_12px_40px_rgba(0,0,0,0.15)] dark:shadow-[0_12px_40px_rgba(0,0,0,0.4)] rounded-[18px] p-1.5 z-[100] transition-colors animate-ios-popover-center" sideOffset={12} align="center">
                     {user?.permissions.accessProfessional && (
                       <Link href="/professional" className="block w-full">
                         <DropdownMenuItem className="cursor-pointer font-bold rounded-lg py-2.5 px-3 flex items-center justify-between hover:bg-slate-100 dark:hover:bg-slate-800 focus:bg-slate-100 dark:focus:bg-slate-800 transition-colors">
@@ -567,7 +567,7 @@ export function Navigation() {
                 aria-label={mobileMenuOpen ? "Close navigation menu" : "Open navigation menu"}
                 aria-expanded={mobileMenuOpen}
                 aria-controls="mobile-nav-menu"
-                className={`lg:hidden flex items-center justify-center h-10 w-10 sm:h-12 sm:w-12 rounded-[14px] shrink-0 transition-all duration-200 outline-none bg-yellow-400 border-[3px] border-white text-white ${
+                className={`lg:hidden flex items-center justify-center h-10 w-10 sm:h-12 sm:w-12 rounded-[14px] shrink-0 transition-all duration-200 active:scale-90 outline-none bg-yellow-400 border-[3px] border-white text-white ${
                   mobileMenuOpen 
                     ? "translate-y-1 shadow-[0_0px_0_#b45309]" 
                     : "shadow-[0_4px_0_#b45309] md:hover:-translate-y-0.5 md:hover:shadow-[0_6px_0_#b45309] active:translate-y-1 active:shadow-[0_0px_0_#b45309]"
@@ -582,12 +582,11 @@ export function Navigation() {
         {/* Mobile Navigation Menu Overlay Card */}
         <div
           id="mobile-nav-menu"
-          className={`lg:hidden absolute top-[calc(100%+8px)] left-4 right-4 bg-white dark:bg-slate-900 rounded-[1.25rem] shadow-2xl transition-all duration-300 ease-in-out origin-top-right z-[100] border-2 border-slate-200 dark:border-slate-800 ${
-            mobileMenuOpen ? "opacity-100 visible scale-100 translate-y-0" : "opacity-0 invisible scale-95 -translate-y-4"
-          }`}
+          data-open={mobileMenuOpen}
+          className="lg:hidden absolute top-[calc(100%+8px)] left-4 right-4 bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl rounded-[1.5rem] shadow-[0_16px_50px_rgba(0,0,0,0.18)] dark:shadow-[0_16px_50px_rgba(0,0,0,0.5)] z-[100] border-2 border-slate-200/80 dark:border-slate-800 mobile-nav-spring"
         >
           {/* Caret pointing up to the hamburger */}
-          <div className="absolute -top-2.5 right-2 w-6 h-6 bg-white dark:bg-slate-900 rotate-45 rounded-[3px] z-[-1] border-l-2 border-t-2 border-slate-200 dark:border-slate-800"></div>
+          <div className="absolute -top-2.5 right-3 w-5 h-5 bg-white/95 dark:bg-slate-900/95 rotate-45 rounded-[3px] z-[-1] border-l-2 border-t-2 border-slate-200/80 dark:border-slate-800 pointer-events-none"></div>
           
           <div className="max-h-[calc(100vh-120px)] overflow-y-auto py-3 flex flex-col scrollbar-thin scrollbar-thumb-slate-200 dark:scrollbar-thumb-slate-800 scrollbar-track-transparent">
             <Link
