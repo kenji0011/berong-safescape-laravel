@@ -602,26 +602,33 @@ video::cue {
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
 }
 
-/* Modern iOS Fluid Popover Animation (Continuous Spring, 60/120fps GPU accelerated) */
-@keyframes ios-popover-in {
-  0% {
+/* Modern iOS Popover Spring Animation (Smooth, Unrushed & GPU Accelerated) */
+@keyframes ios-popover-fade-in {
+  from {
     opacity: 0;
-    transform: scale(0.91) translateY(-4px);
   }
-  100% {
+  to {
     opacity: 1;
+  }
+}
+
+@keyframes ios-popover-scale-in {
+  from {
+    transform: scale(0.84) translateY(-8px);
+  }
+  to {
     transform: scale(1) translateY(0);
   }
 }
 
 @keyframes ios-popover-out {
-  0% {
+  from {
     opacity: 1;
     transform: scale(1) translateY(0);
   }
-  100% {
+  to {
     opacity: 0;
-    transform: scale(0.94) translateY(-3px);
+    transform: scale(0.88) translateY(-6px);
   }
 }
 
@@ -649,12 +656,14 @@ video::cue {
 
 .animate-ios-popover[data-state="open"],
 .animate-ios-popover-bell[data-state="open"] {
-  animation: ios-popover-in 260ms cubic-bezier(0.2, 1.18, 0.35, 1) forwards !important;
+  animation: 
+    ios-popover-fade-in 160ms cubic-bezier(0.16, 1, 0.3, 1) forwards,
+    ios-popover-scale-in 380ms cubic-bezier(0.25, 1.15, 0.45, 1) forwards !important;
 }
 
 .animate-ios-popover[data-state="closed"],
 .animate-ios-popover-bell[data-state="closed"] {
-  animation: ios-popover-out 150ms cubic-bezier(0.35, 0, 0.65, 0) forwards !important;
+  animation: ios-popover-out 180ms cubic-bezier(0.32, 0, 0.67, 0) forwards !important;
 }
 
 @media (prefers-reduced-motion: reduce) {
