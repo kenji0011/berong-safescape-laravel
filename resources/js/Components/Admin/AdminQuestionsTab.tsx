@@ -159,18 +159,23 @@ export const AdminQuestionsTab: React.FC<QuestionsTabProps> = ({
         <div>
           <div className="space-y-3 sm:space-y-4">
             {loading ? (
-              <div className="space-y-3 animate-pulse">
+              <div className="space-y-3 sm:space-y-4">
                 {[1, 2, 3].map((i) => (
-                  <div key={i} className="p-4 sm:p-5 border-2 border-slate-200 dark:border-slate-700/80 rounded-xl bg-white dark:bg-slate-900/70 space-y-3">
-                    <div className="flex items-center justify-between">
-                      <div className="flex gap-2">
-                        <Skeleton className="h-4 w-16 rounded bg-slate-200 dark:bg-slate-700" />
-                        <Skeleton className="h-4 w-24 rounded bg-slate-200 dark:bg-slate-700" />
+                  <div key={i} className="p-4 sm:p-5 border-2 border-slate-200 dark:border-slate-700/80 rounded-xl bg-white dark:bg-slate-900/70 flex flex-col gap-3">
+                    <div className="flex items-start justify-between gap-3 w-full">
+                      <div className="flex-1 min-w-0 space-y-2">
+                        <div className="flex items-center gap-2">
+                          <Skeleton className="h-5 w-16 rounded-lg bg-slate-200 dark:bg-slate-700" />
+                          <Skeleton className="h-5 w-20 rounded-lg bg-slate-200 dark:bg-slate-700" />
+                        </div>
+                        <Skeleton className="h-5 w-3/4 rounded-md bg-slate-200 dark:bg-slate-700" />
                       </div>
-                      <Skeleton className="h-8 w-8 rounded-lg bg-slate-200 dark:bg-slate-700" />
+                      <Skeleton className="h-9 w-9 sm:h-10 sm:w-10 rounded-xl shrink-0 bg-slate-200 dark:bg-slate-700" />
                     </div>
-                    <Skeleton className="h-5 w-3/4 bg-slate-200 dark:bg-slate-700" />
-                    <Skeleton className="h-14 w-full rounded-xl bg-slate-100 dark:bg-slate-800/40" />
+                    <div className="pt-2 border-t border-slate-100 dark:border-slate-800/80 space-y-1.5 mt-1">
+                      <Skeleton className="h-3.5 w-full rounded bg-slate-200/80 dark:bg-slate-700/80" />
+                      <Skeleton className="h-3.5 w-4/5 rounded bg-slate-200/80 dark:bg-slate-700/80" />
+                    </div>
                   </div>
                 ))}
               </div>

@@ -33,25 +33,8 @@ import SpotlightCard from "@/Components/ui/spotlight-card"
 import "@/Components/ui/spotlight-card.css"
 import { cn, getYouTubeId, formatTimeAgo } from "@/lib/utils"
 import { ProfessionalWelcomeBanner } from "@/Components/Banners"
+import { VideoGridSkeleton } from "@/Components/dashboard-skeletons"
 import { playSound } from '@/lib/audio'
-
-const VideoSkeleton = () => (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5 sm:gap-6 w-full">
-        {[1, 2, 3, 4, 5, 6].map((i) => (
-            <Card key={i} className="flex flex-row sm:flex-col bg-white dark:bg-slate-900 rounded-[1.25rem] sm:rounded-[1.5rem] border-[3px] border-slate-200 dark:border-slate-800 p-2.5 sm:p-3 overflow-hidden shadow-[0_4px_0_#cbd5e1] dark:shadow-[0_4px_0_#0f172a] h-auto animate-pulse gap-0">
-                <div className="w-[135px] xs:w-[155px] sm:w-full aspect-video bg-slate-200 dark:bg-slate-800 rounded-xl sm:rounded-2xl shrink-0" />
-                <div className="flex flex-row items-start gap-2.5 sm:gap-3 flex-1 min-w-0 pl-3 sm:pl-0 sm:mt-3">
-                    <div className="hidden sm:block h-9 w-9 rounded-full bg-slate-200 dark:bg-slate-800 shrink-0 mt-0.5" />
-                    <div className="flex flex-col flex-1 min-w-0 space-y-2 py-0.5">
-                        <div className="h-3.5 sm:h-4 bg-slate-200 dark:bg-slate-800 rounded w-5/6" />
-                        <div className="h-3.5 sm:h-4 bg-slate-200 dark:bg-slate-800 rounded w-3/5" />
-                        <div className="h-3 bg-slate-100 dark:bg-slate-800/60 rounded w-2/5 mt-1" />
-                    </div>
-                </div>
-            </Card>
-        ))}
-    </div>
-)
 
 interface ProfessionalPageClientProps {
     initialVideos?: VideoContent[]
@@ -729,7 +712,7 @@ const ProfessionalDashboard = ({ initialVideos, watchedVideoIds = [] }: Professi
                             )}
                         </AnimatePresence>
                     </div>
-                    <Deferred data="initialVideos" fallback={<VideoSkeleton />}>
+                    <Deferred data="initialVideos" fallback={<VideoGridSkeleton count={6} />}>
                         {filteredVideos.length === 0 ? (
                             <Card className="rounded-[2rem] border-slate-200 dark:border-slate-700 dark:bg-slate-800 hover:shadow-md transition-shadow">
                                 <CardContent className="py-12 text-center text-slate-500 dark:text-slate-400">

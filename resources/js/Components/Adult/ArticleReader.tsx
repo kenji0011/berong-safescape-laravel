@@ -750,14 +750,16 @@ export const ArticleReaderOverlay: React.FC<ArticleReaderOverlayProps> = ({
         cardOpacity,
     ])
 
-    // Lock background scroll cleanly while overlay is open
-    useEffect(() => {
+    // Lock background scroll and flag article-open cleanly while overlay is open
+    useLayoutEffect(() => {
         if (!isOpen) return
         const prevOverflow = document.body.style.overflow
         document.body.style.overflow = "hidden"
+        document.documentElement.classList.add("article-open")
 
         return () => {
             document.body.style.overflow = prevOverflow
+            document.documentElement.classList.remove("article-open")
         }
     }, [isOpen])
 

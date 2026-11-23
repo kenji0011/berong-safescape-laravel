@@ -6,6 +6,7 @@ import { toast } from "sonner"
 import { playSound } from '@/lib/audio'
 import DashboardLayout from "@/Layouts/DashboardLayout"
 import { cn } from "@/lib/utils"
+import { CourseModulesGridSkeleton } from "@/Components/dashboard-skeletons"
 
 // ─────────────────────────────────────────────
 // Types
@@ -479,29 +480,7 @@ const CourseHubPage = ({ initialModules }: CourseHubProps) => {
             )}
           </div>
 
-          <Deferred data="initialModules" fallback={
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 min-h-[800px]">
-              {[1, 2, 3, 4, 5, 6].map((i) => (
-                <div key={i} className="bg-white dark:bg-slate-800 rounded-[1.5rem] border-[3px] border-slate-100 dark:border-slate-700 h-[380px] p-5 sm:p-6 flex flex-col animate-pulse">
-                  <div className="flex justify-between mb-3 h-6">
-                    <div className="w-24 h-4 bg-slate-100 dark:bg-slate-700 rounded-full" />
-                    <div className="w-8 h-8 bg-slate-100 dark:bg-slate-700 rounded-full" />
-                  </div>
-                  <div className="w-12 h-6 bg-slate-100 dark:bg-slate-700 rounded mb-2" />
-                  <div className="w-3/4 h-8 bg-slate-100 dark:bg-slate-700 rounded mb-3" />
-                  <div className="w-full h-12 bg-slate-100 dark:bg-slate-700 rounded mb-6" />
-                  <div className="flex gap-2 mb-6">
-                    <div className="w-20 h-6 bg-slate-100 dark:bg-slate-700 rounded-lg" />
-                    <div className="w-24 h-6 bg-slate-100 dark:bg-slate-700 rounded-lg" />
-                  </div>
-                  <div className="mt-auto pt-4 border-t border-slate-50 dark:border-slate-700 flex justify-between items-center">
-                    <div className="w-16 h-8 bg-slate-100 dark:bg-slate-700 rounded" />
-                    <div className="w-24 h-10 bg-slate-100 dark:bg-slate-700 rounded-xl" />
-                  </div>
-                </div>
-              ))}
-            </div>
-          }>
+          <Deferred data="initialModules" fallback={<CourseModulesGridSkeleton count={5} />}>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 min-h-[800px]">
               {modules.map((module) => {
                 const meta = MODULE_META[module.dayNumber]

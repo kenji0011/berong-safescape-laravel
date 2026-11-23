@@ -2,7 +2,7 @@
 
 import { ContentCard, ContentCardData } from "./content-card"
 import { cn } from "@/lib/utils"
-import { Skeleton } from "./ui/skeleton"
+import { ContentCardSkeleton } from "./dashboard-skeletons"
 
 interface ContentGridProps {
   contents: ContentCardData[]
@@ -181,18 +181,7 @@ export function ContentGrid({
                 isMap && i % 2 !== 0 ? "md:translate-y-20" : ""
               )}
             >
-              <div className="bg-white dark:bg-slate-900 rounded-2xl sm:rounded-[2.5rem] overflow-hidden shadow-sm border border-slate-100 dark:border-slate-800 flex flex-col h-[280px] sm:h-[450px] transition-colors duration-500">
-                <Skeleton className="h-32 sm:h-52 w-full rounded-none" />
-                <div className="p-4 sm:p-6 flex-1 flex flex-col gap-4">
-                  <Skeleton className="h-6 w-3/4 rounded-lg" />
-                  <Skeleton className="h-4 w-full rounded-md" />
-                  <Skeleton className="h-4 w-5/6 rounded-md" />
-                  <div className="mt-auto flex justify-between items-center">
-                    <Skeleton className="h-8 w-20 rounded-full" />
-                    <Skeleton className="h-10 w-28 rounded-full" />
-                  </div>
-                </div>
-              </div>
+              <ContentCardSkeleton />
             </div>
           ))
         ) : (

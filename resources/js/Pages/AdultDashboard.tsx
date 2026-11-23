@@ -19,7 +19,7 @@ import DashboardLayout from "@/Layouts/DashboardLayout"
 import { cn, getYouTubeId, formatTimeAgo } from "@/lib/utils"
 import { useSettings } from "@/lib/settings-context"
 import { AdultWelcomeBanner } from "@/Components/Banners"
-import { AdultDashboardSkeleton } from "@/Components/dashboard-skeletons"
+import { VideoGridSkeleton } from "@/Components/dashboard-skeletons"
 import {
     ArticleOriginRect,
     ArticleReaderOverlay,
@@ -914,7 +914,7 @@ const AdultPageClient = ({ initialBlogs, initialVideos }: AdultPageClientProps) 
                         </AnimatePresence>
                     </div>
 
-                    <Deferred data="initialVideos" fallback={<AdultDashboardSkeleton />}>
+                    <Deferred data="initialVideos" fallback={<VideoGridSkeleton count={6} />}>
                         {filteredVideos.length === 0 ? (
                             <div className="relative overflow-hidden bg-white dark:bg-slate-800 border-[4px] border-dashed border-slate-300 dark:border-slate-700 rounded-[2rem] p-12 flex flex-col items-center justify-center text-center shadow-sm">
                                 <div className="bg-slate-100 dark:bg-slate-700 h-16 w-16 rounded-full flex items-center justify-center mb-4">

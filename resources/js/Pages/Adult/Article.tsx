@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState, useEffect, useCallback } from "react"
+import React, { useState, useEffect, useLayoutEffect, useCallback } from "react"
 import { Head, Link } from "@inertiajs/react"
 import { motion } from "motion/react"
 import { ArrowLeft } from "lucide-react"
@@ -60,6 +60,14 @@ const BlogArticleClient = ({ blog, allBlogs }: BlogArticleProps) => {
         },
         [activeIndex, articles, reduceMotion]
     )
+
+    // Flag article-open so floating widgets stay hidden on mobile
+    useLayoutEffect(() => {
+        document.documentElement.classList.add("article-open")
+        return () => {
+            document.documentElement.classList.remove("article-open")
+        }
+    }, [])
 
     useEffect(() => {
         if (lightboxImage) return

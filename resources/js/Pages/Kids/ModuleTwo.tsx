@@ -6,6 +6,7 @@ import axios from "axios"
 import { cn } from "@/lib/utils"
 import { ModuleNavigation } from "@/Components/module-navigation"
 import { AdaptiveQuiz } from "@/Components/AdaptiveQuiz"
+import { KidsModuleSkeleton } from "@/Components/dashboard-skeletons"
 import { playSound } from '@/lib/audio'
 
 const ModuleTwoPage = ({ moduleNum, initialProgress }: { moduleNum: number; initialProgress?: any }) => {
@@ -446,25 +447,7 @@ const ModuleTwoPage = ({ moduleNum, initialProgress }: { moduleNum: number; init
       <div className="flex-1 flex flex-col w-full relative transition-colors min-h-[80vh]">
         
         {/* Skeleton Loader */}
-        {iframeLoading && (
-          <div className="absolute inset-0 z-10 bg-white dark:bg-slate-950 bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] dark:bg-[radial-gradient(#1e293b_1px,transparent_1px)] [background-size:16px_16px] pointer-events-none transition-colors">
-            <div className="sticky top-[20vh] flex flex-col items-center px-4 w-full">
-              <div className="w-16 h-16 sm:w-20 sm:h-20 bg-white dark:bg-slate-900 rounded-2xl shadow-sm border-[3px] border-blue-200 dark:border-slate-800 flex items-center justify-center mb-6 animate-bounce transition-colors">
-                <Flame className="h-8 w-8 sm:h-10 sm:w-10 text-[#ff4b3e] animate-pulse" />
-              </div>
-              <div className="flex flex-col items-center gap-3 w-full max-w-2xl px-2 sm:px-6">
-                <div className="h-6 sm:h-10 w-48 sm:w-64 bg-blue-200/50 dark:bg-blue-900/30 rounded-full animate-pulse"></div>
-                <div className="h-4 sm:h-5 w-64 sm:w-96 bg-blue-200/50 dark:bg-blue-900/30 rounded-full animate-pulse delay-75 mb-6"></div>
-                
-                <div className="w-full space-y-4">
-                  <div className="h-48 sm:h-64 w-full bg-white/60 dark:bg-slate-900/60 rounded-[2rem] border-[3px] border-blue-200/50 dark:border-slate-800/50 animate-pulse delay-150 transition-colors"></div>
-                  <div className="h-32 sm:h-48 w-full bg-white/60 dark:bg-slate-900/60 rounded-[2rem] border-[3px] border-blue-200/50 dark:border-slate-800/50 animate-pulse delay-200 transition-colors"></div>
-                </div>
-              </div>
-              <p className="mt-8 text-blue-400 font-bold tracking-widest uppercase text-sm animate-pulse delay-300">Loading Module Content...</p>
-            </div>
-          </div>
-        )}
+        {iframeLoading && <KidsModuleSkeleton />}
 
         <iframe 
           ref={iframeRef}

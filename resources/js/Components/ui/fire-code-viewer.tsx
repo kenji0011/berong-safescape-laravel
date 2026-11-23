@@ -126,7 +126,7 @@ export function FireCodeViewer({ initialParentId = null }: FireCodeViewerProps) 
   const renderSectionContent = () => {
     if (loading) {
       return (
-        <div className="space-y-6 animate-pulse">
+        <div className="space-y-6">
           <div className="border-b border-slate-200 dark:border-slate-800 pb-4 space-y-3">
             <Skeleton className="h-8 w-2/3 bg-slate-200 dark:bg-slate-800" />
             <div className="flex gap-2">
@@ -220,11 +220,11 @@ export function FireCodeViewer({ initialParentId = null }: FireCodeViewerProps) 
               <ScrollArea className="h-[440px]">
                 <div className="p-4 space-y-2">
                   {loading ? (
-                    <div className="space-y-2 py-1 animate-pulse">
-                      {[1, 2, 3, 4, 5, 6].map((i) => (
-                        <div key={i} className="flex items-center gap-2 p-2 rounded-xl bg-slate-50 dark:bg-slate-800/40">
-                          <Skeleton className="h-4 w-10 rounded bg-slate-200 dark:bg-slate-700" />
-                          <Skeleton className="h-4 w-full rounded bg-slate-200 dark:bg-slate-700" />
+                    <div className="space-y-1.5 py-1">
+                      {[1, 2, 3, 4, 5, 6, 7].map((i) => (
+                        <div key={i} className="flex items-center gap-2 p-2 rounded-md bg-slate-50 dark:bg-slate-800/40">
+                          <Skeleton className="h-4 w-10 rounded bg-slate-200 dark:bg-slate-700 shrink-0" />
+                          <Skeleton className="h-4 flex-1 rounded bg-slate-200 dark:bg-slate-700" />
                         </div>
                       ))}
                     </div>

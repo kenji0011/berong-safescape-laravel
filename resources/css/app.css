@@ -548,6 +548,22 @@ html.lightbox-open [id*="feedback-widget"] {
   display: none !important;
 }
 
+/* Hide chatbot and feedback widget on mobile when an article is open */
+@media (max-width: 767px) {
+  html.article-open .ss-chatbot-toggle,
+  html.article-open .ss-chatbot-window,
+  html.article-open .chatbot-window-container,
+  html.article-open .chatbot-berong-image,
+  html.article-open .ss-feedback-widget,
+  html.article-open [class*="FeedbackWidget"],
+  html.article-open [id*="feedback-widget"] {
+    opacity: 0 !important;
+    pointer-events: none !important;
+    visibility: hidden !important;
+    display: none !important;
+  }
+}
+
 /* Smooth View Transitions for Article Card Morphing */
 ::view-transition-old(article-card-morph),
 ::view-transition-new(article-card-morph),
@@ -692,6 +708,12 @@ video::cue {
     visibility 180ms;
 }
 
+@keyframes shimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .animate-ios-popover,
   .animate-ios-popover-bell,
@@ -708,6 +730,10 @@ video::cue {
   .animate-ios-popover-center[data-state="closed"] {
     animation: none !important;
     transform: none !important;
+  }
+  [data-slot="skeleton"],
+  [data-slot="skeleton"]::after {
+    animation: none !important;
   }
 }
 
