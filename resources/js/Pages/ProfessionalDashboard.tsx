@@ -1,8 +1,9 @@
 "use client"
 
-import React, { useState, useRef, useEffect } from "react"
+import React, { useState, useRef, useEffect, useCallback } from "react"
 import ReactDOM from "react-dom"
 import { useAuth } from "@/lib/auth-context"
+import { useSettings } from "@/lib/settings-context"
 import { Link, Deferred } from '@inertiajs/react'
 import { motion, AnimatePresence } from "motion/react"
 import confetti from 'canvas-confetti'
@@ -12,7 +13,7 @@ import { Badge } from "@/Components/ui/badge"
 import { Button } from "@/Components/ui/button"
 import { Input } from "@/Components/ui/input"
 import { Alert, AlertDescription } from "@/Components/ui/alert"
-import { Trophy, Star, Shield, Zap, Medal, Video, Clock, Search, BookOpen, FileText, AlertCircle, Play, CheckCircle2, GraduationCap, ArrowRight, CircleHelp, Gamepad2, X, ChevronDown, ChevronUp } from "lucide-react"
+import { Trophy, Star, Shield, Zap, Medal, Video, Clock, Search, BookOpen, FileText, AlertCircle, Play, CheckCircle2, GraduationCap, ArrowRight, CircleHelp, Gamepad2, X, ChevronDown } from "lucide-react"
 import {
   Dialog,
   DialogContent,
@@ -67,6 +68,7 @@ const PROFESSIONAL_RANKS = [
 
 const ProfessionalDashboard = ({ initialVideos, watchedVideoIds = [] }: ProfessionalPageClientProps) => {
     const { user } = useAuth()
+    const { reduceMotion } = useSettings()
     const [searchQuery, setSearchQuery] = useState("")
     const [selectedVideo, setSelectedVideo] = useState<VideoContent | null>(null)
     const [watchedIds, setWatchedIds] = useState<Set<string>>(new Set())
@@ -75,10 +77,54 @@ const ProfessionalDashboard = ({ initialVideos, watchedVideoIds = [] }: Professi
     const [promotedRank, setPromotedRank] = useState<any>(null)
     const [highlightManuals, setHighlightManuals] = useState(false)
     const playerRef = useRef<HTMLDivElement>(null)
+    const playerContainerRef = useRef<HTMLDivElement>(null)
     const ytPlayerRef = useRef<any>(null)
+    const isYTPlayerReadyRef = useRef(false)
+    const pendingVideoIdRef = useRef<string | null>(null)
+    const selectedVideoRef = useRef<VideoContent | null>(null)
+    const watchedIdsRef = useRef<Set<string>>(new Set())
+    const scrollTimerRef = useRef<number | null>(null)
+    const ytInitTimerRef = useRef<number | null>(null)
+    const iframeFallbackTimerRef = useRef<number | null>(null)
     const currentRankRef = useRef<HTMLDivElement>(null)
     const [isYTReady, setIsYTReady] = useState(false)
+    const [isIframeReady, setIsIframeReady] = useState(false)
     const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false)
+
+    selectedVideoRef.current = selectedVideo
+    watchedIdsRef.current = watchedIds
+
+    const destroyYTPlayer = useCallback(() => {
+        if (ytInitTimerRef.current) {
+            window.clearTimeout(ytInitTimerRef.current)
+            ytInitTimerRef.current = null
+        }
+        if (iframeFallbackTimerRef.current) {
+            window.clearTimeout(iframeFallbackTimerRef.current)
+            iframeFallbackTimerRef.current = null
+        }
+        pendingVideoIdRef.current = null
+        isYTPlayerReadyRef.current = false
+        if (ytPlayerRef.current) {
+            try {
+                ytPlayerRef.current.destroy?.()
+            } catch (e) {
+                console.error("Error destroying YT player", e)
+            }
+            ytPlayerRef.current = null
+        }
+        setIsIframeReady(false)
+    }, [])
+
+    useEffect(() => {
+        return () => {
+            if (scrollTimerRef.current) {
+                window.clearTimeout(scrollTimerRef.current)
+                scrollTimerRef.current = null
+            }
+            destroyYTPlayer()
+        }
+    }, [destroyYTPlayer])
 
     // Auto-scroll to current rank when Rank Guide modal opens
     useEffect(() => {
@@ -115,67 +161,144 @@ const ProfessionalDashboard = ({ initialVideos, watchedVideoIds = [] }: Professi
     }, [])
 
     // Handle Video Completion
-    const handleVideoEnd = async (videoId: string) => {
-        if (!watchedIds.has(videoId)) {
+    const handleVideoEnd = useCallback(async (video: VideoContent) => {
+        const videoId = video.id.toString()
+        if (!watchedIdsRef.current.has(videoId)) {
             try {
                 await axios.post('/api/engagement/log', {
                     activityType: "VIDEO_WATCHED",
-                    metadata: { videoId, videoTitle: selectedVideo?.title }
+                    metadata: { videoId, videoTitle: video.title }
                 })
-                
-                setWatchedIds(prev => new Set([...prev, videoId]))
+
+                setWatchedIds(prev => {
+                    const next = new Set(prev)
+                    next.add(videoId)
+                    return next
+                })
             } catch (error) {
                 console.error("Failed to log video completion", error)
             }
         }
-    }
+    }, [])
 
-    // Initialize/Update Player
+    // Initialize/Update Player without blocking open/close animations
     useEffect(() => {
-        if (selectedVideo && isYTReady && (window as any).YT && (window as any).YT.Player) {
-            if (ytPlayerRef.current) {
-                try {
-                    ytPlayerRef.current.destroy()
-                } catch (e) {
-                    console.error("Error destroying YT player", e)
-                }
-                ytPlayerRef.current = null
-            }
+        if (ytInitTimerRef.current) {
+            window.clearTimeout(ytInitTimerRef.current)
+            ytInitTimerRef.current = null
+        }
 
-            const containerWrapper = document.getElementById('youtube-player-container')
-            if (containerWrapper) {
-                containerWrapper.innerHTML = '<div id="youtube-player" class="w-full h-full"></div>'
-                
-                ytPlayerRef.current = new (window as any).YT.Player('youtube-player', {
-                    videoId: getYouTubeId(selectedVideo.youtubeId),
-                    width: '100%',
-                    height: '100%',
-                    playerVars: {
-                        autoplay: 0,
-                        rel: 0,
-                        modestbranding: 1,
-                        enablejsapi: 1,
-                        origin: window.location.origin
+        if (!selectedVideo || !isYTReady || !(window as any).YT?.Player) {
+            return
+        }
+
+        const targetYoutubeId = getYouTubeId(selectedVideo.youtubeId)
+        const existingIframe = ytPlayerRef.current?.getIframe?.()
+        const isPlayerAttached = Boolean(existingIframe && document.body.contains(existingIframe))
+
+        // Reuse existing attached player when switching videos (or reversing mid-close)
+        if (ytPlayerRef.current && isPlayerAttached) {
+            if (isYTPlayerReadyRef.current && typeof ytPlayerRef.current.cueVideoById === 'function') {
+                try {
+                    ytPlayerRef.current.cueVideoById(targetYoutubeId)
+                    setIsIframeReady(true)
+                } catch (e) {
+                    console.error("Error cueing YT video", e)
+                }
+            } else {
+                pendingVideoIdRef.current = targetYoutubeId
+            }
+            return
+        }
+
+        if (ytPlayerRef.current) {
+            try {
+                ytPlayerRef.current.destroy?.()
+            } catch (e) {
+                console.error("Error destroying stale YT player", e)
+            }
+            ytPlayerRef.current = null
+            isYTPlayerReadyRef.current = false
+        }
+
+        setIsIframeReady(false)
+
+        const mountPlayer = () => {
+            const container = playerContainerRef.current
+            if (!container || !selectedVideoRef.current) return
+
+            const latestYoutubeId = getYouTubeId(selectedVideoRef.current.youtubeId)
+            container.innerHTML = ''
+            const mountEl = document.createElement('div')
+            mountEl.className = 'w-full h-full'
+            container.appendChild(mountEl)
+
+            isYTPlayerReadyRef.current = false
+            pendingVideoIdRef.current = null
+
+            if (iframeFallbackTimerRef.current) {
+                window.clearTimeout(iframeFallbackTimerRef.current)
+            }
+            iframeFallbackTimerRef.current = window.setTimeout(() => {
+                setIsIframeReady(true)
+            }, 1200)
+
+            ytPlayerRef.current = new (window as any).YT.Player(mountEl, {
+                videoId: latestYoutubeId,
+                width: '100%',
+                height: '100%',
+                playerVars: {
+                    autoplay: 0,
+                    rel: 0,
+                    modestbranding: 1,
+                    enablejsapi: 1,
+                    origin: window.location.origin
+                },
+                events: {
+                    'onReady': (event: any) => {
+                        isYTPlayerReadyRef.current = true
+                        if (iframeFallbackTimerRef.current) {
+                            window.clearTimeout(iframeFallbackTimerRef.current)
+                            iframeFallbackTimerRef.current = null
+                        }
+                        if (!selectedVideoRef.current) {
+                            try {
+                                event.target.pauseVideo?.()
+                            } catch (e) {}
+                            return
+                        }
+                        if (pendingVideoIdRef.current && pendingVideoIdRef.current !== latestYoutubeId) {
+                            try {
+                                event.target.cueVideoById(pendingVideoIdRef.current)
+                            } catch (e) {}
+                            pendingVideoIdRef.current = null
+                        }
+                        setIsIframeReady(true)
                     },
-                    events: {
-                        'onStateChange': (event: any) => {
-                            if (event.data === (window as any).YT.PlayerState.ENDED) {
-                                handleVideoEnd(selectedVideo.id.toString())
-                            }
+                    'onStateChange': (event: any) => {
+                        if (event.data === (window as any).YT.PlayerState.ENDED && selectedVideoRef.current) {
+                            handleVideoEnd(selectedVideoRef.current)
                         }
                     }
-                })
+                }
+            })
+        }
+
+        // Defer heavy YouTube iframe mount slightly past the initial open frames
+        // so the expand animation stays completely fluid while the cached thumbnail displays.
+        if (reduceMotion) {
+            mountPlayer()
+        } else {
+            ytInitTimerRef.current = window.setTimeout(mountPlayer, 180)
+        }
+
+        return () => {
+            if (ytInitTimerRef.current) {
+                window.clearTimeout(ytInitTimerRef.current)
+                ytInitTimerRef.current = null
             }
         }
-    }, [selectedVideo, isYTReady])
-
-    useEffect(() => {
-        if (selectedVideo) {
-            setTimeout(() => {
-                playerRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
-            }, 100)
-        }
-    }, [selectedVideo])
+    }, [selectedVideo, isYTReady, reduceMotion, handleVideoEnd])
 
     const videos = initialVideos || []
     const watchedCount = videos.filter(v => watchedIds.has(v.id.toString())).length;
@@ -250,27 +373,50 @@ const ProfessionalDashboard = ({ initialVideos, watchedVideoIds = [] }: Professi
     }, [watchedCount, user?.id]);
 
     // Handle video selection and player close
-    const handleClosePlayer = () => {
+    const handlePlayerExitComplete = useCallback(() => {
+        if (!selectedVideoRef.current) {
+            destroyYTPlayer()
+            setIsDescriptionExpanded(false)
+        }
+    }, [destroyYTPlayer])
+
+    const handleClosePlayer = useCallback(() => {
+        if (scrollTimerRef.current) {
+            window.clearTimeout(scrollTimerRef.current)
+            scrollTimerRef.current = null
+        }
+        if (ytInitTimerRef.current) {
+            window.clearTimeout(ytInitTimerRef.current)
+            ytInitTimerRef.current = null
+        }
+        // Pause immediately to stop audio, deferring heavy iframe teardown until after exit completes
         if (ytPlayerRef.current) {
             try {
-                ytPlayerRef.current.stopVideo?.()
-                ytPlayerRef.current.destroy?.()
+                ytPlayerRef.current.pauseVideo?.()
             } catch (e) {
-                console.error("Error destroying YT player", e)
+                // Ignore if player wasn't ready yet
             }
-            ytPlayerRef.current = null
         }
         setSelectedVideo(null)
-        setIsDescriptionExpanded(false)
-    }
+    }, [])
 
-    const handleVideoSelect = (video: VideoContent) => {
+    const handleVideoSelect = useCallback((video: VideoContent) => {
+        if (selectedVideoRef.current?.id !== video.id) {
+            setIsDescriptionExpanded(false)
+        }
         setSelectedVideo(video)
-        setIsDescriptionExpanded(false)
-        setTimeout(() => {
-            playerRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
-        }, 150)
-    }
+
+        if (scrollTimerRef.current) {
+            window.clearTimeout(scrollTimerRef.current)
+        }
+        scrollTimerRef.current = window.setTimeout(() => {
+            playerRef.current?.scrollIntoView({
+                behavior: reduceMotion ? 'auto' : 'smooth',
+                block: 'start'
+            })
+            scrollTimerRef.current = null
+        }, reduceMotion ? 0 : 60)
+    }, [reduceMotion])
 
     const handleScrollToManuals = (e: React.MouseEvent) => {
         e.preventDefault();
@@ -361,13 +507,11 @@ const ProfessionalDashboard = ({ initialVideos, watchedVideoIds = [] }: Professi
                 </div>
 
                 {/* Video Grid Section */}
-                <motion.div 
-                    layout 
-                    transition={{ duration: 0.48, ease: [0.25, 1, 0.5, 1] }} 
-                    id="training-videos-section" 
-                    className="space-y-6"
+                <div
+                    id="training-videos-section"
+                    style={{ overflowAnchor: 'none' }}
                 >
-                    <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-4 sm:gap-6">
+                    <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-4 sm:gap-6 mb-6">
                         <h2 className="text-2xl sm:text-3xl font-black text-slate-800 dark:text-white tracking-tight">Training Videos</h2>
                         
                         <div className="grid grid-cols-2 sm:flex sm:flex-row items-stretch sm:items-center gap-2.5 sm:gap-4 w-full xl:w-auto">
@@ -420,7 +564,7 @@ const ProfessionalDashboard = ({ initialVideos, watchedVideoIds = [] }: Professi
                     </div>
 
                     {/* Search Bar - Positioned BELOW Training Progress card (right before video cards) */}
-                    <div className="relative group w-full max-w-md">
+                    <div className="relative group w-full max-w-md mb-6">
                         <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-slate-400 group-focus-within:text-red-500 transition-colors duration-300" />
                         <input
                             type="text"
@@ -431,120 +575,160 @@ const ProfessionalDashboard = ({ initialVideos, watchedVideoIds = [] }: Professi
                         />
                     </div>
 
-                    {/* Video Player with Smooth Animated Expand/Collapse (Positioned below Search Bar) */}
-                    <AnimatePresence mode="wait">
-                        {selectedVideo && (
-                            <motion.div
-                                key="professional-video-player"
-                                ref={playerRef}
-                                initial={{ opacity: 0, height: 0, scale: 0.96 }}
-                                animate={{ 
-                                    opacity: 1, 
-                                    height: "auto", 
-                                    scale: 1,
-                                    transition: {
-                                        height: { duration: 0.45, ease: [0.16, 1, 0.3, 1] },
-                                        opacity: { duration: 0.3, delay: 0.05 },
-                                        scale: { duration: 0.4, ease: [0.16, 1, 0.3, 1] }
-                                    }
-                                }}
-                                exit={{ 
-                                    opacity: 0, 
-                                    height: 0, 
-                                    scale: 0.96,
-                                    transition: {
-                                        height: { duration: 0.4, ease: [0.25, 1, 0.5, 1] },
-                                        opacity: { duration: 0.2 },
-                                        scale: { duration: 0.3, ease: "easeIn" }
-                                    }
-                                }}
-                                className="w-full max-w-5xl mx-auto scroll-mt-28 sm:scroll-mt-36 overflow-hidden"
-                            >
-                                <Card className="bg-white dark:bg-slate-900 rounded-[1.5rem] sm:rounded-[2rem] border-[3px] border-slate-200 dark:border-slate-800 shadow-[0_8px_0_#cbd5e1] dark:shadow-[0_4px_0_#0f172a] sm:shadow-[0_8px_0_#cbd5e1] dark:sm:shadow-[0_8px_0_#0f172a] overflow-hidden p-3.5 sm:p-5 transition-all duration-300 gap-2.5 sm:gap-3 ring-2 ring-red-500/20">
-                                    <div className="flex items-start justify-between gap-3">
-                                        <motion.div
-                                            key={selectedVideo.id || selectedVideo.youtubeId}
-                                            initial={{ opacity: 0, x: -10 }}
-                                            animate={{ opacity: 1, x: 0 }}
-                                            exit={{ opacity: 0, y: -8 }}
-                                            transition={{ duration: 0.3, delay: 0.1 }}
-                                            className="min-w-0 flex-1 pt-0.5"
-                                        >
-                                            <h3 className="text-base sm:text-2xl font-black text-slate-800 dark:text-white leading-tight">
-                                                {selectedVideo.title}
-                                            </h3>
-                                        </motion.div>
-                                        <motion.button
-                                            whileHover={{ scale: 1.12, rotate: 90 }}
-                                            whileTap={{ scale: 0.88 }}
-                                            onClick={handleClosePlayer}
-                                            className="p-2 text-slate-400 hover:text-slate-700 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-colors shrink-0 cursor-pointer shadow-sm active:scale-95"
-                                            title="Close Player"
-                                            aria-label="Close Player"
-                                        >
-                                            <X className="h-5 w-5" strokeWidth={2.5} />
-                                        </motion.button>
-                                    </div>
-
-                                    <motion.div 
-                                        initial={{ opacity: 0, scale: 0.98 }}
-                                        animate={{ opacity: 1, scale: 1 }}
-                                        exit={{ opacity: 0 }}
-                                        transition={{ duration: 0.35, delay: 0.15 }}
-                                        className="aspect-video bg-black rounded-xl sm:rounded-2xl overflow-hidden shadow-inner border border-slate-200 dark:border-slate-800 relative group"
-                                    >
-                                        <div id="youtube-player-container" className="w-full h-full">
-                                            <div id="youtube-player" className="w-full h-full" />
-                                        </div>
-                                    </motion.div>
-
-                                    {/* YouTube-Style Expandable Description Box */}
-                                    <div 
-                                        onClick={() => setIsDescriptionExpanded(prev => !prev)}
-                                        className="p-3 sm:p-3.5 rounded-xl sm:rounded-2xl bg-slate-100/90 dark:bg-slate-800/70 hover:bg-slate-200/80 dark:hover:bg-slate-800 border border-slate-200/80 dark:border-slate-700/60 transition-colors cursor-pointer group/desc"
-                                    >
-                                        <div className="flex items-center gap-2 mb-2 text-xs font-medium text-slate-500 dark:text-slate-400">
-                                            <span>{formatTimeAgo(selectedVideo.created_at || selectedVideo.createdAt)}</span>
-                                        </div>
-                                        {selectedVideo.description && selectedVideo.description.trim() ? (
-                                            <>
-                                                <p className={cn(
-                                                    "text-xs sm:text-sm font-medium text-slate-600 dark:text-slate-300 leading-relaxed whitespace-pre-line",
-                                                    !isDescriptionExpanded && "line-clamp-3"
-                                                )}>
-                                                    {selectedVideo.description}
-                                                </p>
-                                                <button
-                                                    type="button"
-                                                    onClick={(e) => {
-                                                        e.stopPropagation();
-                                                        setIsDescriptionExpanded(prev => !prev);
-                                                    }}
-                                                    className="mt-1.5 text-xs font-black text-slate-900 dark:text-white hover:text-red-600 dark:hover:text-red-400 inline-flex items-center gap-1 transition-colors cursor-pointer"
-                                                >
-                                                    {isDescriptionExpanded ? (
-                                                        <>
-                                                            <span>Show less</span>
-                                                            <ChevronUp className="h-3.5 w-3.5" />
-                                                        </>
-                                                    ) : (
-                                                        <>
-                                                            <span>See more</span>
-                                                            <ChevronDown className="h-3.5 w-3.5" />
-                                                        </>
-                                                    )}
-                                                </button>
-                                            </>
-                                        ) : (
-                                            <p className="text-xs sm:text-sm font-medium text-slate-400 dark:text-slate-500 italic">
-                                                No description provided for this video.
-                                            </p>
-                                        )}
-                                    </div>
-                                </Card>
-                            </motion.div>
+                    {/* Video Player with Smooth Animated Expand/Collapse (Zero external margin so mount/unmount never snaps) */}
+                    <div
+                        ref={playerRef}
+                        className={cn(
+                            "scroll-mt-28 sm:scroll-mt-36",
+                            !selectedVideo && "pointer-events-none"
                         )}
-                    </AnimatePresence>
+                    >
+                        <AnimatePresence initial={false} onExitComplete={handlePlayerExitComplete}>
+                            {selectedVideo && (
+                                <motion.div
+                                    key="professional-video-player"
+                                    initial={{ height: 0 }}
+                                    animate={{
+                                        height: "auto",
+                                        transition: {
+                                            height: {
+                                                duration: reduceMotion ? 0 : 0.4,
+                                                ease: [0.25, 0.9, 0.3, 1]
+                                            }
+                                        }
+                                    }}
+                                    exit={{
+                                        height: 0,
+                                        transition: {
+                                            height: {
+                                                duration: reduceMotion ? 0 : 0.36,
+                                                ease: [0.4, 0, 0.2, 1]
+                                            }
+                                        }
+                                    }}
+                                    className="w-full max-w-5xl mx-auto overflow-hidden"
+                                >
+                                    <motion.div
+                                        initial={{ opacity: 0, y: -14, scale: 0.975 }}
+                                        animate={{
+                                            opacity: 1,
+                                            y: 0,
+                                            scale: 1,
+                                            transition: {
+                                                duration: reduceMotion ? 0 : 0.36,
+                                                ease: [0.25, 0.9, 0.3, 1],
+                                                opacity: { duration: reduceMotion ? 0 : 0.26, ease: "easeOut" }
+                                            }
+                                        }}
+                                        exit={{
+                                            opacity: 0,
+                                            y: -12,
+                                            scale: 0.975,
+                                            transition: {
+                                                duration: reduceMotion ? 0 : 0.34,
+                                                ease: [0.4, 0, 0.2, 1],
+                                                opacity: { duration: reduceMotion ? 0 : 0.26, ease: [0.4, 0, 1, 1] }
+                                            }
+                                        }}
+                                        style={{ transformOrigin: "top center" }}
+                                        className="pt-1 px-1 pb-7 sm:pb-8 will-change-transform transform-gpu"
+                                    >
+                                        <Card className="bg-white dark:bg-slate-900 rounded-[1.5rem] sm:rounded-[2rem] border-[3px] border-slate-200 dark:border-slate-800 shadow-[0_8px_0_#cbd5e1] dark:shadow-[0_4px_0_#0f172a] sm:shadow-[0_8px_0_#cbd5e1] dark:sm:shadow-[0_8px_0_#0f172a] overflow-hidden p-3.5 sm:p-5 transition-colors duration-300 gap-2.5 sm:gap-3 ring-2 ring-red-500/20">
+                                            <div className="flex items-start justify-between gap-3">
+                                                <motion.div
+                                                    key={selectedVideo.id || selectedVideo.youtubeId}
+                                                    initial={{ opacity: 0, y: 4 }}
+                                                    animate={{ opacity: 1, y: 0 }}
+                                                    transition={{ duration: reduceMotion ? 0 : 0.24, ease: [0.22, 1, 0.36, 1] }}
+                                                    className="min-w-0 flex-1 pt-0.5"
+                                                >
+                                                    <h3 className="text-base sm:text-2xl font-black text-slate-800 dark:text-white leading-tight">
+                                                        {selectedVideo.title}
+                                                    </h3>
+                                                </motion.div>
+                                                <motion.button
+                                                    whileHover={{ scale: 1.1, rotate: 90 }}
+                                                    whileTap={{ scale: 0.9 }}
+                                                    transition={{ type: "spring", stiffness: 420, damping: 24 }}
+                                                    onClick={handleClosePlayer}
+                                                    className="p-2 text-slate-400 hover:text-slate-700 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-colors shrink-0 cursor-pointer shadow-sm"
+                                                    title="Close Player"
+                                                    aria-label="Close Player"
+                                                >
+                                                    <X className="h-5 w-5" strokeWidth={2.5} />
+                                                </motion.button>
+                                            </div>
+
+                                            <div className="aspect-video bg-slate-950 rounded-xl sm:rounded-2xl overflow-hidden shadow-inner border border-slate-200 dark:border-slate-800 relative group">
+                                                {/* Cached thumbnail backdrop provides immediate visual continuity while YouTube iframe loads */}
+                                                <img
+                                                    src={`https://img.youtube.com/vi/${getYouTubeId(selectedVideo.youtubeId)}/mqdefault.jpg`}
+                                                    alt=""
+                                                    aria-hidden="true"
+                                                    className={cn(
+                                                        "absolute inset-0 w-full h-full object-cover transition-opacity duration-300 pointer-events-none select-none",
+                                                        isIframeReady ? "opacity-0" : "opacity-85"
+                                                    )}
+                                                />
+                                                {!isIframeReady && (
+                                                    <div className="absolute inset-0 bg-slate-950/35 flex items-center justify-center pointer-events-none">
+                                                        <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-red-600/90 text-white flex items-center justify-center shadow-lg border-2 border-white/30">
+                                                            <Play className="h-5 w-5 sm:h-6 sm:w-6 ml-0.5 fill-current" />
+                                                        </div>
+                                                    </div>
+                                                )}
+                                                <div
+                                                    ref={playerContainerRef}
+                                                    className={cn(
+                                                        "relative z-10 w-full h-full transition-opacity duration-300",
+                                                        isIframeReady ? "opacity-100" : "opacity-0"
+                                                    )}
+                                                />
+                                            </div>
+
+                                            {/* YouTube-Style Expandable Description Box */}
+                                            <div
+                                                onClick={() => setIsDescriptionExpanded(prev => !prev)}
+                                                className="p-3 sm:p-3.5 rounded-xl sm:rounded-2xl bg-slate-100/90 dark:bg-slate-800/70 hover:bg-slate-200/80 dark:hover:bg-slate-800 border border-slate-200/80 dark:border-slate-700/60 transition-colors cursor-pointer group/desc"
+                                            >
+                                                <div className="flex items-center gap-2 mb-2 text-xs font-medium text-slate-500 dark:text-slate-400">
+                                                    <span>{formatTimeAgo(selectedVideo.created_at || selectedVideo.createdAt)}</span>
+                                                </div>
+                                                {selectedVideo.description && selectedVideo.description.trim() ? (
+                                                    <>
+                                                        <p className={cn(
+                                                            "text-xs sm:text-sm font-medium text-slate-600 dark:text-slate-300 leading-relaxed whitespace-pre-line",
+                                                            !isDescriptionExpanded && "line-clamp-3"
+                                                        )}>
+                                                            {selectedVideo.description}
+                                                        </p>
+                                                        <button
+                                                            type="button"
+                                                            onClick={(e) => {
+                                                                e.stopPropagation();
+                                                                setIsDescriptionExpanded(prev => !prev);
+                                                            }}
+                                                            className="mt-1.5 text-xs font-black text-slate-900 dark:text-white hover:text-red-600 dark:hover:text-red-400 inline-flex items-center gap-1 transition-colors cursor-pointer"
+                                                        >
+                                                            <span>{isDescriptionExpanded ? "Show less" : "See more"}</span>
+                                                            <ChevronDown className={cn(
+                                                                "h-3.5 w-3.5 transition-transform duration-200",
+                                                                isDescriptionExpanded && "rotate-180"
+                                                            )} />
+                                                        </button>
+                                                    </>
+                                                ) : (
+                                                    <p className="text-xs sm:text-sm font-medium text-slate-400 dark:text-slate-500 italic">
+                                                        No description provided for this video.
+                                                    </p>
+                                                )}
+                                            </div>
+                                        </Card>
+                                    </motion.div>
+                                </motion.div>
+                            )}
+                        </AnimatePresence>
+                    </div>
                     <Deferred data="initialVideos" fallback={<VideoSkeleton />}>
                         {filteredVideos.length === 0 ? (
                             <Card className="rounded-[2rem] border-slate-200 dark:border-slate-700 dark:bg-slate-800 hover:shadow-md transition-shadow">
@@ -554,25 +738,25 @@ const ProfessionalDashboard = ({ initialVideos, watchedVideoIds = [] }: Professi
                                 </CardContent>
                             </Card>
                         ) : (
-                            <motion.div 
+                            <motion.div
                                 className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5 sm:gap-6"
                                 initial={{ opacity: 0, y: 15 }}
                                 animate={{ opacity: 1, y: 0 }}
-                                transition={{ duration: 0.4, ease: "easeOut" }}
+                                transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
                             >
                                 {filteredVideos.map((video, idx) => (
                                     <motion.div
                                         key={video.id}
                                         initial={{ opacity: 0, y: 16 }}
                                         animate={{ opacity: 1, y: 0 }}
-                                        transition={{ duration: 0.3, delay: idx * 0.05 }}
+                                        transition={{ duration: 0.32, delay: Math.min(idx * 0.04, 0.32), ease: [0.22, 1, 0.36, 1] }}
                                         className="h-full"
                                     >
                                         <Card
-                                            className={`flex flex-row sm:flex-col h-full cursor-pointer group bg-white dark:bg-slate-900 rounded-[1.25rem] sm:rounded-[1.5rem] border-[3px] transition-all duration-300 overflow-hidden p-2.5 sm:p-3 gap-0 ${
+                                            className={`flex flex-row sm:flex-col h-full cursor-pointer group bg-white dark:bg-slate-900 rounded-[1.25rem] sm:rounded-[1.5rem] border-[3px] transition-[transform,box-shadow,border-color] duration-250 ease-out overflow-hidden p-2.5 sm:p-3 gap-0 ${
                                                 selectedVideo?.id === video.id
                                                     ? 'border-red-500 shadow-[0_6px_0_#ef4444] ring-2 ring-red-400/30'
-                                                    : 'border-slate-200 dark:border-slate-800 shadow-[0_4px_0_#cbd5e1] dark:shadow-[0_4px_0_#0f172a] hover:-translate-y-1 hover:shadow-[0_6px_0_#cbd5e1] dark:hover:shadow-[0_6px_0_#0f172a]'
+                                                    : 'border-slate-200 dark:border-slate-800 shadow-[0_4px_0_#cbd5e1] dark:shadow-[0_4px_0_#0f172a] ring-0 ring-transparent hover:-translate-y-1 hover:shadow-[0_6px_0_#cbd5e1] dark:hover:shadow-[0_6px_0_#0f172a]'
                                             } active:translate-y-0.5 active:shadow-none`}
                                             onClick={() => handleVideoSelect(video)}
                                         >
@@ -644,7 +828,7 @@ const ProfessionalDashboard = ({ initialVideos, watchedVideoIds = [] }: Professi
                             </motion.div>
                         )}
                     </Deferred>
-                </motion.div>
+                </div>
 
                 {/* Resources Section */}
                 <div 
