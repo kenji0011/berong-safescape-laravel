@@ -88,7 +88,7 @@ export function Chatbot() {
   const [speakingMessageId, setSpeakingMessageId] = useState<string | null>(null)
   const [isTTSLoading, setIsTTSLoading] = useState(false)
 
-  // Stop speaking when navigation happens or component unmounts
+  // Stop speaking, voice input, and pending requests when navigation happens or component unmounts
   useEffect(() => {
     return () => {
       if (typeof window !== 'undefined') {
@@ -97,6 +97,16 @@ export function Chatbot() {
       if (currentAudioRef.current) {
         currentAudioRef.current.pause()
         currentAudioRef.current.currentTime = 0
+      }
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort()
+        abortControllerRef.current = null
+      }
+      if (recognitionRef.current) {
+        try {
+          recognitionRef.current.stop()
+        } catch {}
+        recognitionRef.current = null
       }
       setSpeakingMessageId(null)
     }

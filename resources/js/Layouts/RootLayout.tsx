@@ -1,5 +1,6 @@
-import React, { Suspense, useState, useEffect } from "react";
+import React, { Suspense, useState, useEffect, useRef } from "react";
 import { AuthProvider } from "@/lib/auth-context";
+import { useSettings } from "@/lib/settings-context";
 
 // Lazy-load the Chatbot to keep the initial page bundle lightweight
 const Chatbot = React.lazy(() => import("@/Components/chatbot").then(m => ({ default: m.Chatbot })));
@@ -14,6 +15,8 @@ import { PageExpiredModal } from "@/Components/Modals/page-expired-modal";
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   const { url, component, props } = usePage();
+  const { chatbotEnabled } = useSettings();
+  const initialChatbotEnabledRef = useRef(chatbotEnabled);
   const [chatbotReady, setChatbotReady] = useState(false);
   const isAuthPage = url.startsWith('/login') || url.startsWith('/register');
   
@@ -65,14 +68,18 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
   // Defer mounting the Chatbot chunk until the browser is idle so it never competes with initial LCP/FCP
   useEffect(() => {
-    if (chatbotReady) return;
+    if (!chatbotEnabled || chatbotReady) return;
+    if (!initialChatbotEnabledRef.current) {
+      setChatbotReady(true);
+      return;
+    }
     if ('requestIdleCallback' in window) {
       const idleId = (window as any).requestIdleCallback(() => setChatbotReady(true), { timeout: 1500 });
       return () => (window as any).cancelIdleCallback?.(idleId);
     }
     const timer = setTimeout(() => setChatbotReady(true), 800);
     return () => clearTimeout(timer);
-  }, [chatbotReady]);
+  }, [chatbotReady, chatbotEnabled]);
 
   // Background polling for standing sessions (pauses while tab is hidden, checks on tab resume)
   useEffect(() => {
@@ -162,7 +169,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               {children}
             </div>
           </ProfileCheckWrapper>
-          {(chatbotReady && !isAuthPage && !isMiniGame && !url.startsWith('/maintenance')) && (
+          {(chatbotEnabled && chatbotReady && !isAuthPage && !isMiniGame && !url.startsWith('/maintenance')) && (
             <Suspense fallback={null}>
               <Chatbot />
             </Suspense>

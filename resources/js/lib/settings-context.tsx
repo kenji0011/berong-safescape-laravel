@@ -23,6 +23,9 @@ interface SettingsContextType {
   magnifyingMouse: boolean;
   setMagnifyingMouse: (value: boolean) => void;
   toggleMagnifyingMouse: () => void;
+  chatbotEnabled: boolean;
+  setChatbotEnabled: (value: boolean) => void;
+  toggleChatbotEnabled: () => void;
   generalVolume: number;
   setGeneralVolume: (value: number) => void;
   gamesVolume: number;
@@ -43,6 +46,11 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
   const [focusMode, setFocusModeState] = useState<boolean>(false);
   const [colorBlindness, setColorBlindnessState] = useState<ColorBlindness>('none');
   const [magnifyingMouse, setMagnifyingMouseState] = useState<boolean>(false);
+  const [chatbotEnabled, setChatbotEnabledState] = useState<boolean>(() => {
+    if (typeof window === "undefined") return true;
+    const saved = localStorage.getItem("safescape-chatbot-enabled");
+    return saved === null ? true : saved === "true";
+  });
 
   const [generalVolume, setGeneralVolumeState] = useState<number>(100);
   const [gamesVolume, setGamesVolumeState] = useState<number>(100);
@@ -91,6 +99,11 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
     const savedMagnifyingMouse = localStorage.getItem("safescape-magnifying-mouse");
     if (savedMagnifyingMouse !== null) {
       setMagnifyingMouseState(savedMagnifyingMouse === "true");
+    }
+
+    const savedChatbotEnabled = localStorage.getItem("safescape-chatbot-enabled");
+    if (savedChatbotEnabled !== null) {
+      setChatbotEnabledState(savedChatbotEnabled === "true");
     }
 
     const savedGeneral = localStorage.getItem("safescape-general-volume");
@@ -178,6 +191,19 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
     setMagnifyingMouseState(prev => {
       const newValue = !prev;
       setTimeout(() => localStorage.setItem("safescape-magnifying-mouse", String(newValue)), 0);
+      return newValue;
+    });
+  }, []);
+
+  const setChatbotEnabled = React.useCallback((value: boolean) => {
+    setChatbotEnabledState(value);
+    setTimeout(() => localStorage.setItem("safescape-chatbot-enabled", String(value)), 0);
+  }, []);
+
+  const toggleChatbotEnabled = React.useCallback(() => {
+    setChatbotEnabledState(prev => {
+      const newValue = !prev;
+      setTimeout(() => localStorage.setItem("safescape-chatbot-enabled", String(newValue)), 0);
       return newValue;
     });
   }, []);
@@ -303,6 +329,9 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
     magnifyingMouse,
     setMagnifyingMouse,
     toggleMagnifyingMouse,
+    chatbotEnabled,
+    setChatbotEnabled,
+    toggleChatbotEnabled,
     generalVolume,
     setGeneralVolume,
     gamesVolume,
@@ -311,7 +340,7 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
     setMusicVolume,
     notificationVolume,
     setNotificationVolume
-  }), [reduceMotion, setReduceMotion, toggleReduceMotion, textSize, setTextSize, isDarkMode, setIsDarkMode, toggleDarkMode, dyslexiaFont, setDyslexiaFont, toggleDyslexiaFont, focusMode, setFocusMode, toggleFocusMode, colorBlindness, setColorBlindness, magnifyingMouse, setMagnifyingMouse, toggleMagnifyingMouse, generalVolume, setGeneralVolume, gamesVolume, setGamesVolume, musicVolume, setMusicVolume, notificationVolume, setNotificationVolume]);
+  }), [reduceMotion, setReduceMotion, toggleReduceMotion, textSize, setTextSize, isDarkMode, setIsDarkMode, toggleDarkMode, dyslexiaFont, setDyslexiaFont, toggleDyslexiaFont, focusMode, setFocusMode, toggleFocusMode, colorBlindness, setColorBlindness, magnifyingMouse, setMagnifyingMouse, toggleMagnifyingMouse, chatbotEnabled, setChatbotEnabled, toggleChatbotEnabled, generalVolume, setGeneralVolume, gamesVolume, setGamesVolume, musicVolume, setMusicVolume, notificationVolume, setNotificationVolume]);
 
   return (
     <SettingsContext.Provider value={value}>

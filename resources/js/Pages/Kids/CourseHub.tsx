@@ -1,6 +1,6 @@
 import React, { useMemo, useEffect, useState } from "react"
 import { Link, Deferred, router } from '@inertiajs/react'
-import { ArrowLeft, ArrowRight, BookOpen, Trophy, Shield, CheckCircle, Lock, Flame, ChevronRight, ClipboardCheck } from "lucide-react"
+import { ArrowLeft, BookOpen, Trophy, Shield, CheckCircle, Lock, ChevronRight, ClipboardCheck } from "lucide-react"
 import { useAuth } from "@/lib/auth-context"
 import { toast } from "sonner"
 import { playSound } from '@/lib/audio'
@@ -226,10 +226,6 @@ const CourseHubPage = ({ initialModules }: CourseHubProps) => {
   }, [])
   
   const completedCount = useMemo(() => modules.filter(m => m.isCompleted).length, [modules])
-  const overallProgress = useMemo(() => {
-    if (modules.length === 0) return 0
-    return Math.round((completedCount / modules.length) * 100)
-  }, [modules, completedCount])
 
   const handleModuleClick = (e: React.MouseEvent, module: any) => {
     if (module.isLocked) {
@@ -393,7 +389,7 @@ const CourseHubPage = ({ initialModules }: CourseHubProps) => {
       )}
 
       {/* ── Bright Module Content Area ── */}
-      <div className="relative flex-1 bg-transparent pt-2 sm:pt-4 pb-8 sm:pb-12 px-4 sm:px-6 lg:px-8 overflow-hidden">
+      <div className="relative flex-1 bg-transparent pt-2 sm:pt-4 pb-12 sm:pb-16 px-4 sm:px-6 lg:px-8 overflow-hidden">
         
         {/* Floating Themed Elements for Empty Space */}
         <style dangerouslySetInnerHTML={{__html: `
@@ -480,7 +476,7 @@ const CourseHubPage = ({ initialModules }: CourseHubProps) => {
             )}
           </div>
 
-          <Deferred data="initialModules" fallback={<CourseModulesGridSkeleton count={5} />}>
+          <Deferred data="initialModules" fallback={<CourseModulesGridSkeleton count={6} />}>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 min-h-[800px]">
               {modules.map((module) => {
                 const meta = MODULE_META[module.dayNumber]
@@ -718,68 +714,6 @@ const CourseHubPage = ({ initialModules }: CourseHubProps) => {
 
             </div>
           </Deferred>
-
-          {/* ── Motivational Footer (Refined Celebration Banner) ── */}
-          <div className={cn(
-            "mt-16 sm:mt-20 rounded-[2rem] p-6 sm:p-10 text-center relative overflow-hidden transition-all duration-300",
-            completedCount === 5
-              ? "bg-white dark:bg-slate-900 border-[3px] sm:border-[4px] border-amber-300 dark:border-amber-500/40 shadow-[0_8px_0_#fcd34d] dark:shadow-[0_8px_0_#78350f]"
-              : completedCount > 0
-              ? "bg-white dark:bg-slate-900 border-[3px] sm:border-[4px] border-orange-300 dark:border-orange-500/40 shadow-[0_8px_0_#fed7aa] dark:shadow-[0_8px_0_#7c2d12]"
-              : "bg-white dark:bg-slate-900 border-[3px] sm:border-[4px] border-slate-200 dark:border-slate-800 shadow-[0_8px_0_#cbd5e1] dark:shadow-[0_8px_0_#0f172a]"
-          )}>
-            <div className="relative z-10 flex flex-col items-center">
-              {/* Milestone Icon */}
-              <div className={cn(
-                "h-16 w-16 sm:h-20 sm:w-20 rounded-2xl sm:rounded-[1.5rem] flex items-center justify-center mb-4 border-[3px] shadow-sm transition-transform duration-300 hover:scale-105",
-                completedCount === 5
-                  ? "bg-amber-50 dark:bg-amber-950/40 border-amber-300 dark:border-amber-500/50 text-amber-500"
-                  : completedCount > 0
-                  ? "bg-orange-50 dark:bg-orange-950/40 border-orange-300 dark:border-orange-500/50 text-orange-500"
-                  : "bg-red-50 dark:bg-red-950/40 border-red-200 dark:border-red-500/40 text-red-500"
-              )}>
-                {completedCount === 5 ? (
-                  <Trophy className="h-8 w-8 sm:h-10 sm:w-10 text-amber-500 drop-shadow-sm" strokeWidth={2.5} />
-                ) : completedCount > 0 ? (
-                  <Flame className="h-8 w-8 sm:h-10 sm:w-10 text-orange-500 drop-shadow-sm" strokeWidth={2.5} />
-                ) : (
-                  <Shield className="h-8 w-8 sm:h-10 sm:w-10 text-red-500 drop-shadow-sm" strokeWidth={2.5} />
-                )}
-              </div>
-
-              {/* Progress Chip */}
-              <span className={cn(
-                "inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full text-[11px] sm:text-xs font-black uppercase tracking-wider mb-2 border",
-                completedCount === 5
-                  ? "bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-800/60"
-                  : completedCount > 0
-                  ? "bg-orange-50 dark:bg-orange-950/40 text-orange-700 dark:text-orange-300 border-orange-200 dark:border-orange-800/60"
-                  : "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700"
-              )}>
-                {completedCount === 5
-                  ? "⭐ 5 of 5 Missions Mastered"
-                  : completedCount > 0
-                  ? `🚀 ${completedCount} of 5 Missions Completed`
-                  : "🌟 0 of 5 Missions Started"}
-              </span>
-
-              {/* Dynamic Title & Description */}
-              <h3 className="text-xl sm:text-2xl md:text-3xl font-black text-slate-800 dark:text-white mb-1.5 tracking-tight">
-                {completedCount === 5
-                  ? "Fire Safety Hero Status Achieved!"
-                  : completedCount > 0
-                  ? "Keep Up the Great Work!"
-                  : "Start Your Fire Safety Adventure!"}
-              </h3>
-              <p className="text-slate-500 dark:text-slate-400 font-bold text-sm sm:text-base max-w-xl">
-                {completedCount === 5
-                  ? "You've successfully finished all 5 safety missions! Keep practicing your skills and staying fire safe."
-                  : completedCount > 0
-                  ? "Every lesson you complete brings you one step closer to earning your official Fire Safety Hero Certificate!"
-                  : "Complete all 5 interactive missions and fun mini-games to earn your official Fire Safety Hero Certificate!"}
-              </p>
-            </div>
-          </div>
 
         </div>
       </div>
