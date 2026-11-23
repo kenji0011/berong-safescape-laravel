@@ -367,17 +367,23 @@ html.module-focus-mode .drop-shadow-lg {
 }
 
 /* Hide floating distraction elements globally in both Focus Modes */
+/* Keep chatbot mounted in layout (visibility/opacity) so Motion's drag ResizeObserver never sees a 0x0 collapse */
 html.focus-mode .chatbot-window-container,
 html.focus-mode .chatbot-berong-image,
 html.focus-mode .ss-chatbot-toggle,
 html.focus-mode .ss-chatbot-window,
-html.focus-mode .ss-feedback-widget,
-html.focus-mode [class*="FeedbackWidget"],
-html.focus-mode [id*="feedback-widget"],
 html.module-focus-mode .chatbot-window-container,
 html.module-focus-mode .chatbot-berong-image,
 html.module-focus-mode .ss-chatbot-toggle,
-html.module-focus-mode .ss-chatbot-window,
+html.module-focus-mode .ss-chatbot-window {
+  opacity: 0 !important;
+  pointer-events: none !important;
+  visibility: hidden !important;
+}
+
+html.focus-mode .ss-feedback-widget,
+html.focus-mode [class*="FeedbackWidget"],
+html.focus-mode [id*="feedback-widget"],
 html.module-focus-mode .ss-feedback-widget,
 html.module-focus-mode [class*="FeedbackWidget"],
 html.module-focus-mode [id*="feedback-widget"] {
@@ -534,10 +540,16 @@ html.meet-devs-in-view .ss-chatbot-window {
 }
 
 /* Hide floating distraction elements when image lightbox/modal is open */
+/* Preserve chatbot box dimensions (no display:none) so Motion's drag constraints never collapse to 0x0 and drift left */
 html.lightbox-open .ss-chatbot-toggle,
 html.lightbox-open .ss-chatbot-window,
 html.lightbox-open .chatbot-window-container,
-html.lightbox-open .chatbot-berong-image,
+html.lightbox-open .chatbot-berong-image {
+  opacity: 0 !important;
+  pointer-events: none !important;
+  visibility: hidden !important;
+}
+
 html.lightbox-open .ss-install-shortcut-btn,
 html.lightbox-open .ss-feedback-widget,
 html.lightbox-open [class*="FeedbackWidget"],
@@ -553,7 +565,12 @@ html.lightbox-open [id*="feedback-widget"] {
   html.article-open .ss-chatbot-toggle,
   html.article-open .ss-chatbot-window,
   html.article-open .chatbot-window-container,
-  html.article-open .chatbot-berong-image,
+  html.article-open .chatbot-berong-image {
+    opacity: 0 !important;
+    pointer-events: none !important;
+    visibility: hidden !important;
+  }
+
   html.article-open .ss-feedback-widget,
   html.article-open [class*="FeedbackWidget"],
   html.article-open [id*="feedback-widget"] {

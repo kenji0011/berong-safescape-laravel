@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState, useEffect, useRef, Suspense } from "react"
+import React, { useState, useEffect, useRef, useCallback, Suspense } from "react"
 import { Button } from "@/Components/ui/button"
 import { Card } from "@/Components/ui/card"
 import { Input } from "@/Components/ui/input"
@@ -384,6 +384,8 @@ export function Chatbot() {
 
   // Draggable chathead state - full XY drag with rotation
   const [isDragging, setIsDragging] = useState(false)
+  const isDraggingRef = useRef(false)
+  const isSnapAnimatingRef = useRef(false)
   const [isOnLeft, setIsOnLeft] = useState(false)
   const constraintsRef = useRef<HTMLDivElement>(null)
   const chatheadRef = useRef<HTMLDivElement>(null)
@@ -399,34 +401,32 @@ export function Chatbot() {
   const miniDragY = useMotionValue(0)
   const [miniIsOnLeft, setMiniIsOnLeft] = useState(false)
 
+  const getSnappedX = useCallback(() => {
+    if (!isOnLeft) return 0
+    const screenWidth = window.innerWidth
+    const chatheadWidth = chatheadRef.current?.offsetWidth || 160
+    const leftOffset = screenWidth < 640
+      ? (useMiniButton ? 24 : 0)
+      : (useMiniButton ? 32 : 0)
+    return -(screenWidth - chatheadWidth) + leftOffset // adjust berong sides
+  }, [isOnLeft, useMiniButton])
+
   // Entry slide-in animation via motion value (so it doesn't conflict with snap)
   const isMounted = useRef(false)
   useEffect(() => {
     if (!isOpen) {
       rotationValue.set(0)
-      if (isOnLeft) {
-        // Re-enter from the left side
-        const screenWidth = window.innerWidth
-        const chatheadWidth = chatheadRef.current?.offsetWidth || 160
-        const leftOffset = screenWidth < 640
-          ? (useMiniButton ? 24 : 0)
-          : (useMiniButton ? 32 : 0)
-        const targetX = -(screenWidth - chatheadWidth) + leftOffset  // adjust berong sides
+      const targetX = getSnappedX()
 
-        if (!isMounted.current) {
-          dragX.set(targetX)
-        } else {
-          dragX.set(targetX - 100) // start further off-screen left
-          animate(dragX, targetX, { type: "spring", stiffness: 400, damping: 25 })
-        }
+      if (!isMounted.current) {
+        dragX.set(targetX)
       } else {
-        // Re-enter from the right side (default)
-        if (!isMounted.current) {
-          dragX.set(0)
-        } else {
-          dragX.set(100)
-          animate(dragX, 0, { type: "spring", stiffness: 400, damping: 25 })
-        }
+        isSnapAnimatingRef.current = true
+        dragX.set(isOnLeft ? targetX - 100 : 100)
+        const controls = animate(dragX, targetX, { type: "spring", stiffness: 400, damping: 25 })
+        controls.finished.finally(() => {
+          isSnapAnimatingRef.current = false
+        })
       }
       isMounted.current = true
     }
@@ -434,6 +434,7 @@ export function Chatbot() {
 
   // Snap to nearest screen edge when drag ends
   const handleDragEnd = () => {
+    isDraggingRef.current = false
     setIsDragging(false)
     // Reset rotation to 0 (straight) when snapping
     animate(rotationValue, 0, { type: "spring", stiffness: 400, damping: 30 })
@@ -446,17 +447,24 @@ export function Chatbot() {
     const currentCenterX = (screenWidth - chatheadWidth) + dragX.get() + chatheadWidth / 2
     const isCloserToLeft = currentCenterX < screenWidth / 2
 
+    isSnapAnimatingRef.current = true
     if (isCloserToLeft) {
       // Snap to left edge
       const leftOffset = screenWidth < 640
         ? (useMiniButton ? 24 : 0)
         : (useMiniButton ? 32 : 0)
-      const targetX = -(screenWidth - chatheadWidth) + leftOffset  // adjust berong sides
-      animate(dragX, targetX, { type: "spring", stiffness: 600, damping: 25 })
+      const targetX = -(screenWidth - chatheadWidth) + leftOffset // adjust berong sides
+      const controls = animate(dragX, targetX, { type: "spring", stiffness: 600, damping: 25 })
+      controls.finished.finally(() => {
+        isSnapAnimatingRef.current = false
+      })
       setIsOnLeft(true)
     } else {
       // Snap back to right edge (original position)
-      animate(dragX, 0, { type: "spring", stiffness: 600, damping: 25 })
+      const controls = animate(dragX, 0, { type: "spring", stiffness: 600, damping: 25 })
+      controls.finished.finally(() => {
+        isSnapAnimatingRef.current = false
+      })
       setIsOnLeft(false)
     }
   }
@@ -471,48 +479,45 @@ export function Chatbot() {
     lastDragX.current = currentX
   }
 
-  // Handle window resize / orientation change to re-snap accurately
+  // Safeguard: Re-lock dragX to its snapped edge after any window/container resize or
+  // modal/lightbox class toggle so Motion's internal ResizeObserver never drifts it left
   useEffect(() => {
-    const handleResize = () => {
-      if (isDragging) return
-      if (isOnLeft && chatheadRef.current) {
-        const screenWidth = window.innerWidth
-        const chatheadWidth = chatheadRef.current.offsetWidth || 160
-        const leftOffset = screenWidth < 640
-          ? (useMiniButton ? 24 : 0)
-          : (useMiniButton ? 32 : 0)
-        const targetX = -(screenWidth - chatheadWidth) + leftOffset
-        dragX.set(targetX)
-      } else if (!isOnLeft) {
-        dragX.set(0)
-      }
+    let rafId: number | null = null
+
+    const syncSnappedPosition = () => {
+      if (rafId !== null) cancelAnimationFrame(rafId)
+      rafId = requestAnimationFrame(() => {
+        rafId = null
+        if (isDraggingRef.current || isSnapAnimatingRef.current) return
+        const targetX = getSnappedX()
+        if (Math.abs(dragX.get() - targetX) > 0.5) {
+          dragX.set(targetX)
+        }
+      })
     }
 
-    window.addEventListener('resize', handleResize)
-    return () => window.removeEventListener('resize', handleResize)
-  }, [isOnLeft, useMiniButton, isDragging])
+    window.addEventListener('resize', syncSnappedPosition)
 
-  // Safeguard: Ensure dragX stays at 0 (or targetX) when not dragging,
-  // preventing any desync when footer or meet-devs classes are toggled
-  useEffect(() => {
-    const checkPosition = () => {
-      if (isDragging) return
-      if (!isOnLeft && dragX.get() !== 0) {
-        animate(dragX, 0, { type: "spring", stiffness: 600, damping: 25 })
-      }
-    }
-
-    const observer = new MutationObserver(() => {
-      checkPosition()
-    })
-
+    const mutationObserver = new MutationObserver(syncSnappedPosition)
     if (typeof document !== 'undefined') {
-      observer.observe(document.body, { attributes: true, attributeFilter: ['class'] })
-      observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] })
+      mutationObserver.observe(document.body, { attributes: true, attributeFilter: ['class', 'data-scroll-locked'] })
+      mutationObserver.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] })
     }
 
-    return () => observer.disconnect()
-  }, [isOnLeft, isDragging])
+    let resizeObserver: ResizeObserver | null = null
+    if (typeof ResizeObserver !== 'undefined') {
+      resizeObserver = new ResizeObserver(syncSnappedPosition)
+      if (constraintsRef.current) resizeObserver.observe(constraintsRef.current)
+      if (chatheadRef.current) resizeObserver.observe(chatheadRef.current)
+    }
+
+    return () => {
+      if (rafId !== null) cancelAnimationFrame(rafId)
+      window.removeEventListener('resize', syncSnappedPosition)
+      mutationObserver.disconnect()
+      resizeObserver?.disconnect()
+    }
+  }, [getSnappedX, dragX, isOpen])
 
   const startCTATimeout = () => {
     if (ctaTimeoutRef.current) clearTimeout(ctaTimeoutRef.current)
@@ -794,7 +799,7 @@ export function Chatbot() {
               dragConstraints={constraintsRef}
               dragElastic={0.1}
               dragMomentum={false}
-              onDragStart={() => { setIsDragging(true); lastDragX.current = dragX.get() }}
+              onDragStart={() => { isDraggingRef.current = true; isSnapAnimatingRef.current = false; setIsDragging(true); lastDragX.current = dragX.get() }}
               onDrag={handleDrag}
               onDragEnd={handleDragEnd}
               ref={chatheadRef}

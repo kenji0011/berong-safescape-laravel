@@ -110,13 +110,13 @@ export function HeroCarouselClient({ images }: HeroCarouselClientProps) {
                                             decoding={index === 0 ? "sync" : "async"}
                                             fetchPriority={index === 0 ? "high" : "low"}
                                             onLoad={index === 0 && images.length > 1 ? () => markSlidesLoaded([1]) : undefined}
-                                            className="absolute inset-0 w-full h-full object-cover transition-[opacity,transform] duration-700 ease-out group-hover/slide:scale-110"
+                                            className="absolute inset-0 w-full h-full object-cover transition-[transform,scale,opacity] duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] will-change-transform group-hover/slide:scale-[1.06]"
                                         />
                                     )}
 
                                     {/* Gradient Overlay - Bottom Left aligned */}
                                     <div className="absolute inset-0 bg-gradient-to-t from-gray-900/90 via-gray-900/40 to-transparent flex flex-col justify-end items-start p-6 pb-10 sm:p-10 sm:pb-14 md:p-12 md:pb-16 pointer-events-none rounded-[2rem] sm:rounded-[2.5rem]">
-                                        <div className="relative z-10 text-white w-full max-w-5xl pointer-events-auto">
+                                        <div className="relative z-10 text-white w-full max-w-5xl pointer-events-auto transition-[transform,translate] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover/slide:-translate-y-1">
                                             <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black mb-3 sm:mb-4 drop-shadow-2xl tracking-tight leading-tight">
                                                 {image.title}
                                             </h1>
@@ -131,11 +131,11 @@ export function HeroCarouselClient({ images }: HeroCarouselClientProps) {
                                     {/* Transparent Clickable Overlay Button */}
                                     <button
                                         onClick={() => handleImageClick(image)}
-                                        className="absolute inset-0 z-10 w-full h-full cursor-zoom-in bg-transparent transition-colors outline-none focus:ring-2 focus:ring-primary focus:ring-inset rounded-[2rem] sm:rounded-[2.5rem] flex items-center justify-center group/overlay"
+                                        className="absolute inset-0 z-10 w-full h-full cursor-zoom-in bg-black/0 hover:bg-black/15 transition-colors duration-500 ease-out outline-none focus:ring-2 focus:ring-primary focus:ring-inset rounded-[2rem] sm:rounded-[2.5rem] flex items-center justify-center group/overlay"
                                         aria-label={`View full screen image: ${image.title}`}
                                     >
                                         {/* Center Overlay Hint */}
-                                        <div className="opacity-0 group-hover/overlay:opacity-100 translate-y-4 group-hover/overlay:translate-y-0 transition-all duration-300 bg-slate-900/90 backdrop-blur-md text-white font-bold px-4 py-2 sm:px-5 sm:py-2.5 rounded-xl flex items-center gap-2 shadow-2xl border border-slate-700/50 text-xs sm:text-sm">
+                                        <div className="opacity-0 translate-y-3 scale-95 group-hover/overlay:opacity-100 group-hover/overlay:translate-y-0 group-hover/overlay:scale-100 transition-[opacity,transform,translate,scale] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] will-change-transform bg-slate-900/90 backdrop-blur-md text-white font-bold px-4 py-2 sm:px-5 sm:py-2.5 rounded-xl flex items-center gap-2 shadow-2xl border border-slate-700/50 text-xs sm:text-sm">
                                             <Maximize2 className="h-4 w-4 sm:h-5 sm:w-5" strokeWidth={2.5} />
                                             Click to expand
                                         </div>
