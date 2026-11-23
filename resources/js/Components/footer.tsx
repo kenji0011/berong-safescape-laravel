@@ -184,7 +184,7 @@ export function Footer() {
           >
             <div className="flex items-center gap-3 mb-3">
               <div className="w-12 h-12 rounded-2xl flex items-center justify-center">
-                <img src="/berong_profile.webp" alt="Berong Mascot" className="w-12 h-12 object-contain drop-shadow-md" />
+                <img src="/berong_profile.webp" alt="Berong Mascot" loading="lazy" decoding="async" className="w-12 h-12 object-contain drop-shadow-md" />
               </div>
               <div>
                 <h3 className="text-base font-black text-white tracking-wide">SafeScape</h3>
@@ -394,6 +394,8 @@ export function Footer() {
                 <img 
                   src="/rd-logo.webp" 
                   alt="Berong Mascot" 
+                  loading="lazy"
+                  decoding="async"
                   className="w-auto h-[10vw] sm:h-[8vw] xl:h-[220px] object-contain drop-shadow-2xl"
                   draggable={false}
                 />

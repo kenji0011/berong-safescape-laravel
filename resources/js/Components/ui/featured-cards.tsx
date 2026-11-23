@@ -100,19 +100,26 @@ function AnimatedFeaturedCard({
 }) {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-80px" });
+  const [hasHovered, setHasHovered] = useState(false);
 
   const cardContent = (
-    <div className={`w-full flex flex-col bg-white dark:bg-[#0B1120] rounded-[1.75rem] sm:rounded-[2rem] overflow-hidden relative transition-all duration-500 border-2 border-slate-200 dark:border-slate-800 shadow-xl ${isRestricted ? 'grayscale opacity-50' : 'group-hover/card:-translate-y-3 group-hover/card:shadow-[0_30px_60px_rgba(0,0,0,0.12)] dark:group-hover/card:shadow-[0_30px_60px_rgba(0,0,0,0.6)] group-hover/card:dark:border-slate-700/80'}`}>
+    <div
+      onMouseEnter={() => { if (!hasHovered) setHasHovered(true); }}
+      className={`w-full flex flex-col bg-white dark:bg-[#0B1120] rounded-[1.75rem] sm:rounded-[2rem] overflow-hidden relative transition-all duration-500 border-2 border-slate-200 dark:border-slate-800 shadow-xl ${isRestricted ? 'grayscale opacity-50' : 'group-hover/card:-translate-y-3 group-hover/card:shadow-[0_30px_60px_rgba(0,0,0,0.12)] dark:group-hover/card:shadow-[0_30px_60px_rgba(0,0,0,0.6)] group-hover/card:dark:border-slate-700/80'}`}
+    >
 
-      {/* Full Card Hover Overlay */}
+      {/* Full Card Hover Overlay (image mounts only on first hover so initial load skips 3 hidden images) */}
       {card.hoverImageUrl && (
         <div className={`absolute inset-0 z-20 pointer-events-none transition-all duration-700 ease-out opacity-0 ${isRestricted ? '' : 'group-hover/card:opacity-100'}`}>
-          <img
-            src={card.hoverImageUrl}
-            alt={`${card.title} hover preview`}
-            loading="lazy"
-            className={`absolute inset-0 w-full h-full object-cover transition-transform duration-1000 ease-out scale-110 ${isRestricted ? '' : 'group-hover/card:scale-100'}`}
-          />
+          {hasHovered && (
+            <img
+              src={card.hoverImageUrl}
+              alt={`${card.title} hover preview`}
+              loading="lazy"
+              decoding="async"
+              className={`absolute inset-0 w-full h-full object-cover transition-transform duration-1000 ease-out scale-110 ${isRestricted ? '' : 'group-hover/card:scale-100'}`}
+            />
+          )}
           {/* Dark gradient for text readability */}
           <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/60 to-transparent opacity-95 transition-opacity duration-700" />
         </div>
@@ -123,7 +130,8 @@ function AnimatedFeaturedCard({
         <img
           src={card.imageUrl}
           alt={card.title}
-          fetchPriority="high"
+          loading="lazy"
+          decoding="async"
           className={`absolute inset-0 w-full h-full object-cover transition-transform duration-1000 ease-out ${isRestricted ? '' : 'group-hover/card:scale-110'}`}
         />
         {/* Sleek Gradient Overlay */}
@@ -260,7 +268,9 @@ function MobileAnimatedCard({
 export function FeaturedCards({ serverUser }: { serverUser?: ServerUser | null } = {}) {
   const { user: clientUser, isLoading } = useAuth();
   const prefersReducedMotion = useReducedMotion();
-  const [isMobile, setIsMobile] = useState(false);
+  const [isMobile, setIsMobile] = useState(() =>
+    typeof window !== "undefined" ? window.innerWidth < 768 : false
+  );
   const sectionRef = useRef(null);
   const isInView = useInView(sectionRef, { once: true, margin: "-60px" });
 
@@ -327,40 +337,41 @@ export function FeaturedCards({ serverUser }: { serverUser?: ServerUser | null }
         </h2>
       </motion.div>
 
-      {/* Mobile: Staggered animated cards */}
-      <div className="md:hidden space-y-3">
-        {visibleCards.map((card, index) => (
-          <MobileAnimatedCard
-            key={card.id}
-            card={card}
-            index={index}
-            reduceMotion={reduceMotion}
-            isRestricted={isCardRestricted(card)}
-          />
-        ))}
-      </div>
-
-      {/* Desktop: Bento grid with glassmorphism */}
-      <div
-        className={`hidden md:grid gap-6 w-full ${
-          visibleCards.length === 1
-            ? 'grid-cols-1 max-w-md mx-auto'
-            : visibleCards.length === 2
-              ? 'grid-cols-2 max-w-4xl mx-auto'
-              : 'grid-cols-3 max-w-6xl mx-auto'
-        }`}
-      >
-        {visibleCards.map((card, index) => (
-          <AnimatedFeaturedCard
-            key={card.id}
-            card={card}
-            index={index}
-            reduceMotion={reduceMotion}
-            isBento={visibleCards.length >= 3}
-            isRestricted={isCardRestricted(card)}
-          />
-        ))}
-      </div>
+      {/* Render only active viewport layout so mobile never mounts hidden desktop card images */}
+      {isMobile ? (
+        <div className="space-y-3">
+          {visibleCards.map((card, index) => (
+            <MobileAnimatedCard
+              key={card.id}
+              card={card}
+              index={index}
+              reduceMotion={reduceMotion}
+              isRestricted={isCardRestricted(card)}
+            />
+          ))}
+        </div>
+      ) : (
+        <div
+          className={`grid gap-6 w-full ${
+            visibleCards.length === 1
+              ? 'grid-cols-1 max-w-md mx-auto'
+              : visibleCards.length === 2
+                ? 'grid-cols-2 max-w-4xl mx-auto'
+                : 'grid-cols-3 max-w-6xl mx-auto'
+          }`}
+        >
+          {visibleCards.map((card, index) => (
+            <AnimatedFeaturedCard
+              key={card.id}
+              card={card}
+              index={index}
+              reduceMotion={reduceMotion}
+              isBento={visibleCards.length >= 3}
+              isRestricted={isCardRestricted(card)}
+            />
+          ))}
+        </div>
+      )}
     </div>
   );
 }

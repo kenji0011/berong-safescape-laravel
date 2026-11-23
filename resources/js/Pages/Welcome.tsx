@@ -141,12 +141,7 @@ export default function Welcome({ carouselImages }: { carouselImages?: any[] }) 
 
   return (
     <>
-      <Head title="Berong E-Learning for BFP Sta Cruz">
-        {carouselImages && carouselImages.length > 0 && (
-          <link rel="preload" as="image" href={carouselImages[0].imageUrl} fetchPriority="high" />
-        )}
-
-      </Head>
+      <Head title="Berong E-Learning for BFP Sta Cruz" />
       <div className="min-h-screen flex flex-col relative">
         <Navigation />
 

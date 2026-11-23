@@ -10,13 +10,32 @@
         <link rel="icon" type="image/webp" href="/berong-official-logo.webp">
         <link rel="apple-touch-icon" href="/berong-official-logo.webp">
 
-        <!-- Preload critical above-the-fold logo -->
-        <link rel="preload" href="/berong-official-logo.webp" as="image">
+        @php
+            $lcpCarouselImage = null;
+            if (($page['component'] ?? null) === 'Welcome') {
+                $slides = $page['props']['carouselImages'] ?? [];
+                if (is_iterable($slides)) {
+                    foreach ($slides as $slide) {
+                        $url = is_array($slide) ? ($slide['imageUrl'] ?? null) : ($slide->imageUrl ?? null);
+                        if ($url) {
+                            $lcpCarouselImage = $url;
+                            break;
+                        }
+                    }
+                }
+            }
+        @endphp
+        @if ($lcpCarouselImage)
+            <!-- Preload first hero carousel slide directly in server HTML for instant LCP discovery -->
+            <link rel="preload" as="image" href="{{ $lcpCarouselImage }}" fetchpriority="high">
+        @endif
 
-        <!-- Fonts -->
+        <!-- Non-render-blocking Google Fonts -->
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+        <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800;900&display=swap">
+        <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+        <noscript><link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"></noscript>
 
         <!-- Scripts -->
         @viteReactRefresh

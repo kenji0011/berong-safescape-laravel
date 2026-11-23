@@ -1366,6 +1366,8 @@ export function LandingAboutSection({ carouselNode }: { carouselNode?: React.Rea
                                                     <img
                                                         src={slide.image}
                                                         alt={slide.title}
+                                                        loading="lazy"
+                                                        decoding="async"
                                                         className="w-full h-full object-cover select-none rounded-[1.25rem] sm:rounded-[1.75rem] transition-transform duration-700 ease-out group-hover/slide:scale-105"
                                                     />
                                                 </div>

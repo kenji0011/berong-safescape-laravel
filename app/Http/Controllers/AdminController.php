@@ -17,11 +17,13 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use App\Services\AdminAnalyticsService;
+use App\Services\ImageOptimizationService;
 
 class AdminController extends Controller
 {
     public function __construct(
-        protected AdminAnalyticsService $analyticsService
+        protected AdminAnalyticsService $analyticsService,
+        protected ImageOptimizationService $imageOptimizer
     ) {}
 
     /**
@@ -682,8 +684,8 @@ class AdminController extends Controller
             if ($request->hasFile('file')) {
                 $file = $request->file('file');
                 
-                // Store file in non-executable public storage with random hash name
-                $path = $file->store('uploads', 'public');
+                // Resize & compress uploads to WebP (falls back cleanly to raw store for GIFs or if GD is unavailable)
+                $path = $this->imageOptimizer->optimizeUploadedFile($file, 'uploads', 1600, 82);
                 $url = asset('storage/' . $path);
 
                 return response()->json([

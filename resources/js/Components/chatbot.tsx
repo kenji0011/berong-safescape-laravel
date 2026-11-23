@@ -872,7 +872,7 @@ export function Chatbot() {
                     className="chatbot-berong-image drop-shadow-2xl select-none w-24 sm:w-28 md:w-36 lg:w-40 h-auto transition-all duration-300"
                     style={{ transform: isOnLeft ? 'scaleX(-1)' : 'none' }}
                     draggable={false}
-                    priority
+                    loading="lazy"
                   />
                 </>
               )}
