@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useRef, useCallback } from "react"
 import { Deferred, Link } from "@inertiajs/react"
-import { motion, AnimatePresence, LayoutGroup } from "motion/react"
+import { motion, AnimatePresence } from "motion/react"
 import { Card } from "@/Components/ui/card"
 import {
     Flame,
@@ -21,7 +21,7 @@ import { useSettings } from "@/lib/settings-context"
 import { AdultWelcomeBanner } from "@/Components/Banners"
 import { AdultDashboardSkeleton } from "@/Components/dashboard-skeletons"
 import {
-    ARTICLE_MORPH_SPRING,
+    ArticleOriginRect,
     ArticleReaderOverlay,
     SMOOTH_EASE,
 } from "@/Components/Adult/ArticleReader"
@@ -38,10 +38,9 @@ const AdultPageClient = ({ initialBlogs, initialVideos }: AdultPageClientProps) 
     const [selectedVideo, setSelectedVideo] = useState<any>(null)
     const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false)
 
-    // Morph-expanded article state
+    // Morph-expanded article state (measured viewport rect FLIP)
     const [openArticleIndex, setOpenArticleIndex] = useState<number | null>(null)
-    const [morphArticleId, setMorphArticleId] = useState<string | number | null>(null)
-    const [returningArticleId, setReturningArticleId] = useState<string | number | null>(null)
+    const [articleOriginRect, setArticleOriginRect] = useState<ArticleOriginRect | null>(null)
     const [articleNavDirection, setArticleNavDirection] = useState(0)
 
     // Smooth YouTube player refs (matching ProfessionalDashboard architecture)
@@ -319,7 +318,6 @@ const AdultPageClient = ({ initialBlogs, initialVideos }: AdultPageClientProps) 
     // Article morph handlers
     const handleArticleCardClick = (
         e: React.MouseEvent<HTMLAnchorElement>,
-        blog: BlogPost,
         index: number
     ) => {
         // Preserve standard new-tab / modifier-click behavior
@@ -327,27 +325,26 @@ const AdultPageClient = ({ initialBlogs, initialVideos }: AdultPageClientProps) 
             return
         }
         e.preventDefault()
+        const rect = e.currentTarget.getBoundingClientRect()
+        setArticleOriginRect({
+            top: rect.top,
+            left: rect.left,
+            width: rect.width,
+            height: rect.height,
+        })
         setArticleNavDirection(0)
-        setReturningArticleId(null)
-        setMorphArticleId(blog.id)
         setOpenArticleIndex(index)
     }
 
     const handleNavigateArticle = useCallback((index: number, direction: number) => {
         setArticleNavDirection(direction)
-        // Clear morph target once navigating to another article so close smoothly fades instead of jumping across grid slots
-        setMorphArticleId(null)
         setOpenArticleIndex(index)
     }, [])
 
     const handleCloseArticle = useCallback(() => {
-        if (morphArticleId !== null) {
-            setReturningArticleId(morphArticleId)
-        }
         setOpenArticleIndex(null)
-    }, [morphArticleId])
-
-    const morphTransition = reduceMotion ? { duration: 0 } : ARTICLE_MORPH_SPRING
+        setArticleOriginRect(null)
+    }, [])
 
     return (
         <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4 sm:pt-6 pb-8 w-full relative min-h-screen">
@@ -528,207 +525,162 @@ const AdultPageClient = ({ initialBlogs, initialVideos }: AdultPageClientProps) 
                     </motion.div>
                 </div>
 
-                {/* Fire Safety Articles Section with Smooth Shared-Element Morph Expansion */}
-                <LayoutGroup id="adult-articles-morph">
-                    <div id="articles-section" className="scroll-mt-24 sm:scroll-mt-32">
-                        <h2 className="text-2xl sm:text-3xl font-black mb-4 sm:mb-6 text-slate-800 dark:text-white tracking-tight">
-                            Fire Safety Articles
-                        </h2>
+                {/* Fire Safety Articles Section with Smooth FLIP Morph Expansion */}
+                <div id="articles-section" className="scroll-mt-24 sm:scroll-mt-32">
+                    <h2 className="text-2xl sm:text-3xl font-black mb-4 sm:mb-6 text-slate-800 dark:text-white tracking-tight">
+                        Fire Safety Articles
+                    </h2>
 
-                        {/* Article Search Bar */}
-                        <div className="mb-6 relative group max-w-md w-full">
-                            <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-slate-400 dark:text-slate-500 group-focus-within:text-orange-500 transition-colors duration-300" />
-                            <input
-                                type="text"
-                                placeholder="Search fire safety articles..."
-                                value={searchQuery}
-                                onChange={(e) => setSearchQuery(e.target.value)}
-                                className="w-full pl-11 pr-4 py-3.5 rounded-2xl border-[3px] border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 bg-white dark:bg-slate-900 text-slate-800 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 shadow-[0_4px_0_#cbd5e1] dark:shadow-[0_4px_0_#0f172a] focus:outline-none focus:border-orange-500 focus:ring-4 focus:ring-orange-500/20 text-sm font-semibold transition-all duration-300"
-                            />
-                        </div>
-
-                        {filteredBlogs.length === 0 ? (
-                            <motion.div
-                                initial={{ opacity: 0, y: 12 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                transition={{
-                                    duration: reduceMotion ? 0 : 0.3,
-                                    ease: SMOOTH_EASE,
-                                }}
-                                className="relative overflow-hidden bg-white dark:bg-slate-800 border-[4px] border-dashed border-slate-300 dark:border-slate-700 rounded-[2rem] p-12 flex flex-col items-center justify-center text-center shadow-sm transition-colors duration-300"
-                            >
-                                <div className="bg-slate-100 dark:bg-slate-700 h-20 w-20 rounded-full flex items-center justify-center mb-6 shadow-inner border-[3px] border-white dark:border-slate-600 relative transition-colors">
-                                    <Search
-                                        className="h-8 w-8 text-slate-400 dark:text-slate-500"
-                                        strokeWidth={3}
-                                    />
-                                </div>
-
-                                <h3 className="text-2xl font-black text-slate-800 dark:text-white mb-2 transition-colors">
-                                    {searchQuery ? "No Matches Found" : "No Articles Available"}
-                                </h3>
-                                <p className="text-slate-500 dark:text-slate-400 font-bold max-w-md mx-auto leading-relaxed transition-colors">
-                                    {searchQuery
-                                        ? `We couldn't find any articles matching "${searchQuery}". Try adjusting your keywords or browse all articles.`
-                                        : "There are no articles published at the moment. Please check back later."}
-                                </p>
-
-                                {searchQuery && (
-                                    <button
-                                        type="button"
-                                        onClick={() => setSearchQuery("")}
-                                        className="mt-8 inline-flex items-center gap-2 bg-white dark:bg-slate-700 text-slate-700 dark:text-slate-200 font-black px-6 py-3 rounded-full border-[3px] border-slate-200 dark:border-slate-600 shadow-[0_4px_0_#cbd5e1] dark:shadow-[0_4px_0_#1e293b] hover:-translate-y-0.5 hover:shadow-[0_6px_0_#cbd5e1] dark:hover:shadow-[0_6px_0_#1e293b] active:translate-y-1 active:shadow-none transition-[transform,box-shadow] uppercase tracking-wide text-sm cursor-pointer"
-                                    >
-                                        Clear Search & View All
-                                    </button>
-                                )}
-                            </motion.div>
-                        ) : (
-                            <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6">
-                                {filteredBlogs.map((blog, idx) => {
-                                    const isMorphActive =
-                                        openArticleIndex !== null &&
-                                        morphArticleId !== null &&
-                                        String(morphArticleId) === String(blog.id)
-                                    const isReturning =
-                                        returningArticleId !== null &&
-                                        String(returningArticleId) === String(blog.id)
-                                    const authorFull =
-                                        typeof blog.author === "string"
-                                            ? blog.author
-                                            : blog.author?.name || "BFP Admin"
-                                    const authorShort =
-                                        authorFull.length > 10
-                                            ? authorFull.split(" ")[0]
-                                            : authorFull
-
-                                    const cardBody = (
-                                        <>
-                                            {/* Image Section */}
-                                            <motion.div
-                                                layoutId={
-                                                    !isMorphActive
-                                                        ? `article-image-${blog.id}`
-                                                        : undefined
-                                                }
-                                                transition={morphTransition}
-                                                className="relative h-28 sm:h-52 shrink-0 w-full overflow-hidden bg-slate-100 dark:bg-slate-900"
-                                            >
-                                                <img
-                                                    src={
-                                                        blog.imageUrl ||
-                                                        "/placeholder.svg?height=300&width=400"
-                                                    }
-                                                    alt={blog.title}
-                                                    decoding="async"
-                                                    loading="lazy"
-                                                    className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-105"
-                                                />
-                                            </motion.div>
-
-                                            {/* Accent Line */}
-                                            <div className="h-[2px] sm:h-[3px] w-full bg-gradient-to-r from-orange-500 via-red-500 to-orange-400" />
-
-                                            {/* Content Area */}
-                                            <div className="p-2.5 sm:p-5 flex flex-col flex-1 bg-white dark:bg-slate-900 transition-colors">
-                                                <h3 className="font-black text-[11px] sm:text-[1.05rem] text-slate-800 dark:text-white line-clamp-2 mb-1.5 sm:mb-2.5 group-hover:text-orange-600 dark:group-hover:text-orange-400 transition-colors leading-snug tracking-tight">
-                                                    {blog.title}
-                                                </h3>
-
-                                                <p className="text-[10px] sm:text-sm font-medium text-slate-500 dark:text-slate-400 line-clamp-2 sm:line-clamp-3 mb-2.5 sm:mb-5 leading-relaxed flex-1 transition-colors">
-                                                    {blog.excerpt || ""}
-                                                </p>
-
-                                                {/* Footer */}
-                                                <div className="flex items-center justify-between pt-2 sm:pt-4 border-t border-slate-100 dark:border-slate-800 mt-auto transition-colors">
-                                                    <div className="flex flex-col min-w-0 leading-tight">
-                                                        <span className="hidden sm:inline text-xs font-extrabold text-slate-700 dark:text-slate-300 truncate transition-colors">
-                                                            {authorFull}
-                                                        </span>
-                                                        <span className="sm:hidden text-[10px] font-extrabold text-slate-600 dark:text-slate-400 truncate transition-colors">
-                                                            {authorShort}
-                                                        </span>
-                                                        <span className="text-[8px] sm:text-[9px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mt-0.5">
-                                                            Publisher
-                                                        </span>
-                                                    </div>
-
-                                                    <span className="text-[10px] sm:text-xs font-semibold text-slate-500 dark:text-slate-400 whitespace-nowrap shrink-0">
-                                                        {formatTimeAgo(
-                                                            (blog as any).created_at ||
-                                                                blog.createdAt
-                                                        )}
-                                                    </span>
-                                                </div>
-                                            </div>
-                                        </>
-                                    )
-
-                                    return (
-                                        <motion.div
-                                            key={blog.id}
-                                            initial={{ opacity: 0, y: 16 }}
-                                            animate={{ opacity: 1, y: 0 }}
-                                            transition={{
-                                                duration: reduceMotion ? 0 : 0.34,
-                                                delay: reduceMotion
-                                                    ? 0
-                                                    : Math.min(idx * 0.04, 0.28),
-                                                ease: SMOOTH_EASE,
-                                            }}
-                                            className={cn(
-                                                "h-full relative",
-                                                isReturning && "z-30"
-                                            )}
-                                        >
-                                            <a
-                                                id={`article-card-${blog.id}`}
-                                                href={`/adult/blog/${blog.id}`}
-                                                onClick={(e) =>
-                                                    handleArticleCardClick(e, blog, idx)
-                                                }
-                                                className="outline-none block w-full group h-full"
-                                            >
-                                                {isMorphActive ? (
-                                                    /* Invisible structural placeholder keeps grid height locked while card is morphed open */
-                                                    <div
-                                                        aria-hidden="true"
-                                                        className="flex flex-col h-full rounded-xl sm:rounded-[1.75rem] overflow-hidden border-[2px] border-transparent opacity-0 pointer-events-none select-none"
-                                                    >
-                                                        {cardBody}
-                                                    </div>
-                                                ) : (
-                                                    <motion.div
-                                                        layoutId={`article-card-${blog.id}`}
-                                                        transition={morphTransition}
-                                                        onLayoutAnimationComplete={() => {
-                                                            if (isReturning) {
-                                                                setReturningArticleId(null)
-                                                            }
-                                                        }}
-                                                        className="flex flex-col h-full bg-white dark:bg-slate-900 rounded-xl sm:rounded-[1.75rem] overflow-hidden relative transition-[transform,box-shadow,border-color] duration-300 ease-out border-[2px] border-slate-200/80 dark:border-slate-800 shadow-[0_2px_12px_rgba(0,0,0,0.06)] dark:shadow-[0_2px_12px_rgba(0,0,0,0.3)] group-hover:-translate-y-1.5 group-hover:border-orange-500/35 group-hover:shadow-[0_14px_32px_rgba(0,0,0,0.1)] dark:group-hover:shadow-[0_14px_32px_rgba(249,115,22,0.14)] group-active:translate-y-0"
-                                                    >
-                                                        {cardBody}
-                                                    </motion.div>
-                                                )}
-                                            </a>
-                                        </motion.div>
-                                    )
-                                })}
-                            </div>
-                        )}
+                    {/* Article Search Bar */}
+                    <div className="mb-6 relative group max-w-md w-full">
+                        <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-slate-400 dark:text-slate-500 group-focus-within:text-orange-500 transition-colors duration-300" />
+                        <input
+                            type="text"
+                            placeholder="Search fire safety articles..."
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                            className="w-full pl-11 pr-4 py-3.5 rounded-2xl border-[3px] border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 bg-white dark:bg-slate-900 text-slate-800 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 shadow-[0_4px_0_#cbd5e1] dark:shadow-[0_4px_0_#0f172a] focus:outline-none focus:border-orange-500 focus:ring-4 focus:ring-orange-500/20 text-sm font-semibold transition-all duration-300"
+                        />
                     </div>
 
-                    {/* Morph-Expanded Article Reader Overlay */}
-                    <ArticleReaderOverlay
-                        articles={filteredBlogs}
-                        activeIndex={openArticleIndex}
-                        morphCardId={morphArticleId}
-                        direction={articleNavDirection}
-                        onNavigate={handleNavigateArticle}
-                        onClose={handleCloseArticle}
-                    />
-                </LayoutGroup>
+                    {filteredBlogs.length === 0 ? (
+                        <motion.div
+                            initial={{ opacity: 0, y: 12 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{
+                                duration: reduceMotion ? 0 : 0.3,
+                                ease: SMOOTH_EASE,
+                            }}
+                            className="relative overflow-hidden bg-white dark:bg-slate-800 border-[4px] border-dashed border-slate-300 dark:border-slate-700 rounded-[2rem] p-12 flex flex-col items-center justify-center text-center shadow-sm transition-colors duration-300"
+                        >
+                            <div className="bg-slate-100 dark:bg-slate-700 h-20 w-20 rounded-full flex items-center justify-center mb-6 shadow-inner border-[3px] border-white dark:border-slate-600 relative transition-colors">
+                                <Search
+                                    className="h-8 w-8 text-slate-400 dark:text-slate-500"
+                                    strokeWidth={3}
+                                />
+                            </div>
+
+                            <h3 className="text-2xl font-black text-slate-800 dark:text-white mb-2 transition-colors">
+                                {searchQuery ? "No Matches Found" : "No Articles Available"}
+                            </h3>
+                            <p className="text-slate-500 dark:text-slate-400 font-bold max-w-md mx-auto leading-relaxed transition-colors">
+                                {searchQuery
+                                    ? `We couldn't find any articles matching "${searchQuery}". Try adjusting your keywords or browse all articles.`
+                                    : "There are no articles published at the moment. Please check back later."}
+                            </p>
+
+                            {searchQuery && (
+                                <button
+                                    type="button"
+                                    onClick={() => setSearchQuery("")}
+                                    className="mt-8 inline-flex items-center gap-2 bg-white dark:bg-slate-700 text-slate-700 dark:text-slate-200 font-black px-6 py-3 rounded-full border-[3px] border-slate-200 dark:border-slate-600 shadow-[0_4px_0_#cbd5e1] dark:shadow-[0_4px_0_#1e293b] hover:-translate-y-0.5 hover:shadow-[0_6px_0_#cbd5e1] dark:hover:shadow-[0_6px_0_#1e293b] active:translate-y-1 active:shadow-none transition-[transform,box-shadow] uppercase tracking-wide text-sm cursor-pointer"
+                                >
+                                    Clear Search & View All
+                                </button>
+                            )}
+                        </motion.div>
+                    ) : (
+                        <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6">
+                            {filteredBlogs.map((blog, idx) => {
+                                const authorFull =
+                                    typeof blog.author === "string"
+                                        ? blog.author
+                                        : blog.author?.name || "BFP Admin"
+                                const authorShort =
+                                    authorFull.length > 10
+                                        ? authorFull.split(" ")[0]
+                                        : authorFull
+
+                                return (
+                                    <motion.div
+                                        key={blog.id}
+                                        initial={{ opacity: 0, y: 16 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        transition={{
+                                            duration: reduceMotion ? 0 : 0.34,
+                                            delay: reduceMotion
+                                                ? 0
+                                                : Math.min(idx * 0.04, 0.28),
+                                            ease: SMOOTH_EASE,
+                                        }}
+                                        className="h-full relative"
+                                    >
+                                        <a
+                                            id={`article-card-${blog.id}`}
+                                            href={`/adult/blog/${blog.id}`}
+                                            onClick={(e) =>
+                                                handleArticleCardClick(e, idx)
+                                            }
+                                            className="outline-none block w-full group h-full"
+                                        >
+                                            <div className="flex flex-col h-full bg-white dark:bg-slate-900 rounded-xl sm:rounded-[1.75rem] overflow-hidden relative transition-[transform,box-shadow,border-color] duration-300 ease-out border-[2px] border-slate-200/80 dark:border-slate-800 shadow-[0_2px_12px_rgba(0,0,0,0.06)] dark:shadow-[0_2px_12px_rgba(0,0,0,0.3)] group-hover:-translate-y-1.5 group-hover:border-orange-500/35 group-hover:shadow-[0_14px_32px_rgba(0,0,0,0.1)] dark:group-hover:shadow-[0_14px_32px_rgba(249,115,22,0.14)] group-active:translate-y-0">
+                                                {/* Image Section */}
+                                                <div className="relative h-28 sm:h-52 shrink-0 w-full overflow-hidden bg-slate-100 dark:bg-slate-900">
+                                                    <img
+                                                        src={
+                                                            blog.imageUrl ||
+                                                            "/placeholder.svg?height=300&width=400"
+                                                        }
+                                                        alt={blog.title}
+                                                        decoding="async"
+                                                        loading="lazy"
+                                                        className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-105"
+                                                    />
+                                                </div>
+
+                                                {/* Accent Line */}
+                                                <div className="h-[2px] sm:h-[3px] w-full bg-gradient-to-r from-orange-500 via-red-500 to-orange-400" />
+
+                                                {/* Content Area */}
+                                                <div className="p-2.5 sm:p-5 flex flex-col flex-1 bg-white dark:bg-slate-900 transition-colors">
+                                                    <h3 className="font-black text-[11px] sm:text-[1.05rem] text-slate-800 dark:text-white line-clamp-2 mb-1.5 sm:mb-2.5 group-hover:text-orange-600 dark:group-hover:text-orange-400 transition-colors leading-snug tracking-tight">
+                                                        {blog.title}
+                                                    </h3>
+
+                                                    <p className="text-[10px] sm:text-sm font-medium text-slate-500 dark:text-slate-400 line-clamp-2 sm:line-clamp-3 mb-2.5 sm:mb-5 leading-relaxed flex-1 transition-colors">
+                                                        {blog.excerpt || ""}
+                                                    </p>
+
+                                                    {/* Footer */}
+                                                    <div className="flex items-center justify-between pt-2 sm:pt-4 border-t border-slate-100 dark:border-slate-800 mt-auto transition-colors">
+                                                        <div className="flex flex-col min-w-0 leading-tight">
+                                                            <span className="hidden sm:inline text-xs font-extrabold text-slate-700 dark:text-slate-300 truncate transition-colors">
+                                                                {authorFull}
+                                                            </span>
+                                                            <span className="sm:hidden text-[10px] font-extrabold text-slate-600 dark:text-slate-400 truncate transition-colors">
+                                                                {authorShort}
+                                                            </span>
+                                                            <span className="text-[8px] sm:text-[9px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mt-0.5">
+                                                                Publisher
+                                                            </span>
+                                                        </div>
+
+                                                        <span className="text-[10px] sm:text-xs font-semibold text-slate-500 dark:text-slate-400 whitespace-nowrap shrink-0">
+                                                            {formatTimeAgo(
+                                                                (blog as any).created_at ||
+                                                                    blog.createdAt
+                                                            )}
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </a>
+                                    </motion.div>
+                                )
+                            })}
+                        </div>
+                    )}
+                </div>
+
+                {/* Morph-Expanded Article Reader Overlay */}
+                <ArticleReaderOverlay
+                    articles={filteredBlogs}
+                    activeIndex={openArticleIndex}
+                    originRect={articleOriginRect}
+                    direction={articleNavDirection}
+                    onNavigate={handleNavigateArticle}
+                    onClose={handleCloseArticle}
+                />
 
                 {/* Videos Section — Matching ProfessionalDashboard's Smooth Zero-Snap Expand/Collapse */}
                 <div

@@ -94,7 +94,7 @@ const BlogArticleClient = ({ blog, allBlogs }: BlogArticleProps) => {
             {/* Subtle Frosting Overlay */}
             <div className="fixed inset-0 bg-slate-50/88 dark:bg-slate-950/88 -z-10 pointer-events-none transition-colors duration-500" />
 
-            <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-3 sm:pt-5 relative z-10">
+            <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-2 sm:pt-3 relative z-10">
                 {/* Clean Top Bar */}
                 <motion.div
                     initial={{ opacity: 0, y: -8 }}
@@ -103,11 +103,11 @@ const BlogArticleClient = ({ blog, allBlogs }: BlogArticleProps) => {
                         duration: reduceMotion ? 0 : 0.3,
                         ease: SMOOTH_EASE,
                     }}
-                    className="flex items-center justify-between gap-3 mb-4 sm:mb-5"
+                    className="flex items-center justify-between gap-3 mb-3"
                 >
                     <Link
                         href="/adult#articles-section"
-                        className="group inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/95 dark:bg-slate-900/95 backdrop-blur-md text-slate-700 dark:text-slate-200 font-bold text-xs sm:text-sm border border-slate-200/90 dark:border-slate-700 hover:border-orange-500/50 hover:text-orange-600 dark:hover:text-orange-400 shadow-sm transition-colors"
+                        className="group inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/95 dark:bg-slate-900/95 backdrop-blur-md text-slate-700 dark:text-slate-200 font-bold text-xs sm:text-sm border border-slate-200/90 dark:border-slate-700 hover:border-orange-500/50 hover:text-orange-600 dark:hover:text-orange-400 shadow-sm transition-colors"
                     >
                         <ArrowLeft
                             className="h-4 w-4 group-hover:-translate-x-0.5 transition-transform"
