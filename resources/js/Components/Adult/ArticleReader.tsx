@@ -355,9 +355,6 @@ export const ArticleReaderCard: React.FC<ArticleReaderCardProps> = ({
 
     return (
         <article className="bg-white dark:bg-slate-900 rounded-[1.5rem] sm:rounded-[1.75rem] border border-slate-200/90 dark:border-slate-800 shadow-[0_20px_60px_-15px_rgba(15,23,42,0.16)] dark:shadow-[0_24px_70px_-15px_rgba(0,0,0,0.6)] overflow-hidden">
-            {/* Accent Top Rule */}
-            <div className="h-[3px] w-full bg-gradient-to-r from-orange-500 via-red-500 to-orange-400" />
-
             {/* Directional Slide Transition Between Articles */}
             <AnimatePresence mode="wait" initial={false} custom={slideCustom}>
                 <motion.div
@@ -424,20 +421,20 @@ export const ArticleReaderCard: React.FC<ArticleReaderCardProps> = ({
                         />
                     </div>
 
-                    {/* Integrated, Compact Emergency Protocol */}
+                    {/* Integrated Emergency Protocol */}
                     <div className="px-5 sm:px-7 pb-4 sm:pb-5">
-                        <div className="rounded-xl sm:rounded-2xl bg-red-50/70 dark:bg-red-950/25 border border-red-200/75 dark:border-red-900/40 px-3.5 py-2.5 sm:px-4 sm:py-3 flex items-start sm:items-center gap-3">
-                            <div className="h-8 w-8 rounded-lg bg-red-500/10 border border-red-500/20 flex items-center justify-center shrink-0 mt-0.5 sm:mt-0">
+                        <div className="rounded-xl sm:rounded-2xl bg-red-50/75 dark:bg-red-950/30 border border-red-200/80 dark:border-red-900/45 px-4 py-3 sm:px-5 sm:py-3.5 flex items-start sm:items-center gap-3.5">
+                            <div className="h-9 w-9 sm:h-10 sm:w-10 rounded-xl bg-red-500/12 border border-red-500/25 flex items-center justify-center shrink-0 mt-0.5 sm:mt-0">
                                 <ShieldAlert
-                                    className="h-4 w-4 text-red-600 dark:text-red-400"
+                                    className="h-4.5 w-4.5 sm:h-5 sm:w-5 text-red-600 dark:text-red-400"
                                     strokeWidth={2.2}
                                 />
                             </div>
                             <div className="min-w-0">
-                                <h2 className="text-xs sm:text-[13px] font-black text-red-700 dark:text-red-400 tracking-tight leading-snug">
+                                <h2 className="text-sm sm:text-base font-black text-red-700 dark:text-red-400 tracking-tight leading-snug">
                                     Emergency Protocol
                                 </h2>
-                                <p className="text-[11.5px] sm:text-xs font-medium text-slate-600 dark:text-slate-300 leading-relaxed mt-0.5">
+                                <p className="text-xs sm:text-[14.5px] font-medium text-slate-700 dark:text-slate-200 leading-relaxed mt-0.5">
                                     In a fire emergency, evacuate immediately and call{" "}
                                     <strong className="font-extrabold text-red-700 dark:text-red-400">
                                         911
@@ -855,53 +852,13 @@ export const ArticleReaderOverlay: React.FC<ArticleReaderOverlayProps> = ({
 
                                 <div className="flex items-center gap-2">
                                     {articles.length > 1 && (
-                                        <div className="flex items-center gap-2 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md px-3 py-1.5 rounded-full border border-slate-200/90 dark:border-slate-700 shadow-md">
-                                            <span className="text-[11px] sm:text-xs font-extrabold text-slate-500 dark:text-slate-400 tracking-wide uppercase pl-1">
+                                        <div className="flex items-center bg-white/95 dark:bg-slate-900/95 backdrop-blur-md px-3.5 py-1.5 rounded-full border border-slate-200/90 dark:border-slate-700 shadow-md">
+                                            <span className="text-[11px] sm:text-xs font-extrabold text-slate-500 dark:text-slate-400 tracking-wide uppercase">
                                                 <span className="text-orange-600 dark:text-orange-400">
                                                     {activeIndex! + 1}
                                                 </span>{" "}
                                                 / {articles.length}
                                             </span>
-                                            <div className="h-3.5 w-px bg-slate-200 dark:bg-slate-700" />
-                                            <div className="flex items-center gap-0.5">
-                                                <button
-                                                    type="button"
-                                                    onClick={() =>
-                                                        onNavigate(
-                                                            activeIndex! - 1,
-                                                            -1
-                                                        )
-                                                    }
-                                                    disabled={activeIndex === 0}
-                                                    aria-label="Previous article"
-                                                    className="p-1 rounded-full text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 disabled:opacity-30 disabled:hover:bg-transparent transition-colors cursor-pointer disabled:cursor-default"
-                                                >
-                                                    <ChevronLeft
-                                                        className="h-4 w-4"
-                                                        strokeWidth={2.5}
-                                                    />
-                                                </button>
-                                                <button
-                                                    type="button"
-                                                    onClick={() =>
-                                                        onNavigate(
-                                                            activeIndex! + 1,
-                                                            1
-                                                        )
-                                                    }
-                                                    disabled={
-                                                        activeIndex ===
-                                                        articles.length - 1
-                                                    }
-                                                    aria-label="Next article"
-                                                    className="p-1 rounded-full text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 disabled:opacity-30 disabled:hover:bg-transparent transition-colors cursor-pointer disabled:cursor-default"
-                                                >
-                                                    <ChevronRight
-                                                        className="h-4 w-4"
-                                                        strokeWidth={2.5}
-                                                    />
-                                                </button>
-                                            </div>
                                         </div>
                                     )}
 

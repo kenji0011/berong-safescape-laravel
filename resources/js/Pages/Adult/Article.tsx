@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useCallback } from "react"
 import { Head, Link } from "@inertiajs/react"
 import { motion } from "motion/react"
-import { ArrowLeft, ChevronLeft, ChevronRight } from "lucide-react"
+import { ArrowLeft } from "lucide-react"
 import DashboardLayout from "@/Layouts/DashboardLayout"
 import { useSettings } from "@/lib/settings-context"
 import {
@@ -117,44 +117,13 @@ const BlogArticleClient = ({ blog, allBlogs }: BlogArticleProps) => {
                     </Link>
 
                     {articles.length > 1 && (
-                        <div className="flex items-center gap-2 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md px-3 py-1.5 rounded-full border border-slate-200/90 dark:border-slate-700 shadow-sm">
-                            <span className="text-[11px] sm:text-xs font-extrabold text-slate-500 dark:text-slate-400 tracking-wide uppercase pl-1">
+                        <div className="flex items-center bg-white/95 dark:bg-slate-900/95 backdrop-blur-md px-3.5 py-1.5 rounded-full border border-slate-200/90 dark:border-slate-700 shadow-sm">
+                            <span className="text-[11px] sm:text-xs font-extrabold text-slate-500 dark:text-slate-400 tracking-wide uppercase">
                                 <span className="text-orange-600 dark:text-orange-400">
                                     {activeIndex + 1}
                                 </span>{" "}
                                 / {articles.length}
                             </span>
-                            <div className="h-3.5 w-px bg-slate-200 dark:bg-slate-700" />
-                            <div className="flex items-center gap-0.5">
-                                <button
-                                    type="button"
-                                    onClick={() =>
-                                        navigateToIndex(activeIndex - 1, -1)
-                                    }
-                                    disabled={activeIndex === 0}
-                                    aria-label="Previous article"
-                                    className="p-1 rounded-full text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 disabled:opacity-30 disabled:hover:bg-transparent transition-colors cursor-pointer disabled:cursor-default"
-                                >
-                                    <ChevronLeft
-                                        className="h-4 w-4"
-                                        strokeWidth={2.5}
-                                    />
-                                </button>
-                                <button
-                                    type="button"
-                                    onClick={() =>
-                                        navigateToIndex(activeIndex + 1, 1)
-                                    }
-                                    disabled={activeIndex === articles.length - 1}
-                                    aria-label="Next article"
-                                    className="p-1 rounded-full text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 disabled:opacity-30 disabled:hover:bg-transparent transition-colors cursor-pointer disabled:cursor-default"
-                                >
-                                    <ChevronRight
-                                        className="h-4 w-4"
-                                        strokeWidth={2.5}
-                                    />
-                                </button>
-                            </div>
                         </div>
                     )}
                 </motion.div>
