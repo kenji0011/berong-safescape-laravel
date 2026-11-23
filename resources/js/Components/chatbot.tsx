@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect, useRef } from "react"
+import React, { useState, useEffect, useRef, Suspense } from "react"
 import { Button } from "@/Components/ui/button"
 import { Card } from "@/Components/ui/card"
 import { Input } from "@/Components/ui/input"
@@ -10,9 +10,10 @@ import { motion, AnimatePresence, useMotionValue, animate } from "motion/react"
 import { useAuth } from "@/lib/auth-context"
 import { Link, usePage } from '@inertiajs/react';
 import axios from 'axios';
-import ReactMarkdown from "react-markdown"
-import chatbotIntents from "@/lib/chatbot-intents.json"
 import { createAudio, getVolume } from '@/lib/audio'
+
+// Lazy-load react-markdown (~110 KB) only when the chat window actually renders bot messages
+const ReactMarkdown = React.lazy(() => import("react-markdown"))
 
 interface Message {
   id: string
@@ -28,24 +29,42 @@ interface QuickQuestion {
   category: string;
 }
 
-// Pre-process intents for fast matching: extract keywords from all patterns
-const processedIntents = Object.entries(chatbotIntents).map(([tag, data]) => {
-  const intentData = data as { patterns: string[]; responses: string[] }
-  // Extract unique keywords from all patterns (lowercased, 3+ chars)
-  const allKeywords = new Set<string>()
-  intentData.patterns.forEach((pattern: string) => {
-    pattern.toLowerCase().split(/\s+/).forEach((word: string) => {
-      const clean = word.replace(/[^a-z0-9]/g, "")
-      if (clean.length >= 3) allKeywords.add(clean)
-    })
-  })
-  return {
-    tag,
-    patterns: intentData.patterns.map((p: string) => p.toLowerCase()),
-    responses: intentData.responses,
-    keywords: Array.from(allKeywords),
+type IntentEntry = {
+  tag: string;
+  patterns: string[];
+  responses: string[];
+  keywords: string[];
+}
+
+// Lazily load and preprocess the 62.5 KB intents JSON only if offline fallback is triggered
+let cachedIntentsModule: Record<string, { patterns: string[]; responses: string[] }> | null = null;
+let cachedProcessedIntents: IntentEntry[] | null = null;
+
+async function getOfflineIntents(): Promise<{
+  raw: Record<string, { patterns: string[]; responses: string[] }>;
+  processed: IntentEntry[];
+}> {
+  if (!cachedIntentsModule || !cachedProcessedIntents) {
+    const mod = await import("@/lib/chatbot-intents.json");
+    cachedIntentsModule = (mod.default || mod) as Record<string, { patterns: string[]; responses: string[] }>;
+    cachedProcessedIntents = Object.entries(cachedIntentsModule).map(([tag, data]) => {
+      const allKeywords = new Set<string>();
+      data.patterns.forEach((pattern: string) => {
+        pattern.toLowerCase().split(/\s+/).forEach((word: string) => {
+          const clean = word.replace(/[^a-z0-9]/g, "");
+          if (clean.length >= 3) allKeywords.add(clean);
+        });
+      });
+      return {
+        tag,
+        patterns: data.patterns.map((p: string) => p.toLowerCase()),
+        responses: data.responses,
+        keywords: Array.from(allKeywords),
+      };
+    });
   }
-})
+  return { raw: cachedIntentsModule, processed: cachedProcessedIntents };
+}
 
 export function Chatbot() {
   const { user, isAuthenticated } = useAuth()
@@ -665,25 +684,26 @@ export function Chatbot() {
       // If the backend indicates an error (e.g. missing API key, 503 overload)
       if (response.data && response.data.error) {
         console.warn('AI fallback triggered due to backend error:', response.data.response);
-        return generateRuleBasedResponse(input) + "\n\n*(Offline Mode)*";
+        return (await generateRuleBasedResponse(input)) + "\n\n*(Offline Mode)*";
       }
 
       if (response.data && response.data.response) {
         return response.data.response;
       } else {
         console.error('AI response data empty:', response);
-        return generateRuleBasedResponse(input) + "\n\n*(Offline Mode)*";
+        return (await generateRuleBasedResponse(input)) + "\n\n*(Offline Mode)*";
       }
     } catch (error: any) {
       if (axios.isCancel(error)) {
         return "Response generation stopped.";
       }
       console.error('Error calling AI backend, triggering fallback:', error);
-      return generateRuleBasedResponse(input) + "\n\n*(Offline Mode)*";
+      return (await generateRuleBasedResponse(input)) + "\n\n*(Offline Mode)*";
     }
   }
 
-  const generateRuleBasedResponse = (input: string): string => {
+  const generateRuleBasedResponse = async (input: string): Promise<string> => {
+    const { raw: chatbotIntents, processed: processedIntents } = await getOfflineIntents();
     const lowerInput = input.toLowerCase()
 
     // Stop words to prevent false positive matches on common conversational words
@@ -1001,7 +1021,9 @@ export function Chatbot() {
                             [&>code]:bg-white/10 dark:[&>code]:bg-slate-950/50 [&>code]:px-1 [&>code]:rounded [&>code]:text-xs
                             [&>blockquote]:border-l-2 [&>blockquote]:border-orange-400 [&>blockquote]:pl-2 [&>blockquote]:italic
                           ">
-                              <ReactMarkdown>{message.text}</ReactMarkdown>
+                              <Suspense fallback={<span className="whitespace-pre-wrap">{message.text}</span>}>
+                                <ReactMarkdown>{message.text}</ReactMarkdown>
+                              </Suspense>
                             </div>
                             <button
                               onClick={() => speakText(message.text, message.id, true)}

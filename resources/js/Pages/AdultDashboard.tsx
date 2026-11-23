@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useRef } from "react"
 import { router, usePage, Deferred } from '@inertiajs/react';
 import { useAuth } from "@/lib/auth-context"
-import { motion, AnimatePresence } from "framer-motion"
+import { motion, AnimatePresence } from "motion/react"
 import { Navigation } from "@/Components/navigation"
 import { Card, CardContent, CardTitle, CardHeader, CardDescription } from "@/Components/ui/card"
 import { Button } from "@/Components/ui/button"

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { usePage } from "@inertiajs/react";
 import { Navigation } from "@/Components/navigation";
 import { Footer } from "@/Components/footer";
 import { FeedbackWidget } from "@/Components/FeedbackWidget";
@@ -8,22 +9,36 @@ import { Smartphone, RotateCw } from "lucide-react";
 import { preloadAudioFiles } from "@/lib/audio";
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
+    const { url } = usePage();
     const [isMobileLandscape, setIsMobileLandscape] = useState(false);
 
     useEffect(() => {
-        // Preload common game sounds so they play instantly without network delay
-        preloadAudioFiles([
-            '/sounds/click.mp3',
-            '/sounds/tap.mp3',
-            '/sounds/combo.mp3',
-            '/sounds/win.mp3',
-            '/sounds/wrong.mp3',
-            '/sounds/match.mp3',
-            '/sounds/spark.mp3',
-            '/sounds/fire_extinguish.mp3',
-            '/sounds/wood.mp3'
-        ]);
+        // Only preload game sound effects on Kids / Game routes during browser idle time
+        if (!url.startsWith('/kids') && !url.startsWith('/game')) return;
 
+        const warmAudio = () => {
+            preloadAudioFiles([
+                '/sounds/click.mp3',
+                '/sounds/tap.mp3',
+                '/sounds/combo.mp3',
+                '/sounds/win.mp3',
+                '/sounds/wrong.mp3',
+                '/sounds/match.mp3',
+                '/sounds/spark.mp3',
+                '/sounds/fire_extinguish.mp3',
+                '/sounds/wood.mp3'
+            ]);
+        };
+
+        if ('requestIdleCallback' in window) {
+            const idleId = (window as any).requestIdleCallback(warmAudio, { timeout: 3000 });
+            return () => (window as any).cancelIdleCallback?.(idleId);
+        }
+        const timerId = setTimeout(warmAudio, 2000);
+        return () => clearTimeout(timerId);
+    }, [url]);
+
+    useEffect(() => {
         const handleResize = () => {
             const isTouch = window.matchMedia("(pointer: coarse)").matches || navigator.maxTouchPoints > 0;
             const isLandscape = window.innerWidth > window.innerHeight;

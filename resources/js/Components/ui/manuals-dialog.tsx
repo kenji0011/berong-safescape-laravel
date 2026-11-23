@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import ReactDOM from "react-dom";
 import { Card, CardContent } from "@/Components/ui/card";
 import { FileText, Download, BookOpen, Eye, Loader2, Info, X } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence } from "motion/react";
 
 interface Manual {
   id: string;

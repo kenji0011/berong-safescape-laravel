@@ -6,7 +6,7 @@ import { Flame, Trophy, Lock, Shield, Star, Zap, ChevronRight, BadgeCheck, Gamep
 import { cn } from "@/lib/utils"
 import { useState, useEffect, useRef } from "react"
 import ReactDOM from "react-dom"
-import { motion, AnimatePresence } from "framer-motion"
+import { motion, AnimatePresence } from "motion/react"
 import confetti from 'canvas-confetti'
 import { playSound } from '@/lib/audio'
 import { preloadKidsPages } from '@/lib/preload-kids-pages'

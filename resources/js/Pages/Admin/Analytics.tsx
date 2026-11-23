@@ -78,6 +78,19 @@ export default function AnalyticsDashboard({
   const [barangayData, setBarangayData] = useState<BarangayData[]>(initialBarangayData || [])
   const [demographicData, setDemographicData] = useState<DemographicData | null>(initialDemographicData || null)
   const [knowledgeData, setKnowledgeData] = useState<KnowledgeData[]>(initialKnowledgeData || [])
+
+  // Sync deferred Inertia props as they resolve
+  useEffect(() => {
+    if (initialBarangayData) setBarangayData(initialBarangayData)
+  }, [initialBarangayData])
+
+  useEffect(() => {
+    if (initialDemographicData) setDemographicData(initialDemographicData)
+  }, [initialDemographicData])
+
+  useEffect(() => {
+    if (initialKnowledgeData) setKnowledgeData(initialKnowledgeData)
+  }, [initialKnowledgeData])
   const [schoolAnalytics, setSchoolAnalytics] = useState<any>(null)
   const [feedbackAnalytics, setFeedbackAnalytics] = useState<any>(null)
   const [activeTab, setActiveTab] = useState("overview")

@@ -1,12 +1,14 @@
 "use client"
 
-import React, { useState, useEffect } from "react"
+import React, { useState, useEffect, useRef } from "react"
 import { Link } from '@inertiajs/react'
-import { motion } from "framer-motion"
+import { motion } from "motion/react"
 import { Play, Lock, CheckCircle, ArrowRight, Check } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Skeleton } from "./ui/skeleton"
 import { preloadKidsPages } from "@/lib/preload-kids-pages"
+
+const MotionLink = motion.create(Link)
 
 export interface ContentCardData {
   id: string | number
@@ -44,6 +46,29 @@ interface ContentCardProps {
 export const ContentCard = React.memo(({ content, onClick, isMorphing = false }: ContentCardProps) => {
   const [imageError, setImageError] = useState(false)
   const [imageLoading, setImageLoading] = useState(true)
+  const [shouldLoadVideo, setShouldLoadVideo] = useState(false)
+  const videoRef = useRef<HTMLVideoElement>(null)
+
+  const handleCardMouseEnter = () => {
+    preloadKidsPages()
+    if (
+      content.videoPreviewUrl &&
+      typeof window !== "undefined" &&
+      window.matchMedia("(hover: hover) and (pointer: fine)").matches
+    ) {
+      if (!shouldLoadVideo) {
+        setShouldLoadVideo(true)
+      } else {
+        videoRef.current?.play().catch(() => {})
+      }
+    }
+  }
+
+  const handleCardMouseLeave = () => {
+    if (videoRef.current) {
+      videoRef.current.pause()
+    }
+  }
 
   useEffect(() => {
     if (content.justUnlocked) {
@@ -287,15 +312,17 @@ export const ContentCard = React.memo(({ content, onClick, isMorphing = false }:
         </div>
       </div>
       
-      {/* Background Video */}
-      {content.videoPreviewUrl && (
+      {/* Background Video — only mounted on desktop pointer hover so we never download 100MB+ eagerly */}
+      {content.videoPreviewUrl && shouldLoadVideo && (
         <div className="absolute inset-0 z-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none">
           <video
+            ref={videoRef}
             src={content.videoPreviewUrl}
             autoPlay
             muted
             loop
             playsInline
+            preload="metadata"
             className="absolute inset-0 w-full h-full object-cover"
           />
           {/* Vignette Effect */}
@@ -338,6 +365,8 @@ export const ContentCard = React.memo(({ content, onClick, isMorphing = false }:
         style={{
           viewTransitionName: isMorphing ? `kids-card-morph-${content.id}` : 'none'
         }}
+        onMouseEnter={handleCardMouseEnter}
+        onMouseLeave={handleCardMouseLeave}
         onClick={(e) => { e.preventDefault(); if (onClick) onClick(e); }}
         whileHover={{ scale: 1.01 }}
         className={cn(
@@ -362,7 +391,8 @@ export const ContentCard = React.memo(({ content, onClick, isMorphing = false }:
           viewTransitionName: isMorphing ? `kids-card-morph-${content.id}` : 'none'
         }}
         href={content.href}
-        onMouseEnter={() => preloadKidsPages()}
+        onMouseEnter={handleCardMouseEnter}
+        onMouseLeave={handleCardMouseLeave}
         onTouchStart={() => preloadKidsPages()}
         onClick={(e) => { if (onClick) onClick(e) }}
         whileHover={{ 
@@ -384,8 +414,6 @@ export const ContentCard = React.memo(({ content, onClick, isMorphing = false }:
     )
   }
 
-  const MotionLink = motion(Link);
-
   return (
     <MotionLink
       id={`content-card-${content.id}`}
@@ -393,7 +421,8 @@ export const ContentCard = React.memo(({ content, onClick, isMorphing = false }:
         viewTransitionName: isMorphing ? `kids-card-morph-${content.id}` : 'none'
       }}
       href={content.href}
-      onMouseEnter={() => preloadKidsPages()}
+      onMouseEnter={handleCardMouseEnter}
+      onMouseLeave={handleCardMouseLeave}
       onTouchStart={() => preloadKidsPages()}
       onClick={(e) => { if (onClick) onClick(e) }}
       whileHover={{ 

@@ -93,13 +93,13 @@ export function LandingAssessmentSection({ serverUser }: LandingAssessmentProps 
     }
 
     useEffect(() => {
-        // If server already told us the user is authenticated, check immediately
-        if (isAuthenticated) {
+        // Only fetch post-test eligibility once the section scrolls near/into view
+        if (isAuthenticated && isInView && !eligibility && !loading) {
             checkEligibility()
         } else if (!isLoading && !isAuthenticated) {
             setLoading(false);
         }
-    }, [isLoading, isAuthenticated])
+    }, [isLoading, isAuthenticated, isInView])
 
     const checkEligibility = async () => {
         try {
@@ -371,7 +371,7 @@ export function LandingAssessmentSection({ serverUser }: LandingAssessmentProps 
                         </DialogClose>
 
                         <div ref={certificateRef} className="relative w-full select-none" style={{ aspectRatio: '1123/794' }}>
-                            <img src="/safescape_certificate.svg" alt="Certificate Template" className="absolute inset-0 w-full h-full object-contain" crossOrigin="anonymous" />
+                            <img src="/safescape_certificate.webp" alt="Certificate Template" className="absolute inset-0 w-full h-full object-contain" crossOrigin="anonymous" />
 
                             <div className="absolute inset-x-0 text-center flex justify-center items-center" style={{ top: '50%', transform: 'translateY(-50%)' }}>
                                 <h2 className="text-[clamp(1rem,3vw,2.5rem)] font-bold text-[#1a1a2e] uppercase tracking-widest" style={{ fontFamily: "'Georgia', 'Times New Roman', serif" }}>

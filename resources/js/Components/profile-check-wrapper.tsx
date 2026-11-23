@@ -1,9 +1,12 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import React, { useState, useEffect, Suspense } from "react"
 import { useAuth } from "@/lib/auth-context"
-import { ProfileCompletionModal } from "@/Components/Modals"
 import { trackDailyLogin } from "@/lib/engagement-tracker"
+
+const ProfileCompletionModal = React.lazy(() =>
+  import("@/Components/Modals/profile-completion-modal").then((m) => ({ default: m.ProfileCompletionModal }))
+)
 
 interface ProfileCheckWrapperProps {
   children: React.ReactNode
@@ -12,7 +15,6 @@ interface ProfileCheckWrapperProps {
 export function ProfileCheckWrapper({ children }: ProfileCheckWrapperProps) {
   const { user, isLoading } = useAuth()
   const [showModal, setShowModal] = useState(false)
-  const [hasTrackedLogin, setHasTrackedLogin] = useState(false)
 
   useEffect(() => {
     // Check if user needs to complete profile
@@ -22,13 +24,20 @@ export function ProfileCheckWrapper({ children }: ProfileCheckWrapperProps) {
         setShowModal(true)
       }
       
-      // Track daily login (only once per session)
-      if (!hasTrackedLogin) {
+      // Track daily login at most once per calendar day per user (persisted across reloads)
+      const todayKey = `safescape_daily_login_${user.id}_${new Date().toISOString().slice(0, 10)}`
+      try {
+        if (!localStorage.getItem(todayKey)) {
+          localStorage.setItem(todayKey, "1")
+          trackDailyLogin().catch(() => {
+            try { localStorage.removeItem(todayKey) } catch {}
+          })
+        }
+      } catch {
         trackDailyLogin()
-        setHasTrackedLogin(true)
       }
     }
-  }, [user, isLoading, hasTrackedLogin])
+  }, [user, isLoading])
 
   const handleProfileComplete = () => {
     setShowModal(false)
@@ -44,10 +53,12 @@ export function ProfileCheckWrapper({ children }: ProfileCheckWrapperProps) {
     <>
       {children}
       {showModal && user && (
-        <ProfileCompletionModal
-          isOpen={showModal}
-          onComplete={handleProfileComplete}
-        />
+        <Suspense fallback={null}>
+          <ProfileCompletionModal
+            isOpen={showModal}
+            onComplete={handleProfileComplete}
+          />
+        </Suspense>
       )}
     </>
   )

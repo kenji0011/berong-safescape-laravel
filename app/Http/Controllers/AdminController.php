@@ -30,12 +30,16 @@ class AdminController extends Controller
     public function dashboardPage()
     {
         return \Inertia\Inertia::render('AdminDashboard', [
-            'initialCarouselImages' => \App\Models\CarouselImage::where('isActive', true)->orderBy('order', 'asc')->get(),
-            'initialBlogPosts' => \App\Models\BlogPost::with('author:id,name')->orderBy('order', 'asc')->orderBy('created_at', 'desc')->take(100)->get(),
-            'initialVideos' => \App\Models\Video::orderBy('order', 'asc')->orderBy('created_at', 'desc')->take(100)->get(),
-            'initialUsers' => \App\Models\User::latest()->get(),
-            'initialQuickQuestions' => \App\Models\QuickQuestion::where('isActive', true)->orderBy('created_at', 'desc')->get(),
-            'initialFireCodeSections' => \App\Models\FireCodeSection::orderBy('sectionNum')->get(),
+            'initialCarouselImages' => Cache::remember('carousel_images_active', now()->addHours(6), function () {
+                return \App\Models\CarouselImage::where('isActive', true)->orderBy('order', 'asc')->get();
+            }),
+            'initialBlogPosts' => \Inertia\Inertia::defer(fn () => \App\Models\BlogPost::with('author:id,name')->orderBy('order', 'asc')->orderBy('created_at', 'desc')->take(100)->get()),
+            'initialVideos' => \Inertia\Inertia::defer(fn () => \App\Models\Video::orderBy('order', 'asc')->orderBy('created_at', 'desc')->take(100)->get()),
+            'initialUsers' => \Inertia\Inertia::defer(fn () => \App\Models\User::select('id', 'name', 'username', 'email', 'role', 'isActive', 'age', 'barangay', 'school', 'profileCompleted', 'preTestScore', 'postTestScore', 'engagementPoints', 'created_at')->latest()->get()),
+            'initialQuickQuestions' => \Inertia\Inertia::defer(fn () => Cache::remember('quick_questions_active', now()->addHours(6), function () {
+                return \App\Models\QuickQuestion::where('isActive', true)->orderBy('created_at', 'desc')->get();
+            })),
+            'initialFireCodeSections' => \Inertia\Inertia::defer(fn () => \App\Models\FireCodeSection::orderBy('sectionNum')->get()),
         ]);
     }
 
@@ -43,9 +47,9 @@ class AdminController extends Controller
     {
         return \Inertia\Inertia::render('Admin/Analytics', [
             'initialSummaryData' => $this->analyticsService->getCachedAnalytics('summary'),
-            'initialBarangayData' => $this->analyticsService->getCachedAnalytics('barangay'),
-            'initialDemographicData' => $this->analyticsService->getCachedAnalytics('demographics'),
-            'initialKnowledgeData' => $this->analyticsService->getCachedAnalytics('knowledge'),
+            'initialBarangayData' => \Inertia\Inertia::defer(fn () => $this->analyticsService->getCachedAnalytics('barangay')),
+            'initialDemographicData' => \Inertia\Inertia::defer(fn () => $this->analyticsService->getCachedAnalytics('demographics')),
+            'initialKnowledgeData' => \Inertia\Inertia::defer(fn () => $this->analyticsService->getCachedAnalytics('knowledge')),
         ]);
     }
 
@@ -520,6 +524,7 @@ class AdminController extends Controller
         
         try {
             $question = \App\Models\QuickQuestion::create($payload);
+            Cache::forget('quick_questions_active');
             return response()->json(['success' => true, 'question' => $question], 201);
         } catch (\Throwable $e) {
             Log::error('Error creating quick question: ' . $e->getMessage());
@@ -539,6 +544,7 @@ class AdminController extends Controller
         try {
             $question = \App\Models\QuickQuestion::findOrFail($id);
             $question->update($payload);
+            Cache::forget('quick_questions_active');
             return response()->json(['success' => true, 'question' => $question]);
         } catch (ModelNotFoundException $e) {
             return response()->json(['success' => false, 'error' => 'Quick question not found.'], 404);
@@ -552,6 +558,7 @@ class AdminController extends Controller
     {
         try {
             \App\Models\QuickQuestion::findOrFail($id)->delete();
+            Cache::forget('quick_questions_active');
             return response()->json(['success' => true, 'message' => 'Question deleted']);
         } catch (ModelNotFoundException $e) {
             return response()->json(['success' => false, 'error' => 'Quick question not found.'], 404);
@@ -588,6 +595,7 @@ class AdminController extends Controller
 
         try {
             $image = CarouselImage::create($payload);
+            Cache::forget('carousel_images_active');
             return response()->json(['success' => true, 'image' => $image], 201);
         } catch (\Throwable $e) {
             Log::error('Error creating carousel image: ' . $e->getMessage());
@@ -636,6 +644,7 @@ class AdminController extends Controller
             }
 
             $image->update($updates);
+            Cache::forget('carousel_images_active');
 
             return response()->json(['success' => true, 'image' => $image]);
         } catch (ModelNotFoundException $e) {
@@ -650,6 +659,7 @@ class AdminController extends Controller
     {
         try {
             CarouselImage::findOrFail($id)->delete();
+            Cache::forget('carousel_images_active');
             return response()->json(['success' => true, 'message' => 'Image deleted']);
         } catch (ModelNotFoundException $e) {
             return response()->json(['success' => false, 'error' => 'Carousel image not found.'], 404);
@@ -719,6 +729,7 @@ class AdminController extends Controller
                     CarouselImage::where('id', $id)->update(['order' => $index]);
                 }
             });
+            Cache::forget('carousel_images_active');
             
             return response()->json(CarouselImage::orderBy('order')->get());
         } catch (\Throwable $e) {
@@ -850,6 +861,7 @@ class AdminController extends Controller
                 'parentSectionId' => $request->parentSectionId,
                 'order' => $request->order ?? 0,
             ]);
+            Cache::forget('fire_code_manuals');
 
             return response()->json(['success' => true, 'section' => $section], 201);
         } catch (\Throwable $e) {
@@ -896,6 +908,7 @@ class AdminController extends Controller
             }
 
             $section->update($updates);
+            Cache::forget('fire_code_manuals');
 
             return response()->json(['success' => true, 'section' => $section]);
         } catch (ModelNotFoundException $e) {
@@ -910,6 +923,7 @@ class AdminController extends Controller
     {
         try {
             \App\Models\FireCodeSection::findOrFail($id)->delete();
+            Cache::forget('fire_code_manuals');
             return response()->json(['success' => true, 'message' => 'Section deleted']);
         } catch (ModelNotFoundException $e) {
             return response()->json(['success' => false, 'error' => 'Section not found.'], 404);

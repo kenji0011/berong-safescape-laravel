@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react"
+import { useState, useCallback, useEffect } from "react"
 import { apiFetch } from "@/lib/api-fetch"
 import type { 
   AdminInitialData, 
@@ -50,6 +50,40 @@ export function useAdminData(initialData: AdminInitialData) {
   const [fireCodeSections, setFireCodeSections] = useState<FireCodeSection[]>(
     initialData.initialFireCodeSections ? initialData.initialFireCodeSections.map(normalizeFireCodeSection) : []
   )
+
+  // Sync deferred Inertia props when they arrive after initial paint
+  useEffect(() => {
+    if (initialData.initialBlogPosts) {
+      setBlogPosts(initialData.initialBlogPosts.map(normalizeBlogPost))
+    }
+  }, [initialData.initialBlogPosts])
+
+  useEffect(() => {
+    if (initialData.initialVideos) {
+      setVideos(initialData.initialVideos.map(normalizeVideo))
+    }
+  }, [initialData.initialVideos])
+
+  useEffect(() => {
+    if (initialData.initialUsers) {
+      const list = Array.isArray(initialData.initialUsers)
+        ? initialData.initialUsers
+        : initialData.initialUsers.data ?? []
+      setUsers(list.map(normalizeUser))
+    }
+  }, [initialData.initialUsers])
+
+  useEffect(() => {
+    if (initialData.initialQuickQuestions) {
+      setQuickQuestions(initialData.initialQuickQuestions)
+    }
+  }, [initialData.initialQuickQuestions])
+
+  useEffect(() => {
+    if (initialData.initialFireCodeSections) {
+      setFireCodeSections(initialData.initialFireCodeSections.map(normalizeFireCodeSection))
+    }
+  }, [initialData.initialFireCodeSections])
 
   const loadCarouselImages = useCallback(async () => {
     try {

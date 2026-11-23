@@ -15,7 +15,7 @@ import Particles from "@/Components/ui/particles"
 import { useSettings } from "@/lib/settings-context"
 import { KidsWelcomeBannerSkeleton, ContentGridSkeleton } from "@/Components/dashboard-skeletons"
 import { MinecraftSMP } from "@/Components/MinecraftSMP"
-import { motion, AnimatePresence } from "framer-motion"
+import { motion, AnimatePresence } from "motion/react"
 import { BookOpen, Sparkles } from "lucide-react"
 import { playSound } from '@/lib/audio'
 import { preloadKidsPages } from '@/lib/preload-kids-pages'

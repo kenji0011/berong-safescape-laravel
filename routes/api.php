@@ -63,36 +63,9 @@ Route::prefix('games/right_call')->group(function () {
 });
 
 // Public maintenance status endpoint for real-time polling
-Route::get('/maintenance-status', function () {
-    try {
-        if (!\Illuminate\Support\Facades\Schema::hasTable('system_settings')) {
-            return response()->json([
-                'is_active' => false,
-                'message' => '',
-                'warning_active' => false,
-                'warning_message' => ''
-            ]);
-        }
-        $config = \App\Models\SystemSetting::getVal('maintenance_mode', [
-            'is_active' => false,
-            'message' => '',
-            'warning_active' => false,
-            'warning_message' => ''
-        ]);
-    } catch (\Throwable $e) {
-        $config = [
-            'is_active' => false,
-            'message' => '',
-            'warning_active' => false,
-            'warning_message' => ''
-        ];
-    }
-    return response()->json($config);
-});
+Route::get('/maintenance-status', [\App\Http\Controllers\WebPageController::class, 'maintenanceStatus']);
 
-Route::middleware(['auth:sanctum', 'throttle:api'])->get('/user', function (Request $request) {
-    return $request->user();
-});
+Route::middleware(['auth:sanctum', 'throttle:api'])->get('/user', [\App\Http\Controllers\WebPageController::class, 'currentUser']);
 
 // All protected API routes
 Route::middleware(['auth:sanctum', 'throttle:api'])->group(function () {

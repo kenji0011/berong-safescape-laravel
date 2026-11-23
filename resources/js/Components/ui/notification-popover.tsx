@@ -27,13 +27,107 @@ interface NotificationPopoverProps {
   onOpenChange?: (open: boolean) => void;
 }
 
+// Shared singleton store so desktop + mobile NotificationPopover instances share one 30s poller,
+// pause in background tabs, and stay instantaneously synchronized.
+type NotifListener = (items: Notification[], isLoading: boolean) => void;
+const notifStore = {
+  items: [] as Notification[],
+  loading: false,
+  inFlight: null as Promise<void> | null,
+  lastFetchedAt: 0,
+  activeUserId: null as number | null,
+  listeners: new Set<NotifListener>(),
+  intervalId: null as ReturnType<typeof setInterval> | null,
+  visibilityBound: false,
+  notify() {
+    this.listeners.forEach((fn) => fn(this.items, this.loading));
+  },
+  setItems(next: Notification[]) {
+    this.items = next;
+    this.notify();
+  },
+  async fetch(userId: number | null, force = false) {
+    if (!userId) return;
+    if (!force && document.visibilityState === 'hidden') return;
+    if (!force && Date.now() - this.lastFetchedAt < 5000 && this.activeUserId === userId) return;
+    if (this.inFlight) return this.inFlight;
+
+    this.activeUserId = userId;
+    this.loading = true;
+    this.notify();
+
+    this.inFlight = axios
+      .get('/api/notifications')
+      .then((res) => {
+        this.items = res.data;
+        this.lastFetchedAt = Date.now();
+      })
+      .catch((err: any) => {
+        if (err.response && err.response.status === 401) return;
+        console.error('Failed to fetch notifications:', err);
+      })
+      .finally(() => {
+        this.loading = false;
+        this.inFlight = null;
+        this.notify();
+      });
+
+    return this.inFlight;
+  },
+  handleVisibilityChange() {
+    if (document.visibilityState === 'visible' && notifStore.activeUserId) {
+      if (Date.now() - notifStore.lastFetchedAt >= 15000) {
+        notifStore.fetch(notifStore.activeUserId, true);
+      }
+    }
+  },
+  subscribe(userId: number | null, listener: NotifListener) {
+    this.listeners.add(listener);
+    if (userId && userId !== this.activeUserId) {
+      this.items = [];
+      this.lastFetchedAt = 0;
+      this.activeUserId = userId;
+    }
+    listener(this.items, this.loading);
+
+    if (userId) {
+      this.fetch(userId);
+      if (!this.intervalId) {
+        this.intervalId = setInterval(() => {
+          if (this.activeUserId && document.visibilityState === 'visible') {
+            this.fetch(this.activeUserId);
+          }
+        }, 30000);
+      }
+      if (!this.visibilityBound && typeof document !== 'undefined') {
+        document.addEventListener('visibilitychange', this.handleVisibilityChange);
+        this.visibilityBound = true;
+      }
+    }
+
+    return () => {
+      this.listeners.delete(listener);
+      if (this.listeners.size === 0) {
+        if (this.intervalId) {
+          clearInterval(this.intervalId);
+          this.intervalId = null;
+        }
+        if (this.visibilityBound && typeof document !== 'undefined') {
+          document.removeEventListener('visibilitychange', this.handleVisibilityChange);
+          this.visibilityBound = false;
+        }
+      }
+    };
+  },
+};
+
 export function NotificationPopover({
   isOpen: externalIsOpen,
   onOpenChange: externalOnOpenChange
 }: NotificationPopoverProps = {}) {
   const { user } = useAuth();
-  const [notifications, setNotifications] = useState<Notification[]>([]);
-  const [loading, setLoading] = useState(false);
+  const [notifications, setNotifications] = useState<Notification[]>(notifStore.items);
+  const [loading, setLoading] = useState(notifStore.loading);
   const [error] = useState<string | null>(null);
   const [filter, setFilter] = useState<'all' | 'video' | 'blog' | 'achievement' | 'system'>('all');
   const [isFilterDropdownOpen, setIsFilterDropdownOpen] = useState(false);
@@ -76,21 +170,9 @@ export function NotificationPopover({
   const previewTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const isFirstFetchRef = useRef(true);
 
-  const fetchNotifications = async () => {
+  const fetchNotifications = async (force = false) => {
     if (!user) return;
-    setLoading(true);
-    try {
-      const res = await axios.get('/api/notifications');
-      setNotifications(res.data);
-    } catch (err: any) {
-      if (err.response && err.response.status === 401) {
-        // Silently ignore 401 Unauthorized errors (expected when logged out)
-        return;
-      }
-      console.error('Failed to fetch notifications:', err);
-    } finally {
-      setLoading(false);
-    }
+    await notifStore.fetch(user.id, force);
   };
 
   useEffect(() => {
@@ -125,16 +207,24 @@ export function NotificationPopover({
     }
   }, [notifications]);
 
-  // Polling for new notifications every 10 seconds
+  // Subscribe to the shared 30s visibility-aware notification poller
   useEffect(() => {
-    if (!user) return;
-    const interval = setInterval(fetchNotifications, 10000);
-    return () => clearInterval(interval);
-  }, [user]);
+    if (!user) {
+      setNotifications([]);
+      return;
+    }
+    return notifStore.subscribe(user.id, (items, isLoading) => {
+      setNotifications(items);
+      setLoading(isLoading);
+    });
+  }, [user?.id]);
 
+  // Immediately refresh notifications when the user opens the popover
   useEffect(() => {
-    fetchNotifications();
-  }, [user]);
+    if (isOpen && user) {
+      fetchNotifications(true);
+    }
+  }, [isOpen, user?.id]);
 
   useEffect(() => {
     setMounted(true);
@@ -149,7 +239,7 @@ export function NotificationPopover({
   const unreadCount = notifications.filter(n => !n.isRead).length;
 
   const toggleReadStatus = async (id: number, isRead: boolean) => {
-    setNotifications(notifications.map(n =>
+    notifStore.setItems(notifications.map(n =>
       n.id === id ? { ...n, isRead } : n
     ));
     try {
@@ -160,14 +250,14 @@ export function NotificationPopover({
   };
 
   const deleteNotification = async (id: number) => {
-    setNotifications(notifications.filter(n => n.id !== id));
+    notifStore.setItems(notifications.filter(n => n.id !== id));
     try {
       await axios.delete(`/api/notifications/${id}`);
     } catch (e) { console.error(e); }
   };
 
   const markAllAsRead = async () => {
-    setNotifications(notifications.map(n => ({ ...n, isRead: true })));
+    notifStore.setItems(notifications.map(n => ({ ...n, isRead: true })));
     try {
       await axios.post('/api/notifications/read-all');
     } catch (e) { console.error(e); }
@@ -176,7 +266,7 @@ export function NotificationPopover({
   const handleDismissWelcome = async () => {
     if (!welcomeNotification) return;
     const welcomeId = welcomeNotification.id;
-    setNotifications(prev => prev.map(n => n.id === welcomeId ? { ...n, isRead: true } : n));
+    notifStore.setItems(notifications.map(n => n.id === welcomeId ? { ...n, isRead: true } : n));
     setWelcomeNotification(null);
     try {
       await axios.patch(`/api/notifications/${welcomeId}/read`);
@@ -190,7 +280,7 @@ export function NotificationPopover({
       const welcomeId = welcomeNotification.id;
       // Clear modal immediately so it visually disappears
       setWelcomeNotification(null);
-      setNotifications(prev => prev.map(n => n.id === welcomeId ? { ...n, isRead: true } : n));
+      notifStore.setItems(notifications.map(n => n.id === welcomeId ? { ...n, isRead: true } : n));
       // Wait for the API to confirm read status before navigating,
       // so the new page's fetch won't find it unread and reopen the modal
       try {

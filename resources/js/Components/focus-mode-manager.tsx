@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react"
 import { usePage } from "@inertiajs/react"
 import { Shield, Volume2, VolumeX, Sun, Moon } from "lucide-react"
-import { motion, AnimatePresence } from "framer-motion"
+import { motion, AnimatePresence } from "motion/react"
 import { cn } from "@/lib/utils"
 import { useSettings } from "@/lib/settings-context"
 

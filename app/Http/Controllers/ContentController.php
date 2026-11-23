@@ -7,6 +7,7 @@ use App\Models\Video;
 use App\Models\QuickQuestion;
 use App\Models\CarouselImage;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 
 class ContentController extends Controller
@@ -80,9 +81,11 @@ class ContentController extends Controller
     public function questions()
     {
         try {
-            $questions = QuickQuestion::where('isActive', true)
-                ->orderBy('created_at', 'desc')
-                ->get();
+            $questions = Cache::remember('quick_questions_active', now()->addHours(6), function () {
+                return QuickQuestion::where('isActive', true)
+                    ->orderBy('created_at', 'desc')
+                    ->get();
+            });
 
             return response()->json($questions);
         } catch (\Throwable $e) {
@@ -97,9 +100,11 @@ class ContentController extends Controller
     public function carousel()
     {
         try {
-            $images = CarouselImage::where('isActive', true)
-                ->orderBy('order', 'asc')
-                ->get();
+            $images = Cache::remember('carousel_images_active', now()->addHours(6), function () {
+                return CarouselImage::where('isActive', true)
+                    ->orderBy('order', 'asc')
+                    ->get();
+            });
 
             return response()->json($images);
         } catch (\Throwable $e) {
@@ -114,7 +119,9 @@ class ContentController extends Controller
     public function manuals()
     {
         try {
-            $manuals = \App\Models\FireCodeSection::orderBy('category')->orderBy('sectionNum')->orderBy('id')->get();
+            $manuals = Cache::remember('fire_code_manuals', now()->addHours(6), function () {
+                return \App\Models\FireCodeSection::orderBy('category')->orderBy('sectionNum')->orderBy('id')->get();
+            });
             return response()->json($manuals);
         } catch (\Throwable $e) {
             Log::error('ContentController@manuals failed: ' . $e->getMessage(), ['exception' => $e]);

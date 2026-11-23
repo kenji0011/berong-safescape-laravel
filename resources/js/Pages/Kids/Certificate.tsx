@@ -110,7 +110,7 @@ const CertificatePage = () => {
                 style={{ aspectRatio: '1123/794', containerType: 'inline-size' }}
               >
                 <img 
-                  src="/safescape_certificate.svg" 
+                  src="/safescape_certificate.webp" 
                   alt="Certificate Template" 
                   className="absolute inset-0 w-full h-full object-cover" 
                   crossOrigin="anonymous" 

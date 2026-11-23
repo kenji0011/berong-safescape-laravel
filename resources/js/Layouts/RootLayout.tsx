@@ -10,10 +10,11 @@ import { usePage } from '@inertiajs/react';
 import { Toaster } from "@/Components/ui/sonner";
 import { AlertTriangle } from "lucide-react";
 
-import { PageExpiredModal } from "@/Components/Modals";
+import { PageExpiredModal } from "@/Components/Modals/page-expired-modal";
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   const { url, component, props } = usePage();
+  const [chatbotReady, setChatbotReady] = useState(false);
   const isAuthPage = url.startsWith('/login') || url.startsWith('/register');
   
   const isMiniGame = url.startsWith('/kids/quiz') || 
@@ -62,13 +63,28 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     return () => clearInterval(timer);
   }, [localAlert]);
 
-  // Background polling for standing sessions (checks every 25s without duplicate per-route fetches)
+  // Defer mounting the Chatbot chunk until the browser is idle so it never competes with initial LCP/FCP
+  useEffect(() => {
+    if (chatbotReady) return;
+    if ('requestIdleCallback' in window) {
+      const idleId = (window as any).requestIdleCallback(() => setChatbotReady(true), { timeout: 1500 });
+      return () => (window as any).cancelIdleCallback?.(idleId);
+    }
+    const timer = setTimeout(() => setChatbotReady(true), 800);
+    return () => clearTimeout(timer);
+  }, [chatbotReady]);
+
+  // Background polling for standing sessions (pauses while tab is hidden, checks on tab resume)
   useEffect(() => {
     if (url.startsWith('/maintenance') || url.startsWith('/login') || url.startsWith('/logout')) {
       return;
     }
 
+    let lastCheckedAt = Date.now();
+
     const checkMaintenanceStatus = async () => {
+      if (document.visibilityState === 'hidden') return;
+      lastCheckedAt = Date.now();
       try {
         const response = await fetch('/api/maintenance-status');
         if (response.ok) {
@@ -101,8 +117,18 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       }
     };
 
-    const interval = setInterval(checkMaintenanceStatus, 25000);
-    return () => clearInterval(interval);
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible' && Date.now() - lastCheckedAt >= 25000) {
+        checkMaintenanceStatus();
+      }
+    };
+
+    const interval = setInterval(checkMaintenanceStatus, 30000);
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    return () => {
+      clearInterval(interval);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
   }, []);
 
   return (
@@ -136,7 +162,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               {children}
             </div>
           </ProfileCheckWrapper>
-          {(!isAuthPage && !isMiniGame && !url.startsWith('/maintenance')) && (
+          {(chatbotReady && !isAuthPage && !isMiniGame && !url.startsWith('/maintenance')) && (
             <Suspense fallback={null}>
               <Chatbot />
             </Suspense>

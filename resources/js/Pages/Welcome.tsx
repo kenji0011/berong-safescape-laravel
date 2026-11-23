@@ -1,15 +1,22 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef, Suspense } from 'react';
 import { Head, usePage } from '@inertiajs/react';
 import RootLayout from '@/Layouts/RootLayout';
 import { Navigation } from '@/Components/navigation';
 import { HeroCarousel } from '@/Components/ui/hero-carousel';
 import { FeaturedCards } from '@/Components/ui/featured-cards';
 import { Footer } from '@/Components/footer';
-import { HeroSection, LandingAboutSection, LandingAssessmentSection } from '@/Components/Landing';
+import { HeroSection } from '@/Components/Landing/hero-section';
 import Particles from '@/Components/ui/particles';
 import { Smartphone, X, ChevronLeft, ChevronRight } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { cn } from '@/lib/utils';
+
+const LandingAboutSection = React.lazy(() =>
+  import('@/Components/Landing/landing-about-section').then((m) => ({ default: m.LandingAboutSection }))
+);
+const LandingAssessmentSection = React.lazy(() =>
+  import('@/Components/Landing/landing-assessment-section').then((m) => ({ default: m.LandingAssessmentSection }))
+);
 
 export default function Welcome({ carouselImages }: { carouselImages?: any[] }) {
   const { auth } = usePage().props as any;
@@ -177,12 +184,16 @@ export default function Welcome({ carouselImages }: { carouselImages?: any[] }) 
 
           {/* About SafeScape Sections */}
           <section id="about-section" className="mb-8 sm:mb-32 scroll-mt-24 w-full">
-            <LandingAboutSection />
+            <Suspense fallback={<div className="min-h-[400px]" />}>
+              <LandingAboutSection />
+            </Suspense>
           </section>
 
           {/* Assessment Section */}
           <section id="final-assessment" className="mb-8 sm:mb-32 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
-            <LandingAssessmentSection serverUser={mappedUser} />
+            <Suspense fallback={<div className="min-h-[320px]" />}>
+              <LandingAssessmentSection serverUser={mappedUser} />
+            </Suspense>
           </section>
         </main>
 

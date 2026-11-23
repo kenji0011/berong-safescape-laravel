@@ -62,17 +62,27 @@ class RouteNavigationTest extends TestCase
             ->assertInertia(fn (Assert $page) => $page
                 ->component('AdminDashboard')
                 ->has('initialCarouselImages')
-                ->has('initialBlogPosts')
-                ->has('initialVideos')
-                ->has('initialUsers')
-                ->has('initialQuickQuestions')
-                ->has('initialFireCodeSections')
+                ->loadDeferredProps(fn (Assert $reload) => $reload
+                    ->has('initialBlogPosts')
+                    ->has('initialVideos')
+                    ->has('initialUsers')
+                    ->has('initialQuickQuestions')
+                    ->has('initialFireCodeSections')
+                )
             );
 
         $this->actingAs($admin)
             ->get('/admin/analytics')
             ->assertStatus(200)
-            ->assertInertia(fn (Assert $page) => $page->component('Admin/Analytics'));
+            ->assertInertia(fn (Assert $page) => $page
+                ->component('Admin/Analytics')
+                ->has('initialSummaryData')
+                ->loadDeferredProps(fn (Assert $reload) => $reload
+                    ->has('initialBarangayData')
+                    ->has('initialDemographicData')
+                    ->has('initialKnowledgeData')
+                )
+            );
     }
 
     public function test_kids_safescape_modules_render_correct_components(): void

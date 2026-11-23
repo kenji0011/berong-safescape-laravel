@@ -5,7 +5,6 @@ namespace App\Http\Middleware;
 use Closure;
 use Illuminate\Http\Request;
 use App\Models\SystemSetting;
-use Illuminate\Support\Facades\Schema;
 
 class CheckMaintenanceMode
 {
@@ -15,11 +14,7 @@ class CheckMaintenanceMode
     public function handle(Request $request, Closure $next)
     {
         try {
-            // Check if settings table exists first to prevent boot failures during installation
-            if (!Schema::hasTable('system_settings')) {
-                return $next($request);
-            }
-
+            // SystemSetting::getVal() caches for 30s and safely handles DB/table errors
             $config = SystemSetting::getVal('maintenance_mode');
             
             if ($config && isset($config['is_active']) && $config['is_active']) {

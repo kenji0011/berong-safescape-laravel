@@ -4,7 +4,7 @@ import React, { useState, useRef, useEffect } from "react"
 import ReactDOM from "react-dom"
 import { useAuth } from "@/lib/auth-context"
 import { Link, Deferred } from '@inertiajs/react'
-import { motion, AnimatePresence } from "framer-motion"
+import { motion, AnimatePresence } from "motion/react"
 import confetti from 'canvas-confetti'
 import { Navigation } from "@/Components/navigation"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/Components/ui/card"

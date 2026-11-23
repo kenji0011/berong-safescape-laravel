@@ -993,7 +993,7 @@ export function LandingAboutSection({ carouselNode }: { carouselNode?: React.Rea
                                                 }}
                                             >
                                                 <img
-                                                    src="/berong_mascot.png"
+                                                    src="/berong_mascot.webp"
                                                     alt="Berong Mascot Waving"
                                                     loading="lazy"
                                                     className="w-full h-full object-contain drop-shadow-[0_20px_25px_rgba(0,0,0,0.3)] select-none"

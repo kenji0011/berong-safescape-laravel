@@ -10,14 +10,8 @@
         <link rel="icon" type="image/webp" href="/berong-official-logo.webp">
         <link rel="apple-touch-icon" href="/berong-official-logo.webp">
 
-        <!-- Prefetch loader images for later display (avoids console warnings) -->
-        <link rel="prefetch" href="/berong_pr.webp" as="image">
-        <link rel="prefetch" href="/berong_logout.webp" as="image">
-
-        <!-- Preload critical above-the-fold assets -->
+        <!-- Preload critical above-the-fold logo -->
         <link rel="preload" href="/berong-official-logo.webp" as="image">
-        <link rel="preload" href="/web-background-image.webp" as="image">
-        <link rel="preload" href="/stacruz.webp" as="image">
 
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -25,7 +19,6 @@
         <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 
         <!-- Scripts -->
-        @routes
         @viteReactRefresh
         @vite(['resources/js/app.jsx'])
         @inertiaHead

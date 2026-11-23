@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react"
 import { router, usePage } from '@inertiajs/react';
 import axios from 'axios';
-import { motion, AnimatePresence } from "framer-motion"
+import { motion, AnimatePresence } from "motion/react"
 import { useAuth } from "@/lib/auth-context"
 import { Navigation } from "@/Components/navigation"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/Components/ui/card"

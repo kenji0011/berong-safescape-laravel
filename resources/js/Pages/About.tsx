@@ -688,7 +688,7 @@ export default function AboutPage() {
                                                 }}
                                             >
                                                 <Image
-                                                    src="/berong_mascot.png"
+                                                    src="/berong_mascot.webp"
                                                     alt="Berong Mascot Waving"
                                                     fill
                                                     className="object-contain drop-shadow-2xl relative z-10 select-none"

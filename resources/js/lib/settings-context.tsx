@@ -222,10 +222,17 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
     }
   }, [isDarkMode]);
 
-  // Sync dyslexia font class
+  // Sync dyslexia font class & lazy-load OpenDyslexic stylesheet only when enabled
   useEffect(() => {
     const root = document.documentElement;
     if (dyslexiaFont) {
+      if (!document.getElementById("open-dyslexic-font")) {
+        const link = document.createElement("link");
+        link.id = "open-dyslexic-font";
+        link.rel = "stylesheet";
+        link.href = "https://fonts.cdnfonts.com/css/open-dyslexic";
+        document.head.appendChild(link);
+      }
       root.classList.add("dyslexia-mode");
     } else {
       root.classList.remove("dyslexia-mode");

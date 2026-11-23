@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Head, Link } from '@inertiajs/react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence } from 'motion/react';
 import { ArrowLeft, Trophy, Heart, Zap, Shield, Flame, AlertCircle, Play, RotateCcw, BadgeCheck, Smartphone, Maximize, Minimize } from 'lucide-react';
 import { cn } from "@/lib/utils";
 import { useAuth } from '@/lib/auth-context';

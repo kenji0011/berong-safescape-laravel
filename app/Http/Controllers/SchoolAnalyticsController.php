@@ -19,9 +19,11 @@ class SchoolAnalyticsController extends Controller
     public function index()
     {
         try {
-            $schools = School::where('isActive', true)
-                ->orderBy('name')
-                ->get(['id', 'name', 'type', 'district', 'address']);
+            $schools = Cache::remember('schools_active', now()->addHours(6), function () {
+                return School::where('isActive', true)
+                    ->orderBy('name')
+                    ->get(['id', 'name', 'type', 'district', 'address']);
+            });
 
             return response()->json(['schools' => $schools]);
         } catch (\Throwable $e) {
@@ -120,6 +122,7 @@ class SchoolAnalyticsController extends Controller
             ]));
 
             Cache::forget('school_analytics_live');
+            Cache::forget('schools_active');
 
             return response()->json(['school' => $school], 201);
         } catch (\Throwable $e) {
@@ -148,6 +151,7 @@ class SchoolAnalyticsController extends Controller
             ]));
 
             Cache::forget('school_analytics_live');
+            Cache::forget('schools_active');
 
             return response()->json(['school' => $school]);
         } catch (ModelNotFoundException $e) {
@@ -174,6 +178,7 @@ class SchoolAnalyticsController extends Controller
             });
 
             Cache::forget('school_analytics_live');
+            Cache::forget('schools_active');
 
             return response()->json(['success' => true]);
         } catch (ModelNotFoundException $e) {
