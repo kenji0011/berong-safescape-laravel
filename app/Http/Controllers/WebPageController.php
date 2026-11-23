@@ -249,7 +249,7 @@ class WebPageController extends Controller
         return Inertia::render('AdultDashboard', [
             'initialBlogs' => BlogPost::with('author:id,name')
                 ->where('isPublished', true)
-                ->select('id', 'title', 'excerpt', 'imageUrl', 'category', 'authorId', 'created_at', 'order')
+                ->select('id', 'title', 'excerpt', 'content', 'imageUrl', 'category', 'authorId', 'created_at', 'order')
                 ->orderBy('order', 'asc')
                 ->orderBy('created_at', 'desc')
                 ->take(12)
@@ -269,7 +269,7 @@ class WebPageController extends Controller
         $blog = BlogPost::with('author:id,name')->findOrFail($id);
         $allBlogs = BlogPost::with('author:id,name')
             ->where('isPublished', true)
-            ->select('id', 'title', 'excerpt', 'imageUrl', 'category', 'authorId', 'created_at', 'order')
+            ->select('id', 'title', 'excerpt', 'content', 'imageUrl', 'category', 'authorId', 'created_at', 'order')
             ->orderBy('order', 'asc')
             ->orderBy('created_at', 'desc')
             ->take(20)

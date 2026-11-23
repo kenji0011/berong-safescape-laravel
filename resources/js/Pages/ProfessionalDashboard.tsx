@@ -631,9 +631,9 @@ const ProfessionalDashboard = ({ initialVideos, watchedVideoIds = [] }: Professi
                                             }
                                         }}
                                         style={{ transformOrigin: "top center" }}
-                                        className="pt-1 px-1 pb-7 sm:pb-8 will-change-transform transform-gpu"
+                                        className="pt-0.5 pb-7 sm:pb-8 will-change-transform transform-gpu"
                                     >
-                                        <Card className="bg-white dark:bg-slate-900 rounded-[1.5rem] sm:rounded-[2rem] border-[3px] border-slate-200 dark:border-slate-800 shadow-[0_8px_0_#cbd5e1] dark:shadow-[0_4px_0_#0f172a] sm:shadow-[0_8px_0_#cbd5e1] dark:sm:shadow-[0_8px_0_#0f172a] overflow-hidden p-3.5 sm:p-5 transition-colors duration-300 gap-2.5 sm:gap-3 ring-2 ring-red-500/20">
+                                        <Card className="bg-white dark:bg-slate-900 rounded-[1.5rem] sm:rounded-[2rem] border-[3px] border-slate-200 dark:border-slate-800 shadow-[0_8px_0_#cbd5e1] dark:shadow-[0_4px_0_#0f172a] sm:shadow-[0_8px_0_#cbd5e1] dark:sm:shadow-[0_8px_0_#0f172a] overflow-hidden p-3.5 sm:p-5 transition-colors duration-300 gap-2.5 sm:gap-3">
                                             <div className="flex items-start justify-between gap-3">
                                                 <motion.div
                                                     key={selectedVideo.id || selectedVideo.youtubeId}
